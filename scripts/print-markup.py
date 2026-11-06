@@ -20,4 +20,16 @@ def cell(m):
 s = re.sub(r"<td([^>]*)>(.*?)</td>", cell, s, flags=re.S)
 s = re.sub(r"<td([^>]*)>(MUST|SHOULD|MAY)(\b[^<]*)</td>",
            lambda m: f'<td{m.group(1)}><span class="lvl lvl-{m.group(2).lower()}">{m.group(2)}</span>{m.group(3)}</td>', s)
+
+def figure(img):
+    cap = re.search(r'title="([^"]*)"', img)
+    img = re.sub(r'\s*title="[^"]*"', "", img)
+    return f'<figure class="shot">{img}' + (f"<figcaption>{cap.group(1)}</figcaption>" if cap else "") + "</figure>"
+def para(m):
+    imgs = re.findall(r"<img\s[^>]*>", m.group(1))
+    if not imgs or re.sub(r"<img\s[^>]*>|\s", "", m.group(1)):
+        return m.group(0)
+    figs = "".join(figure(i) for i in imgs)
+    return figs if len(imgs) == 1 else f'<div class="shot-row n{len(imgs)}">{figs}</div>'
+s = re.sub(r"<p>(.*?)</p>", para, s, flags=re.S)
 open(dst, "w", encoding="utf-8").write(s)

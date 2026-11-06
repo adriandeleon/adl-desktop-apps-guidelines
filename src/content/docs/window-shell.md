@@ -3,6 +3,8 @@ title: "Window shell"
 description: "Status bar, themes, title bar, dialogs, Welcome, About, window state and zoom."
 ---
 
+![Editora's Welcome tab](../../assets/shots/editora-welcome.png "Editora's Welcome page: Start actions with their chords, Recent Projects, Recent Files and Customize.")
+
 - **Status bar**, always present (toggleable). Its left side is the *echo area*: one line of feedback for
   the last action. Errors are red, warnings amber. Clicking it opens the Message Log.
 - **Themes**: light and dark AtlantaFX themes plus a "follow the system" choice, switchable at run time
@@ -20,3 +22,6 @@ description: "Status bar, themes, title bar, dialogs, Welcome, About, window sta
   `--no-session` flag skips the restore.
 - **Zoom**: UI and content zoom from the keyboard (`Ctrl/Cmd +`, `-`, `0`), persisted.
 - **Modes** (MAY): Zen (no chrome), Simple (fewer menus for new users), Expert.
+
+![Termina window with tabs in the title bar and a tab context menu](../../assets/shots/termina-tabs.png "Termina puts its tabs in the title bar with JavaFX 27's HeaderBar.")
+![Editora's View menu open with toggle commands and their chords](../../assets/shots/editora-menu-bar.png "Every menu item is a command and shows its chord.")

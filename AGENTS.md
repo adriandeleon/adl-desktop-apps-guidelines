@@ -20,4 +20,7 @@ Editora (`../Editora`) is the reference implementation.
   build does the same in `scripts/print-markup.py`). Change both if the convention changes.
 - Plain, direct sentences written for the app developer. No marketing copy.
 - Update `CHANGELOG.md` (Keep a Changelog) in the same change.
+- Screenshots live in `src/assets/shots/<app>-<what>.png` (max 1600 px wide, palette PNG). In a page, put an
+  image alone in a paragraph with a title (`![alt](../../assets/shots/x.png "Caption.")`); several images in one
+  paragraph become a gallery row. Captions describe what the image shows, in one sentence.
 - Never commit `dist/`, `build/` or `public/downloads/`.

@@ -22,6 +22,10 @@ description: "Commands, the Command Palette, keymaps, focus and accessibility."
 - The same picker (`QuickOpen`) serves every other list choice: recent files, themes, keymaps, settings
   values.
 
+![Editora's command palette filtered to Git commands](../../assets/shots/editora-palette.png "Editora: M-x over the editor; typing git lists every Git command.")
+![Torrenta's command palette listing Rename, Remove and Force Resume with shortcuts](../../assets/shots/torrenta-palette.png "Torrenta: the same palette, filtered to torrent actions with their shortcuts.")
+![Termina's command palette over a terminal listing tab commands](../../assets/shots/termina-palette.png "Termina: the palette over a shell session, filtered to tab commands.")
+
 ## Keymaps
 
 - Ship presets as JSON resources: Emacs, CUA, IntelliJ, VS Code and Sublime, with `.mac.json` variants
@@ -31,6 +35,10 @@ description: "Commands, the Command Palette, keymaps, focus and accessibility."
 - A keymap editor in Settings lists every command with its chord, searchable, with conflict warnings.
 - Never bake a chord into translated text. Derive the label from the active keymap.
 - Multi-key prefixes (`C-x …`) show a which-key style hint listing the possible next keys.
+
+![Editora's keymap picker](../../assets/shots/editora-keymaps.png "Keymap: Select… offers Emacs, CUA, Sublime Text, Visual Studio Code and IntelliJ IDEA.")
+![Editora's palette filtered to kill commands with Emacs chords](../../assets/shots/editora-emacs.png "M-x kill: each command shows its chord from the active keymap.")
+![Termina's keyboard shortcuts window](../../assets/shots/termina-shortcuts.png "Termina's shortcuts reference: every key, grouped by menu.")
 
 ## Focus and accessibility
 

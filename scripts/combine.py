@@ -3,6 +3,7 @@ import json, re, sys
 from pathlib import Path
 
 order_file, docs_dir, today = sys.argv[1], Path(sys.argv[2]), sys.argv[3]
+RAW = "https://raw.githubusercontent.com/adriandeleon/adl-desktop-apps-guidelines/master/src/assets/shots/"
 groups = json.loads(Path(order_file).read_text(encoding="utf-8"))["groups"]
 
 print("# adl Desktop Apps Guidelines\n")
@@ -18,4 +19,6 @@ for group in groups:
         front, body = re.match(r"^---\n(.*?)\n---\n(.*)$", text, re.S).groups()
         title = json.loads(re.search(r"^title:\s*(.+)$", front, re.M).group(1))
         body = re.sub(r"^(#{2,5}) ", lambda m: "#" + m.group(1) + " ", body, flags=re.M)
+        # Screenshots point at the repository's raw files, so the single Markdown file works anywhere.
+        body = re.sub(r"\]\((?:\.\./)+assets/shots/", "](" + RAW, body)
         print(f"## {title}\n\n{body.strip()}\n")

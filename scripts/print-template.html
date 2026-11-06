@@ -141,6 +141,12 @@ footer.colophon { max-width: 1180px; margin: 0 auto; padding-block: 24px 48px; c
   table.matrix td:first-child { min-width: 0; }
   a { color: var(--ink); text-decoration: none; }
 }
+figure.shot { margin: 18px 0; break-inside: avoid; }
+figure.shot img { display: block; width: 100%; height: auto; border: 1px solid var(--rule); border-radius: 6px; }
+figure.shot figcaption { font-size: 0.8rem; color: var(--ink-muted); margin-top: 6px; }
+.shot-row { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); align-items: start; margin: 18px 0; }
+.shot-row figure.shot { margin: 0; }
+main > .shot-row, main > figure.shot { max-width: 100%; }
 @page { size: A4; margin: 16mm 14mm; }
 </style>
 

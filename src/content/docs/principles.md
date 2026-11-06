@@ -3,6 +3,8 @@ title: "Principles"
 description: "The seven rules every other page follows from."
 ---
 
+![Editora editing a Java file with the project tree, minimap and status bar](../../assets/shots/editora-hero.png "Editora, the reference implementation: one window where every action is a command, reachable from a keymap or the palette.")
+
 1. **Keyboard first.** Every action works without a mouse. The mouse is a shortcut to commands, not the
    other way round.
 2. **Every feature is a command.** One registry of commands with ids. Menus, toolbar buttons, the command

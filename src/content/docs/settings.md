@@ -15,6 +15,8 @@ description: "The Settings window with search, live apply, versioned config and 
   never committed.
 - A change made in one window reaches every other open window.
 
+![Editora's Settings window searching for sync, with the Sync page open](../../assets/shots/editora-settings-search.png "Typing sync in Settings: pages without a match grey out and the best page opens.")
+
 ## Adding a setting touches five places
 
 1. **Model** field, default and accessors, with a schema bump and migration.
@@ -48,3 +50,7 @@ description: "The Settings window with search, live apply, versioned config and 
 - Status shows as a pill in Settings and as echo messages; failures go to the Message Log.
 - Reference: `sync/SyncEngine`, `sync/SyncMerge`, `sync/SyncAccount`, `ui/SettingsSync`,
   `docs/subsystems/settings-sync.md`.
+
+![Editora's Sync settings page](../../assets/shots/editora-settings-sync.png "Editora's Sync page: repository, branch, Create on GitHub… and what to sync.")
+![Torrenta's Sync settings page](../../assets/shots/torrenta-settings-sync.png "Torrenta's Sync page.")
+![Termina's Sync settings page](../../assets/shots/termina-settings-sync.png "Termina's Sync page.")

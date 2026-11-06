@@ -23,10 +23,30 @@ function addClass(node, cls) {
   props.className = [...list, cls];
 }
 
+// A paragraph holding only images becomes figures: one image → <figure>, several → a gallery row. An image's
+// Markdown title ("caption") becomes its <figcaption>.
+function figure(img) {
+  const caption = img.properties?.title;
+  if (img.properties) delete img.properties.title;
+  return {
+    type: "element", tagName: "figure", properties: { className: ["shot"] },
+    children: [img, ...(caption ? [{ type: "element", tagName: "figcaption", properties: {}, children: [{ type: "text", value: String(caption) }] }] : [])],
+  };
+}
+
 export default function rehypeStatus() {
   return (tree) => {
     visit(tree, (node) => {
       if (node.type !== "element") return;
+      if (node.tagName === "p") {
+        const kids = (node.children ?? []).filter((c) => !(c.type === "text" && !c.value.trim()));
+        if (kids.length && kids.every((c) => c.type === "element" && c.tagName === "img")) {
+          const figs = kids.map(figure);
+          if (figs.length === 1) Object.assign(node, figs[0]);
+          else Object.assign(node, { tagName: "div", properties: { className: ["shot-row", `n${figs.length}`] }, children: figs });
+        }
+        return;
+      }
       if (node.tagName === "table") {
         const header = [];
         visit(node, (n) => n.type === "element" && n.tagName === "th" && header.push(text(n).trim()));

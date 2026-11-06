@@ -18,6 +18,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   repository that meets every MUST: a runnable app with its tests, CI and release workflows, and an example of
   every repository document.
 
+### Changed
+
+- **Levels read the same everywhere.** MUST, SHOULD and MAY render as the level pill in prose and lists too
+  ("**MUST.**", "(SHOULD)"), not only in table cells; on the site and in the PDF.
+- **Rule tables stack on a phone.** A table with a Level column turns each row into a card with its level and
+  Editora reference visible, instead of scrolling them off screen.
+- **The feature matrix keeps its app row in view** while a long table scrolls (wide screens).
+- **Screenshot galleries leave no gap.** Galleries are two to a row; with an odd count the first screenshot spans
+  the row.
+- **The overview is reorganised.** The Editora screenshot sits beside the title, with the edition under the
+  actions; *Where to start* and *How to read it* come before the family, which is now six even tiles with Editora
+  marked as the reference.
+
+### Fixed
+
+- **The feature matrix no longer widens the page on a phone.** Each matrix scrolls inside its own box, so the
+  header's search and menu stay on screen.
+- **A "—" outside the feature matrix stays a dash.** Only matrix cells become status dots; the Homepage column of
+  "What the apps are" no longer shows a "No" dot for apps without a homepage. The print build does the same.
+- **Template mockups fit the column.** Where a mockup is wider than the text column (Settings Sync and the Command
+  Palette at laptop widths), it is scaled down to fit and says by how much, instead of being clipped.
+
 ## [1.1.0] - 2026-11-06
 
 ### Added

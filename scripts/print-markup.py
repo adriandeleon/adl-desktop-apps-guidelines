@@ -7,11 +7,6 @@ extra_css = Path(sys.argv[3]).read_text(encoding="utf-8") if len(sys.argv) > 3 e
 s = open(src, encoding="utf-8").read()
 s = s.replace("<table>", '<div class="table-wrap"><table>').replace("</table>", "</table></div>")
 
-def mark(m):
-    t = m.group(0)
-    return t.replace("<table>", '<table class="matrix">', 1) if "Torrenta</th>" in t and "nux</th>" in t else t
-s = re.sub(r"<table>.*?</table>", mark, s, flags=re.S)
-
 def cell(m):
     attrs, body = m.group(1), m.group(2).strip()
     for glyph, cls, label in (("●", "s-yes", "Yes"), ("◐", "s-part", "Partly"), ("—", "s-no", "No")):
@@ -19,9 +14,46 @@ def cell(m):
             note = body[len(glyph):].strip()
             return f'<td{attrs}><span class="s {cls}" title="{label}">{note}</span></td>'
     return m.group(0)
-s = re.sub(r"<td([^>]*)>(.*?)</td>", cell, s, flags=re.S)
-s = re.sub(r"<td([^>]*)>(MUST|SHOULD|MAY)(\b[^<]*)</td>",
-           lambda m: f'<td{m.group(1)}><span class="lvl lvl-{m.group(2).lower()}">{m.group(2)}</span>{m.group(3)}</td>', s)
+
+# Status dots only in a feature matrix (a table whose header names the apps); elsewhere "—" stays a dash.
+def mark(m):
+    t = m.group(0)
+    if "Torrenta</th>" not in t or "nux</th>" not in t:
+        return t
+    return re.sub(r"<td([^>]*)>(.*?)</td>", cell, t.replace("<table>", '<table class="matrix">', 1), flags=re.S)
+s = re.sub(r"<table>.*?</table>", mark, s, flags=re.S)
+
+# Level words become pills, as on the site: "**MUST.**" alone, "(SHOULD)" without brackets, a bare MAY in prose.
+# Code, headings, links and the drawn mockups keep the word as text.
+def pill(level):
+    return f'<span class="lvl lvl-{level.lower()}">{level}</span>'
+s = re.sub(r"<strong>(MUST|SHOULD|MAY)\.?</strong>", lambda m: pill(m.group(1)), s)
+KEEP = re.compile(r"<(code|pre|kbd|a|h[1-6]|th|style|script|svg)\b|<span class=\"lvl|<div class=\"mock-stage")
+def levels(html):
+    out, depth = [], []
+    for tok in re.split(r"(<[^>]+>)", html):
+        if tok.startswith("<"):
+            name = re.match(r"</?([a-zA-Z0-9]+)", tok)
+            name = name.group(1).lower() if name else ""
+            if tok.startswith("</"):
+                if depth and depth[-1][0] == name:
+                    depth[-1][1] -= 1
+                    if depth[-1][1] == 0:
+                        depth.pop()
+            elif depth and depth[-1][0] == name and not tok.endswith("/>"):
+                depth[-1][1] += 1
+            elif not depth and KEEP.match(tok) and not tok.endswith("/>"):
+                depth.append([name, 1])
+            out.append(tok)
+        elif depth:
+            out.append(tok)
+        else:
+            out.append(re.sub(r"\(?\b(MUST|SHOULD|MAY)\b\)?",
+                              lambda m: pill(m.group(1)) if m.group(0).startswith("(") == m.group(0).endswith(")")
+                              else m.group(0).replace(m.group(1), pill(m.group(1))), tok))
+    return "".join(out)
+head, sep, body = s.partition("<body")
+s = head + sep + levels(body) if sep else levels(s)
 
 def figure(img):
     cap = re.search(r'title="([^"]*)"', img)

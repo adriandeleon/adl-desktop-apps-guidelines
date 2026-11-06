@@ -4,25 +4,27 @@ description: Pauta, the adl desktop apps guidelines. UI, UX and platform rules f
 template: splash
 hero:
   title: Pauta
+  image:
+    file: ../../assets/shots/editora-hero.png
+    alt: Editora editing a Java file with the project tree and status bar
   tagline: The adl desktop apps guidelines. UI, UX and platform rules for the family of JavaFX desktop apps, with Editora as the reference implementation; every rule names the class or file to copy from.
   actions:
     - text: Read the principles
       link: /adl-desktop-apps-guidelines/principles/
       icon: right-arrow
-    - text: Download PDF
+    - text: PDF
       link: /adl-desktop-apps-guidelines/downloads/adl-desktop-apps-guidelines.pdf
-      icon: document
+      icon: download
       variant: minimal
     - text: Markdown
       link: /adl-desktop-apps-guidelines/downloads/adl-desktop-apps-guidelines.md
-      icon: seti:markdown
+      icon: download
       variant: minimal
 ---
 
 import { CardGrid, LinkCard } from "@astrojs/starlight/components";
 import { Image } from "astro:assets";
-import pkg from "../../../package.json";
-import editora from "../../assets/shots/editora-hero.png";
+import editora from "../../assets/shots/editora-palette.png";
 import torrenta from "../../assets/shots/torrenta-main.png";
 import termina from "../../assets/shots/termina-main.png";
 import modula from "../../assets/shots/modula-main.png";
@@ -31,14 +33,31 @@ import mirada from "../../assets/shots/mirada-main.png";
 
 export const icon = (app) => `/adl-desktop-apps-guidelines/icons/${app}.svg`;
 
-<p class="edition-badge">Version {pkg.version} · {pkg.guidelines.date}</p>
+## Where to start
+
+<CardGrid>
+  <LinkCard title="Principles" href="/adl-desktop-apps-guidelines/principles/" description="The seven rules every other page follows from." />
+  <LinkCard title="New app checklist" href="/adl-desktop-apps-guidelines/checklist/" description="Everything a new app needs before its first release." />
+  <LinkCard title="Feature matrix" href="/adl-desktop-apps-guidelines/family/matrix/" description="Which of the six apps has which piece today." />
+  <LinkCard title="Gaps per app" href="/adl-desktop-apps-guidelines/family/gaps/" description="What each app still misses against this guide." />
+</CardGrid>
+
+## How to read it
+
+<div class="levels-legend">
+  <p><span class="lvl lvl-must">MUST</span> A release blocker for a new app.</p>
+  <p><span class="lvl lvl-should">SHOULD</span> Expected unless the app has a stated reason.</p>
+  <p><span class="lvl lvl-may">MAY</span> A pattern worth copying when the app grows into it.</p>
+</div>
+
+When this guide and Editora disagree, check Editora's code, then fix whichever is wrong.
 
 ## The family
 
 <div class="family-grid">
   <figure class="app ref">
-    <Image src={editora} alt="Editora editing a Java file with the project tree and status bar" />
-    <figcaption><strong><img class="app-icon" src={icon("editora")} alt="" width="28" height="28" />Editora</strong> Keyboard-driven programmer's text editor. The reference implementation.<span class="app-links"><a href="https://editora-project.dev/">editora-project.dev</a> · <a href="https://github.com/adriandeleon/Editora">GitHub</a></span></figcaption>
+    <Image src={editora} alt="Editora's Command Palette filtered to Git commands over the editor" />
+    <figcaption><strong><img class="app-icon" src={icon("editora")} alt="" width="28" height="28" />Editora<span class="ref-tag">REFERENCE</span></strong> Keyboard-driven programmer's text editor. The reference implementation.<span class="app-links"><a href="https://editora-project.dev/">editora-project.dev</a> · <a href="https://github.com/adriandeleon/Editora">GitHub</a></span></figcaption>
   </figure>
   <figure class="app">
     <Image src={torrenta} alt="Torrenta's transfer list with a details pane and speed graph" />
@@ -61,20 +80,3 @@ export const icon = (app) => `/adl-desktop-apps-guidelines/icons/${app}.svg`;
     <figcaption><strong><img class="app-icon" src={icon("mirada")} alt="" width="28" height="28" />Mirada</strong> Fast image viewer, shipped as a GraalVM native image.<span class="app-links"><a href="https://github.com/adriandeleon/Mirada">GitHub</a></span></figcaption>
   </figure>
 </div>
-
-## How to read it
-
-<span class="lvl lvl-must">MUST</span> is a release blocker for a new app.
-<span class="lvl lvl-should">SHOULD</span> is expected unless the app has a stated reason.
-<span class="lvl lvl-may">MAY</span> is a pattern worth copying when the app grows into it.
-
-When this guide and Editora disagree, check Editora's code, then fix whichever is wrong.
-
-## Where to start
-
-<CardGrid>
-  <LinkCard title="Principles" href="/adl-desktop-apps-guidelines/principles/" description="The seven rules every other page follows from." />
-  <LinkCard title="New app checklist" href="/adl-desktop-apps-guidelines/checklist/" description="Everything a new app needs before its first release." />
-  <LinkCard title="Feature matrix" href="/adl-desktop-apps-guidelines/family/matrix/" description="Which of the six apps has which piece today." />
-  <LinkCard title="Gaps per app" href="/adl-desktop-apps-guidelines/family/gaps/" description="What each app still misses against this guide." />
-</CardGrid>

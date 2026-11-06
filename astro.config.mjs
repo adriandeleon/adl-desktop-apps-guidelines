@@ -20,6 +20,7 @@ export default defineConfig({
       favicon: "/favicon.svg",
       head: [
         { tag: "script", attrs: { src: "/adl-desktop-apps-guidelines/lightbox.js", defer: true } },
+        { tag: "script", attrs: { src: "/adl-desktop-apps-guidelines/mock-fit.js", defer: true } },
         { tag: "meta", attrs: { property: "og:image", content: "https://adriandeleon.github.io/adl-desktop-apps-guidelines/og.png" } },
         { tag: "meta", attrs: { property: "og:image:width", content: "1280" } },
         { tag: "meta", attrs: { property: "og:image:height", content: "640" } },
@@ -33,7 +34,7 @@ export default defineConfig({
       ],
       editLink: { baseUrl: "https://github.com/adriandeleon/adl-desktop-apps-guidelines/edit/master/" },
       lastUpdated: true,
-      components: { Footer: "./src/components/Footer.astro" },
+      components: { Footer: "./src/components/Footer.astro", Hero: "./src/components/Hero.astro" },
       customCss: [
         "@fontsource-variable/inter",
         "@fontsource/jetbrains-mono/400.css",

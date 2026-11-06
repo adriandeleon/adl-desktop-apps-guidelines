@@ -150,6 +150,9 @@ main > .shot-row, main > figure.shot { max-width: 100%; }
 .app-icon { display: inline-block; width: 18px; height: 18px; vertical-align: -4px; margin-right: 6px; border-radius: 22%; }
 table.matrix th .app-icon { display: block; width: 24px; height: 24px; margin: 0 auto 4px; }
 .apps img { width: 16px; height: 16px; vertical-align: -3px; margin-right: 5px; border-radius: 22%; }
+li:has(> input[type="checkbox"]) { list-style: none; position: relative; padding-left: 1.6em; }
+li > input[type="checkbox"] { position: absolute; left: 0; top: 0.3em; margin: 0; }
+ul:has(> li > input[type="checkbox"]) { padding-left: 0; }
 @page { size: A4; margin: 16mm 14mm; }
 </style>
 

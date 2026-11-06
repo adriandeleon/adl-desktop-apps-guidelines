@@ -7,27 +7,36 @@ tableOfContents: false
 Surveyed on 2026-11-05 from each repository's default branch. ● has it, ◐ partly or differently,
 — not found.
 
-**What the apps are.** Editora: programmer's text editor. Torrenta: BitTorrent client. Termina: terminal
-emulator. Modula: software-defined-radio receiver. Mirada: fast image viewer (GraalVM native image). nux:
-UPS monitor for Network UPS Tools, living in the tray.
+**What the apps are.**
+
+| App | What it is | Homepage | Source |
+|---|---|---|---|
+| Editora | Programmer's text editor (the reference) | [editora-project.dev](https://editora-project.dev/) | [adriandeleon/Editora](https://github.com/adriandeleon/Editora) |
+| Torrenta | BitTorrent client | [torrenta-project.dev](https://torrenta-project.dev/) | [adriandeleon/torrenta](https://github.com/adriandeleon/torrenta) |
+| Termina | Terminal emulator | [termina-project.dev](https://termina-project.dev/) | [adriandeleon/Termina](https://github.com/adriandeleon/Termina) |
+| Modula | Software-defined-radio receiver | — | [adriandeleon/Modula](https://github.com/adriandeleon/Modula) |
+| Mirada | Fast image viewer (GraalVM native image) | — | [adriandeleon/Mirada](https://github.com/adriandeleon/Mirada) |
+| nux | UPS monitor for Network UPS Tools, in the tray | — | [adriandeleon/nux](https://github.com/adriandeleon/nux) |
 
 ## Platform and repository
 
 
 | | Editora | Torrenta | Termina | Modula | Mirada | nux |
 |---|:-:|:-:|:-:|:-:|:-:|:-:|
-| JDK 25 + JavaFX 27, JPMS module, `mvnw` | ● | ● | ● | ● | ● | ● |
+| JDK 25+ and JavaFX 27+, JPMS module, `mvnw` | ● | ● | ● | ● | ● | ● |
 | AtlantaFX 3 | ● | ● | ◐ vendored CSS | ● Primer | ● Cupertino | ● Primer |
-| Inter UI font | ● | ● | ● | — Plex Mono | — | — |
+| Inter UI font (SHOULD) | ● | ● | ● | — Plex Mono | — | — |
 | NullAway + every package `@NullMarked` | ● | ● | ● | ● | ● | — |
 | Spotless (Palantir) | ● | ● | ● | ● | ● | — |
 | JaCoCo gate | ● 0.90 L/M | ● 0.90 L | ◐ per-package | — | — | — |
 | Headless FX tests | ● | ● | ● | — | ● | ● |
-| Six message catalogs | ● | ● | ● | — | — | ● |
+| Six or more message catalogs | ● | ● | ● | — | — | ● |
 | README badges + screenshot | ● | ● | ● | ● | ◐ no shot | ● |
 | Keep a Changelog format | ● | ◐ | ◐ | ● | ◐ | ● |
 | MIT `LICENSE` + `NOTICE` | ● | ● | ● | ● | ● | ● |
-| `AGENTS.md` canonical, `CLAUDE.md` a pointer | ● | ◐ two copies | ● | ◐ two copies | ● | ◐ copy |
+| `AGENTS.md` canonical, `CLAUDE.md` a pointer | ● | ◐ `CLAUDE.md` only | ● | ◐ `CLAUDE.md` only | ● | ◐ copy |
+| `CONTRIBUTING.md` | ● | — | — | — | — | — |
+| `docs/` and `branding/` | ● | ● | ● | ● | ● | ● |
 | `bug_report.yml` issue form | ● | ● | — | — | — | — |
 | Dependabot | ● | ● | — | ● | — | ● |
 

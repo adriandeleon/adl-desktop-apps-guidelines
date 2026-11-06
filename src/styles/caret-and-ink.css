@@ -133,3 +133,18 @@ dialog.lightbox .lightbox-close { position: fixed; top: max(0.75rem, env(safe-ar
   dialog.lightbox .next { right: max(0.75rem, env(safe-area-inset-right, 0px)); }
 }
 @media (prefers-reduced-motion: reduce) { img.zoomable { transition: none; } }
+
+/* Feature matrix: the page is wider than a reading column so all six apps fit; notes under a dot wrap. */
+:root:has(table.matrix) { --sl-content-width: 66rem; }
+.sl-markdown-content table.matrix { display: table; width: 100%; }
+.sl-markdown-content table.matrix td:not(:first-child) { white-space: normal; min-width: 5.5rem; }
+.sl-markdown-content table.matrix .s { flex-wrap: wrap; justify-content: center; max-width: 7.5rem; margin-inline: auto; text-align: center; }
+.sl-markdown-content :is(div:has(> table.matrix), table.matrix) { overflow-x: auto; }
+
+/* Checklist: grouped lists with a hanging indent, so a wrapped line starts under its text, not its box. */
+.sl-markdown-content ul.contains-task-list { padding-inline-start: 0; margin-top: 0.5rem; }
+.sl-markdown-content li.task-list-item { list-style: none; position: relative; padding-inline-start: 1.9rem; margin-top: 0.4rem; }
+.sl-markdown-content li.task-list-item input[type="checkbox"] { position: absolute; inset-inline-start: 0.1rem; top: 0.3em; margin: 0; width: 1.05rem; height: 1.05rem; }
+.family-grid .app-links { display: block; margin-top: 0.3rem; font-size: var(--sl-text-xs); }
+.family-grid .app-links a { color: var(--sl-color-accent-high); }
+:root[data-theme="light"] .family-grid .app-links a { color: var(--sl-color-accent); }

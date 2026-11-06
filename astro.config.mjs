@@ -10,7 +10,7 @@ const pages = JSON.parse(readFileSync(new URL("./pages.json", import.meta.url), 
 export default defineConfig({
   site: "https://adriandeleon.github.io",
   base: "/adl-desktop-apps-guidelines",
-  markdown: { rehypePlugins: [rehypeStatus] },
+  markdown: { rehypePlugins: [[rehypeStatus, { iconBase: "/adl-desktop-apps-guidelines/icons/" }]] },
   integrations: [
     starlight({
       title: "adl Desktop Apps Guidelines",

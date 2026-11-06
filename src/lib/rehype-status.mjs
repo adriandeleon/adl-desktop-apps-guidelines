@@ -8,6 +8,8 @@ const STATUS = [
   ["—", "s-no", "No"],
 ];
 const LEVELS = ["MUST", "SHOULD", "MAY"];
+// A table cell that names one app (header or bold row label) gets that app's icon.
+const APPS = { Editora: "editora", Torrenta: "torrenta", Termina: "termina", Modula: "modula", Mirada: "mirada", nux: "nux" };
 
 const text = (node) =>
   node.type === "text" ? node.value : (node.children ?? []).map(text).join("");
@@ -34,7 +36,8 @@ function figure(img) {
   };
 }
 
-export default function rehypeStatus() {
+export default function rehypeStatus(options = {}) {
+  const iconBase = options.iconBase ?? "/icons/";
   return (tree) => {
     visit(tree, (node) => {
       if (node.type !== "element") return;
@@ -52,6 +55,15 @@ export default function rehypeStatus() {
         visit(node, (n) => n.type === "element" && n.tagName === "th" && header.push(text(n).trim()));
         if (header.includes("Torrenta") && header.includes("nux")) addClass(node, "matrix");
         return;
+      }
+      if (node.tagName === "th" || node.tagName === "td") {
+        const app = APPS[text(node).trim()];
+        if (app) {
+          const icon = { type: "element", tagName: "img", properties: { className: ["app-icon"], src: `${iconBase}${app}.svg`, alt: "", width: 24, height: 24 }, children: [] };
+          const target = node.children?.[0]?.type === "element" && node.children[0].tagName === "strong" ? node.children[0] : node;
+          target.children.unshift(icon);
+          return;
+        }
       }
       if (node.tagName !== "td") return;
       const first = node.children?.[0];

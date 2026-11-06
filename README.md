@@ -1,5 +1,14 @@
 # adl Desktop Apps Guidelines
 
+<p>
+  <img src="public/icons/editora.svg" alt="Editora" title="Editora" width="56" height="56">
+  <img src="public/icons/torrenta.svg" alt="Torrenta" title="Torrenta" width="56" height="56">
+  <img src="public/icons/termina.svg" alt="Termina" title="Termina" width="56" height="56">
+  <img src="public/icons/modula.svg" alt="Modula" title="Modula" width="56" height="56">
+  <img src="public/icons/mirada.svg" alt="Mirada" title="Mirada" width="56" height="56">
+  <img src="public/icons/nux.svg" alt="nux" title="nux" width="56" height="56">
+</p>
+
 [![Deploy](https://github.com/adriandeleon/adl-desktop-apps-guidelines/actions/workflows/pages.yml/badge.svg)](https://github.com/adriandeleon/adl-desktop-apps-guidelines/actions/workflows/pages.yml)
 [![License: MIT](https://img.shields.io/github/license/adriandeleon/adl-desktop-apps-guidelines)](LICENSE)
 ![Built with Starlight](https://img.shields.io/badge/built%20with-Starlight-0e8577)

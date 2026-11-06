@@ -25,33 +25,36 @@ import torrenta from "../../assets/shots/torrenta-main.png";
 import termina from "../../assets/shots/termina-main.png";
 import modula from "../../assets/shots/modula-main.png";
 import nux from "../../assets/shots/nux-main.png";
+import mirada from "../../assets/shots/mirada-main.png";
+
+export const icon = (app) => `/adl-desktop-apps-guidelines/icons/${app}.svg`;
 
 ## The family
 
 <div class="family-grid">
   <figure class="app ref">
     <Image src={editora} alt="Editora editing a Java file with the project tree and status bar" width={1200} />
-    <figcaption><strong>Editora</strong> Keyboard-driven programmer's text editor. The reference implementation.</figcaption>
+    <figcaption><strong><img class="app-icon" src={icon("editora")} alt="" width="28" height="28" />Editora</strong> Keyboard-driven programmer's text editor. The reference implementation.</figcaption>
   </figure>
   <figure class="app">
     <Image src={torrenta} alt="Torrenta's transfer list with a details pane and speed graph" width={900} />
-    <figcaption><strong>Torrenta</strong> BitTorrent client with a tray icon and a web API.</figcaption>
+    <figcaption><strong><img class="app-icon" src={icon("torrenta")} alt="" width="28" height="28" />Torrenta</strong> BitTorrent client with a tray icon and a web API.</figcaption>
   </figure>
   <figure class="app">
     <Image src={termina} alt="Termina showing a directory listing and git log in a tab" width={900} />
-    <figcaption><strong>Termina</strong> Terminal emulator with tabs and imported colour schemes.</figcaption>
+    <figcaption><strong><img class="app-icon" src={icon("termina")} alt="" width="28" height="28" />Termina</strong> Terminal emulator with tabs and imported colour schemes.</figcaption>
   </figure>
   <figure class="app">
     <Image src={modula} alt="Modula tuned to 98.9 MHz with its spectrum display" width={700} />
-    <figcaption><strong>Modula</strong> Software-defined-radio receiver.</figcaption>
+    <figcaption><strong><img class="app-icon" src={icon("modula")} alt="" width="28" height="28" />Modula</strong> Software-defined-radio receiver.</figcaption>
   </figure>
   <figure class="app">
     <Image src={nux} alt="nux dashboard showing battery charge, load and runtime gauges for a UPS" width={700} />
-    <figcaption><strong>nux</strong> UPS monitor for Network UPS Tools, living in the tray.</figcaption>
+    <figcaption><strong><img class="app-icon" src={icon("nux")} alt="" width="28" height="28" />nux</strong> UPS monitor for Network UPS Tools, living in the tray.</figcaption>
   </figure>
   <figure class="app">
-    <div class="no-shot">No screenshot yet</div>
-    <figcaption><strong>Mirada</strong> Fast image viewer, shipped as a GraalVM native image.</figcaption>
+    <Image src={mirada} alt="Mirada showing a wallpaper with its info panel and thumbnail strip" width={900} />
+    <figcaption><strong><img class="app-icon" src={icon("mirada")} alt="" width="28" height="28" />Mirada</strong> Fast image viewer, shipped as a GraalVM native image.</figcaption>
   </figure>
 </div>
 

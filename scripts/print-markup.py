@@ -1,5 +1,6 @@
 """Applies the guide's table conventions to pandoc's HTML for print: status dots, level pills, matrix tables."""
 import re, sys
+from pathlib import Path
 
 src, dst = sys.argv[1], sys.argv[2]
 s = open(src, encoding="utf-8").read()
@@ -32,4 +33,12 @@ def para(m):
     figs = "".join(figure(i) for i in imgs)
     return figs if len(imgs) == 1 else f'<div class="shot-row n{len(imgs)}">{figs}</div>'
 s = re.sub(r"<p>(.*?)</p>", para, s, flags=re.S)
+
+# Each app's icon beside its name in table headers and bold row labels.
+ICONS = (Path(__file__).resolve().parent.parent / "public" / "icons").as_uri()
+APPS = {"Editora": "editora", "Torrenta": "torrenta", "Termina": "termina", "Modula": "modula", "Mirada": "mirada", "nux": "nux"}
+def icon(app):
+    return f'<img class="app-icon" src="{ICONS}/{APPS[app]}.svg" alt="" />'
+s = re.sub(r"<th([^>]*)>(" + "|".join(APPS) + r")</th>", lambda m: f"<th{m.group(1)}>{icon(m.group(2))}{m.group(2)}</th>", s)
+s = re.sub(r"<td([^>]*)><strong>(" + "|".join(APPS) + r")</strong></td>", lambda m: f"<td{m.group(1)}><strong>{icon(m.group(2))}{m.group(2)}</strong></td>", s)
 open(dst, "w", encoding="utf-8").write(s)

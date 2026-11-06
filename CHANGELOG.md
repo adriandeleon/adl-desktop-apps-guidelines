@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Start from the template.** The New app checklist and Repository documents link to
+  [adl-desktop-app-template](https://github.com/adriandeleon/adl-desktop-app-template), a GitHub template
+  repository that meets every MUST: a runnable app with its tests, CI and release workflows, and an example of
+  every repository document.
+
 ## [1.1.0] - 2026-11-06
 
 ### Added

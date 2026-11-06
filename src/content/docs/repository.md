@@ -3,6 +3,9 @@ title: "Repository documents"
 description: "README, CHANGELOG, LICENSE, NOTICE, AGENTS.md and the rest of the files every repository carries."
 ---
 
+**Start from the template.** [adl-desktop-app-template](https://github.com/adriandeleon/adl-desktop-app-template) carries an example of every file on this page,
+filled in for a placeholder app, `ExampleApp`. `scripts/rename.sh <AppName> <package>` renames it to yours.
+
 | File | What it holds | Level |
 |---|---|---|
 | `README.md` | A landing page, about 200 lines: logo, badges, one-paragraph pitch, hero screenshot, highlights, install, build, command line, config folder, licence. Detail lives on the website. | MUST |

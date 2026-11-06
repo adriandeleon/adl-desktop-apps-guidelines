@@ -6,7 +6,7 @@ order_file, docs_dir, today, version = sys.argv[1], Path(sys.argv[2]), sys.argv[
 RAW = "https://raw.githubusercontent.com/adriandeleon/adl-desktop-apps-guidelines/master/src/assets/shots/"
 groups = json.loads(Path(order_file).read_text(encoding="utf-8"))["groups"]
 
-print("# Pauta: the adl desktop apps guidelines\n")
+print("# adl Desktop Apps Guidelines\n")
 print("UI, UX and platform rules for adl's JavaFX desktop apps: **Editora**, **Torrenta**, **Termina**, **Modula**,")
 print("**Mirada** and **nux**. Editora is the reference implementation.\n")
 print("**MUST** is a release blocker for a new app. **SHOULD** is expected unless the app has a stated reason.")

@@ -1,6 +1,6 @@
-# Pauta (adl desktop apps guidelines): agent guide
+# adl Desktop Apps Guidelines — agent guide
 
-**Pauta** is the name; its mark and social card live in `branding/` (see `branding/README.md`). A documentation site (Astro Starlight) holding the UI/UX/platform guidelines for adl's JavaFX desktop apps.
+A documentation site (Astro Starlight) holding the UI/UX/platform guidelines for adl's JavaFX desktop apps.
 Editora (`../Editora`) is the reference implementation.
 
 ## Commands

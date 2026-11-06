@@ -28,3 +28,8 @@ Editora (`../Editora`) is the reference implementation.
   Markdown download read them from there. To publish an edition: move `## [Unreleased]` in `CHANGELOG.md` into
   `## [x.y.z] - YYYY-MM-DD`, set the same version and date in `package.json`, commit, tag `vx.y.z`. A new or
   stronger rule is a minor version, a new MUST that existing apps fail is a major one, wording and facts a patch.
+- **Where the site lives.** `package.json`'s `guidelines.url` is the only place the site's address is written;
+  `astro.config.mjs` derives `site` and `base` from it, and the PDF and Markdown downloads print it. Pages link
+  with relative paths or `import.meta.env.BASE_URL`, never a hard-coded `/adl-desktop-apps-guidelines/`.
+  To move to a custom domain: set the URL (for example `https://pauta-project.dev/`), add `public/CNAME` with the
+  bare domain, set the domain in the repository's Pages settings, and update the links in `README.md`.

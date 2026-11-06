@@ -2,7 +2,7 @@
 import json, re, sys
 from pathlib import Path
 
-order_file, docs_dir, today, version = sys.argv[1], Path(sys.argv[2]), sys.argv[3], sys.argv[4]
+order_file, docs_dir, today, version, site = sys.argv[1], Path(sys.argv[2]), sys.argv[3], sys.argv[4], sys.argv[5]
 RAW = "https://raw.githubusercontent.com/adriandeleon/adl-desktop-apps-guidelines/master/src/assets/shots/"
 groups = json.loads(Path(order_file).read_text(encoding="utf-8"))["groups"]
 
@@ -11,7 +11,7 @@ print("UI, UX and platform rules for adl's JavaFX desktop apps: **Editora**, **T
 print("**Mirada** and **nux**. Editora is the reference implementation.\n")
 print("**MUST** is a release blocker for a new app. **SHOULD** is expected unless the app has a stated reason.")
 print("**MAY** is a pattern worth copying when the app grows into it.\n")
-print(f"**Version {version} · {today}** · Web version: <https://adriandeleon.github.io/adl-desktop-apps-guidelines/>\n")
+print(f"**Version {version} · {today}** · Web version: <{site}>\n")
 
 for group in groups:
     for slug in group["items"]:

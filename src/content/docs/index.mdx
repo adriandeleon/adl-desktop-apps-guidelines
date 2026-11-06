@@ -10,14 +10,14 @@ hero:
   tagline: The adl desktop apps guidelines. UI, UX and platform rules for the family of JavaFX desktop apps, with Editora as the reference implementation; every rule names the class or file to copy from.
   actions:
     - text: Read the principles
-      link: /adl-desktop-apps-guidelines/principles/
+      link: principles/
       icon: right-arrow
     - text: PDF
-      link: /adl-desktop-apps-guidelines/downloads/adl-desktop-apps-guidelines.pdf
+      link: downloads/adl-desktop-apps-guidelines.pdf
       icon: download
       variant: minimal
     - text: Markdown
-      link: /adl-desktop-apps-guidelines/downloads/adl-desktop-apps-guidelines.md
+      link: downloads/adl-desktop-apps-guidelines.md
       icon: download
       variant: minimal
 ---
@@ -31,15 +31,16 @@ import modula from "../../assets/shots/modula-main.png";
 import nux from "../../assets/shots/nux-main.png";
 import mirada from "../../assets/shots/mirada-main.png";
 
-export const icon = (app) => `/adl-desktop-apps-guidelines/icons/${app}.svg`;
+export const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+export const icon = (app) => `${base}icons/${app}.svg`;
 
 ## Where to start
 
 <CardGrid>
-  <LinkCard title="Principles" href="/adl-desktop-apps-guidelines/principles/" description="The thirteen rules every other page follows from." />
-  <LinkCard title="New app checklist" href="/adl-desktop-apps-guidelines/checklist/" description="Everything a new app needs before its first release." />
-  <LinkCard title="Feature matrix" href="/adl-desktop-apps-guidelines/family/matrix/" description="Which of the six apps has which piece today." />
-  <LinkCard title="Gaps per app" href="/adl-desktop-apps-guidelines/family/gaps/" description="What each app still misses against this guide." />
+  <LinkCard title="Principles" href={`${base}principles/`} description="The thirteen rules every other page follows from." />
+  <LinkCard title="New app checklist" href={`${base}checklist/`} description="Everything a new app needs before its first release." />
+  <LinkCard title="Feature matrix" href={`${base}family/matrix/`} description="Which of the six apps has which piece today." />
+  <LinkCard title="Gaps per app" href={`${base}family/gaps/`} description="What each app still misses against this guide." />
 </CardGrid>
 
 ## How to read it

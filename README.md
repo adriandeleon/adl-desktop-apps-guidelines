@@ -20,7 +20,7 @@ UI, UX and platform rules for the family of JavaFX desktop apps — [Editora](ht
 [nux](https://github.com/adriandeleon/nux). Editora is the reference implementation: every rule names the class
 or file to copy from.
 
-**Version 1.0.0 · 6 November 2026.** The version and date live in `package.json`; [CHANGELOG.md](CHANGELOG.md) says what each edition changed.
+**Version 1.1.0 · 6 November 2026.** The version and date live in `package.json`; [CHANGELOG.md](CHANGELOG.md) says what each edition changed.
 
 📖 **Read it at [adriandeleon.github.io/adl-desktop-apps-guidelines](https://adriandeleon.github.io/adl-desktop-apps-guidelines/)**
 — or download the [PDF](https://adriandeleon.github.io/adl-desktop-apps-guidelines/downloads/adl-desktop-apps-guidelines.pdf)

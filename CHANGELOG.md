@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-06
+
 ### Added
 
 - **Visual templates** for four shared surfaces: the Command Palette, the About window, the Message Log and the
@@ -63,5 +65,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Web version on GitHub Pages** with search, light and dark themes, and PDF and single-Markdown downloads built
   in the same workflow.
 
-[Unreleased]: https://github.com/adriandeleon/adl-desktop-apps-guidelines/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/adriandeleon/adl-desktop-apps-guidelines/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/adriandeleon/adl-desktop-apps-guidelines/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/adriandeleon/adl-desktop-apps-guidelines/releases/tag/v1.0.0

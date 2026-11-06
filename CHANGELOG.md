@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Five more principles**, from what the apps already do: speed comes first; never claim what is not true;
+  one source of truth for each fact; separate the decision from the UI, then test it; verify by driving the
+  real app. The principles are now thirteen, in two groups: for the people using the apps and for the people
+  building them. Code quality gates and the checklist follow.
+- **Four rules where they belong.** Settings: *Before adding a setting* (one right answer is not a setting; Modula's
+  car-radio test), *never trust a config file* (clamp on read, `.corrupt.bak`), and *Secrets stay out of files*
+  (the OS keychain or session-only, no UI for dangerous escape hatches). Window shell: a destructive action asks
+  first, its button names the action, and undo beats a question.
 - **Principle 3: the UI never waits**, and a **Performance** page behind it: keep the JavaFX application thread
   free (with the generation-guarded background shape every Editora service uses), coalesce hot-path work, bound
   memory, build only the first frame before it paints, and measure. The checklist gains a Performance group.

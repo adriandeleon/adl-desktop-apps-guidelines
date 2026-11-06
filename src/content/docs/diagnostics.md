@@ -18,3 +18,5 @@ description: "Message Log, Debug Log, update notification, Report a Problem, Doc
 
 ![Editora's About window](../../assets/shots/editora-about.png "About: version, runtime, licence, links and the update status.")
 ![Editora's Doctor page](../../assets/shots/editora-doctor.png "Doctor: each external tool with its version, or what to install.")
+
+Secrets never reach a log, a report or a config file: see [Secrets stay out of files](../settings/#secrets-stay-out-of-files).

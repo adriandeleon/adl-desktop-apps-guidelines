@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Its own domain: [pauta-project.dev](https://pauta-project.dev/).** The old github.io address redirects there.
 - **Five more principles**, from what the apps already do: speed comes first; never claim what is not true;
   one source of truth for each fact; separate the decision from the UI, then test it; verify by driving the
   real app. The principles are now thirteen, in two groups: for the people using the apps and for the people

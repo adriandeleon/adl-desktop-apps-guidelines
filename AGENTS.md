@@ -5,7 +5,7 @@ Editora (`../Editora`) is the reference implementation.
 
 ## Commands
 
-- `npm run dev` — local site at http://localhost:4321/adl-desktop-apps-guidelines/
+- `npm run dev` — local site at http://localhost:4321/
 - `npm run print` — builds `public/downloads/` (PDF + single Markdown); needs pandoc, python3 and Chrome
 - `npm run build` — static site into `dist/`
 

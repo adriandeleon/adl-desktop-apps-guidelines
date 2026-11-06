@@ -17,13 +17,16 @@ export default defineConfig({
       description:
         "UI, UX and platform rules for adl's JavaFX desktop apps, with Editora as the reference implementation.",
       favicon: "/favicon.svg",
-      head: [{ tag: "script", attrs: { src: "/adl-desktop-apps-guidelines/lightbox.js", defer: true } }],
+      head: [
+        { tag: "script", attrs: { src: "/adl-desktop-apps-guidelines/lightbox.js", defer: true } },
+        { tag: "script", attrs: { src: "/adl-desktop-apps-guidelines/mock-fit.js", defer: true } },
+      ],
       social: [
         { icon: "github", label: "GitHub", href: "https://github.com/adriandeleon/adl-desktop-apps-guidelines" },
       ],
       editLink: { baseUrl: "https://github.com/adriandeleon/adl-desktop-apps-guidelines/edit/master/" },
       lastUpdated: true,
-      components: { Footer: "./src/components/Footer.astro" },
+      components: { Footer: "./src/components/Footer.astro", Hero: "./src/components/Hero.astro" },
       customCss: [
         "@fontsource-variable/inter",
         "@fontsource/jetbrains-mono/400.css",

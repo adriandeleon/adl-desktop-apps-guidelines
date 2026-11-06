@@ -1,4 +1,5 @@
-/* Template pages are a little wider than a reading column, so the 720 px Settings mockup fits. */
+/* Template pages are a little wider than a reading column; where a mockup still does not fit, public/mock-fit.js
+   scales it down and the stage says by how much. */
 :root:has(.mock-stage) { --sl-content-width: 54rem; }
 
 /* Visual templates: HTML/CSS mockups of the family's shared surfaces, drawn at the apps' real pixel sizes.
@@ -67,6 +68,11 @@
   --m-scrim: rgb(0 0 0 / 0.35);
 }
 .mock-stage * { box-sizing: border-box; }
+.mock-stage { position: relative; }
+.mock-stage[data-scale]::after {
+  content: "Shown at " attr(data-scale); position: absolute; right: 8px; bottom: 6px;
+  font: 600 10px/1 var(--m-mono); letter-spacing: 0.04em; color: var(--m-subtle);
+}
 .mock-stage p, .mock-stage div, .mock-stage span { margin: 0; }
 .mock-stage.scrim { background-image: none; background-color: var(--m-window); box-shadow: inset 0 0 0 9999px var(--m-scrim); }
 

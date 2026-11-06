@@ -67,25 +67,34 @@
 .sl-markdown-content ul.contains-task-list { list-style: none; padding-inline-start: 0; }
 .sl-markdown-content .task-list-item input { accent-color: var(--sl-color-accent); margin-inline-end: 0.5rem; }
 
-/* Screenshots: a quiet frame, a caption in the muted colour, galleries in a wrapping row. */
+/* Screenshots: a quiet frame, a caption in the muted colour, galleries in rows of two. */
 .sl-markdown-content figure.shot { margin: 1.5rem 0; }
 .sl-markdown-content figure.shot img {
   display: block; width: 100%; height: auto; border-radius: 8px;
   border: 1px solid var(--sl-color-gray-5); box-shadow: 0 1px 2px rgb(0 0 0 / 0.08), 0 8px 24px -12px rgb(0 0 0 / 0.25);
 }
 .sl-markdown-content figure.shot figcaption { margin-top: 0.5rem; font-size: var(--sl-text-sm); color: var(--sl-color-gray-3); line-height: 1.45; }
-.sl-markdown-content .shot-row { display: grid; gap: 1rem; margin: 1.5rem 0; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); align-items: start; }
+.sl-markdown-content .shot-row { display: grid; gap: 1rem; margin: 1.5rem 0; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+/* An odd number of screenshots: the first one takes the whole row, so no row ends with an empty half. */
+.sl-markdown-content .shot-row:is(.n3, .n5, .n7, .n9) > figure.shot:first-child { grid-column: 1 / -1; }
+@media (max-width: 36rem) { .sl-markdown-content .shot-row { grid-template-columns: minmax(0, 1fr); } }
 .sl-markdown-content .shot-row figure.shot { margin: 0; }
 
 /* Overview: the six apps. Editora spans the row as the reference. */
-.family-grid { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); margin-top: 1rem; }
+/* Overview: the six apps, three or two to a row so no row is left with a gap. */
+.family-grid { display: grid; gap: 1.25rem; grid-template-columns: minmax(0, 1fr); margin-top: 1rem; }
+@media (min-width: 36rem) { .family-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 60rem) { .family-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .family-grid figure.app { margin: 0; display: grid; gap: 0.6rem; align-content: start; }
-.family-grid figure.app.ref { grid-column: 1 / -1; }
+.family-grid .ref-tag {
+  margin-inline-start: 0.5rem; font-family: var(--sl-font-mono); font-size: 0.68rem; font-weight: 600; letter-spacing: 0.04em;
+  padding: 0.05rem 0.45rem; border-radius: 4px; background: var(--sl-color-accent-low); color: var(--sl-color-accent-high);
+}
+:root[data-theme="light"] .family-grid .ref-tag { color: var(--sl-color-accent); }
 .family-grid img, .family-grid .no-shot {
   width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--sl-color-gray-5);
   aspect-ratio: 16 / 10; object-fit: cover; object-position: top left; background: var(--sl-color-gray-6);
 }
-.family-grid figure.app.ref img { aspect-ratio: auto; }
 .family-grid .no-shot { display: grid; place-items: center; color: var(--sl-color-gray-3); font-size: var(--sl-text-sm); border-style: dashed; }
 .family-grid figcaption { font-size: var(--sl-text-sm); color: var(--sl-color-gray-3); line-height: 1.45; }
 .family-grid figcaption strong { display: block; color: var(--sl-color-white); font-size: var(--sl-text-base); }
@@ -139,7 +148,17 @@ dialog.lightbox .lightbox-close { position: fixed; top: max(0.75rem, env(safe-ar
 .sl-markdown-content table.matrix { display: table; width: 100%; }
 .sl-markdown-content table.matrix td:not(:first-child) { white-space: normal; min-width: 5.5rem; }
 .sl-markdown-content table.matrix .s { flex-wrap: wrap; justify-content: center; max-width: 7.5rem; margin-inline: auto; text-align: center; }
-.sl-markdown-content :is(div:has(> table.matrix), table.matrix) { overflow-x: auto; }
+/* The matrix scrolls inside its own box on a narrow screen (rehype-status wraps it), so the page never grows
+   wider than the phone. Where it fits, the box stops scrolling and the app row stays under the header. */
+.sl-markdown-content .matrix-scroll { overflow-x: auto; margin-top: 1rem; }
+.sl-markdown-content .matrix-scroll > table.matrix { margin-top: 0; }
+@media (min-width: 72rem) {
+  .sl-markdown-content .matrix-scroll { overflow-x: visible; }
+  .sl-markdown-content table.matrix thead th {
+    position: sticky; top: var(--sl-nav-height); z-index: 1;
+    background: var(--sl-color-bg); box-shadow: inset 0 -1px 0 var(--sl-color-gray-5);
+  }
+}
 
 /* Checklist: grouped lists with a hanging indent, so a wrapped line starts under its text, not its box. */
 .sl-markdown-content ul.contains-task-list { padding-inline-start: 0; margin-top: 0.5rem; }
@@ -148,4 +167,28 @@ dialog.lightbox .lightbox-close { position: fixed; top: max(0.75rem, env(safe-ar
 .family-grid .app-links { display: block; margin-top: 0.3rem; font-size: var(--sl-text-xs); }
 .family-grid .app-links a { color: var(--sl-color-accent-high); }
 :root[data-theme="light"] .family-grid .app-links a { color: var(--sl-color-accent); }
+/* Overview: the three levels side by side. */
+.levels-legend { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); margin-top: 1rem; }
+.sl-markdown-content .levels-legend p {
+  margin: 0; padding: 0.75rem 1rem; border: 1px solid var(--sl-color-gray-5); border-radius: 0.5rem;
+  font-size: var(--sl-text-sm); color: var(--sl-color-gray-2); line-height: 1.5;
+}
+.levels-legend .lvl { display: table; margin-bottom: 0.4rem; }
 .edition-badge { font-family: var(--sl-font-mono); font-size: var(--sl-text-xs); color: var(--sl-color-gray-3); letter-spacing: 0.02em; }
+
+/* Rule tables (a "Level" column) on a phone: each row stacks into a card, the area as its title and every other
+   cell under its column's name, so the level and the Editora reference are never off-screen. */
+@media (max-width: 50rem) {
+  .sl-markdown-content table.rules, .sl-markdown-content table.rules :is(tbody, tr, td) { display: block; }
+  .sl-markdown-content table.rules { overflow: visible; }
+  .sl-markdown-content table.rules thead {
+    position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+  }
+  .sl-markdown-content table.rules tr { padding: 0.75rem 0; border-bottom: 1px solid var(--sl-color-gray-5); }
+  .sl-markdown-content table.rules td { border: 0; padding: 0.15rem 0; }
+  .sl-markdown-content table.rules td:first-child { font-weight: 600; color: var(--sl-color-white); padding-bottom: 0.35rem; }
+  .sl-markdown-content table.rules td + td { margin-top: 0.35rem; }
+  .sl-markdown-content table.rules td:not(:first-child)[data-label]::before {
+    content: attr(data-label); display: block; font-size: var(--sl-text-xs); color: var(--sl-color-gray-3);
+  }
+}

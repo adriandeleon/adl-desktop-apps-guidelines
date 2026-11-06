@@ -1,0 +1,53 @@
+---
+// Starlight's hero with its image beside the copy at the image's own shape. Starlight renders a hero image as a
+// 400 × 400 square, which crops a 16:10 screenshot; this hands Starlight the hero without its image and draws
+// the image itself, with the edition under the actions.
+import Default from "@astrojs/starlight/components/Hero.astro";
+import { Image } from "astro:assets";
+import pkg from "../../package.json";
+
+const { data } = Astro.locals.starlightRoute.entry;
+const image = data.hero?.image && "file" in data.hero.image ? data.hero.image : undefined;
+if (image && data.hero) data.hero = { ...data.hero, image: undefined };
+---
+
+{
+  image ? (
+    <div class="hero-with-shot">
+      <div class="hero-copy">
+        <Default />
+        <p class="edition-badge">Version {pkg.version} · {pkg.guidelines.date}</p>
+      </div>
+      <Image
+        class="hero-shot"
+        src={image.file}
+        alt={image.alt}
+        widths={[640, 960, 1280, 1600]}
+        sizes="(min-width: 50rem) 36rem, 100vw"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
+  ) : (
+    <Default />
+  )
+}
+
+<style>
+  .hero-with-shot { display: grid; gap: 1.5rem; align-items: center; padding-block: 1rem 2rem; }
+  .hero-copy .edition-badge { margin: 0; text-align: center; }
+  @media (min-width: 50rem) { .hero-copy .edition-badge { text-align: start; } }
+  /* The title fits in two lines beside the screenshot; the three actions sit on one row. */
+  .hero-with-shot :global(.hero h1) { font-size: clamp(var(--sl-text-3xl), calc(0.25rem + 4vw), var(--sl-text-5xl)); }
+  .hero-with-shot :global(.hero .actions) { gap: 0.75rem 1rem; }
+  .hero-with-shot :global(.hero .actions .sl-link-button.minimal) { padding-inline: 0.25rem; }
+  .hero-shot {
+    width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--sl-color-gray-5);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.08), 0 18px 40px -18px rgb(0 0 0 / 0.45);
+  }
+  @media (min-width: 50rem) {
+    .hero-with-shot { grid-template-columns: 5fr 6fr; gap: 3%; }
+    /* Starlight keeps a column for the image it no longer draws; give the copy the whole of its side. */
+    .hero-with-shot :global(.hero) { grid-template-columns: 100%; padding-block: 2rem 1.25rem; }
+  }
+</style>

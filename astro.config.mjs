@@ -29,6 +29,7 @@ export default defineConfig({
         "@fontsource/jetbrains-mono/400.css",
         "@fontsource/jetbrains-mono/600.css",
         "./src/styles/caret-and-ink.css",
+        "./src/styles/templates.css",
       ],
       sidebar: [
         { label: "Overview", link: "/" },

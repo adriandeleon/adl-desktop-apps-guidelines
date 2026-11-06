@@ -15,8 +15,8 @@ description: "Commands, the Command Palette, keymaps, focus and accessibility."
 ## Command Palette
 
 - **MUST.** Opened by `M-x` in Emacs keymaps and `Ctrl/Cmd+Shift+P` in the others.
-- Fuzzy matching over title, id and description; recently used commands first; each row shows the active
-  key binding.
+- Fuzzy matching over title, id and description; a query that names a command's title outranks a fuzzy
+  hit. Each row shows the active key binding. See the [Command Palette template](../templates/command-palette/).
 - It is an **in-scene overlay** in the window's root `StackPane`, not a `javafx.stage.Popup`. On Windows a
   Popup does not reliably take OS keyboard focus and the whole app can stop receiving keystrokes.
 - The same picker (`QuickOpen`) serves every other list choice: recent files, themes, keymaps, settings

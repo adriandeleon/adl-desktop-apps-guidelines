@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Visual templates** for four shared surfaces: the Command Palette, the About window, the Message Log and the
+  Settings Sync page. Each has an annotated mockup at the apps' real sizes (light and dark), its anatomy, a spec
+  table tied to Editora's code, its behaviour, its exact strings, and the real screenshots from the apps.
+
+### Fixed
+
+- **The palette does not rank recently used commands first.** Keyboard first said it did; Editora ranks by match
+  score, with a query that names a title first.
+
 ## [1.0.0] - 2026-11-06
 
 ### Changed

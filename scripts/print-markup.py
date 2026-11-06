@@ -3,6 +3,7 @@ import re, sys
 from pathlib import Path
 
 src, dst = sys.argv[1], sys.argv[2]
+extra_css = Path(sys.argv[3]).read_text(encoding="utf-8") if len(sys.argv) > 3 else ""
 s = open(src, encoding="utf-8").read()
 s = s.replace("<table>", '<div class="table-wrap"><table>').replace("</table>", "</table></div>")
 
@@ -41,4 +42,9 @@ def icon(app):
     return f'<img class="app-icon" src="{ICONS}/{APPS[app]}.svg" alt="" />'
 s = re.sub(r"<th([^>]*)>(" + "|".join(APPS) + r")</th>", lambda m: f"<th{m.group(1)}>{icon(m.group(2))}{m.group(2)}</th>", s)
 s = re.sub(r"<td([^>]*)><strong>(" + "|".join(APPS) + r")</strong></td>", lambda m: f"<td{m.group(1)}><strong>{icon(m.group(2))}{m.group(2)}</strong></td>", s)
+# Site-absolute paths (/adl-desktop-apps-guidelines/…) point into public/ for the file:// print.
+PUBLIC = (Path(__file__).resolve().parent.parent / "public").as_uri()
+s = s.replace('src="/adl-desktop-apps-guidelines/', f'src="{PUBLIC}/')
+# The template mockups' stylesheet.
+s = s.replace("</style>", extra_css + "\n.mock-stage { break-inside: avoid; }\n</style>", 1)
 open(dst, "w", encoding="utf-8").write(s)

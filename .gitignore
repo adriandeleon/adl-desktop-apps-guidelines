@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.astro/
+build/
+# Built by scripts/build-print.sh (in CI before the site build).
+public/downloads/

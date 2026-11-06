@@ -1,0 +1,61 @@
+---
+title: adl Desktop Apps Guidelines
+description: UI, UX and platform rules for adl's JavaFX desktop apps, with Editora as the reference implementation.
+template: splash
+hero:
+  tagline: UI, UX and platform rules for the family of JavaFX desktop apps. Editora is the reference implementation, and every rule names the class or file to copy from.
+  actions:
+    - text: Read the principles
+      link: /adl-desktop-apps-guidelines/principles/
+      icon: right-arrow
+    - text: Download PDF
+      link: /adl-desktop-apps-guidelines/downloads/adl-desktop-apps-guidelines.pdf
+      icon: document
+      variant: minimal
+    - text: Markdown
+      link: /adl-desktop-apps-guidelines/downloads/adl-desktop-apps-guidelines.md
+      icon: seti:markdown
+      variant: minimal
+---
+
+import { Card, CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+## The family
+
+<CardGrid>
+  <Card title="Editora" icon="pencil">
+    Keyboard-driven programmer's text editor. **The reference implementation.**
+  </Card>
+  <Card title="Torrenta" icon="down-arrow">
+    BitTorrent client with a tray icon and a web API.
+  </Card>
+  <Card title="Termina" icon="seti:shell">
+    Terminal emulator with tabs and imported colour schemes.
+  </Card>
+  <Card title="Modula" icon="rss">
+    Software-defined-radio receiver.
+  </Card>
+  <Card title="Mirada" icon="seti:image">
+    Fast image viewer, shipped as a GraalVM native image.
+  </Card>
+  <Card title="nux" icon="laptop">
+    UPS monitor for Network UPS Tools, living in the tray.
+  </Card>
+</CardGrid>
+
+## How to read it
+
+<span class="lvl lvl-must">MUST</span> is a release blocker for a new app.
+<span class="lvl lvl-should">SHOULD</span> is expected unless the app has a stated reason.
+<span class="lvl lvl-may">MAY</span> is a pattern worth copying when the app grows into it.
+
+When this guide and Editora disagree, check Editora's code, then fix whichever is wrong.
+
+## Where to start
+
+<CardGrid>
+  <LinkCard title="Principles" href="/adl-desktop-apps-guidelines/principles/" description="The seven rules every other page follows from." />
+  <LinkCard title="New app checklist" href="/adl-desktop-apps-guidelines/checklist/" description="Everything a new app needs before its first release." />
+  <LinkCard title="Feature matrix" href="/adl-desktop-apps-guidelines/family/matrix/" description="Which of the six apps has which piece today." />
+  <LinkCard title="Gaps per app" href="/adl-desktop-apps-guidelines/family/gaps/" description="What each app still misses against this guide." />
+</CardGrid>

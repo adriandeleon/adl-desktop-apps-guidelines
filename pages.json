@@ -1,0 +1,10 @@
+{
+  "comment": "Page order for the sidebar and the PDF. Each slug is a file under src/content/docs.",
+  "groups": [
+    { "label": "Start here", "items": ["principles", "checklist"] },
+    { "label": "Foundations", "items": ["platform", "repository", "quality"] },
+    { "label": "Experience", "items": ["keyboard", "window-shell", "settings", "diagnostics", "command-line", "i18n"] },
+    { "label": "Shipping", "items": ["release"] },
+    { "label": "The family", "items": ["family/matrix", "family/shared-features", "family/gaps"] }
+  ]
+}

@@ -1,0 +1,166 @@
+<title>adl Desktop Apps Guidelines</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a reference manual. Sticky contents rail on the left, one reading column, wide tables scroll in place.
+   Palette: Editora's "Caret & Ink" tokens (caret teal accent, ink navy, porcelain/abyss grounds, brace periwinkle for keys). */
+:root {
+  --ground: #F4F5F9;
+  --paper: #FFFFFF;
+  --ink: #1B1E2A;
+  --ink-muted: #4C5266;
+  --rule: #DDE0EA;
+  --caret: #0E8577;
+  --caret-soft: #E3F3F0;
+  --brace: #5C66AE;
+  --brace-soft: #ECEDF7;
+  --amber: #A86200;
+  --amber-soft: #FBF0DF;
+  --code-bg: #EEF0F6;
+  --font-ui: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --step-0: 0.95rem;
+  --step-1: 1.15rem;
+  --step-2: 1.45rem;
+  --step-3: 2.1rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #12141D; --paper: #1B1E2A; --ink: #E6E8F0; --ink-muted: #A3A9BD; --rule: #2E3242;
+    --caret: #43DEC5; --caret-soft: #133A36; --brace: #9AA2D4; --brace-soft: #262A44;
+    --amber: #F0B24A; --amber-soft: #3A2C14; --code-bg: #232736; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --ground: #12141D; --paper: #1B1E2A; --ink: #E6E8F0; --ink-muted: #A3A9BD; --rule: #2E3242;
+  --caret: #43DEC5; --caret-soft: #133A36; --brace: #9AA2D4; --brace-soft: #262A44;
+  --amber: #F0B24A; --amber-soft: #3A2C14; --code-bg: #232736; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--ground); color: var(--ink); font-family: var(--font-ui); font-size: var(--step-0);
+  line-height: 1.6; -webkit-font-smoothing: antialiased;
+}
+a { color: var(--caret); text-underline-offset: 2px; }
+a:focus-visible { outline: 2px solid var(--brace); outline-offset: 2px; border-radius: 2px; }
+
+.masthead {
+  border-bottom: 1px solid var(--rule); background: var(--paper);
+  padding-block: 40px 28px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.masthead-inner { max-width: 1180px; margin: 0 auto; display: grid; gap: 14px; }
+.eyebrow { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.06em; color: var(--ink-muted); text-transform: uppercase; }
+.eyebrow .caret { display: inline-block; width: 2px; height: 1em; background: var(--caret); vertical-align: -2px; margin-right: 8px; }
+.masthead h1 { font-size: var(--step-3); line-height: 1.15; margin: 0; letter-spacing: -0.02em; text-wrap: balance; }
+.masthead p { margin: 0; max-width: 68ch; color: var(--ink-muted); font-size: var(--step-1); }
+.apps { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.apps span {
+  font-size: 0.82rem; font-weight: 600; padding: 3px 10px; border-radius: 999px;
+  border: 1px solid var(--rule); background: var(--ground); color: var(--ink);
+}
+.apps span.ref { border-color: var(--caret); background: var(--caret-soft); }
+.legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 0.85rem; color: var(--ink-muted); }
+.legend b { color: var(--ink); }
+
+.layout {
+  max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 48px;
+  padding-block: 32px 80px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+nav.toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 20px); align-self: start; max-height: calc(100vh - 40px); overflow-y: auto; font-size: 0.86rem; }
+nav.toc .toc-title { font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 8px; }
+nav.toc ul { list-style: none; margin: 0; padding: 0; }
+nav.toc li { margin: 0; }
+nav.toc a { display: block; padding: 4px 0 4px 12px; border-left: 2px solid var(--rule); color: var(--ink-muted); text-decoration: none; }
+nav.toc a:hover { color: var(--ink); border-left-color: var(--caret); }
+nav.toc ul ul { display: none; }
+
+main { min-width: 0; }
+main > * { max-width: 78ch; }
+main > table, main > .table-wrap, main > pre, main > div.sourceCode { max-width: 100%; }
+main h2 {
+  font-size: var(--step-2); margin: 56px 0 14px; padding-top: 18px; border-top: 1px solid var(--rule);
+  letter-spacing: -0.01em; text-wrap: balance; scroll-margin-top: 20px;
+}
+main h2:first-of-type { margin-top: 8px; border-top: 0; padding-top: 0; }
+main h3 { font-size: var(--step-1); margin: 32px 0 10px; text-wrap: balance; scroll-margin-top: 20px; }
+main hr { display: none; }
+main p, main li { color: var(--ink); }
+main ol, main ul { padding-left: 1.4em; }
+main li + li { margin-top: 4px; }
+main strong { font-weight: 650; }
+
+code { font-family: var(--font-mono); font-size: 0.86em; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+pre { background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; padding: 14px 16px; overflow-x: auto; line-height: 1.5; }
+pre code { background: none; padding: 0; font-size: 0.82rem; }
+
+.table-wrap { overflow-x: auto; margin: 14px 0 20px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); }
+table { border-collapse: collapse; width: 100%; font-size: 0.86rem; font-variant-numeric: tabular-nums; }
+th, td { padding: 8px 12px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--rule); }
+tr:last-child td { border-bottom: 0; }
+th { font-weight: 600; background: var(--ground); color: var(--ink); white-space: nowrap; }
+table.matrix th:not(:first-child), table.matrix td:not(:first-child) { text-align: center; white-space: nowrap; }
+table.matrix td:first-child { min-width: 240px; }
+
+.s { display: inline-flex; align-items: center; gap: 6px; font-size: 0.78rem; color: var(--ink-muted); }
+.s::before { content: ""; width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.s-yes::before { background: var(--caret); }
+.s-part::before { background: linear-gradient(90deg, var(--amber) 50%, transparent 50%); border: 1.5px solid var(--amber); width: 7px; height: 7px; }
+.s-no::before { background: transparent; border: 1.5px solid var(--rule); width: 7px; height: 7px; }
+.s-yes, .s-part, .s-no { justify-content: center; }
+
+.lvl { font-family: var(--font-mono); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; padding: 1px 7px; border-radius: 4px; white-space: nowrap; }
+.lvl-must { background: var(--caret-soft); color: var(--caret); }
+.lvl-should { background: var(--brace-soft); color: var(--brace); }
+.lvl-may { background: var(--code-bg); color: var(--ink-muted); }
+
+ul.task-list, ul:has(> li > input[type="checkbox"]) { list-style: none; padding-left: 0; }
+li > input[type="checkbox"] { accent-color: var(--caret); margin-right: 8px; }
+
+footer.colophon { max-width: 1180px; margin: 0 auto; padding-block: 24px 48px; color: var(--ink-muted); font-size: 0.82rem; border-top: 1px solid var(--rule);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+@media (max-width: 860px) {
+  .layout { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  nav.toc { position: static; max-height: none; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); padding: 12px 14px; }
+}
+@media print {
+  :root { --ground: #FFFFFF; --paper: #FFFFFF; }
+  body { font-size: 10pt; }
+  .layout { display: block; padding: 0; }
+  nav.toc { position: static; max-height: none; break-after: page; }
+  nav.toc a { border-left: 0; padding-left: 0; color: var(--ink); }
+  .masthead { padding: 0 0 18px; border-bottom: 2px solid var(--caret); }
+  main > * { max-width: none; }
+  main h2 { break-before: page; border-top: 0; margin-top: 0; }
+  main h2:first-of-type { break-before: auto; }
+  main h3, th { break-after: avoid; }
+  tr, pre { break-inside: avoid; }
+  .table-wrap { overflow: visible; }
+  table.matrix td:first-child { min-width: 0; }
+  a { color: var(--ink); text-decoration: none; }
+}
+@page { size: A4; margin: 16mm 14mm; }
+</style>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="eyebrow"><span class="caret"></span>Desktop platform guide · $date$</div>
+    <h1>adl Desktop Apps Guidelines</h1>
+    <p>UI, UX and platform rules for adl's JavaFX desktop apps. Editora is the reference implementation; every rule names the class or file to copy from.</p>
+    <div class="apps"><span class="ref">Editora · reference</span><span>Torrenta</span><span>Termina</span><span>Modula</span><span>Mirada</span><span>nux</span></div>
+    <div class="legend"><span><span class="lvl lvl-must">MUST</span> release blocker for a new app</span><span><span class="lvl lvl-should">SHOULD</span> expected unless the app says why not</span><span><span class="lvl lvl-may">MAY</span> copy when the app grows into it</span></div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="toc" aria-label="Contents">
+    <div class="toc-title">Contents</div>
+    $toc$
+  </nav>
+  <main>
+$body$
+  </main>
+</div>
+<footer class="colophon">Web version: <a href="https://adriandeleon.github.io/adl-desktop-apps-guidelines/">adriandeleon.github.io/adl-desktop-apps-guidelines</a>. Source: <a href="https://github.com/adriandeleon/adl-desktop-apps-guidelines">github.com/adriandeleon/adl-desktop-apps-guidelines</a>. Built $date$.</footer>

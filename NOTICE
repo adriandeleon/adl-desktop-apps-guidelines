@@ -1,0 +1,11 @@
+adl Desktop Apps Guidelines
+Copyright (c) 2026 Adrián Arturo De León Saldivar
+
+This work is licensed under the MIT License (see LICENSE).
+
+The website bundles third-party components:
+
+- Astro and Starlight — MIT License (https://github.com/withastro)
+- Pagefind — MIT License (https://github.com/CloudCannon/pagefind)
+- Inter (via Fontsource) — SIL Open Font License 1.1 (https://rsms.me/inter/)
+- JetBrains Mono (via Fontsource) — SIL Open Font License 1.1 (https://www.jetbrains.com/lp/mono/)

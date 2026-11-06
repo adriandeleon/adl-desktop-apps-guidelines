@@ -29,6 +29,16 @@ document. Click **Use this template**, then run `scripts/rename.sh <AppName> <pa
 - [ ] JUnit 5 and headless FX tests (`-Dglass.platform=Headless`), FX tests tagged `fx`
 - [ ] JaCoCo check at 0.90 lines and 0.90 methods
 
+## Performance
+
+[Performance](../performance/)
+
+- [ ] No I/O, process, parsing or waiting on the JavaFX application thread; results return through `Platform.runLater`
+- [ ] Background results applied under a generation guard; named daemon threads
+- [ ] Redraws coalesced to one per pulse; streams delivered in batches
+- [ ] Logs, histories and caches bounded; large inputs guarded
+- [ ] Only the first frame built before it paints; update check and extras deferred
+
 ## Keyboard and commands
 
 [Keyboard first](../keyboard/)

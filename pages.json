@@ -13,7 +13,8 @@
       "items": [
         "platform",
         "repository",
-        "quality"
+        "quality",
+        "performance"
       ]
     },
     {

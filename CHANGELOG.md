@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Principle 3: the UI never waits**, and a **Performance** page behind it: keep the JavaFX application thread
+  free (with the generation-guarded background shape every Editora service uses), coalesce hot-path work, bound
+  memory, build only the first frame before it paints, and measure. The checklist gains a Performance group.
 - **A name and a mark: Pauta.** Spanish for a guideline, and for the ruled lines on writing paper. The mark (three
   periwinkle rules and a teal tick on the family's Ink tile) is the favicon and the site logo; a 1280 × 640 card
   serves shared links. The README, the PDF and the footer carry the name. Sources and how to re-render them are in

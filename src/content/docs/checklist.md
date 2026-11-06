@@ -24,10 +24,23 @@ document. Click **Use this template**, then run `scripts/rename.sh <AppName> <pa
 
 [Code quality gates](../quality/)
 
+- [ ] The version comes only from `pom.xml` (filtered `build-info.properties`); lists that repeat a fact have a drift test
+- [ ] Rules live in pure, unit-tested helpers; UI classes stay thin
+- [ ] A capture hook or headless screenshot drives the real window for UI checks
 - [ ] Every package `@NullMarked`; NullAway on Error Prone fails the build
 - [ ] Spotless with Palantir Java Format
 - [ ] JUnit 5 and headless FX tests (`-Dglass.platform=Headless`), FX tests tagged `fx`
 - [ ] JaCoCo check at 0.90 lines and 0.90 methods
+
+## Performance
+
+[Performance](../performance/)
+
+- [ ] No I/O, process, parsing or waiting on the JavaFX application thread; results return through `Platform.runLater`
+- [ ] Background results applied under a generation guard; named daemon threads
+- [ ] Redraws coalesced to one per pulse; streams delivered in batches
+- [ ] Logs, histories and caches bounded; large inputs guarded
+- [ ] Only the first frame built before it paints; update check and extras deferred
 
 ## Keyboard and commands
 

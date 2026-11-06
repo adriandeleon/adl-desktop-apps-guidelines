@@ -17,6 +17,14 @@ description: "The Settings window with search, live apply, versioned config and 
 
 ![Editora's Settings window searching for sync, with the Sync page open](../../assets/shots/editora-settings-search.png "Typing sync in Settings: pages without a match grey out and the best page opens.")
 
+## Before adding a setting
+
+A setting is a question the user has to answer. When the question has one right answer, choose it, make it the
+behaviour, and say why in the code and the docs; do not ship a knob for it. Modula's test: *would a car radio have
+it?* A preset button, yes; a "decimation stages" spinner, no. So Modula has no gain, bandwidth or squelch control:
+each has one right value for a listener, and the app supplies it. Add a setting when people really differ (a
+keymap, a theme, a language), not when the developer could not decide.
+
 ## Adding a setting touches five places
 
 1. **Model** field, default and accessors, with a schema bump and migration.
@@ -35,8 +43,27 @@ description: "The Settings window with search, live apply, versioned config and 
   an identity step.
 - A file newer than the running build is backed up to `<name>.v<n>.bak` and defaults load: an older build
   never clobbers a newer config.
+- **Never trust a config file.** Config is plain JSON (or properties) and people edit it by hand. Clamp every
+  value to its valid range when it is **read**, not only when it is written: a hand-edited two-million-line
+  scrollback must not exhaust memory at the next launch (Termina). An unknown value falls back to its default; a
+  file that cannot be decoded is kept as `<name>.corrupt.bak` and defaults load. A bad file never stops the app
+  from starting.
 - **Export configuration** writes a timestamped `.zip` of the config folder (`ConfigExporter`). Import
   restores from one.
+
+## Secrets stay out of files
+
+- **No secret in a config file.** API keys and tokens go to the operating system's keychain: macOS Keychain,
+  Windows Credential Manager, the Secret Service on Linux (Editora's `secrets/SecretStore`). Calls may block on a
+  prompt, so they run off the FX thread.
+- **Or keep it for the session only.** A credential the app can ask for again (nux's UPS login) lives in memory and
+  is never written. Work that needs it waits until the user has signed in this session; do not "fix" that by
+  storing the password.
+- **Refuse a secret in the wrong place.** A repository URL with a password or token in it is refused, with the fix
+  ([Settings Sync](../templates/settings-sync/)); a problem report redacts tokens, hosts and home paths before
+  anyone sees it ([Diagnostics](../diagnostics/)).
+- **No UI for a dangerous escape hatch.** An option that weakens security, such as nux's trust-all TLS
+  (`tlsTrustAll`), exists only as a key in the config file, so nobody turns it on by clicking.
 
 ## Settings Sync (Git / GitHub)
 

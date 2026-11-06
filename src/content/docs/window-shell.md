@@ -14,6 +14,11 @@ description: "Status bar, themes, title bar, dialogs, Welcome, About, window sta
   the title bar, with a decorated-window fallback, and `useSystemMenuBar` on macOS.
 - **Native dialogs** go through one helper (`Dialogs.styled`) because a dialog is its own scene and does
   not inherit the app stylesheet or the UI font.
+- **A destructive action asks first, and says what it does.** Removing, deleting, discarding or overwriting
+  something the user made goes through one confirm helper (Torrenta's `RemoveConfirm`, Editora's save
+  decisions). The question names the thing ("Remove 3 torrents?"), the confirm button names the action
+  (Remove, Discard, Overwrite), never OK or Yes, and Escape cancels. Where the action can be undone instead
+  (Torrenta's `UndoStack`, Termina's and Editora's reopen-closed-tab), prefer the undo over the question.
 - **Welcome page** when there is nothing to restore: Start actions (which run commands), Recent items, a
   Customize block (keymap and theme), Help links.
 - **About** shows version, build, runtime (Java and JavaFX versions), licence, links, and the result of the

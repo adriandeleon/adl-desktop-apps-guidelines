@@ -36,7 +36,7 @@ jobs:
     if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 25
     permissions:
       pages: write
       id-token: write
@@ -47,3 +47,7 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
+        with:
+          # Pages sometimes sits in "updating_pages" for over ten minutes (the action's default wait), and a
+          # cancelled deployment cannot be re-run: its ID is the commit SHA. Wait longer instead.
+          timeout: 1200000

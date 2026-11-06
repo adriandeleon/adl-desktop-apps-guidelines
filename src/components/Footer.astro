@@ -1,0 +1,20 @@
+---
+// Starlight's footer plus the guidelines' version and date, read from package.json.
+import Default from "@astrojs/starlight/components/Footer.astro";
+import pkg from "../../package.json";
+
+const date = new Date(`${pkg.guidelines.date}T00:00:00Z`).toLocaleDateString("en-GB", {
+  day: "numeric", month: "long", year: "numeric", timeZone: "UTC",
+});
+const changelog = "https://github.com/adriandeleon/adl-desktop-apps-guidelines/blob/master/CHANGELOG.md";
+---
+
+<Default><slot /></Default>
+<p class="edition">
+  Version <strong>{pkg.version}</strong> · <time datetime={pkg.guidelines.date}>{date}</time> · <a href={changelog}>Changelog</a>
+</p>
+
+<style>
+  .edition { margin-top: 1rem; font-size: var(--sl-text-xs); color: var(--sl-color-gray-3); font-variant-numeric: tabular-nums; }
+  .edition a { color: inherit; }
+</style>

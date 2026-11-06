@@ -20,6 +20,7 @@ hero:
 
 import { CardGrid, LinkCard } from "@astrojs/starlight/components";
 import { Image } from "astro:assets";
+import pkg from "../../../package.json";
 import editora from "../../assets/shots/editora-hero.png";
 import torrenta from "../../assets/shots/torrenta-main.png";
 import termina from "../../assets/shots/termina-main.png";
@@ -28,6 +29,8 @@ import nux from "../../assets/shots/nux-main.png";
 import mirada from "../../assets/shots/mirada-main.png";
 
 export const icon = (app) => `/adl-desktop-apps-guidelines/icons/${app}.svg`;
+
+<p class="edition-badge">Version {pkg.version} · {pkg.guidelines.date}</p>
 
 ## The family
 

@@ -6,16 +6,18 @@ cd "$(dirname "$0")/.."
 out=public/downloads
 work=build/print
 mkdir -p "$out" "$work"
-today=$(date -u +%Y-%m-%d)
+# The edition's version and date (package.json is the one source).
+version=$(python3 -I -c 'import json;print(json.load(open("package.json"))["version"])')
+today=$(python3 -I -c 'import json;print(json.load(open("package.json"))["guidelines"]["date"])')
 
 # 1. One Markdown file, pages in pages.json order: each page's title becomes an H2, its headings move down a level.
-python3 -I scripts/combine.py pages.json src/content/docs "$today" > "$out/adl-desktop-apps-guidelines.md"
+python3 -I scripts/combine.py pages.json src/content/docs "$today" "$version" > "$out/adl-desktop-apps-guidelines.md"
 
 # 2. HTML for print (the masthead carries the title and intro, so the combined file's preamble is dropped).
 sed -n '/^## /,$p' "$out/adl-desktop-apps-guidelines.md" \
   | sed "s#https://raw.githubusercontent.com/adriandeleon/adl-desktop-apps-guidelines/master/src/assets/shots/#file://$PWD/src/assets/shots/#g" \
   | pandoc -f gfm -t html5 --toc --toc-depth=2 --template=scripts/print-template.html \
-      --metadata date="$today" --metadata title="adl Desktop Apps Guidelines" --no-highlight -o "$work/raw.html"
+      --metadata date="$today" --metadata version="$version" --metadata title="adl Desktop Apps Guidelines" --no-highlight -o "$work/raw.html"
 python3 -I scripts/print-markup.py "$work/raw.html" "$work/guide.html"
 
 # 3. PDF.

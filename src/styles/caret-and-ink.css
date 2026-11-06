@@ -148,3 +148,4 @@ dialog.lightbox .lightbox-close { position: fixed; top: max(0.75rem, env(safe-ar
 .family-grid .app-links { display: block; margin-top: 0.3rem; font-size: var(--sl-text-xs); }
 .family-grid .app-links a { color: var(--sl-color-accent-high); }
 :root[data-theme="light"] .family-grid .app-links a { color: var(--sl-color-accent); }
+.edition-badge { font-family: var(--sl-font-mono); font-size: var(--sl-text-xs); color: var(--sl-color-gray-3); letter-spacing: 0.02em; }

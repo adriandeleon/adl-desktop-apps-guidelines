@@ -23,6 +23,7 @@ export default defineConfig({
       ],
       editLink: { baseUrl: "https://github.com/adriandeleon/adl-desktop-apps-guidelines/edit/master/" },
       lastUpdated: true,
+      components: { Footer: "./src/components/Footer.astro" },
       customCss: [
         "@fontsource-variable/inter",
         "@fontsource/jetbrains-mono/400.css",

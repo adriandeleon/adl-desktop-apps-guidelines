@@ -24,3 +24,7 @@ Editora (`../Editora`) is the reference implementation.
   image alone in a paragraph with a title (`![alt](../../assets/shots/x.png "Caption.")`); several images in one
   paragraph become a gallery row. Captions describe what the image shows, in one sentence.
 - Never commit `dist/`, `build/` or `public/downloads/`.
+- **Editions.** `package.json` holds the version and `guidelines.date`; the footer, the overview, the PDF and the
+  Markdown download read them from there. To publish an edition: move `## [Unreleased]` in `CHANGELOG.md` into
+  `## [x.y.z] - YYYY-MM-DD`, set the same version and date in `package.json`, commit, tag `vx.y.z`. A new or
+  stronger rule is a minor version, a new MUST that existing apps fail is a major one, wording and facts a patch.

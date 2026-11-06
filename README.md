@@ -11,6 +11,7 @@
 
 [![Deploy](https://github.com/adriandeleon/adl-desktop-apps-guidelines/actions/workflows/pages.yml/badge.svg)](https://github.com/adriandeleon/adl-desktop-apps-guidelines/actions/workflows/pages.yml)
 [![License: MIT](https://img.shields.io/github/license/adriandeleon/adl-desktop-apps-guidelines)](LICENSE)
+![Version](https://img.shields.io/github/package-json/v/adriandeleon/adl-desktop-apps-guidelines?label=guidelines)
 ![Built with Starlight](https://img.shields.io/badge/built%20with-Starlight-0e8577)
 
 UI, UX and platform rules for the family of JavaFX desktop apps — [Editora](https://github.com/adriandeleon/Editora),
@@ -18,6 +19,8 @@ UI, UX and platform rules for the family of JavaFX desktop apps — [Editora](ht
 [Modula](https://github.com/adriandeleon/Modula), [Mirada](https://github.com/adriandeleon/Mirada) and
 [nux](https://github.com/adriandeleon/nux). Editora is the reference implementation: every rule names the class
 or file to copy from.
+
+**Version 1.0.0 · 6 November 2026.** The version and date live in `package.json`; [CHANGELOG.md](CHANGELOG.md) says what each edition changed.
 
 📖 **Read it at [adriandeleon.github.io/adl-desktop-apps-guidelines](https://adriandeleon.github.io/adl-desktop-apps-guidelines/)**
 — or download the [PDF](https://adriandeleon.github.io/adl-desktop-apps-guidelines/downloads/adl-desktop-apps-guidelines.pdf)

@@ -23,5 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the README.
 - **A Mirada screenshot.** Mirada showing a folder of wallpapers with its info panel and thumbnail strip, on the
   overview and on Window shell beside Termina's title bar.
+- **Click a screenshot to see it large.** Every screenshot on a page (and in the overview gallery) opens in a
+  full-window viewer with its caption; ← and → step through the page's screenshots, Esc or a click outside closes
+  it. Screenshots take keyboard focus and open with Enter or Space.
 - **Web version on GitHub Pages** with search, light and dark themes, and PDF and single-Markdown downloads built
   in the same workflow.

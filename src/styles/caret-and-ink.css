@@ -95,3 +95,41 @@
 .sl-markdown-content table.matrix th .app-icon { display: block; width: 2rem; height: 2rem; margin: 0 auto 0.3rem; }
 .family-grid figcaption strong { display: flex; align-items: center; }
 .family-grid figcaption .app-icon { width: 1.75rem; height: 1.75rem; margin-inline-end: 0.55rem; }
+
+/* Screenshot viewer (public/lightbox.js). */
+img.zoomable { cursor: zoom-in; transition: box-shadow 0.15s ease, transform 0.15s ease; }
+img.zoomable:hover { box-shadow: 0 0 0 2px var(--sl-color-accent), 0 8px 24px -12px rgb(0 0 0 / 0.35); }
+img.zoomable:focus-visible { outline: 3px solid var(--sl-color-accent); outline-offset: 3px; }
+html.lightbox-open { overflow: hidden; }
+dialog.lightbox {
+  width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0;
+  background: transparent; color: #e6e8f0;
+  display: none; grid-template-columns: 3.5rem minmax(0, 1fr) 3.5rem; grid-template-rows: minmax(0, 1fr) auto; align-items: center;
+}
+dialog.lightbox[open] { display: grid; }
+dialog.lightbox::backdrop { background: rgb(10 12 18 / 0.96); backdrop-filter: blur(4px); }
+dialog.lightbox figure {
+  grid-column: 2; grid-row: 1; margin: 0; height: 100%; min-height: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.75rem;
+  padding: max(1rem, env(safe-area-inset-top, 0px)) 0 0.5rem;
+}
+dialog.lightbox img { max-width: 100%; max-height: calc(100dvh - 7rem); object-fit: contain; border-radius: 8px; box-shadow: 0 20px 60px rgb(0 0 0 / 0.5); cursor: zoom-out; }
+dialog.lightbox figcaption { max-width: 70ch; text-align: center; font-size: var(--sl-text-sm); color: #c3c8d6; line-height: 1.45; }
+dialog.lightbox .lightbox-count { grid-column: 1 / -1; grid-row: 2; margin: 0 0 max(0.75rem, env(safe-area-inset-bottom, 0px)); text-align: center; font-family: var(--sl-font-mono); font-size: 0.75rem; color: #a3a9bd; }
+dialog.lightbox button {
+  appearance: none; border: 0; cursor: pointer; color: #e6e8f0; background: rgb(255 255 255 / 0.08);
+  border-radius: 999px; width: 2.75rem; height: 2.75rem; font-size: 1.6rem; line-height: 1; display: grid; place-items: center;
+}
+dialog.lightbox button:hover { background: rgb(255 255 255 / 0.18); }
+dialog.lightbox button:focus-visible { outline: 2px solid #43dec5; outline-offset: 2px; }
+dialog.lightbox .lightbox-step { justify-self: center; grid-row: 1; }
+dialog.lightbox .prev { grid-column: 1; }
+dialog.lightbox .next { grid-column: 3; }
+dialog.lightbox .lightbox-close { position: fixed; top: max(0.75rem, env(safe-area-inset-top, 0px)); right: max(0.75rem, env(safe-area-inset-right, 0px)); z-index: 1; }
+@media (max-width: 50rem) {
+  dialog.lightbox { grid-template-columns: 0 minmax(0, 1fr) 0; }
+  dialog.lightbox .lightbox-step { position: fixed; bottom: max(0.5rem, env(safe-area-inset-bottom, 0px)); }
+  dialog.lightbox .prev { left: max(0.75rem, env(safe-area-inset-left, 0px)); }
+  dialog.lightbox .next { right: max(0.75rem, env(safe-area-inset-right, 0px)); }
+}
+@media (prefers-reduced-motion: reduce) { img.zoomable { transition: none; } }

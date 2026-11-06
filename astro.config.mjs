@@ -17,6 +17,7 @@ export default defineConfig({
       description:
         "UI, UX and platform rules for adl's JavaFX desktop apps, with Editora as the reference implementation.",
       favicon: "/favicon.svg",
+      head: [{ tag: "script", attrs: { src: "/adl-desktop-apps-guidelines/lightbox.js", defer: true } }],
       social: [
         { icon: "github", label: "GitHub", href: "https://github.com/adriandeleon/adl-desktop-apps-guidelines" },
       ],

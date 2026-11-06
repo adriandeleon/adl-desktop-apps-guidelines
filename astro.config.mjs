@@ -21,6 +21,7 @@ export default defineConfig({
       head: [
         { tag: "script", attrs: { src: "/adl-desktop-apps-guidelines/lightbox.js", defer: true } },
         { tag: "script", attrs: { src: "/adl-desktop-apps-guidelines/mock-fit.js", defer: true } },
+        { tag: "script", attrs: { src: "/adl-desktop-apps-guidelines/checklist.js", defer: true } },
         { tag: "meta", attrs: { property: "og:image", content: "https://adriandeleon.github.io/adl-desktop-apps-guidelines/og.png" } },
         { tag: "meta", attrs: { property: "og:image:width", content: "1280" } },
         { tag: "meta", attrs: { property: "og:image:height", content: "640" } },

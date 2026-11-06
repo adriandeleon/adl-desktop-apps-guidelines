@@ -30,6 +30,10 @@ or file to copy from.
 — or download the [PDF](https://adriandeleon.github.io/adl-desktop-apps-guidelines/downloads/adl-desktop-apps-guidelines.pdf)
 or the [single Markdown file](https://adriandeleon.github.io/adl-desktop-apps-guidelines/downloads/adl-desktop-apps-guidelines.md).
 
+🧰 **Starting a new app?** Use [adl-desktop-app-template](https://github.com/adriandeleon/adl-desktop-app-template),
+a GitHub template repository that meets every MUST: a runnable app with its tests, CI and release workflows, and an
+example of every repository document. Click **Use this template**, then run `scripts/rename.sh <AppName> <package>`.
+
 ## What it covers
 
 | Part | Pages |
@@ -52,8 +56,9 @@ npm run print      # PDF + single Markdown into public/downloads (needs pandoc a
 npm run build      # static site into dist/
 ```
 
-Table conventions: a cell starting with `●`, `◐` or `—` renders as a status dot (the rest of the cell is its note);
-a cell starting with `MUST`, `SHOULD` or `MAY` renders as a level pill.
+Conventions: in a feature matrix (a table whose header names the apps), a cell starting with `●`, `◐` or `—`
+renders as a status dot, the rest of the cell being its note; elsewhere a `—` stays a dash. `MUST`, `SHOULD` and
+`MAY` render as a level pill wherever they appear in prose, lists or tables, including `**MUST.**` and `(SHOULD)`.
 
 Every push to `master` builds the downloads and the site and deploys them to GitHub Pages.
 

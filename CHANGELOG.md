@@ -20,6 +20,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **The New app checklist can be ticked.** Ticks are kept in the reader's browser, a line above the groups counts
+  them, and *Clear ticks* resets them.
+- **Principles opens with Editora's keymap picker** instead of repeating the overview's screenshot.
+- **The "not found" dot is easier to see**, in dark mode especially: an outline in the muted text colour.
+- **The README links the new app template** and describes the dot and pill conventions as they now work.
 - **Levels read the same everywhere.** MUST, SHOULD and MAY render as the level pill in prose and lists too
   ("**MUST.**", "(SHOULD)"), not only in table cells; on the site and in the PDF.
 - **Rule tables stack on a phone.** A table with a Level column turns each row into a card with its level and
@@ -28,7 +33,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Screenshot galleries leave no gap.** Galleries are two to a row; with an odd count the first screenshot spans
   the row.
 - **The overview is reorganised.** The Editora screenshot sits beside the title, with the edition under the
-  actions; *Where to start* and *How to read it* come before the family, which is now six even tiles with Editora
+  actions (side by side from 64rem, so the three actions stay on one row; stacked below that); *Where to start*
+  and *How to read it* come before the family, which is now six even tiles with Editora
   marked as the reference.
 
 ### Fixed

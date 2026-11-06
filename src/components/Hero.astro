@@ -46,8 +46,14 @@ if (image && data.hero) data.hero = { ...data.hero, image: undefined };
     box-shadow: 0 1px 2px rgb(0 0 0 / 0.08), 0 18px 40px -18px rgb(0 0 0 / 0.45);
   }
   @media (min-width: 50rem) {
-    .hero-with-shot { grid-template-columns: 5fr 6fr; gap: 3%; }
     /* Starlight keeps a column for the image it no longer draws; give the copy the whole of its side. */
     .hero-with-shot :global(.hero) { grid-template-columns: 100%; padding-block: 2rem 1.25rem; }
+    /* Stacked, the screenshot stays a readable size rather than filling a wide column. */
+    .hero-shot { max-width: 40rem; }
+  }
+  /* Side by side only where the copy column is wide enough for the three actions on one row (about 28rem). */
+  @media (min-width: 64rem) {
+    .hero-with-shot { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 3%; }
+    .hero-shot { max-width: none; }
   }
 </style>

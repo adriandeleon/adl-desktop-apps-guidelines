@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **A name and a mark: Pauta.** Spanish for a guideline, and for the ruled lines on writing paper. The mark (three
+  periwinkle rules and a teal tick on the family's Ink tile) is the favicon and the site logo; a 1280 × 640 card
+  serves shared links. The README, the PDF and the footer carry the name. Sources and how to re-render them are in
+  `branding/`.
 - **Start from the template.** The New app checklist and Repository documents link to
   [adl-desktop-app-template](https://github.com/adriandeleon/adl-desktop-app-template), a GitHub template
   repository that meets every MUST: a runnable app with its tests, CI and release workflows, and an example of

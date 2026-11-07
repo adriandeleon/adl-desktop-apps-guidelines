@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-11-07
+
+### Changed
+
+- **Secrets and config safety are MUSTs.** SET-11 (read a config file with suspicion: clamp on load, keep a file
+  that can't be read as a backup, never stop startup over it), SET-13 (no secret in a config file; keys and tokens
+  in the OS keychain, off the FX thread), SET-14 (a credential the app can ask for again stays in memory), SET-15 (a
+  secret in the wrong place is refused) and SET-16 (an option that weakens security has no UI) were SHOULDs and are
+  now MUSTs, and the checklist lists them. Apps fail them today, so this is a major edition: Torrenta, Modula, Mirada
+  and nux keep no backup of a bad config file, and in Torrenta and nux a malformed `\uXXXX` escape stops startup;
+  Editora keeps its AI keys in `settings.json` as a fallback and writes the keychain on the FX thread, and lets
+  plugin signature checking be switched off from Settings; Torrenta keeps its proxy, Torznab and remote-profile
+  secrets in plain text. SET-11 now asks for a backup, not the exact name `<name>.corrupt.bak`, and its check
+  includes a parser that throws something other than an `IOException`.
+- **The checklist sets the level.** Where a page and the checklist disagreed, the checklist wins, as `AGENTS.md`
+  says: PLAT-04 (one JPMS module) is a MUST, which all six apps meet; TABS-15 (panel state restored), TBAR-07 (a
+  toggle wears `:open`) and ICON-09 (readable text) are SHOULDs.
+- **One rule for readable text.** ICON-09 now holds what ICON-03 and KBD-19 repeated; those two IDs are retired, and
+  Keyboard links to ICON-09.
+
+### Fixed
+
+- **Follow the system.** The feature matrix marked every app as following the system's light or dark scheme; only
+  Mirada and nux do. Editora, Torrenta, Termina and Modula switch live but have no system choice, and WIN-02 and
+  ICON-16 name both apps that do.
+- **Gaps per app** lists what each app fails among the MUSTs above, and Editora's row the MUSTs its rules' References
+  already said it misses.
+- **SET-15** said a problem report redacts hosts; it redacts tokens, credentials, e-mail addresses, user names and
+  home paths, and keeps the host.
+
 ## [2.0.2] - 2026-11-06
 
 ### Added

@@ -105,7 +105,7 @@ title and chord come from the registry and the active keymap. Reference: Editora
   - *Check (by hand):* look at the top and the bottom of a window in a light and a dark theme for a line between
     the bands.
   - *Reference:* Editora `app.css` (`.menu-bar, .tool-bar`).
-- **TBAR-07 · MUST.** A toggle looks on while it is on: a button that opens an overlay (Find, the palette, a split)
+- **TBAR-07 · SHOULD.** A toggle looks on while it is on: a button that opens an overlay (Find, the palette, a split)
   and the Simple mode button carry the `:open` pseudo-class while their state holds, so the way back out does not
   look like the way in.
   - *Check (code):* each such button sets a pseudo-class from its state, and the stylesheet gives that state a fill.

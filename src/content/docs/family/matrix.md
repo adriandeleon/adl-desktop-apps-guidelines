@@ -91,7 +91,7 @@ Surveyed on 2026-11-05 from each repository's default branch (the rows added in 
 | Doctor / diagnosis | ● | ◐ per torrent | — | ◐ native libs | — | — |
 | Single instance (hand off to running app) | ● | ● | — | — | — | ● |
 | `--config-dir` and other CLI flags | ● | ● | ● | — | — | ◐ |
-| Light / dark / follow system, live switch | ● | ● | ● | ● | ● | ● |
+| Light / dark / follow system, live switch | ◐ live, no system choice | ◐ live, no system choice | ◐ live, no system choice | ◐ live day/night, no system choice | ● | ● |
 | Caret & Ink theme pair (Editora Light / Dark) | ● authored | ● vendored | ● vendored | — | — Cupertino | — Primer |
 | Icons as themed SVG paths, one style class per family | ● two families | ● two families | ● filled, menus | ◐ transport glyphs | ● hand-drawn stroked | — tray bitmap |
 | State colors from theme roles, contrast-tested | ● `StyleContrastTest` | ◐ roles, no test | ◐ roles; terminal schemes tested | — fixed hexes | ◐ accent tested | ◐ roles, no test |

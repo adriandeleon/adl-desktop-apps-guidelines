@@ -29,7 +29,7 @@ a GitHub template repository: a runnable app with its tests, CI and release work
 repository document, built to the Pauta edition its README names. Click **Use this template**, then run
 `scripts/rename.sh <AppName> <package>`.
 
-**Pauta 2.0.1 · 6 November 2026.** The version and date live in `package.json`; [CHANGELOG.md](CHANGELOG.md) says what each edition changed.
+**Pauta 3.0.0 · 7 November 2026.** The version and date live in `package.json`; [CHANGELOG.md](CHANGELOG.md) says what each edition changed.
 
 📖 **Read it at [pauta-project.dev](https://pauta-project.dev/)**
 — or download the [PDF](https://pauta-project.dev/downloads/adl-desktop-apps-guidelines.pdf)

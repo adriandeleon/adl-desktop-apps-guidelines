@@ -17,8 +17,9 @@ description: "Status bar, themes, title bar, dialogs, Welcome, About, window sta
   - *Check (code):* one place applies the app theme to every open window, and the theme list has a system choice
     that follows the OS color scheme as it changes.
   - *Reference:* Editora `ui/Themes.java` (`applyAppTheme`) switches at run time and `ui/WindowColorScheme.java` tells
-    every window's frame which scheme it is in; Mirada `ui/Theme.java` (`ThemeChoice.SYSTEM`) follows the system.
-    Editora has no system choice yet.
+    every window's frame which scheme it is in; Mirada `ui/Theme.java` (`ThemeChoice.SYSTEM`) and nux
+    `ui/Theme.java` (`THEME_SYSTEM`, the default) follow the system. Editora, Torrenta, Termina and Modula switch
+    live but have no system choice yet.
 - **WIN-03 · SHOULD.** The title bar uses JavaFX 27's `HeaderBar` with `StageStyle.EXTENDED` to carry the menu or
   tabs, with a decorated-window fallback, and `useSystemMenuBar` on macOS.
   - *Check (code):* the main stage is created `StageStyle.EXTENDED` with a `HeaderBar`, a setting falls back to a

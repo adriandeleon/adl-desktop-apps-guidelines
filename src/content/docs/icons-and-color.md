@@ -41,11 +41,6 @@ timestamps.
     `fonts/inter/` with their `OFL.txt`, and `Font.loadFont` runs on them before the first window is shown.
   - *Reference:* Editora `src/main/resources/com/editora/fonts/inter/`, `ui/Fonts.java` (`loadForFirstPaint`,
     called from `App`). Termina and Torrenta bundle the same four faces.
-- **ICON-03 · SHOULD.** A line of UI text is `-color-fg-default` and secondary text `-color-fg-muted`;
-  `-color-fg-subtle` (about 3:1) is for disabled or decorative text only.
-  - *Check (test):* a test lists the selectors of text that must be read and fails when one uses
-    `-color-fg-subtle`.
-  - *Reference:* Editora `StyleContrastTest.textThatMustBeReadUsesTheMutedRoleNotSubtle`.
 
 Modula is the stated exception to ICON-01 and ICON-02: IBM Plex Mono everywhere, because every reading on a radio is
 a number (see *Before adding a setting* in [Settings](../settings/)).
@@ -123,8 +118,9 @@ pill, a row tint and a hover state come from the same place. `.state-pill` is th
     pass the whole check: `.breakpoint-marker`, `.exec-arrow`, `.view-mode-bar`, `.recent-remove`,
     `.personal-note-tooltip-content`, the fold-gutter markers and the default editor and Markdown preview palettes
     in `app.css` still carry fixed hexes.
-- **ICON-09 · MUST.** Readable text uses `-color-fg-muted` or stronger, which is 4.5:1 on the default, subtle and
-  overlay grounds in both flagship themes.
+- **ICON-09 · SHOULD.** Readable text uses `-color-fg-muted` or stronger, which is 4.5:1 on the default, subtle and
+  overlay grounds in both flagship themes: a line of UI text is `-color-fg-default` and secondary text
+  `-color-fg-muted`. `-color-fg-subtle` (about 3:1) is for disabled or decorative text only.
   - *Check (test):* a contrast test computes muted ink on each ground, and fails a readable selector set in
     `-color-fg-subtle`.
   - *Reference:* Editora `StyleContrastTest.textThatMustBeReadUsesTheMutedRoleNotSubtle`.
@@ -167,8 +163,9 @@ pill, a row tint and a hover state come from the same place. `.state-pill` is th
   scheme, and changes with it.
   - *Check (code):* the theme setting has a system value, and a listener on
     `Platform.getPreferences().colorSchemeProperty()` re-applies the theme.
-  - *Reference:* Mirada `settings/Settings.java` (`ThemeChoice.SYSTEM`), `ui/Theme.java`. Editora doesn't yet: its
-    theme picker lists named themes only.
+  - *Reference:* Mirada `settings/Settings.java` (`ThemeChoice.SYSTEM`), `ui/Theme.java`; nux `config/Advanced.java`
+    (`THEME_SYSTEM`), `ui/Theme.java`. Editora, Torrenta, Termina and Modula don't yet: their pickers list named
+    themes only.
 - **ICON-17 · MUST.** A theme name the app does not know falls back to the first-run default theme.
   - *Check (code):* the lookup from a saved name to a theme ends in the default, not an exception.
   - *Reference:* Editora `Themes.themeFor`, falling back to `Themes.DEFAULT` (Editora Light).

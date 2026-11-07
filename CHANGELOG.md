@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.2] - 2026-11-06
+
+### Changed
+
+- **Mirada's homepage.** The overview's family grid and the matrix link Mirada to
+  [mirada-project.dev](https://mirada-project.dev/) beside its GitHub repository, as Editora, Torrenta and
+  Termina already are.
+
 ## [1.3.1] - 2026-11-06
 
 ### Changed

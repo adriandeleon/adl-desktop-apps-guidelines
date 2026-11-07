@@ -50,6 +50,12 @@ export function rulesJson(root) {
 
 const howTo = (base, version) => `## Using Pauta
 
+**Starting a new app:** create it from the GitHub template repository
+https://github.com/adriandeleon/adl-desktop-app-template (\`gh repo create <name> --template
+adriandeleon/adl-desktop-app-template\`, or **Use this template** on GitHub), then run \`scripts/rename.sh <AppName>
+<package>\`. It is built to the edition its README and AGENTS.md name; audit it against this edition and add what is
+missing.
+
 **Building a feature:** read the rules on its page first, then copy from the code each rule's *Reference* names.
 Editora is the reference implementation.
 

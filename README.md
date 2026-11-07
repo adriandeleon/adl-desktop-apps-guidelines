@@ -24,7 +24,12 @@ UI, UX and platform rules so the family of JavaFX desktop apps is the same app o
 [nux](https://github.com/adriandeleon/nux). Editora is the reference implementation: every rule names the class
 or file to copy from.
 
-**Pauta 2.0.0 · 6 November 2026.** The version and date live in `package.json`; [CHANGELOG.md](CHANGELOG.md) says what each edition changed.
+🧰 **Starting a new app?** Use [adl-desktop-app-template](https://github.com/adriandeleon/adl-desktop-app-template),
+a GitHub template repository: a runnable app with its tests, CI and release workflows, and an example of every
+repository document, built to the Pauta edition its README names. Click **Use this template**, then run
+`scripts/rename.sh <AppName> <package>`.
+
+**Pauta 2.0.1 · 6 November 2026.** The version and date live in `package.json`; [CHANGELOG.md](CHANGELOG.md) says what each edition changed.
 
 📖 **Read it at [pauta-project.dev](https://pauta-project.dev/)**
 — or download the [PDF](https://pauta-project.dev/downloads/adl-desktop-apps-guidelines.pdf)
@@ -34,10 +39,6 @@ Coding agents start at [`llms.txt`](https://pauta-project.dev/llms.txt): every e
 [`llms-full.txt`](https://pauta-project.dev/latest/llms-full.txt), with how to audit an app against them.
 Every edition stays online at its own address: [`/latest/`](https://pauta-project.dev/latest/) is always the newest,
 `/1.4.0/`, `/1.3.2/` and so on are permanent, and the header of every page switches between them.
-
-🧰 **Starting a new app?** Use [adl-desktop-app-template](https://github.com/adriandeleon/adl-desktop-app-template),
-a GitHub template repository that meets every MUST: a runnable app with its tests, CI and release workflows, and an
-example of every repository document. Click **Use this template**, then run `scripts/rename.sh <AppName> <package>`.
 
 ## What it covers
 

@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.1] - 2026-11-06
+
+### Changed
+
+- **The template comes first.** The overview opens *Where to start* with the two ways to implement Pauta: a new app
+  starts from [adl-desktop-app-template](https://github.com/adriandeleon/adl-desktop-app-template), an existing one works through the
+  checklist and its gaps. The hero links the template, and the PDF, the Markdown download, `llms.txt` and the README
+  name it at the top. They say the template is built to the edition its README names, not to every MUST of this one.
+
 ## [2.0.0] - 2026-11-06
 
 ### Added

@@ -22,7 +22,11 @@
       "items": [
         "keyboard",
         "window-shell",
+        "icons-and-colour",
+        "toolbars-and-tooltips",
+        "tabs-and-panels",
         "menus",
+        "tray-and-background",
         "settings",
         "diagnostics",
         "command-line",
@@ -33,7 +37,11 @@
       "label": "Templates",
       "items": [
         "templates/command-palette",
+        "templates/quick-open",
+        "templates/welcome",
         "templates/about",
+        "templates/confirm-dialog",
+        "templates/find-bar",
         "templates/message-log",
         "templates/settings-sync"
       ]

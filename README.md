@@ -24,7 +24,7 @@ UI, UX and platform rules so the family of JavaFX desktop apps is the same app o
 [nux](https://github.com/adriandeleon/nux). Editora is the reference implementation: every rule names the class
 or file to copy from.
 
-**Pauta 1.3.2 · 6 November 2026.** The version and date live in `package.json`; [CHANGELOG.md](CHANGELOG.md) says what each edition changed.
+**Pauta 1.4.1 · 6 November 2026.** The version and date live in `package.json`; [CHANGELOG.md](CHANGELOG.md) says what each edition changed.
 
 📖 **Read it at [pauta-project.dev](https://pauta-project.dev/)**
 — or download the [PDF](https://pauta-project.dev/downloads/adl-desktop-apps-guidelines.pdf)

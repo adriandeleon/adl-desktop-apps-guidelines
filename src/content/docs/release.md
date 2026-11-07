@@ -21,13 +21,14 @@ is no cross-building.
 - jpackage builds the installers through the Maven `dist` profile. **JReleaser** (`jreleaser.yml`) only
   creates the GitHub release: it attaches the files, `checksums_sha256.txt` and the changelog section.
 - The maven version is the single source of truth: `-SNAPSHOT` on `master`, a tag `vX.Y.Z` releases, a
-  post-release job bumps to the next snapshot.
+  post-release job bumps to the next snapshot (Editora's `bump` job in `release.yml` opens that pull request).
 - GitHub releases are immutable, so a **release-asset check** fails the run before publishing when an
-  expected file is missing.
+  expected file is missing (Editora's "Verify the expected release assets" step in `release.yml`).
 - **Linux desktop integration**: a `.desktop` file whose `StartupWMClass` is the JavaFX app class, plus
-  AppStream metainfo `io.github.adriandeleon.<App>`.
+  AppStream metainfo `io.github.adriandeleon.<App>` (Torrenta's `packaging/linux/` holds both; Editora's
+  `packaging/linux/Editora.desktop` has the `StartupWMClass`, but its metainfo id predates the rule).
 - **AOT cache** (JDK 25 Leyden): a training run during packaging cuts start-up time; Linux legs run it under
-  `xvfb`.
+  `xvfb` (Editora's `scripts/aot_build.java`).
 
 ## Install methods
 
@@ -80,6 +81,9 @@ Every workflow:
 - Puts `timeout-minutes` on every job, and uses `concurrency` to cancel a superseded pull-request run, never a run
   on `master`.
 - Uploads the surefire reports when tests fail and the JaCoCo report always; writes the coverage totals to the
-  job summary.
-- Skips signing cleanly when the secrets are absent (forks, dry runs); a tag without them fails.
-- Launches the packaged app once on each OS before a release (a smoke test).
+  job summary (Editora's "Summarise coverage" step in `ci.yml`).
+- Skips signing cleanly when the secrets are absent (forks, dry runs); a tag without them fails (Editora's
+  "Import signing certificate (macOS)" step checks `MACOS_CERT_P12` first).
+- Launches the packaged app once on each OS before a release (a smoke test): Torrenta's "Smoke-test the
+  packaged app" step runs the launcher in every target's image. Editora runs only the notarized macOS app
+  (`--version`).

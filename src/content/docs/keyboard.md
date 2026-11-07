@@ -10,7 +10,7 @@ description: "Commands, the Command Palette, keymaps, focus and accessibility."
 - Titles come from `command.<id>` and palette descriptions from `command.<id>.desc` in the message
   catalogs, so a registered command is localized and discoverable without extra work.
 - A command that cannot run in the current context is shown grayed with a tooltip that says why, not
-  hidden.
+  hidden (`ui/Chrome.java`: `paletteEnabled` and `disabledReason`).
 
 ## Command Palette
 
@@ -32,9 +32,12 @@ description: "Commands, the Command Palette, keymaps, focus and accessibility."
   where Cmd replaces Ctrl.
 - Layer order: base keymap → user overrides → plugin keymaps → the user's own bindings again, so the user
   always has the last word (`KeymapLayers`).
-- A keymap editor in Settings lists every command with its chord, searchable, with conflict warnings.
-- Never bake a chord into translated text. Derive the label from the active keymap.
-- Multi-key prefixes (`C-x …`) show a which-key style hint listing the possible next keys.
+- A keymap editor in Settings lists every command with its chord, searchable, with conflict warnings
+  (`ui/SettingsKeymapsPage.java`; conflicts from `KeybindingEdits.takenDefaults`).
+- Never bake a chord into translated text. Derive the label from the active keymap (`command/ChordFormat.java`,
+  the one place a binding is rendered).
+- Multi-key prefixes (`C-x …`) show a which-key style hint listing the possible next keys. Editora echoes only the
+  pending prefix (`C-x -`) in the status bar (`KeyDispatcher`); no app lists the next keys yet.
 
 ![Editora's keymap picker](../../assets/shots/editora-keymaps.png "Keymap: Select… offers Emacs, CUA, Sublime Text, Visual Studio Code and IntelliJ IDEA.")
 ![Editora's palette filtered to kill commands with Emacs chords](../../assets/shots/editora-emacs.png "M-x kill: each command shows its chord from the active keymap.")
@@ -42,7 +45,8 @@ description: "Commands, the Command Palette, keymaps, focus and accessibility."
 
 ## Focus and accessibility
 
-- Every interactive control is reachable with Tab and operable with Space/Enter.
+- Every interactive control is reachable with Tab and operable with Space/Enter. Checked in the running app;
+  `FocusRingFxTest` holds that every control family draws the focus ring when Tab reaches it.
 - Keyboard focus is drawn by one `:focus-visible` block at the end of `app.css`.
 - Icon-only buttons are built by a helper (`Icons.button`) that sets both the tooltip and the accessible
   text.
@@ -50,4 +54,4 @@ description: "Commands, the Command Palette, keymaps, focus and accessibility."
   `ToggleSwitch` is mouse-only.
 - Readable text uses `-color-fg-muted` or stronger; `-color-fg-subtle` (about 3:1) is for disabled or
   decorative text only.
-- Rows wrap instead of truncating to "…". Check German at 1024 px wide.
+- Rows wrap instead of truncating to "…". Check German at 1024 px wide, by eye: no test catches a cut row.

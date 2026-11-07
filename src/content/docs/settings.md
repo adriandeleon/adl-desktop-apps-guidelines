@@ -11,9 +11,10 @@ description: "The Settings window with search, live apply, versioned config and 
   name and English keywords. Title hits rank above description hits; whole words above word starts. The
   page with the best match opens, and every non-matching row, heading and card is hidden
   (`SettingsSearch`).
-- **Live apply.** No Save button. Text fields commit on Enter or focus loss; invalid numbers are marked and
-  never committed.
-- A change made in one window reaches every other open window.
+- **Live apply.** No Save button. Text fields commit on Enter or focus loss (`SettingsWindow.commitOnEnterOrBlur`);
+  invalid values are marked and never committed (`SettingsSyncPage`'s branch field).
+- A change made in one window reaches every other open window: every window holds the same `SharedConfig`, which
+  announces each change (`onSettingsChanged`).
 
 ![Editora's Settings window searching for sync, with the Sync page open](../../assets/shots/editora-settings-search.png "Typing sync in Settings: pages without a match gray out and the best page opens.")
 

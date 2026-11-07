@@ -90,7 +90,8 @@ of the next menu button. The offset must be at least the radius; Editora pins it
   platform's convention.
 - **Enablement is re-read on every open** (`refreshEnablement`), titles and chords on a keymap or locale change.
   A menu built before Git finished detecting a repository must not stay grayed out.
-- **Simple mode** shows a shorter menu, rebuilt only when the mode actually changes.
+- **Simple mode** shows a shorter menu, rebuilt only when the mode actually changes (`MainMenuBar.setSimple`,
+  `MenuBarModel.menus(simple)`).
 
 ![Editora's View menu open with toggle commands and their chords](../../assets/shots/editora-menu-bar.png "Editora's View menu: icons where a glyph fits, chords in one periwinkle column. An earlier build: rows now drop the menu's own name from their titles.")
 

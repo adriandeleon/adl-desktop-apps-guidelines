@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.1] - 2026-11-06
+
+### Changed
+
+- **Every rule names its code.** About twenty rules that named no class or file now do, checked against each app's
+  default branch: the status bar, themes, title bar, Welcome, About, window state, zoom and modes on Window shell
+  (`StatusBar`, `Themes`, `WindowColorScheme`, `ExtendedWindow`, `WorkspaceState`, `WindowChromeCoordinator`); the
+  `MessagesTest` checks behind each i18n rule; `App.main`'s AWT guard and `ProcessRunner.augmentedPath`; the command
+  sweep's home-directory check; the release workflow steps; `Chrome.disabledReason`, `SettingsKeymapsPage` and
+  `ChordFormat` on Keyboard; `commitOnEnterOrBlur` and `SharedConfig` on Settings; `MainMenuBar.setSimple`; the
+  bundled Inter folder; and `ToolbarCatalog`. Where Editora does not do what a rule says, the page now names the app
+  that does or says that none does yet: following the system theme is Mirada's `Theme`, the per-OS smoke launch and
+  the `io.github.adriandeleon.<App>` metainfo are Torrenta's, Editora zooms content only, no app lists a prefix's next
+  keys, and no app ships a CJK or right-to-left language. Rules checked by hand (an English value in a catalog, a cut
+  row at 1024 px) say so.
+
 ## [1.4.0] - 2026-11-06
 
 ### Added

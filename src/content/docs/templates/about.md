@@ -1,6 +1,6 @@
 ---
 title: "About window"
-description: "The family's About panel: identity, update status, licence, links and copyable environment details."
+description: "The family's About panel: identity, update status, license, links and copyable environment details."
 ---
 
 <span class="lvl lvl-must">MUST</span> in every app. Help → About, the `help.about` command, and on macOS the
@@ -32,7 +32,7 @@ Config: ~/.editora</div><span class="pin">6</span></div>
 <li><span class="pin">2</span><span><strong>Version and tagline.</strong> Version 14 px muted; a snapshot build appends its Git branch, "0.28.0-SNAPSHOT (feat/map)". The tagline is the README's one-line pitch, 13 px muted.</span></li>
 <li><span class="pin">3</span><span><strong>Update status.</strong> What the last update check found (see the states below), when it ran, and <em>Check now</em>. Nothing is claimed before a check has answered.</span></li>
 <li><span class="pin">4</span><span><strong>Copyright</strong>, muted.</span></li>
-<li><span class="pin">5</span><span><strong>Links.</strong> Licence, homepage, source code and releases, and the settings file, which opens in the app (or in the file manager for apps with no editor).</span></li>
+<li><span class="pin">5</span><span><strong>Links.</strong> License, homepage, source code and releases, and the settings file, which opens in the app (or in the file manager for apps with no editor).</span></li>
 <li><span class="pin">6</span><span><strong>Environment.</strong> Monospace 11.5 px, muted: version and build time, commit, Java and JavaFX versions with vendor, OS with architecture, config folder. Home folders shown as <code>~</code>.</span></li>
 <li><span class="pin">7</span><span><strong>Copy details</strong> copies the environment block and stays open; its label becomes "Copied". It sits in the content, not the button bar, so pressing it does not close the panel.</span></li>
 <li><span class="pin">8</span><span><strong>Close</strong>, the one button, and the default: Enter and Esc both close.</span></li>
@@ -61,7 +61,7 @@ date": with no answer, the panel says it has not checked.
 | Layout | One column, 14 px between blocks; content padding 6 8 2 8 | `.about-content` |
 | Icon | The app icon PNG at 72 px | `icon-128.png` |
 | Name / version / tagline | 26 px bold / 14 px muted / 13 px muted | `.about-name`, `.about-version`, `.about-tagline` |
-| Update colours | Available: accent, bold. Up to date: green. Failed: red. Last checked: muted | `.about-update*` |
+| Update colors | Available: accent, bold. Up to date: green. Failed: red. Last checked: muted | `.about-update*` |
 | Environment | JetBrains Mono 11.5 px, muted | `.about-env` |
 | Source of the version | Maven-filtered `build-info.properties`, read by `AppInfo`: the same text as `--version` and a problem report | `AppInfo` |
 

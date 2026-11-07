@@ -15,12 +15,12 @@ description: "The Settings window with search, live apply, versioned config and 
   never committed.
 - A change made in one window reaches every other open window.
 
-![Editora's Settings window searching for sync, with the Sync page open](../../assets/shots/editora-settings-search.png "Typing sync in Settings: pages without a match grey out and the best page opens.")
+![Editora's Settings window searching for sync, with the Sync page open](../../assets/shots/editora-settings-search.png "Typing sync in Settings: pages without a match gray out and the best page opens.")
 
 ## Before adding a setting
 
 A setting is a question the user has to answer. When the question has one right answer, choose it, make it the
-behaviour, and say why in the code and the docs; do not ship a knob for it. Modula's test: *would a car radio have
+behavior, and say why in the code and the docs; do not ship a knob for it. Modula's test: *would a car radio have
 it?* A preset button, yes; a "decimation stages" spinner, no. So Modula has no gain, bandwidth or squelch control:
 each has one right value for a listener, and the app supplies it. Add a setting when people really differ (a
 keymap, a theme, a language), not when the developer could not decide.

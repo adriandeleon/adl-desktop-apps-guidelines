@@ -50,7 +50,7 @@
 .s::before { content: ""; flex: none; width: 0.65rem; height: 0.65rem; border-radius: 50%; box-sizing: border-box; }
 .s-yes::before { background: var(--sl-color-accent); }
 .s-part::before { border: 1.5px solid var(--amber); background: linear-gradient(90deg, var(--amber) 50%, transparent 50%); }
-/* "Not found" is an outline in the body's muted colour: quieter than a filled dot, never fainter than the text. */
+/* "Not found" is an outline in the body's muted color: quieter than a filled dot, never fainter than the text. */
 .s-no::before { border: 1.5px solid var(--sl-color-gray-3); }
 :root[data-theme="light"] .s-no::before { border-color: var(--sl-color-gray-4); }
 
@@ -63,13 +63,13 @@
 .lvl-may { background: var(--sl-color-gray-6); color: var(--sl-color-gray-3); }
 :root[data-theme="light"] .lvl-must { color: var(--sl-color-accent); }
 
-/* Key chords read in the keyboard colour. */
+/* Key chords read in the keyboard color. */
 .sl-markdown-content kbd { font-family: var(--sl-font-mono); background: var(--brace-low); color: var(--brace); border: 0; border-radius: 4px; padding: 0.05rem 0.35rem; }
 
 .sl-markdown-content ul.contains-task-list { list-style: none; padding-inline-start: 0; }
 .sl-markdown-content .task-list-item input { accent-color: var(--sl-color-accent); margin-inline-end: 0.5rem; }
 
-/* Screenshots: a quiet frame, a caption in the muted colour, galleries in rows of two. */
+/* Screenshots: a quiet frame, a caption in the muted color, galleries in rows of two. */
 .sl-markdown-content figure.shot { margin: 1.5rem 0; }
 .sl-markdown-content figure.shot img {
   display: block; width: 100%; height: auto; border-radius: 8px;

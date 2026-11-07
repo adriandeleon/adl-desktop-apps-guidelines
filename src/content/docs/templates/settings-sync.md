@@ -73,7 +73,7 @@ the page in `SettingsWindow`; Torrenta and Termina carry the same package.
 </div>
 </div>
 
-Green, amber and red are the Settings status-pill colours. Amber means "will recover by itself" (offline, the
+Green, amber and red are the Settings status-pill colors. Amber means "will recover by itself" (offline, the
 remote unreachable); red means "the user must act" (Git missing, the repository written by a newer version, a sync
 that would remove most of a kind of data and waits for confirmation). The pill's accessible text is
 "Sync status: …".

@@ -27,9 +27,9 @@ are the same code with their own menus; nux's `TrayController` holds the close p
 </div>
 
 <ol class="anatomy">
-<li><span class="pin">1</span><span><strong>The icon</strong> is the app's own mark, recoloured by state, not a badge and never the number it stands for ("101.5" at 22 px is unreadable and lies by rounding). Torrenta's arrow is teal while something downloads, muted when nothing does, red on an error; Modula's broadcast glyph amber while listening, ink when stopped, coral on a fault; nux shows the charge number coloured by severity, grey when disconnected.</span></li>
+<li><span class="pin">1</span><span><strong>The icon</strong> is the app's own mark, recolored by state, not a badge and never the number it stands for ("101.5" at 22 px is unreadable and lies by rounding). Torrenta's arrow is teal while something downloads, muted when nothing does, red on an error; Modula's broadcast glyph amber while listening, ink when stopped, coral on a fault; nux shows the charge number colored by severity, gray when disconnected.</span></li>
 <li><span class="pin">2</span><span><strong>Status line</strong>, disabled, first. It is also the tooltip, because GNOME's AppIndicator extension renders a StatusNotifierItem's menu but not its tooltip, so the menu is the one place the live figures are sure to appear.</span></li>
-<li><span class="pin">3</span><span><strong>The main actions</strong> the window would offer, so the common jobs need no window: Listen becomes Stop, Record is greyed (not hidden) until the receiver runs; Torrenta's menu has none; nux offers Connect, Switch UPS and the instant commands, which still go through the app's confirmation.</span></li>
+<li><span class="pin">3</span><span><strong>The main actions</strong> the window would offer, so the common jobs need no window: Listen becomes Stop, Record is grayed (not hidden) until the receiver runs; Torrenta's menu has none; nux offers Connect, Switch UPS and the instant commands, which still go through the app's confirmation.</span></li>
 <li><span class="pin">4</span><span><strong>Show <em>App</em></strong> brings the window back, as a left click on the icon does.</span></li>
 <li><span class="pin">5</span><span><strong>Quit</strong>, after a separator. The only way to end the program apart from File → Quit and the system's Quit.</span></li>
 </ol>
@@ -51,7 +51,7 @@ icons and chords do not apply here. The order does.
 | Updates | Only when the value-equal snapshot changed: a repaint crosses a process boundary on Linux. Torrenta polls once a second, Modula nine times | `TrayDisplay`, `MainWindow.pushTray` |
 | Package | Free of JavaFX: it takes callbacks, and the window marshals them onto the FX thread | `TorrentaTray` |
 
-## Behaviour
+## Behavior
 
 - **MUST. Fully usable without a tray.** No icon is a normal outcome (stock GNOME has no StatusNotifier host), not an
   error. The reason is said where the person will look, because the bug they actually hit is silence: the box says
@@ -67,7 +67,7 @@ icons and chords do not apply here. The order does.
   geometry (`MainWindow.quit`).
 - **`--minimized` comes up behind the icon.** The window is never shown until the tray attempt has answered; if no icon
   comes, the window is shown after all, so a start at login can never leave a program with no way back. With the tray
-  setting off, Torrenta starts minimised instead and nux ignores the flag (`MainWindow.show`, nux's `App`).
+  setting off, Torrenta starts minimized instead and nux ignores the flag (`MainWindow.show`, nux's `App`).
 - **Start at login writes the OS's own entry, and nothing else.** An XDG autostart entry in `~/.config/autostart`
   (quoted `Exec`, `StartupWMClass` matching the installed launcher, `X-KDE-autostart-after=panel` so a tray host is up
   first), a LaunchAgent in `~/Library/LaunchAgents`, the `HKCU\…\Run` value on Windows (read together with
@@ -90,7 +90,7 @@ icons and chords do not apply here. The order does.
   OSC 777 notifications. The in-app status already shows the state, so a notification is never the only place it is
   said.
 - **A dock badge (MAY).** Torrenta puts the download rate on the macOS dock icon through AWT's `Taskbar` and a count
-  on a Linux launcher that honours Unity's `LauncherEntry` signal (KDE, Dash to Dock); nothing on Windows, whose
+  on a Linux launcher that honors Unity's `LauncherEntry` signal (KDE, Dash to Dock); nothing on Windows, whose
   taskbar badges only AWT's own windows. Cleared when nothing downloads; its own switch (`os/Badges`, `BadgeState`).
 - **A second launch brings the hidden window forward.** The [single-instance hand-off](../command-line/) shows a
   window hidden to the tray before it opens what it was given (`MainWindow.showFromTray`).
@@ -103,9 +103,9 @@ icons and chords do not apply here. The order does.
 | Key | English |
 |---|---|
 | `ui.tray` | A tray (menu-bar) icon with the rates and a menu; on by default |
-| `ui.closeToTray` | Closing the window keeps Torrenta in the tray. *The torrents go on; the tray icon's Show Torrenta brings the window back, its Quit ends the program, as does Quit in the File menu. Without a tray, closing quits.* On by default; nux greys it while the tray is off |
+| `ui.closeToTray` | Closing the window keeps Torrenta in the tray. *The torrents go on; the tray icon's Show Torrenta brings the window back, its Quit ends the program, as does Quit in the File menu. Without a tray, closing quits.* On by default; nux grays it while the tray is off |
 | (the OS entry) | Start Torrenta when you log in. *Adds Torrenta to your login items: an entry in ~/.config/autostart on Linux, a LaunchAgent on macOS, the Run key on Windows. Turned off in the system's own settings, it shows unticked here. Only for an installed Torrenta, not a run from source.* |
-| `os.autostartInTray` | Start behind the tray icon. *At login Torrenta comes up behind its tray icon instead of as a window, and minimised where there is no tray. `torrenta --minimized` does the same by hand.* |
+| `os.autostartInTray` | Start behind the tray icon. *At login Torrenta comes up behind its tray icon instead of as a window, and minimized where there is no tray. `torrenta --minimized` does the same by hand.* |
 | `notify.<event>` | One switch per event; `notify.finished` on by default |
 | `status.noTray` | No tray icon ({reason}); closing the window quits {app} |
 

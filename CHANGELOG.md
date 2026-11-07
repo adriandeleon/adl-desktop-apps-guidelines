@@ -7,36 +7,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.2] - 2026-11-06
+
+### Changed
+
+- **Mirada's homepage.** The overview's family grid and the matrix link Mirada to
+  [mirada-project.dev](https://mirada-project.dev/) beside its GitHub repository, as Editora, Torrenta and
+  Termina already are.
+
+## [1.3.1] - 2026-11-06
+
+### Changed
+
+- **American spelling throughout.** Color, behavior, gray, license, customize and canceled, in every page, the
+  changelog and the README; the Icons and color page's address follows (`/icons-and-color/`). `AGENTS.md` states
+  the rule.
+
 ## [1.3.0] - 2026-11-06
 
 ### Added
 
-- **Icons and colour**, a new Experience page: Inter on every scene and JetBrains Mono for code; the Caret & Ink
+- **Icons and color**, a new Experience page: Inter on every scene and JetBrains Mono for code; the Caret & Ink
   palette as a swatch grid of each token's light and dark value; the state vocabulary (amber not durable yet, red
   broken, green verified, accent an offer, periwinkle the keyboard and nothing else) named once on `.root` from the
   theme's roles, with the contrast rules `StyleContrastTest` pins; the 28 themes and the separate editor themes;
-  and the two icon families (kit line glyphs stroked, Material glyphs filled), their classes, sizes and licences,
-  with what each of the six apps does. The checklist gains an Icons and colour group and the matrix three rows.
+  and the two icon families (kit line glyphs stroked, Material glyphs filled), their classes, sizes and licenses,
+  with what each of the six apps does. The checklist gains an Icons and color group and the matrix three rows.
 - **Toolbars and tooltips**, a new Experience page: an icon-only button gets its tooltip and its accessible name from
   one helper, stays out of the Tab order and names its command and chord in the tooltip; groups are spaced, not
   ruled, on one chrome band with the menu bar and the tab strip; a toggle wears `:open` while its overlay shows; the
-  pinned tail never overflows; and Editora's customisable toolbar (drag to reorder, drag off to remove, Escape) as a
+  pinned tail never overflows; and Editora's customizable toolbar (drag to reorder, drag off to remove, Escape) as a
   MAY. An annotated mockup and a spec table from Editora's `Icons`, `ToolbarCoordinator` and `ToolWindowManager`.
 - **Tabs and tool panels**, a new Experience page. The tab header is a graphic label that carries the states (`•` and
-  amber italic for unsaved, a pin and bold for pinned, muted italic for read-only, the Git colours), is the drag
+  amber italic for unsaved, a pin and bold for pinned, muted italic for read-only, the Git colors), is the drag
   handle for reordering, and opens into the editor with a three-sided border; bulk close skips pinned tabs and Reopen
   Closed Tab brings the last one back. Tool panels dock on three stripes, two windows a side, toggled by commands and
   restored from `workspace-state.json`, with the SplitPane divider as their only edge. An annotated mockup and a spec
   table from Editora's `TabHeaders`, `ClosedTabs`, `Switcher` and `ToolWindowManager`; Torrenta's sidebar and detail
   pane, Mirada's panels and Termina's panes beside them.
 - **Tray and background**, a new Experience page for the apps that keep working without their window: the tray icon
-  (a StatusNotifierItem on Linux, AWT elsewhere, the app's own mark recoloured by state), its text-only menu with the
+  (a StatusNotifierItem on Linux, AWT elsewhere, the app's own mark recolored by state), its text-only menu with the
   status line first and Quit last, close to tray only while an icon is actually up, `--minimized`, start at login as
   the OS's own entry with nothing beside it, and desktop notifications through one `Notifier` with one switch per
   event. From Torrenta's `tray/`, `os/Autostart` and `automation/Notifiers`, with Modula and nux. The checklist gains a
   Tray and background group and the matrix two rows.
 - **QuickOpen picker template.** The palette card with a title and a prompt, for choosing one thing from a list:
-  anatomy, spec (620 px, 26 px rows that hug the matches, 12 before scrolling), behaviour (the supplier's order until
+  anatomy, spec (620 px, 26 px rows that hug the matches, 12 before scrolling), behavior (the supplier's order until
   you type, the current value pre-selected, preview with an undo, row actions), what each app picks with it, and the
   strings. From Editora's `QuickOpen`, `PickerKeys` and `OverlayHost`; Mirada's `CommandPalette.Choices` is the
   same shape.
@@ -44,7 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   their chords, recent projects and files a digit away, Customize, Help and the footer; the spec from `WelcomePane`,
   when the page shows and when it does not (the empty-state hint after the last tab), and Torrenta's drop zone as
   the empty state for an app with no documents.
-- **Confirm dialog**, a template. The question before a destructive action: it names the thing and the consequence, the button names the action in red (`danger`), Cancel is the catalogue's word with Escape behind it, and where an undo exists there is no question. Mockup, the three-answer unsaved-changes variant, a spec tied to Editora's `CloseCoordinator` and `GitCoordinator.confirmDestructive` and Torrenta's `RemoveConfirm`, and the strings.
+- **Confirm dialog**, a template. The question before a destructive action: it names the thing and the consequence, the button names the action in red (`danger`), Cancel is the catalog's word with Escape behind it, and where an undo exists there is no question. Mockup, the three-answer unsaved-changes variant, a spec tied to Editora's `CloseCoordinator` and `GitCoordinator.confirmDestructive` and Torrenta's `RemoveConfirm`, and the strings.
 - **Find bar**, a template. In-scene and incremental with a count; Enter and Shift+Enter step, Escape closes the
   bar and gives the keyboard back; the keymap's caret chords work in the field; big documents and scrollbacks are
   searched off the FX thread. Editora's docked find and replace and Termina's floating card as mockups, Torrenta's
@@ -62,9 +78,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Menus**, a new Experience page. The menu bar and right-click menus share one look: Inter 14 px rows of 34 px, a
   22 px icon column with the command's own glyph, the chord right-aligned in its own column at 11 px in the keyboard
-  colour, radius 8 and a shadow that falls below the card. Right-click menus MUST open one at a time, close on a press
+  color, radius 8 and a shadow that falls below the card. Right-click menus MUST open one at a time, close on a press
   anywhere outside them (including inside the control they were opened on, which JavaFX's auto-hide exempts), close on
-  Escape and open from the Menu key at the selected row. Two annotated mockups, a spec table and the behaviour, all
+  Escape and open from the Menu key at the selected row. Two annotated mockups, a spec table and the behavior, all
   from Editora's `MainMenuBar`, `ContextMenuDismissal`, `RowContextMenu` and `LazyContextMenu`. The checklist gains a
   Menus group and the feature matrix three menu rows.
 - **What's new, and a Changelog page.** The overview shows the current edition's changes; the Changelog page lists
@@ -97,7 +113,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **The New app checklist can be ticked.** Ticks are kept in the reader's browser, a line above the groups counts
   them, and *Clear ticks* resets them.
 - **Principles opens with Editora's keymap picker** instead of repeating the overview's screenshot.
-- **The "not found" dot is easier to see**, in dark mode especially: an outline in the muted text colour.
+- **The "not found" dot is easier to see**, in dark mode especially: an outline in the muted text color.
 - **The README links the new app template** and describes the dot and pill conventions as they now work.
 - **Levels read the same everywhere.** MUST, SHOULD and MAY render as the level pill in prose and lists too
   ("**MUST.**", "(SHOULD)"), not only in table cells; on the site and in the PDF.
@@ -106,7 +122,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **The feature matrix keeps its app row in view** while a long table scrolls (wide screens).
 - **Screenshot galleries leave no gap.** Galleries are two to a row; with an odd count the first screenshot spans
   the row.
-- **The overview is reorganised.** The Editora screenshot sits beside the title, with the edition under the
+- **The overview is reorganized.** The Editora screenshot sits beside the title, with the edition under the
   actions (side by side from 64rem, so the three actions stay on one row; stacked below that); *Where to start*
   and *How to read it* come before the family, which is now six even tiles with Editora
   marked as the reference.
@@ -126,7 +142,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Visual templates** for four shared surfaces: the Command Palette, the About window, the Message Log and the
   Settings Sync page. Each has an annotated mockup at the apps' real sizes (light and dark), its anatomy, a spec
-  table tied to Editora's code, its behaviour, its exact strings, and the real screenshots from the apps.
+  table tied to Editora's code, its behavior, its exact strings, and the real screenshots from the apps.
 
 ### Fixed
 

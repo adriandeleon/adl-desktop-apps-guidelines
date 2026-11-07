@@ -10,7 +10,7 @@ description: "NullAway, coverage floors and the guard tests that pay for themsel
   package's coverage rises, ratchet its floor up. A test (`BuildHygieneTest`) fails when the documented
   floor table and the pom disagree.
 - **Extract the decision, then test it** ([principle 12](../principles/#for-the-people-building-them)). **Prefer a pure decision helper plus unit tests.** Use the headless FX harness only when controller or
-  toolkit behaviour is the point.
+  toolkit behavior is the point.
 - **Tag FX tests `@Tag("fx")`**, so the pure suite runs alone with `-DexcludedGroups=fx`.
 - **Guard tests that pay for themselves across the family:**
   - *Command sweep* runs every registered command in a real headless window (`CommandSweepFxTest`).

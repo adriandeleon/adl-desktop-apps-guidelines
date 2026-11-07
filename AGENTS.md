@@ -20,7 +20,8 @@ Editora (`../Editora`) is the reference implementation.
   wins and the guide is fixed in the same change.
 - Feature matrix cells start with `●`, `◐` or `—` (rendered as dots by `src/lib/rehype-status.mjs`; the print
   build does the same in `scripts/print-markup.py`). Change both if the convention changes.
-- Plain, direct sentences written for the app developer. No marketing copy.
+- Plain, direct sentences written for the app developer. No marketing copy. American spelling throughout (color,
+  behavior, gray, license, customize, canceled), in pages, the changelog, the README and comments alike.
 - **Every content change is an edition.** A change to what a reader takes as guidance (a page under
   `src/content/docs/`, `pages.json`, the checklist, the matrix, a screenshot) bumps the version in `package.json` in
   the same commit and is described under its `## [x.y.z] - YYYY-MM-DD` section in `CHANGELOG.md` (Keep a Changelog).

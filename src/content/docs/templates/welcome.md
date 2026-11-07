@@ -47,14 +47,14 @@ with the text rules in `ui/WelcomeText.java` and the strings under `welcome.*`.
 </div>
 
 <ol class="anatomy">
-<li><span class="pin">1</span><span><strong>Identity.</strong> The app icon at 64 px beside the name (2.4 em, bold) and the README's one-line tagline, muted. One centred column, at most 640 px wide and never narrower than 340; a longer window scrolls.</span></li>
+<li><span class="pin">1</span><span><strong>Identity.</strong> The app icon at 64 px beside the name (2.4 em, bold) and the README's one-line tagline, muted. One centered column, at most 640 px wide and never narrower than 340; a longer window scrolls.</span></li>
 <li><span class="pin">2</span><span><strong>Start actions</strong>, each an existing command: New File, Open File, Open Folder as a Project (only with Projects on), Clone Git Repository (only with Git on), and the Command Palette always last, the gateway to everything else. Accent links with no box; the icon sits in a 26 px column so every label starts at the same x, and the whole row answers a click.</span></li>
-<li><span class="pin">3</span><span><strong>Chord</strong>, right-aligned past a 32 px gap, in the keyboard colour, from the active keymap. Unbound: no chord. Open File shows find-file's chord in the Emacs keymap, where that is the key to learn. The hovered row tints and the chord becomes a chip.</span></li>
-<li><span class="pin">4</span><span><strong>Entry number.</strong> The first nine recent entries, projects first, are numbered in the keyboard colour; typing that digit opens the entry. Projects come in the order of their most recent file.</span></li>
+<li><span class="pin">3</span><span><strong>Chord</strong>, right-aligned past a 32 px gap, in the keyboard color, from the active keymap. Unbound: no chord. Open File shows find-file's chord in the Emacs keymap, where that is the key to learn. The hovered row tints and the chord becomes a chip.</span></li>
+<li><span class="pin">4</span><span><strong>Entry number.</strong> The first nine recent entries, projects first, are numbered in the keyboard color; typing that digit opens the entry. Projects come in the order of their most recent file.</span></li>
 <li><span class="pin">5</span><span><strong>Recent file row.</strong> The name keeps its width; a chip names the project (or the host of a remote file); the folder is muted, relative to the project root, with <code>~</code> for home, and elides from its start so the part that differs stays visible. The full path is the row's tooltip; right-click offers Copy Path and Remove from recent files.</span></li>
 <li><span class="pin">6</span><span><strong>Disclosure.</strong> Five rows per list; the rest wait behind "Show N more", which becomes "Show fewer".</span></li>
 <li><span class="pin">7</span><span><strong>Customize.</strong> The active keymap and app theme by name; each link runs the picker command. Under an Emacs-style keymap a caption explains the notation. On a first run, with nothing recent, this block moves up under Start.</span></li>
-<li><span class="pin">8</span><span><strong>Help and footer.</strong> Documentation, What's New (the release notes) and the Doctor. Then the version, the home page and the licence; a dev build adds its commit on its own line once the lookup, which runs <code>git</code> off the FX thread, has answered.</span></li>
+<li><span class="pin">8</span><span><strong>Help and footer.</strong> Documentation, What's New (the release notes) and the Doctor. Then the version, the home page and the license; a dev build adds its commit on its own line once the lookup, which runs <code>git</code> off the FX thread, has answered.</span></li>
 </ol>
 
 ## Spec
@@ -62,7 +62,7 @@ with the text rules in `ui/WelcomeText.java` and the strings under `welcome.*`.
 | Property | Value | Reference |
 |---|---|---|
 | Kind | A real tab content in its own closeable "Welcome" tab, so the tab strip handles switching and closing; not an overlay | `WelcomePane implements TabContent`, `MainController.addWelcomeTab` |
-| Column | 640 px max, 340 px min, 48 px margin, centred in a scroll pane; below the minimum the page scrolls sideways | `COLUMN_WIDTH`, `MIN_COLUMN_WIDTH`, `MARGIN` |
+| Column | 640 px max, 340 px min, 48 px margin, centered in a scroll pane; below the minimum the page scrolls sideways | `COLUMN_WIDTH`, `MIN_COLUMN_WIDTH`, `MARGIN` |
 | Zoom | Every px size is multiplied by the text zoom and the fonts are `em`, so zoom scales the layout, not only the words | `setFontScale`, `.welcome-*` |
 | Surface | `-color-bg-default`, the UI surface, not the editor's; its tab takes the same fill | `.welcome-pane`, `.ui-surface-tab` |
 | Header | Icon 64 px; title 2.4 em bold; tagline `-color-fg-muted` | `.welcome-title`, `.welcome-caption` |
@@ -74,7 +74,7 @@ with the text rules in `ui/WelcomeText.java` and the strings under `welcome.*`.
 | Lists | 5 rows, then a flat disclosure button | `COLLAPSED_RECENT_LIMIT`, `addCollapsed` |
 | Focus | The first recent entry, or New File when there is none, with no focus ring; Enter and Space open it | `requestFocus`, `focusPage` |
 
-## Behaviour
+## Behavior
 
 - **Shown** at startup when there is no session to restore (so always with `--no-session`), by the `view.welcome`
   command (Help → Welcome Page), and when the tab strip is empty after a project swap (`showWelcomeIfNoTabs`).

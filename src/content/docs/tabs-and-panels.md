@@ -34,7 +34,7 @@ rules in `app.css`.
 
 <ol class="anatomy">
 <li><span class="pin">1</span><span><strong>Active tab.</strong> Its fill is the editor's own surface (<code>-editor-surface</code>) with a border on three sides and none at the bottom, so the tab opens into the editor instead of sitting on it. Title bold in <code>-color-fg-default</code>; the file-type glyph tints accent.</span></li>
-<li><span class="pin">2</span><span><strong>Unsaved tab.</strong> A <code>•</code> before the name, amber (<code>-state-amber</code>, "not durable yet") and italic. Amber outranks the Git-status colour: "you have not saved this" matters more than "this differs from HEAD".</span></li>
+<li><span class="pin">2</span><span><strong>Unsaved tab.</strong> A <code>•</code> before the name, amber (<code>-state-amber</code>, "not durable yet") and italic. Amber outranks the Git-status color: "you have not saved this" matters more than "this differs from HEAD".</span></li>
 <li><span class="pin">3</span><span><strong>Pinned tab.</strong> A pin glyph and a bold title, kept at the front of the strip in pin order. Every bulk close (Others, All, Unmodified, Left, Right) skips it.</span></li>
 <li><span class="pin">4</span><span><strong>Read-only tab.</strong> Muted and italic, echoing the status bar's Read-Only segment.</span></li>
 <li><span class="pin">5</span><span><strong>Drag to reorder.</strong> The header is the drag handle and a snapshot of the whole tab follows the pointer; the dragged tab dims to 40 % and a 2 px accent line marks the edge it would land on (left half of a tab: before it; right half: after).</span></li>
@@ -51,7 +51,7 @@ rules in `app.css`.
   [right-click menu](../menus/) lists them (`TabContextMenu`).
 - **MUST. The header is the title.** The Tab's own text stays empty; a graphic header carries the file-type glyph,
   the markers and the title in a `.tab-title` label, which is what makes it a drag handle and lets each state set
-  its own colour (`TabHeaders`). The tooltip is the full path.
+  its own color (`TabHeaders`). The tooltip is the full path.
 - **MUST. Bulk close skips pinned tabs.** `closeOtherTabs`, `closeAllTabs`, `closeUnmodifiedTabs` and
   `eligibleToLeft` / `eligibleToRight` all filter on the pinned set; a pinned tab cannot be closed by accident. Pinning
   moves the tab to the end of the pinned group, unpinning to just after it (`togglePin`, `moveToPinBoundary`).
@@ -63,7 +63,7 @@ rules in `app.css`.
 - **Drag to reorder** with the feedback above (`TabHeaders.enableTabDrag`; Termina `installTabDrag` and the pure
   `TabReorder.insertIndex`). In Termina a double-click on a tab renames it, and a pane dragged onto a tab joins it
   (the whole header outlined, `tab-drop-into`).
-- **Git status on the tab** in the Project tree's colours: modified accent, added green, untracked olive, renamed
+- **Git status on the tab** in the Project tree's colors: modified accent, added green, untracked olive, renamed
   violet, deleted muted, conflict red (`TabGitStatus`). A read-only tab still shows it; an unsaved one shows amber.
 - **Switcher.** `C-x C-b` (Emacs) opens an IntelliJ-style list of the open files in tab order: `C-n` / `C-p` or the
   arrows move, Enter or releasing Ctrl activates, `C-g` or Esc cancels, `C-d` or Backspace closes the highlighted

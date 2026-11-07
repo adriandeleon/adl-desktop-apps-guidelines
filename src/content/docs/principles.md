@@ -43,7 +43,7 @@ written down.
     coverage table in the docs) has a test that fails when the two drift, in both directions.
     *(Modula's `DependenciesTest`, nux and Torrenta's `AppInfo`, Editora's `BuildHygieneTest`.)*
 12. **Separate the decision from the UI, then test it.** Anything with a rule in it (which key does what, sort
-    order, when a bar shows, whether a colour is legible) is a small pure method or class with its own unit
+    order, when a bar shows, whether a color is legible) is a small pure method or class with its own unit
     tests. UI classes stay thin and only wire decisions to controls. *(Termina, Torrenta, Mirada and nux
     "Conventions"; Editora's pure decision helpers.)* See [Code quality gates](../quality/).
 13. **Verify by driving the real app.** UI bugs are visual and none of them throw. Before calling a UI change

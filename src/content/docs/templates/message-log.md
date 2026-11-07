@@ -32,7 +32,7 @@ carries the same pair.
 <li><span class="pin">1</span><span><strong>Title</strong> "Messages", 14 px bold.</span></li>
 <li><span class="pin">2</span><span><strong>Filter</strong>, focused on open. Filters as you type; ↓ or Enter moves into the results without leaving the field.</span></li>
 <li><span class="pin">3</span><span><strong>Entry.</strong> The time as <code>HH:mm:ss</code> (11 px, monospace, muted) and the message as it appeared in the echo line. Newest first.</span></li>
-<li><span class="pin">4</span><span><strong>Severity</strong> colours the message, not the row: errors red, warnings amber, information in the default colour. The time stays muted.</span></li>
+<li><span class="pin">4</span><span><strong>Severity</strong> colors the message, not the row: errors red, warnings amber, information in the default color. The time stays muted.</span></li>
 <li><span class="pin">5</span><span><strong>Actions:</strong> Copy (the visible entries as text), Clear (empties the session log and its unread count), and Open Doctor: messages carry no actions of their own, and a missing tool or a server that would not start is where Doctor helps.</span></li>
 <li><span class="pin">6</span><span><strong>Key hint</strong>, muted, 11 px.</span></li>
 <li><span class="pin">7</span><span><strong>Echo line.</strong> The status bar's latest message; a click opens the log.</span></li>
@@ -52,7 +52,7 @@ carries the same pair.
 | Lifetime | This session only, in memory. Not written to disk: the Debug Log is the persistent record | `MessageLog` |
 | Blank messages | Not recorded (a blank message only clears the echo line) | `MessageLog.add` |
 
-## Behaviour
+## Behavior
 
 - **Open:** click the echo line or the unread-error count, or run `view.messageLog`.
 - **Close:** Esc, `C-g`, or a click outside. **Copy:** `Ctrl/Cmd+C` copies the selected entries.

@@ -1,0 +1,369 @@
+<!DOCTYPE html><html lang="en" dir="ltr" data-theme="dark" data-has-toc data-has-sidebar class="astro-ffdeby5s"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Icons and color | Pauta</title><link rel="canonical" href="https://pauta-project.dev/1.3.1/icons-and-color/"/><link rel="sitemap" href="/1.3.1/sitemap-index.xml"/><script src="/1.3.1/lightbox.js" defer></script><script src="/1.3.1/mock-fit.js" defer></script><script src="/1.3.1/checklist.js" defer></script><link rel="apple-touch-icon" href="/1.3.1/pauta-128.png"/><link rel="shortcut icon" href="/1.3.1/favicon.svg" type="image/svg+xml"/><meta name="generator" content="Astro v7.4.7"/><meta name="generator" content="Starlight v0.42.9"/><meta property="og:title" content="Icons and color"/><meta property="og:type" content="article"/><meta property="og:url" content="https://pauta-project.dev/1.3.1/icons-and-color/"/><meta property="og:locale" content="en"/><meta property="og:description" content="Inter and JetBrains Mono, the Caret &amp; Ink palette, state colors that mean one thing, themes, and the two icon families."/><meta property="og:site_name" content="Pauta"/><meta name="description" content="Inter and JetBrains Mono, the Caret &amp; Ink palette, state colors that mean one thing, themes, and the two icon families."/><meta property="og:image" content="https://pauta-project.dev/1.3.1/og.png"/><meta property="og:image:width" content="1280"/><meta property="og:image:height" content="640"/><meta property="og:image:alt" content="Pauta, the adl desktop apps guidelines, with the six apps' icons"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:image" content="https://pauta-project.dev/1.3.1/og.png"/><script>
+	window.StarlightThemeProvider = (() => {
+		const storedTheme =
+			typeof localStorage !== 'undefined' && localStorage.getItem('starlight-theme');
+		const theme =
+			storedTheme ||
+			(window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+		document.documentElement.dataset.theme = theme === 'light' ? 'light' : 'dark';
+		return {
+			updatePickers(theme = storedTheme || 'auto') {
+				document.querySelectorAll('starlight-theme-select').forEach((picker) => {
+					const select = picker.querySelector('select');
+					if (select) select.value = theme;
+					/** @type {HTMLTemplateElement | null} */
+					const tmpl = document.querySelector(`#theme-icons`);
+					const newIcon = tmpl && tmpl.content.querySelector('.' + theme);
+					if (newIcon) {
+						const oldIcon = picker.querySelector('svg.label-icon');
+						if (oldIcon) {
+							oldIcon.replaceChildren(...newIcon.cloneNode(true).childNodes);
+						}
+					}
+				});
+			},
+		};
+	})();
+</script><template id="theme-icons"><svg aria-hidden="true" class="light astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M5 12a1 1 0 0 0-1-1H3a1 1 0 0 0 0 2h1a1 1 0 0 0 1-1Zm.64 5-.71.71a1 1 0 0 0 0 1.41 1 1 0 0 0 1.41 0l.71-.71A1 1 0 0 0 5.64 17ZM12 5a1 1 0 0 0 1-1V3a1 1 0 0 0-2 0v1a1 1 0 0 0 1 1Zm5.66 2.34a1 1 0 0 0 .7-.29l.71-.71a1 1 0 1 0-1.41-1.41l-.66.71a1 1 0 0 0 0 1.41 1 1 0 0 0 .66.29Zm-12-.29a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.71-.71a1.004 1.004 0 1 0-1.43 1.41l.73.71ZM21 11h-1a1 1 0 0 0 0 2h1a1 1 0 0 0 0-2Zm-2.64 6A1 1 0 0 0 17 18.36l.71.71a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.76-.66ZM12 6.5a5.5 5.5 0 1 0 5.5 5.5A5.51 5.51 0 0 0 12 6.5Zm0 9a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Zm0 3.5a1 1 0 0 0-1 1v1a1 1 0 0 0 2 0v-1a1 1 0 0 0-1-1Z"/></svg><svg aria-hidden="true" class="dark astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.64 13a1 1 0 0 0-1.05-.14 8.049 8.049 0 0 1-3.37.73 8.15 8.15 0 0 1-8.14-8.1 8.59 8.59 0 0 1 .25-2A1 1 0 0 0 8 2.36a10.14 10.14 0 1 0 14 11.69 1 1 0 0 0-.36-1.05Zm-9.5 6.69A8.14 8.14 0 0 1 7.08 5.22v.27a10.15 10.15 0 0 0 10.14 10.14 9.784 9.784 0 0 0 2.1-.22 8.11 8.11 0 0 1-7.18 4.32v-.04Z"/></svg><svg aria-hidden="true" class="auto astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg></template><link rel="stylesheet" href="/1.3.1/_astro/print.C9eyqPGL.css" media="print"><link rel="stylesheet" href="/1.3.1/_astro/common.CJOScOj0.css"><style>@layer starlight.components{svg:where(.astro-4oohy4pg){color:var(--sl-icon-color);font-size:var(--sl-icon-size,1em);width:1em;height:1em;overflow:visible}}
+</style><script type="module" src="/1.3.1/_astro/page.cNngjUgL.js"></script><script src="/versions.js" defer data-root="/" data-version="1.3.1" data-edition="1.3.1"></script><meta name="robots" content="noindex"></head><body class="astro-ffdeby5s"><a class="sl-skip-link astro-krmueyth" href="#_top">Skip to content</a><div class="page sl-flex astro-krxyw6w2"><header class="header astro-krxyw6w2"><div class="header astro-zb4mp7m4"><div class="title-wrapper sl-flex astro-zb4mp7m4"><a href="/1.3.1/" class="site-title sl-flex astro-rt6z55xs"><img class="astro-rt6z55xs" alt src="/1.3.1/_astro/pauta-icon.BdPhq1pq.svg" width="512" height="512"><span class="astro-rt6z55xs" translate="no">Pauta</span></a></div><div class="sl-flex print:hidden astro-zb4mp7m4"><site-search class="astro-zb4mp7m4 astro-zo3r2rlc" data-translations="{&quot;placeholder&quot;:&quot;Search&quot;}"><button data-open-modal disabled aria-label="Search" aria-keyshortcuts="Control+K" class="astro-zo3r2rlc"><svg aria-hidden="true" class="astro-zo3r2rlc astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.71 20.29 18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a.999.999 0 0 0 1.42 0 1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z"/></svg><span class="sl-hidden md:sl-block astro-zo3r2rlc" aria-hidden="true">Search</span><kbd class="sl-hidden md:sl-flex astro-zo3r2rlc" style="display: none"><kbd class="astro-zo3r2rlc">Ctrl</kbd><kbd class="astro-zo3r2rlc">K</kbd></kbd></button><dialog style="padding: 0" aria-label="Search" class="astro-zo3r2rlc"><div class="dialog-frame sl-flex astro-zo3r2rlc"><button data-close-modal class="sl-flex md:sl-hidden astro-zo3r2rlc">Cancel</button><div class="search-container astro-zo3r2rlc"><div id="starlight__search" class="astro-zo3r2rlc"></div></div></div></dialog></site-search><script>
+	(() => {
+		const openBtn = document.querySelector('button[data-open-modal]');
+		const shortcut = openBtn?.querySelector('kbd');
+		if (!openBtn || !(shortcut instanceof HTMLElement)) return;
+		const platformKey = shortcut.querySelector('kbd');
+		if (platformKey && /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)) {
+			platformKey.textContent = '⌘';
+			openBtn.setAttribute('aria-keyshortcuts', 'Meta+K');
+		}
+		shortcut.style.display = '';
+	})();
+</script><script type="module" src="/1.3.1/_astro/Search.astro_astro_type_script_index_0_lang.BieRCDAF.js"></script></div><div class="sl-hidden md:sl-flex print:hidden right-group astro-zb4mp7m4"><div class="sl-flex social-icons astro-zb4mp7m4"><a href="https://github.com/adriandeleon/adl-desktop-apps-guidelines" rel="me" class="sl-flex astro-ixqknywc"><span class="sr-only astro-ixqknywc">GitHub</span><svg aria-hidden="true" class="astro-ixqknywc astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57L9 21.07c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.09-.73.09-.73 1.2.09 1.83 1.24 1.83 1.24 1.08 1.83 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18a4.65 4.65 0 0 1 1.23 3.22c0 4.61-2.8 5.63-5.48 5.92.42.36.81 1.1.81 2.22l-.01 3.29c0 .31.2.69.82.57A12 12 0 0 0 12 .3Z"/></svg></a></div><starlight-theme-select><label style="--sl-select-width: 6.25em" class="astro-yjtbfmae"><span class="sr-only astro-yjtbfmae">Select theme</span><svg aria-hidden="true" class="icon label-icon astro-yjtbfmae astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg><select autocomplete="off" class="astro-yjtbfmae"><option value="dark" class="astro-yjtbfmae">Dark</option><option value="light" class="astro-yjtbfmae">Light</option><option value="auto" selected class="astro-yjtbfmae">Auto</option></select><svg aria-hidden="true" class="icon caret astro-yjtbfmae astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg></label></starlight-theme-select><script>
+	StarlightThemeProvider.updatePickers();
+</script><script type="module">var e=`starlight-theme`,t=e=>e===`auto`||e===`dark`||e===`light`?e:`auto`,n=()=>t(typeof localStorage<`u`&&localStorage.getItem(e));function r(t){typeof localStorage<`u`&&localStorage.setItem(e,t===`light`||t===`dark`?t:``)}var i=()=>matchMedia(`(prefers-color-scheme: light)`).matches?`light`:`dark`;function a(e){StarlightThemeProvider.updatePickers(e),document.documentElement.dataset.theme=e===`auto`?i():e,r(e)}matchMedia(`(prefers-color-scheme: light)`).addEventListener(`change`,()=>{n()===`auto`&&a(`auto`)});var o=class extends HTMLElement{constructor(){super(),a(n()),this.querySelector(`select`)?.addEventListener(`change`,e=>{e.currentTarget instanceof HTMLSelectElement&&a(t(e.currentTarget.value))})}};customElements.define(`starlight-theme-select`,o);</script><script type="module">var e=class extends HTMLElement{constructor(){super();let e=this.querySelector(`select`);e&&(e.addEventListener(`change`,e=>{e.currentTarget instanceof HTMLSelectElement&&(window.location.pathname=e.currentTarget.value)}),window.addEventListener(`pageshow`,t=>{if(!t.persisted)return;let n=e.querySelector(`option[selected]`)?.index;n!==e.selectedIndex&&(e.selectedIndex=n??0)}))}};customElements.define(`starlight-lang-select`,e);</script></div></div></header><nav class="sidebar print:hidden astro-krxyw6w2" aria-label="Main"><button popovertarget="starlight__sidebar" class="sl-menu-button sl-flex md:sl-hidden print:hidden astro-ondgmuz7"><svg aria-hidden="true" class="open-menu astro-ondgmuz7 astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M3 8h18a1 1 0 1 0 0-2H3a1 1 0 0 0 0 2Zm18 8H3a1 1 0 0 0 0 2h18a1 1 0 0 0 0-2Zm0-5H3a1 1 0 0 0 0 2h18a1 1 0 0 0 0-2Z"/></svg><svg aria-hidden="true" class="close-menu astro-ondgmuz7 astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="m13.41 12 6.3-6.29a1.004 1.004 0 1 0-1.42-1.42L12 10.59l-6.29-6.3a1.004 1.004 0 0 0-1.42 1.42l6.3 6.29-6.3 6.29a1 1 0 0 0 0 1.42.998.998 0 0 0 1.42 0l6.29-6.3 6.29 6.3a.999.999 0 0 0 1.42 0 1 1 0 0 0 0-1.42L13.41 12Z"/></svg><span class="sr-only astro-ondgmuz7">Menu</span></button><script type="module">var e=class extends HTMLElement{constructor(){super();let e=matchMedia(`(min-width: 50em)`),t=()=>{this.popover=e.matches?null:`auto`};t(),e.addEventListener(`change`,()=>t()),this.addEventListener(`toggle`,({newState:e})=>this.trapFocus(e===`open`))}trapFocus(e){document.querySelectorAll(`.main-frame, .sl-skip-link`).forEach(t=>{t.toggleAttribute(`inert`,e)})}};customElements.define(`sl-sidebar-pane`,e);</script><sl-sidebar-pane popover id="starlight__sidebar" class="sidebar-pane astro-krxyw6w2"><div class="sidebar-content sl-flex astro-krxyw6w2"><sl-sidebar-state-persist data-hash="0aj1k2l" class="astro-msobw52n"><script aria-hidden="true">
+		(() => {
+			try {
+				if (!matchMedia('(min-width: 50em)').matches) return;
+				/** @type {HTMLElement | null} */
+				const target = document.querySelector('sl-sidebar-state-persist');
+				const state = JSON.parse(sessionStorage.getItem('sl-sidebar-state') || '0');
+				if (!target || !state || target.dataset.hash !== state.hash) return;
+				window._starlightScrollRestore = state.scroll;
+				customElements.define(
+					'sl-sidebar-restore',
+					class SidebarRestore extends HTMLElement {
+						connectedCallback() {
+							try {
+								const idx = parseInt(this.dataset.index || '');
+								const details = this.closest('details');
+								if (details && typeof state.open[idx] === 'boolean') details.open = state.open[idx];
+							} catch {}
+						}
+					}
+				);
+			} catch {}
+		})();
+	</script><ul class="top-level astro-5nqrizwh"><li class="astro-5nqrizwh"><a href="/1.3.1/" class="large astro-5nqrizwh"><span class="astro-5nqrizwh">Overview</span></a></li><li class="astro-5nqrizwh"><details open class="astro-5nqrizwh"><summary class="astro-5nqrizwh"><span class="group-label astro-5nqrizwh"><span class="large astro-5nqrizwh">Start here</span></span><svg aria-hidden="true" class="caret astro-5nqrizwh astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="0"></sl-sidebar-restore><ul class="astro-5nqrizwh"><li class="astro-5nqrizwh"><a href="/1.3.1/principles/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Principles</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.1/checklist/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">New app checklist</span></a></li></ul></details></li><li class="astro-5nqrizwh"><details open class="astro-5nqrizwh"><summary class="astro-5nqrizwh"><span class="group-label astro-5nqrizwh"><span class="large astro-5nqrizwh">Foundations</span></span><svg aria-hidden="true" class="caret astro-5nqrizwh astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="1"></sl-sidebar-restore><ul class="astro-5nqrizwh"><li class="astro-5nqrizwh"><a href="/1.3.1/platform/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Platform baseline</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.1/repository/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Repository documents</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.1/quality/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Code quality gates</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.1/performance/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Performance</span></a></li></ul></details></li><li class="astro-5nqrizwh"><details open class="astro-5nqrizwh"><summary class="astro-5nqrizwh"><span class="group-label astro-5nqrizwh"><span class="large astro-5nqrizwh">Experience</span></span><svg aria-hidden="true" class="caret astro-5nqrizwh astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="2"></sl-sidebar-restore><ul class="astro-5nqrizwh"><li class="astro-5nqrizwh"><a href="/1.3.1/keyboard/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Keyboard first</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.1/window-shell/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Window shell</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.1/icons-and-color/" aria-current="page" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Icons and color</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.1/toolbars-and-tooltips/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Toolbars and tooltips</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.1/tabs-and-panels/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Tabs and tool panels</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.1/menus/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Menus</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.1/tray-and-background/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Tray and background</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.1/settings/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Settings</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.1/diagnostics/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Diagnostics and support</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.1/command-line/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Command line and launch</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.1/i18n/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Internationalization</span></a></li></ul></details></li><li class="astro-5nqrizwh"><details open class="astro-5nqrizwh"><summary class="astro-5nqrizwh"><span class="group-label astro-5nqrizwh"><span class="large astro-5nqrizwh">Templates</span></span><svg aria-hidden="true" class="caret astro-5nqrizwh astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="3"></sl-sidebar-restore><ul class="astro-5nqrizwh"><li class="astro-5nqrizwh"><a href="/1.3.1/templates/command-palette/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Command Palette</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.1/templates/quick-open/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">QuickOpen picker</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.1/templates/welcome/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Welcome page</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.1/templates/about/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">About window</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.1/templates/confirm-dialog/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Confirm dialog</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.1/templates/find-bar/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Find bar</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.1/templates/message-log/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Message Log</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.1/templates/settings-sync/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Settings Sync</span></a></li></ul></details></li><li class="astro-5nqrizwh"><details open class="astro-5nqrizwh"><summary class="astro-5nqrizwh"><span class="group-label astro-5nqrizwh"><span class="large astro-5nqrizwh">Shipping</span></span><svg aria-hidden="true" class="caret astro-5nqrizwh astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="4"></sl-sidebar-restore><ul class="astro-5nqrizwh"><li class="astro-5nqrizwh"><a href="/1.3.1/release/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Packaging, signing and release</span></a></li></ul></details></li><li class="astro-5nqrizwh"><details open class="astro-5nqrizwh"><summary class="astro-5nqrizwh"><span class="group-label astro-5nqrizwh"><span class="large astro-5nqrizwh">The family</span></span><svg aria-hidden="true" class="caret astro-5nqrizwh astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="5"></sl-sidebar-restore><ul class="astro-5nqrizwh"><li class="astro-5nqrizwh"><a href="/1.3.1/family/matrix/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Feature matrix</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.1/family/shared-features/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Shared features</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.1/family/gaps/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Gaps per app</span></a></li></ul></details></li><li class="astro-5nqrizwh"><a href="/1.3.1/changelog/" class="large astro-5nqrizwh"><span class="astro-5nqrizwh">Changelog</span></a></li></ul><script aria-hidden="true">
+		(() => {
+			const scroller = document.getElementById('starlight__sidebar');
+			if (!window._starlightScrollRestore || !scroller) return;
+			scroller.scrollTop = window._starlightScrollRestore;
+			delete window._starlightScrollRestore;
+		})();
+	</script></sl-sidebar-state-persist><div class="md:sl-hidden"><div class="mobile-preferences sl-flex astro-hlvk36qr"><div class="social-icons astro-hlvk36qr"><a href="https://github.com/adriandeleon/adl-desktop-apps-guidelines" rel="me" class="sl-flex astro-ixqknywc"><span class="sr-only astro-ixqknywc">GitHub</span><svg aria-hidden="true" class="astro-ixqknywc astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57L9 21.07c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.09-.73.09-.73 1.2.09 1.83 1.24 1.83 1.24 1.08 1.83 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18a4.65 4.65 0 0 1 1.23 3.22c0 4.61-2.8 5.63-5.48 5.92.42.36.81 1.1.81 2.22l-.01 3.29c0 .31.2.69.82.57A12 12 0 0 0 12 .3Z"/></svg></a></div><starlight-theme-select><label style="--sl-select-width: 6.25em" class="astro-yjtbfmae"><span class="sr-only astro-yjtbfmae">Select theme</span><svg aria-hidden="true" class="icon label-icon astro-yjtbfmae astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg><select autocomplete="off" class="astro-yjtbfmae"><option value="dark" class="astro-yjtbfmae">Dark</option><option value="light" class="astro-yjtbfmae">Light</option><option value="auto" selected class="astro-yjtbfmae">Auto</option></select><svg aria-hidden="true" class="icon caret astro-yjtbfmae astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg></label></starlight-theme-select><script>
+	StarlightThemeProvider.updatePickers();
+</script></div></div></div></sl-sidebar-pane></nav><div class="main-frame astro-krxyw6w2"><script type="module">var e=document.getElementById(`starlight__sidebar`),t=e?.querySelector(`sl-sidebar-state-persist`),n=`sl-sidebar-state`,r=()=>{let r=[],i=t?.dataset.hash||``;try{let e=sessionStorage.getItem(n),t=JSON.parse(e||`{}`);Array.isArray(t.open)&&t.hash===i&&(r=t.open)}catch{}return{hash:i,open:r,scroll:e?.scrollTop||0}},i=e=>{try{sessionStorage.setItem(n,JSON.stringify(e))}catch{}},a=()=>i(r()),o=(e,t)=>{let n=r();n.open[t]=e,i(n)};t?.addEventListener(`click`,e=>{if(!(e.target instanceof Element))return;let t=e.target.closest(`summary`)?.closest(`details`);if(!t)return;let n=t.querySelector(`sl-sidebar-restore`),r=parseInt(n?.dataset.index||``);isNaN(r)||o(!t.open,r)}),addEventListener(`visibilitychange`,()=>{document.visibilityState===`hidden`&&a()});</script><div class="lg:sl-flex astro-wh2afnfx"><aside class="right-sidebar-container print:hidden astro-wh2afnfx"><div class="right-sidebar astro-wh2afnfx"><div class="lg:sl-hidden astro-io7qnfcd"><mobile-starlight-toc data-min-h="2" data-max-h="3" class="astro-goa26zq6"><nav aria-labelledby="starlight__on-this-page--mobile" class="astro-goa26zq6"><details id="starlight__mobile-toc" class="astro-goa26zq6"><summary id="starlight__on-this-page--mobile" class="sl-flex astro-goa26zq6"><span class="toggle sl-flex astro-goa26zq6">On this page<svg aria-hidden="true" class="caret astro-goa26zq6 astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></span><span class="display-current astro-goa26zq6"></span></summary><div class="dropdown astro-goa26zq6"><ul class="isMobile astro-ja2zv5me" style="--depth: 0;"><li style="--depth: 0;" class="astro-ja2zv5me"><a href="#_top" style="--depth: 0;" class="astro-ja2zv5me"><span style="--depth: 0;" class="astro-ja2zv5me">Overview</span></a></li><li style="--depth: 0;" class="astro-ja2zv5me"><a href="#type" style="--depth: 0;" class="astro-ja2zv5me"><span style="--depth: 0;" class="astro-ja2zv5me">Type</span></a></li><li style="--depth: 0;" class="astro-ja2zv5me"><a href="#the-palette-caret--ink" style="--depth: 0;" class="astro-ja2zv5me"><span style="--depth: 0;" class="astro-ja2zv5me">The palette: Caret &amp; Ink</span></a></li><li style="--depth: 0;" class="astro-ja2zv5me"><a href="#state-colors" style="--depth: 0;" class="astro-ja2zv5me"><span style="--depth: 0;" class="astro-ja2zv5me">State colors</span></a></li><li style="--depth: 0;" class="astro-ja2zv5me"><a href="#themes" style="--depth: 0;" class="astro-ja2zv5me"><span style="--depth: 0;" class="astro-ja2zv5me">Themes</span></a></li><li style="--depth: 0;" class="astro-ja2zv5me"><a href="#icons" style="--depth: 0;" class="astro-ja2zv5me"><span style="--depth: 0;" class="astro-ja2zv5me">Icons</span></a><ul class="isMobile astro-ja2zv5me" style="--depth: 1;"><li style="--depth: 1;" class="astro-ja2zv5me"><a href="#in-the-apps" style="--depth: 1;" class="astro-ja2zv5me"><span style="--depth: 1;" class="astro-ja2zv5me">In the apps</span></a></li></ul></li></ul></div></details></nav></mobile-starlight-toc><script type="module" src="/1.3.1/_astro/MobileTableOfContents.astro_astro_type_script_index_0_lang.C3fM4Kra.js"></script></div><div class="right-sidebar-panel sl-hidden lg:sl-block astro-io7qnfcd"><div class="sl-container astro-io7qnfcd"><starlight-toc data-min-h="2" data-max-h="3"><nav aria-labelledby="starlight__on-this-page"><h2 id="starlight__on-this-page">On this page</h2><ul class="astro-ja2zv5me" style="--depth: 0;"><li style="--depth: 0;" class="astro-ja2zv5me"><a href="#_top" style="--depth: 0;" class="astro-ja2zv5me"><span style="--depth: 0;" class="astro-ja2zv5me">Overview</span></a></li><li style="--depth: 0;" class="astro-ja2zv5me"><a href="#type" style="--depth: 0;" class="astro-ja2zv5me"><span style="--depth: 0;" class="astro-ja2zv5me">Type</span></a></li><li style="--depth: 0;" class="astro-ja2zv5me"><a href="#the-palette-caret--ink" style="--depth: 0;" class="astro-ja2zv5me"><span style="--depth: 0;" class="astro-ja2zv5me">The palette: Caret &amp; Ink</span></a></li><li style="--depth: 0;" class="astro-ja2zv5me"><a href="#state-colors" style="--depth: 0;" class="astro-ja2zv5me"><span style="--depth: 0;" class="astro-ja2zv5me">State colors</span></a></li><li style="--depth: 0;" class="astro-ja2zv5me"><a href="#themes" style="--depth: 0;" class="astro-ja2zv5me"><span style="--depth: 0;" class="astro-ja2zv5me">Themes</span></a></li><li style="--depth: 0;" class="astro-ja2zv5me"><a href="#icons" style="--depth: 0;" class="astro-ja2zv5me"><span style="--depth: 0;" class="astro-ja2zv5me">Icons</span></a><ul class="astro-ja2zv5me" style="--depth: 1;"><li style="--depth: 1;" class="astro-ja2zv5me"><a href="#in-the-apps" style="--depth: 1;" class="astro-ja2zv5me"><span style="--depth: 1;" class="astro-ja2zv5me">In the apps</span></a></li></ul></li></ul></nav></starlight-toc><script type="module" src="/1.3.1/_astro/TableOfContents.astro_astro_type_script_index_0_lang.BpJaGz7G.js"></script></div></div></div></aside><div class="main-pane astro-wh2afnfx"><main data-pagefind-body class="astro-ffdeby5s" lang="en" dir="ltr"><div class="content-panel astro-brieias3"><div class="sl-container astro-brieias3"><h1 id="_top" class="astro-nczppgfy">Icons and color</h1></div></div><div class="content-panel astro-brieias3"><div class="sl-container astro-brieias3"><div class="sl-markdown-content"><p>One typeface pair, one palette, one color vocabulary and one way of drawing icons, so a tab, a status segment, a
+tree row and a Settings row say the same thing in the same way in every app. Reference: Editora’s
+<code dir="auto">styles/ui-font.css</code> and <code dir="auto">ui/Fonts.java</code> (type), <code dir="auto">styles/atlantafx-themes/editora-light.css</code> and <code dir="auto">editora-dark.css</code>
+(the Caret &#x26; Ink palette, which Torrenta and Termina vendor verbatim), the <code dir="auto">.root</code> block at the top of
+<code dir="auto">styles/app.css</code> (the state vocabulary), <code dir="auto">ui/Themes.java</code> and <code dir="auto">ui/EditorThemes.java</code> (themes), <code dir="auto">ui/Icons.java</code>,
+<code dir="auto">ui/FileIcons.java</code>, <code dir="auto">ui/MenuBarIcons.java</code> and <code dir="auto">editor/MenuIcons.java</code> (icons), and <code dir="auto">StyleContrastTest</code>, which
+pins the color rules.</p>
+<div class="sl-heading-wrapper level-h2"><h2 id="type">Type</h2><a class="sl-anchor-link" href="#type"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Type”</span></a></div>
+<p><strong>Inter speaks, JetBrains Mono works.</strong> Inter is the chrome: menus, buttons, settings, pickers, status bar. The
+monospace face is for text that is code or output: the editor, a terminal, the environment block in About, log
+timestamps.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Value</th><th>Reference</th></tr></thead><tbody><tr><td>UI family</td><td>Inter, in four faces, bundled in the app’s resources and registered before any CSS is applied</td><td><code dir="auto">Fonts.UI</code>, <code dir="auto">Fonts.load()</code>, <code dir="auto">resources/com/editora/fonts/inter/</code></td></tr><tr><td>Root size</td><td>14 px, the AtlantaFX theme’s root size; popups pin absolute pixels where an owner’s font would leak (see <a href="../menus/">Menus</a>)</td><td><code dir="auto">MainMenuBar.UI_FONT_SIZE</code></td></tr><tr><td>How it is attached</td><td>A scene stylesheet (<code dir="auto">ui-font.css</code>, one rule: <code dir="auto">.root { -fx-font-family: "Inter" }</code>) on every window’s scene, dialogs and popups included</td><td><code dir="auto">App.installUiFont</code></td></tr><tr><td>Monospace</td><td>JetBrains Mono by default; Cascadia Code, Fira Code, IBM Plex Mono and Source Code Pro are bundled as editor choices</td><td><code dir="auto">Fonts.DEFAULT</code>, <code dir="auto">Fonts.FAMILIES</code></td></tr></tbody></table>
+<ul>
+<li><span class="lvl lvl-must">MUST</span> Attach Inter with a <em>scene</em> stylesheet, not a rule in the app stylesheet. Dialogs, the Settings window,
+the palette, context menus and tooltips each live in a scene of their own that does not share <code dir="auto">app.css</code>, and a
+scene sheet is re-applied cleanly when the theme switches at run time (<code dir="auto">setUserAgentStylesheet</code>). AtlantaFX
+neither bundles nor names Inter, and JavaFX does not fall through a font-family list, so without the sheet the
+whole interface renders in the platform’s “System” face.</li>
+<li><span class="lvl lvl-must">MUST</span> Bundle the font. Do not map the platform’s own UI font (an earlier macOS-only sheet used San Francisco,
+which JavaFX faux-bolds; Inter has a real bold on every platform).</li>
+<li>Termina and Torrenta carry the same sheet and the same four Inter faces. Modula is the stated exception: IBM Plex
+Mono everywhere, because every reading on a radio is a number (see <em>Before adding a setting</em> in
+<a href="../settings/">Settings</a>).</li>
+<li>A line of UI text is <code dir="auto">-color-fg-default</code>; secondary text <code dir="auto">-color-fg-muted</code>. <code dir="auto">-color-fg-subtle</code> is about 3:1 and
+is for disabled or decorative text only (<code dir="auto">StyleContrastTest.textThatMustBeReadUsesTheMutedRoleNotSubtle</code>).</li>
+</ul>
+<div class="sl-heading-wrapper level-h2"><h2 id="the-palette-caret--ink">The palette: Caret &#x26; Ink</h2><a class="sl-anchor-link" href="#the-palette-caret--ink"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “The palette: Caret &#x26; Ink”</span></a></div>
+<p>The flagship theme pair, “Editora Light” and “Editora Dark”, is authored (not vendored) and derived from Editora’s
+icon: a <strong>caret</strong> teal accent, <strong>ink</strong> navy as the text in light and the surface in dark, <strong>porcelain</strong> and <strong>abyss</strong>
+grounds, and <strong>brace</strong> periwinkle reserved for the keyboard. Amber, red and green are semantic and never decorate.</p>
+<div class="mock-stage">
+<div class="m-ic-palette" role="img" aria-label="The Caret and Ink palette: each token&#x27;s light and dark value">
+<div class="m-ic-head"><span></span><span>Light</span><span>Dark</span><span>Token</span></div>
+<div class="m-ic-row"><span class="n">Ground</span><span class="m-ic-chip" style="--c:#ffffff"><i>#ffffff</i></span><span class="m-ic-chip" style="--c:#1b1e2a"><i>#1b1e2a</i></span><span class="t">-color-bg-default</span></div>
+<div class="m-ic-row"><span class="n">Porcelain / Abyss</span><span class="m-ic-chip" style="--c:#f4f5f9"><i>#f4f5f9</i></span><span class="m-ic-chip" style="--c:#12141d"><i>#12141d</i></span><span class="t">-color-bg-subtle / -color-dark</span></div>
+<div class="m-ic-row"><span class="n">Ink</span><span class="m-ic-chip" style="--c:#1b1e2a"><i>#1b1e2a</i></span><span class="m-ic-chip" style="--c:#e8eaf3"><i>#e8eaf3</i></span><span class="t">-color-fg-default</span></div>
+<div class="m-ic-row"><span class="n">Muted ink</span><span class="m-ic-chip" style="--c:#575d6e"><i>#575d6e</i></span><span class="m-ic-chip" style="--c:#9ba1b5"><i>#9ba1b5</i></span><span class="t">-color-fg-muted</span></div>
+<div class="m-ic-row"><span class="n">Subtle ink</span><span class="m-ic-chip" style="--c:#8b91a3"><i>#8b91a3</i></span><span class="m-ic-chip" style="--c:#6c7288"><i>#6c7288</i></span><span class="t">-color-fg-subtle</span></div>
+<div class="m-ic-row"><span class="n">Caret</span><span class="m-ic-chip" style="--c:#0e8577"><i>#0e8577</i></span><span class="m-ic-chip" style="--c:#43dec5"><i>#43dec5</i></span><span class="t">-color-accent-emphasis</span></div>
+<div class="m-ic-row"><span class="n">Caret, as text</span><span class="m-ic-chip" style="--c:#0d786b"><i>#0d786b</i></span><span class="m-ic-chip" style="--c:#43dec5"><i>#43dec5</i></span><span class="t">-color-accent-fg</span></div>
+<div class="m-ic-row"><span class="n">Amber</span><span class="m-ic-chip" style="--c:#8d6309"><i>#8d6309</i></span><span class="m-ic-chip" style="--c:#e3a93c"><i>#e3a93c</i></span><span class="t">-color-warning-fg</span></div>
+<div class="m-ic-row"><span class="n">Red</span><span class="m-ic-chip" style="--c:#c03434"><i>#c03434</i></span><span class="m-ic-chip" style="--c:#ee7a6e"><i>#ee7a6e</i></span><span class="t">-color-danger-fg</span></div>
+<div class="m-ic-row"><span class="n">Green</span><span class="m-ic-chip" style="--c:#2c784c"><i>#2c784c</i></span><span class="m-ic-chip" style="--c:#5bc98a"><i>#5bc98a</i></span><span class="t">-color-success-fg</span></div>
+<div class="m-ic-row"><span class="n">Brace</span><span class="m-ic-chip" style="--c:#3c4380"><i>#3c4380</i></span><span class="m-ic-chip" style="--c:#b8bee5"><i>#b8bee5</i></span><span class="t">-state-key (a ladder of the ground)</span></div>
+</div>
+</div>
+<ul>
+<li>The theme files follow the vendored AtlantaFX community themes: a <code dir="auto">.root</code> block of <code dir="auto">-color-*</code> tokens, then
+component rules that reference only those tokens.</li>
+<li><span class="lvl lvl-should">SHOULD</span> A new app ships the pair as its default theme. Torrenta and Termina copy
+<code dir="auto">editora-light.css</code> and <code dir="auto">editora-dark.css</code> unchanged into their own <code dir="auto">styles/</code>; the palette is the family’s, not
+the editor’s.</li>
+<li>Brace has no AtlantaFX role, so it is a literal: a <code dir="auto">ladder()</code> over <code dir="auto">-color-bg-default</code> that picks a deep ink on a
+light ground and a lighter periwinkle the darker the ground gets, and reads at 4.5:1 or more on every bundled
+theme’s default and subtle surfaces (<code dir="auto">StyleContrastTest.theKeyboardPeriwinkleReadsOnEveryBundledAppTheme</code>).</li>
+</ul>
+<div class="sl-heading-wrapper level-h2"><h2 id="state-colors">State colors</h2><a class="sl-anchor-link" href="#state-colors"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “State colors”</span></a></div>
+<p>A color is a meaning, named once on <code dir="auto">.root</code> and referenced everywhere. The same state wears the same color in a
+tab, a status segment, a tree row, a picker and a Settings row.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Token</th><th>Chains to</th><th>Meaning</th><th>Where it appears</th></tr></thead><tbody><tr><td><code dir="auto">-state-amber</code></td><td><code dir="auto">-color-warning-fg</code></td><td>Not durable yet</td><td>An unsaved tab, a read-only file, a narrowed view, a snapshot build</td></tr><tr><td><code dir="auto">-state-red</code></td><td><code dir="auto">-color-danger-fg</code></td><td>Broken</td><td>Errors in the echo area and the Message Log, breakpoints, a recording</td></tr><tr><td><code dir="auto">-state-green</code></td><td><code dir="auto">-color-success-fg</code></td><td>Verified</td><td>Found, added, passing, running</td></tr><tr><td><code dir="auto">-state-accent</code></td><td><code dir="auto">-color-accent-fg</code></td><td>The app is offering something</td><td>An update, a link, the current branch, a selected row’s bar</td></tr><tr><td><code dir="auto">-state-olive</code>, <code dir="auto">-state-violet</code></td><td>A ladder of the ground</td><td>Git only: untracked, renamed</td><td>The Project tree and tabs, the Map’s structure columns</td></tr><tr><td><code dir="auto">-state-key</code></td><td>A ladder of the ground</td><td>The keyboard, and nothing else</td><td>Chord chips, the menu chord column, brace matching</td></tr><tr><td><code dir="auto">-state-sel</code></td><td><code dir="auto">-color-accent-subtle</code></td><td>The selected overlay row</td><td>The palette, pickers, the Message Log (about a 13 % accent wash)</td></tr></tbody></table>
+<p>Each of the first four also has a <code dir="auto">-bg</code> (the role’s <code dir="auto">-subtle</code>) and a <code dir="auto">-hover</code> (the role’s <code dir="auto">-muted</code>) variant, so a
+pill, a row tint and a hover state come from the same place. <code dir="auto">.state-pill</code> is the shape (bold, radius 999, padding
+1 × 8); the color variant beside it carries the meaning.</p>
+<ul>
+<li><span class="lvl lvl-must">MUST</span> No fixed hex in a component rule. A hex suits one theme; the roles track every theme for free. A
+severity or debug color that is not a state token fails <code dir="auto">StyleContrastTest.severityAndDebugColoursComeFromTheStateTokens</code>.</li>
+<li><span class="lvl lvl-must">MUST</span> Readable text uses <code dir="auto">-color-fg-muted</code> or stronger, which is 4.5:1 on the default, subtle and overlay
+grounds in both flagship themes. Tinted text (<code dir="auto">-color-&#x3C;role>-fg</code>) reaches 4.5:1 on its own subtle fill and on
+both grounds.</li>
+<li><span class="lvl lvl-must">MUST</span> Ink on an emphasis fill is <code dir="auto">-color-fg-emphasis</code>, never white: white on the dark accent is 1.68:1.</li>
+<li><span class="lvl lvl-must">MUST</span> One focus ring, <code dir="auto">-focus-ring: -color-accent-emphasis</code>, drawn by the <code dir="auto">:focus-visible</code> block at the end
+of <code dir="auto">app.css</code>, at 3:1 or better on every surface (see <a href="../keyboard/">Keyboard first</a>).</li>
+<li>A brand hue the theme has no role for (periwinkle, olive, violet) is a <code dir="auto">ladder()</code> of <code dir="auto">-color-bg-default</code>, never a
+fixed pair: the old fixed light hexes read at 3.2:1 on Editora Dark.</li>
+<li><span class="lvl lvl-should">SHOULD</span> A pure test reads the stylesheets and does the WCAG arithmetic, as <code dir="auto">StyleContrastTest</code> does; a
+contrast regression is invisible in a code diff. Mirada’s <code dir="auto">AccentTest</code> checks that the accent reads as text on
+both grounds; Termina’s <code dir="auto">ThemeTest</code> keeps every chromatic color of its terminal schemes legible.</li>
+</ul>
+<div class="sl-heading-wrapper level-h2"><h2 id="themes">Themes</h2><a class="sl-anchor-link" href="#themes"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Themes”</span></a></div>
+<ul>
+<li><span class="lvl lvl-must">MUST</span> Light and dark, a “follow the system” choice, and a live switch without a restart (see
+<a href="../window-shell/">Window shell</a>). The first-run default is <strong>Editora Light</strong> (<code dir="auto">Themes.DEFAULT</code>), which is also
+the fallback for a theme name the app does not know.</li>
+<li>Editora lists 28 app themes: the Caret &#x26; Ink pair, AtlantaFX’s Primer, Nord, Cupertino and Dracula, and 21
+community themes (Army, Autumn, Blacky, Blue, Browny, Fall, Navy, News, Spring, Summer, Winter, Yacht, with
+light and dark variants) vendored unmodified from the MIT-licensed dlsc <code dir="auto">atlantafx-themes</code> collection. User
+themes under <code dir="auto">&#x3C;config>/themes/</code> join the list (<code dir="auto">Themes.names()</code>).</li>
+<li><strong>Editor themes are separate</strong> (<code dir="auto">EditorThemes</code>). The flagship pair carries its own editor stylesheet; every
+community theme is served by one <code dir="auto">adaptive</code> editor theme whose syntax palette is expressed in the theme’s own
+<code dir="auto">-color-*</code> tokens, so it follows whatever ground the theme has.</li>
+<li>Semantic colors never decorate: a theme may change the teal, the ground and the ink, but amber still means
+“not durable yet”.</li>
+</ul>
+<figure class="shot"><img alt="Editora&#39;s Settings page for themes and fonts" loading="lazy" decoding="async" width="1600" height="1391" src="/1.3.1/_astro/editora-themes-fonts.l8jbBUsO_1OqwQJ.webp"><figcaption>Settings: the theme picker with the Caret &#x26; Ink pair first, and the UI and editor fonts.</figcaption></figure>
+<div class="sl-heading-wrapper level-h2"><h2 id="icons">Icons</h2><a class="sl-anchor-link" href="#icons"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Icons”</span></a></div>
+<p>Every icon is an SVG path drawn in code, colored by the stylesheet so it follows the theme, and returned as a
+fresh node per call (a JavaFX node has one parent). There are two families, mid-migration to the UI Kit, and they
+are not interchangeable.</p>
+<div class="mock-stage">
+<div class="m-ic-families" role="img" aria-label="A line glyph and a filled glyph side by side at the toolbar size">
+<div class="m-ic-fam"><svg class="line" viewBox="0 0 16 16"><path d="M4.5 2.5h4.6l2.9 2.9v8.1h-7.5zM9.1 2.5v2.9h2.9M8.25 8.2v3.2M6.65 9.8h3.2"></path></svg><span class="cap">Line</span><span class="sub">16-unit outline, stroke 1.3, round caps</span><span class="sub"><code>icon-line</code> · <code>-fx-stroke</code></span></div>
+<div class="m-ic-fam"><svg class="fill" viewBox="0 0 24 24"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"></path></svg><span class="cap">Filled</span><span class="sub">Material 24 dp, one path, filled</span><span class="sub"><code>toolbar-icon</code> · <code>-fx-fill</code></span></div>
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Line family</th><th>Filled family</th><th>Reference</th></tr></thead><tbody><tr><td>Source</td><td>The UI Kit’s 16-unit outline glyphs, drawn for the kit</td><td>Material Design 24 dp single-path glyphs (Apache-2.0), plus Simple Icons brand marks (CC0)</td><td><code dir="auto">Icons.line</code>, <code dir="auto">Icons.of</code>, <code dir="auto">NOTICE</code></td></tr><tr><td>Style class</td><td><code dir="auto">icon-line</code></td><td><code dir="auto">toolbar-icon</code></td><td><code dir="auto">app.css</code></td></tr><tr><td>Color</td><td><code dir="auto">-fx-stroke: -color-fg-muted</code>, stroke width 1.3, round caps and joins, fill transparent</td><td><code dir="auto">-fx-fill: -color-fg-muted</code></td><td><code dir="auto">.icon-line</code>, <code dir="auto">.toolbar-icon</code></td></tr><tr><td>Hover, disabled</td><td><code dir="auto">-color-fg-default</code> on hover, <code dir="auto">-color-fg-subtle</code> disabled; every context mirrors the matching rule of the other family</td><td>The same</td><td><code dir="auto">.button:hover .icon-line</code>, <code dir="auto">.button:hover .toolbar-icon</code></td></tr><tr><td>Drawn size</td><td>16 × 1.2 = 19.2 px (<code dir="auto">LINE_SCALE</code> = <code dir="auto">ICON_SCALE</code> × 24 ÷ 16)</td><td>24 × 0.8 = 19.2 px (<code dir="auto">ICON_SCALE</code>)</td><td><code dir="auto">Icons</code></td></tr><tr><td>Used for</td><td>The chrome the kit draws: toolbar, tool stripe, tabs, and every action that has a kit glyph</td><td>Everything the kit specifies no glyph for: file types, context-menu rows, build-tool and browser brand marks</td><td><code dir="auto">Icons</code>, <code dir="auto">FileIcons</code></td></tr></tbody></table>
+<ul>
+<li><span class="lvl lvl-must">MUST</span> One class per family on a node, never both. A line glyph is colored by its stroke, and any
+<code dir="auto">X .toolbar-icon</code> fill rule (there are dozens) would paint its outline solid. A glyph that moves family moves its
+CSS with it.</li>
+<li><span class="lvl lvl-must">MUST</span> The same action wears the same glyph wherever it is reached: Save is one floppy on the toolbar, in the
+File menu and in a tab’s menu. <code dir="auto">MenuBarIcons</code> reuses <code dir="auto">Icons</code>; <code dir="auto">editor/MenuIcons</code> (the editor package may not
+depend on <code dir="auto">ui</code>) copies each twin’s family and path data verbatim.</li>
+<li><span class="lvl lvl-must">MUST</span> An icon-only control has a name: build it through <code dir="auto">Icons.button</code> or <code dir="auto">Icons.toolbarButton</code>, which set
+the tooltip and the accessible text together (see <a href="../keyboard/">Keyboard first</a>).</li>
+<li><span class="lvl lvl-should">SHOULD</span> No invented glyph. A row gets an icon only where an existing glyph genuinely depicts it; a picture
+that does not mean the thing beside it has to be read and then discounted. The column stays reserved so a menu
+with a mix stays aligned (see <a href="../menus/">Menus</a>).</li>
+<li><strong>File icons</strong> (<code dir="auto">FileIcons</code>): a pure <code dir="auto">iconKeyFor(name)</code> resolves a file name to a key (unit-tested without the
+toolkit), <code dir="auto">forFileName</code> turns the key into a node. Brand logos from Simple Icons, category glyphs (image,
+archive, PDF, table, lock, JSON, settings) from Material, and the generic document glyph for anything unknown, so
+a new type never regresses the look.</li>
+<li><strong>Licenses.</strong> Every glyph set and font is credited in <code dir="auto">NOTICE</code>: Material Design Icons (Apache-2.0), Simple Icons
+(CC0; the logos stay their owners’ trademarks), Octicons and Seti UI (MIT), Inter and the monospace faces (OFL).</li>
+</ul>
+<div class="sl-heading-wrapper level-h3"><h3 id="in-the-apps">In the apps</h3><a class="sl-anchor-link" href="#in-the-apps"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “In the apps”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>App</th><th>Icons</th><th>Size</th></tr></thead><tbody><tr><td><img class="app-icon" src="/1.3.1/icons/editora.svg" alt="" width="24" height="24">Editora</td><td>Both families, <code dir="auto">ui/Icons</code>, <code dir="auto">FileIcons</code>, <code dir="auto">MenuBarIcons</code>, <code dir="auto">editor/MenuIcons</code></td><td>19.2 px on the toolbar and in menus</td></tr><tr><td><img class="app-icon" src="/1.3.1/icons/torrenta.svg" alt="" width="24" height="24">Torrenta</td><td>Both families, copied from Editora as <code dir="auto">Icons.Glyph</code>, which knows its box and resizes with <code dir="auto">at(px)</code>; the toolbar is all line glyphs (stroke 1.5, <code dir="auto">-torrenta-icon</code>)</td><td>17 px toolbar, 16 px menu and tab (<code dir="auto">MENU_SIZE</code>), 13 px sidebar</td></tr><tr><td><img class="app-icon" src="/1.3.1/icons/termina.svg" alt="" width="24" height="24">Termina</td><td>Material filled, <code dir="auto">ui/MenuIcons</code>, colored by <code dir="auto">.menu-icon</code> (<code dir="auto">-color-fg-muted</code>; <code dir="auto">-color-fg-default</code> focused; subtle and half opacity disabled)</td><td>24 × 0.7 = 16.8 px, menus only</td></tr><tr><td><img class="app-icon" src="/1.3.1/icons/mirada.svg" alt="" width="24" height="24">Mirada</td><td>Hand-drawn stroked paths on a 24-unit grid, two-unit strokes, round caps, in GNOME’s symbolic style, so nothing carries a license; <code dir="auto">.icon</code> strokes <code dir="auto">-color-fg-default</code></td><td>16 px, centered in a 16 px box</td></tr><tr><td><img class="app-icon" src="/1.3.1/icons/modula.svg" alt="" width="24" height="24">Modula</td><td><code dir="auto">Glyphs</code>: the transport symbols (tune, seek, star) as shapes, because the characters are missing from most faces and render differently on every platform</td><td>11 px</td></tr><tr><td><img class="app-icon" src="/1.3.1/icons/nux.svg" alt="" width="24" height="24">nux</td><td>No in-window icons; the tray icon is rendered as a bitmap by severity (<code dir="auto">TrayIconRenderer</code>)</td><td>Tray only</td></tr></tbody></table></div><footer class="sl-flex astro-yd7upq6w"><div class="meta sl-flex astro-yd7upq6w"><a href="https://github.com/adriandeleon/adl-desktop-apps-guidelines/edit/master/src/content/docs/icons-and-color.md" class="sl-flex print:hidden astro-lfz5224o"><svg aria-hidden="true" class="astro-lfz5224o astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.2em;"><path d="M22 7.24a1 1 0 0 0-.29-.71l-4.24-4.24a1 1 0 0 0-1.1-.22 1 1 0 0 0-.32.22l-2.83 2.83L2.29 16.05a1 1 0 0 0-.29.71V21a1 1 0 0 0 1 1h4.24a1 1 0 0 0 .76-.29l10.87-10.93L21.71 8c.1-.1.17-.2.22-.33a1 1 0 0 0 0-.24v-.14l.07-.05ZM6.83 20H4v-2.83l9.93-9.93 2.83 2.83L6.83 20ZM18.17 8.66l-2.83-2.83 1.42-1.41 2.82 2.82-1.41 1.42Z"/></svg>Edit page</a><p>Last updated: <time datetime="2026-11-07T02:18:40.000Z">Nov 7, 2026</time></p></div><div class="pagination-links print:hidden astro-aoqaorxs" dir="ltr"><a href="/1.3.1/window-shell/" rel="prev" class="astro-aoqaorxs"><svg aria-hidden="true" class="astro-aoqaorxs astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.5rem;"><path d="M17 11H9.41l3.3-3.29a1.004 1.004 0 1 0-1.42-1.42l-5 5a1 1 0 0 0-.21.33 1 1 0 0 0 0 .76 1 1 0 0 0 .21.33l5 5a1.002 1.002 0 0 0 1.639-.325 1 1 0 0 0-.219-1.095L9.41 13H17a1 1 0 0 0 0-2Z"/></svg><span class="astro-aoqaorxs">Previous<br class="astro-aoqaorxs"><span class="link-title astro-aoqaorxs">Window shell</span></span></a><a href="/1.3.1/toolbars-and-tooltips/" rel="next" class="astro-aoqaorxs"><svg aria-hidden="true" class="astro-aoqaorxs astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.5rem;"><path d="M17.92 11.62a1.001 1.001 0 0 0-.21-.33l-5-5a1.003 1.003 0 1 0-1.42 1.42l3.3 3.29H7a1 1 0 0 0 0 2h7.59l-3.3 3.29a1.002 1.002 0 0 0 .325 1.639 1 1 0 0 0 1.095-.219l5-5a1 1 0 0 0 .21-.33 1 1 0 0 0 0-.76Z"/></svg><span class="astro-aoqaorxs">Next<br class="astro-aoqaorxs"><span class="link-title astro-aoqaorxs">Toolbars and tooltips</span></span></a></div></footer><p class="edition astro-jo6i4kqk">Pauta <strong class="astro-jo6i4kqk">1.3.1</strong> · <time datetime="2026-11-06" class="astro-jo6i4kqk">6 November 2026</time> · <a href="/1.3.1/changelog/" class="astro-jo6i4kqk">Changelog</a></p></div></div></main></div></div></div></div></body></html>

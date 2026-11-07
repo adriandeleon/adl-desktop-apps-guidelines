@@ -1,0 +1,236 @@
+<!DOCTYPE html><html lang="en" dir="ltr" data-theme="dark" data-has-sidebar class="astro-ffdeby5s"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Changelog | Pauta</title><link rel="canonical" href="https://pauta-project.dev/1.3.0/changelog/"/><link rel="sitemap" href="/1.3.0/sitemap-index.xml"/><script src="/1.3.0/lightbox.js" defer></script><script src="/1.3.0/mock-fit.js" defer></script><script src="/1.3.0/checklist.js" defer></script><link rel="apple-touch-icon" href="/1.3.0/pauta-128.png"/><link rel="shortcut icon" href="/1.3.0/favicon.svg" type="image/svg+xml"/><meta name="generator" content="Astro v7.4.7"/><meta name="generator" content="Starlight v0.42.9"/><meta property="og:title" content="Changelog"/><meta property="og:type" content="article"/><meta property="og:url" content="https://pauta-project.dev/1.3.0/changelog/"/><meta property="og:locale" content="en"/><meta property="og:description" content="Every edition of the guidelines and what each one changed."/><meta property="og:site_name" content="Pauta"/><meta name="description" content="Every edition of the guidelines and what each one changed."/><meta property="og:image" content="https://pauta-project.dev/1.3.0/og.png"/><meta property="og:image:width" content="1280"/><meta property="og:image:height" content="640"/><meta property="og:image:alt" content="Pauta, the adl desktop apps guidelines, with the six apps' icons"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:image" content="https://pauta-project.dev/1.3.0/og.png"/><script>
+	window.StarlightThemeProvider = (() => {
+		const storedTheme =
+			typeof localStorage !== 'undefined' && localStorage.getItem('starlight-theme');
+		const theme =
+			storedTheme ||
+			(window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+		document.documentElement.dataset.theme = theme === 'light' ? 'light' : 'dark';
+		return {
+			updatePickers(theme = storedTheme || 'auto') {
+				document.querySelectorAll('starlight-theme-select').forEach((picker) => {
+					const select = picker.querySelector('select');
+					if (select) select.value = theme;
+					/** @type {HTMLTemplateElement | null} */
+					const tmpl = document.querySelector(`#theme-icons`);
+					const newIcon = tmpl && tmpl.content.querySelector('.' + theme);
+					if (newIcon) {
+						const oldIcon = picker.querySelector('svg.label-icon');
+						if (oldIcon) {
+							oldIcon.replaceChildren(...newIcon.cloneNode(true).childNodes);
+						}
+					}
+				});
+			},
+		};
+	})();
+</script><template id="theme-icons"><svg aria-hidden="true" class="light astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M5 12a1 1 0 0 0-1-1H3a1 1 0 0 0 0 2h1a1 1 0 0 0 1-1Zm.64 5-.71.71a1 1 0 0 0 0 1.41 1 1 0 0 0 1.41 0l.71-.71A1 1 0 0 0 5.64 17ZM12 5a1 1 0 0 0 1-1V3a1 1 0 0 0-2 0v1a1 1 0 0 0 1 1Zm5.66 2.34a1 1 0 0 0 .7-.29l.71-.71a1 1 0 1 0-1.41-1.41l-.66.71a1 1 0 0 0 0 1.41 1 1 0 0 0 .66.29Zm-12-.29a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.71-.71a1.004 1.004 0 1 0-1.43 1.41l.73.71ZM21 11h-1a1 1 0 0 0 0 2h1a1 1 0 0 0 0-2Zm-2.64 6A1 1 0 0 0 17 18.36l.71.71a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.76-.66ZM12 6.5a5.5 5.5 0 1 0 5.5 5.5A5.51 5.51 0 0 0 12 6.5Zm0 9a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Zm0 3.5a1 1 0 0 0-1 1v1a1 1 0 0 0 2 0v-1a1 1 0 0 0-1-1Z"/></svg><svg aria-hidden="true" class="dark astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.64 13a1 1 0 0 0-1.05-.14 8.049 8.049 0 0 1-3.37.73 8.15 8.15 0 0 1-8.14-8.1 8.59 8.59 0 0 1 .25-2A1 1 0 0 0 8 2.36a10.14 10.14 0 1 0 14 11.69 1 1 0 0 0-.36-1.05Zm-9.5 6.69A8.14 8.14 0 0 1 7.08 5.22v.27a10.15 10.15 0 0 0 10.14 10.14 9.784 9.784 0 0 0 2.1-.22 8.11 8.11 0 0 1-7.18 4.32v-.04Z"/></svg><svg aria-hidden="true" class="auto astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg></template><link rel="stylesheet" href="/1.3.0/_astro/print.C9eyqPGL.css" media="print"><link rel="stylesheet" href="/1.3.0/_astro/common._vBF7bsJ.css"><style>@layer starlight.components{svg:where(.astro-4oohy4pg){color:var(--sl-icon-color);font-size:var(--sl-icon-size,1em);width:1em;height:1em;overflow:visible}}
+</style><script type="module" src="/1.3.0/_astro/page.cNngjUgL.js"></script><script src="/versions.js" defer data-root="/" data-version="1.3.0" data-edition="1.3.0"></script><meta name="robots" content="noindex"></head><body class="astro-ffdeby5s"><a class="sl-skip-link astro-krmueyth" href="#_top">Skip to content</a><div class="page sl-flex astro-krxyw6w2"><header class="header astro-krxyw6w2"><div class="header astro-zb4mp7m4"><div class="title-wrapper sl-flex astro-zb4mp7m4"><a href="/1.3.0/" class="site-title sl-flex astro-rt6z55xs"><img class="astro-rt6z55xs" alt src="/1.3.0/_astro/pauta-icon.BdPhq1pq.svg" width="512" height="512"><span class="astro-rt6z55xs" translate="no">Pauta</span></a></div><div class="sl-flex print:hidden astro-zb4mp7m4"><site-search class="astro-zb4mp7m4 astro-zo3r2rlc" data-translations="{&quot;placeholder&quot;:&quot;Search&quot;}"><button data-open-modal disabled aria-label="Search" aria-keyshortcuts="Control+K" class="astro-zo3r2rlc"><svg aria-hidden="true" class="astro-zo3r2rlc astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.71 20.29 18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a.999.999 0 0 0 1.42 0 1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z"/></svg><span class="sl-hidden md:sl-block astro-zo3r2rlc" aria-hidden="true">Search</span><kbd class="sl-hidden md:sl-flex astro-zo3r2rlc" style="display: none"><kbd class="astro-zo3r2rlc">Ctrl</kbd><kbd class="astro-zo3r2rlc">K</kbd></kbd></button><dialog style="padding: 0" aria-label="Search" class="astro-zo3r2rlc"><div class="dialog-frame sl-flex astro-zo3r2rlc"><button data-close-modal class="sl-flex md:sl-hidden astro-zo3r2rlc">Cancel</button><div class="search-container astro-zo3r2rlc"><div id="starlight__search" class="astro-zo3r2rlc"></div></div></div></dialog></site-search><script>
+	(() => {
+		const openBtn = document.querySelector('button[data-open-modal]');
+		const shortcut = openBtn?.querySelector('kbd');
+		if (!openBtn || !(shortcut instanceof HTMLElement)) return;
+		const platformKey = shortcut.querySelector('kbd');
+		if (platformKey && /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)) {
+			platformKey.textContent = '⌘';
+			openBtn.setAttribute('aria-keyshortcuts', 'Meta+K');
+		}
+		shortcut.style.display = '';
+	})();
+</script><script type="module" src="/1.3.0/_astro/Search.astro_astro_type_script_index_0_lang.zxlonaB_.js"></script></div><div class="sl-hidden md:sl-flex print:hidden right-group astro-zb4mp7m4"><div class="sl-flex social-icons astro-zb4mp7m4"><a href="https://github.com/adriandeleon/adl-desktop-apps-guidelines" rel="me" class="sl-flex astro-ixqknywc"><span class="sr-only astro-ixqknywc">GitHub</span><svg aria-hidden="true" class="astro-ixqknywc astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57L9 21.07c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.09-.73.09-.73 1.2.09 1.83 1.24 1.83 1.24 1.08 1.83 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18a4.65 4.65 0 0 1 1.23 3.22c0 4.61-2.8 5.63-5.48 5.92.42.36.81 1.1.81 2.22l-.01 3.29c0 .31.2.69.82.57A12 12 0 0 0 12 .3Z"/></svg></a></div><starlight-theme-select><label style="--sl-select-width: 6.25em" class="astro-yjtbfmae"><span class="sr-only astro-yjtbfmae">Select theme</span><svg aria-hidden="true" class="icon label-icon astro-yjtbfmae astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg><select autocomplete="off" class="astro-yjtbfmae"><option value="dark" class="astro-yjtbfmae">Dark</option><option value="light" class="astro-yjtbfmae">Light</option><option value="auto" selected class="astro-yjtbfmae">Auto</option></select><svg aria-hidden="true" class="icon caret astro-yjtbfmae astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg></label></starlight-theme-select><script>
+	StarlightThemeProvider.updatePickers();
+</script><script type="module">var e=`starlight-theme`,t=e=>e===`auto`||e===`dark`||e===`light`?e:`auto`,n=()=>t(typeof localStorage<`u`&&localStorage.getItem(e));function r(t){typeof localStorage<`u`&&localStorage.setItem(e,t===`light`||t===`dark`?t:``)}var i=()=>matchMedia(`(prefers-color-scheme: light)`).matches?`light`:`dark`;function a(e){StarlightThemeProvider.updatePickers(e),document.documentElement.dataset.theme=e===`auto`?i():e,r(e)}matchMedia(`(prefers-color-scheme: light)`).addEventListener(`change`,()=>{n()===`auto`&&a(`auto`)});var o=class extends HTMLElement{constructor(){super(),a(n()),this.querySelector(`select`)?.addEventListener(`change`,e=>{e.currentTarget instanceof HTMLSelectElement&&a(t(e.currentTarget.value))})}};customElements.define(`starlight-theme-select`,o);</script><script type="module">var e=class extends HTMLElement{constructor(){super();let e=this.querySelector(`select`);e&&(e.addEventListener(`change`,e=>{e.currentTarget instanceof HTMLSelectElement&&(window.location.pathname=e.currentTarget.value)}),window.addEventListener(`pageshow`,t=>{if(!t.persisted)return;let n=e.querySelector(`option[selected]`)?.index;n!==e.selectedIndex&&(e.selectedIndex=n??0)}))}};customElements.define(`starlight-lang-select`,e);</script></div></div></header><nav class="sidebar print:hidden astro-krxyw6w2" aria-label="Main"><button popovertarget="starlight__sidebar" class="sl-menu-button sl-flex md:sl-hidden print:hidden astro-ondgmuz7"><svg aria-hidden="true" class="open-menu astro-ondgmuz7 astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M3 8h18a1 1 0 1 0 0-2H3a1 1 0 0 0 0 2Zm18 8H3a1 1 0 0 0 0 2h18a1 1 0 0 0 0-2Zm0-5H3a1 1 0 0 0 0 2h18a1 1 0 0 0 0-2Z"/></svg><svg aria-hidden="true" class="close-menu astro-ondgmuz7 astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="m13.41 12 6.3-6.29a1.004 1.004 0 1 0-1.42-1.42L12 10.59l-6.29-6.3a1.004 1.004 0 0 0-1.42 1.42l6.3 6.29-6.3 6.29a1 1 0 0 0 0 1.42.998.998 0 0 0 1.42 0l6.29-6.3 6.29 6.3a.999.999 0 0 0 1.42 0 1 1 0 0 0 0-1.42L13.41 12Z"/></svg><span class="sr-only astro-ondgmuz7">Menu</span></button><script type="module">var e=class extends HTMLElement{constructor(){super();let e=matchMedia(`(min-width: 50em)`),t=()=>{this.popover=e.matches?null:`auto`};t(),e.addEventListener(`change`,()=>t()),this.addEventListener(`toggle`,({newState:e})=>this.trapFocus(e===`open`))}trapFocus(e){document.querySelectorAll(`.main-frame, .sl-skip-link`).forEach(t=>{t.toggleAttribute(`inert`,e)})}};customElements.define(`sl-sidebar-pane`,e);</script><sl-sidebar-pane popover id="starlight__sidebar" class="sidebar-pane astro-krxyw6w2"><div class="sidebar-content sl-flex astro-krxyw6w2"><sl-sidebar-state-persist data-hash="10jnt7e" class="astro-msobw52n"><script aria-hidden="true">
+		(() => {
+			try {
+				if (!matchMedia('(min-width: 50em)').matches) return;
+				/** @type {HTMLElement | null} */
+				const target = document.querySelector('sl-sidebar-state-persist');
+				const state = JSON.parse(sessionStorage.getItem('sl-sidebar-state') || '0');
+				if (!target || !state || target.dataset.hash !== state.hash) return;
+				window._starlightScrollRestore = state.scroll;
+				customElements.define(
+					'sl-sidebar-restore',
+					class SidebarRestore extends HTMLElement {
+						connectedCallback() {
+							try {
+								const idx = parseInt(this.dataset.index || '');
+								const details = this.closest('details');
+								if (details && typeof state.open[idx] === 'boolean') details.open = state.open[idx];
+							} catch {}
+						}
+					}
+				);
+			} catch {}
+		})();
+	</script><ul class="top-level astro-5nqrizwh"><li class="astro-5nqrizwh"><a href="/1.3.0/" class="large astro-5nqrizwh"><span class="astro-5nqrizwh">Overview</span></a></li><li class="astro-5nqrizwh"><details open class="astro-5nqrizwh"><summary class="astro-5nqrizwh"><span class="group-label astro-5nqrizwh"><span class="large astro-5nqrizwh">Start here</span></span><svg aria-hidden="true" class="caret astro-5nqrizwh astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="0"></sl-sidebar-restore><ul class="astro-5nqrizwh"><li class="astro-5nqrizwh"><a href="/1.3.0/principles/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Principles</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.0/checklist/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">New app checklist</span></a></li></ul></details></li><li class="astro-5nqrizwh"><details open class="astro-5nqrizwh"><summary class="astro-5nqrizwh"><span class="group-label astro-5nqrizwh"><span class="large astro-5nqrizwh">Foundations</span></span><svg aria-hidden="true" class="caret astro-5nqrizwh astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="1"></sl-sidebar-restore><ul class="astro-5nqrizwh"><li class="astro-5nqrizwh"><a href="/1.3.0/platform/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Platform baseline</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.0/repository/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Repository documents</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.0/quality/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Code quality gates</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.0/performance/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Performance</span></a></li></ul></details></li><li class="astro-5nqrizwh"><details open class="astro-5nqrizwh"><summary class="astro-5nqrizwh"><span class="group-label astro-5nqrizwh"><span class="large astro-5nqrizwh">Experience</span></span><svg aria-hidden="true" class="caret astro-5nqrizwh astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="2"></sl-sidebar-restore><ul class="astro-5nqrizwh"><li class="astro-5nqrizwh"><a href="/1.3.0/keyboard/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Keyboard first</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.0/window-shell/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Window shell</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.0/icons-and-colour/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Icons and colour</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.0/toolbars-and-tooltips/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Toolbars and tooltips</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.0/tabs-and-panels/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Tabs and tool panels</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.0/menus/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Menus</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.0/tray-and-background/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Tray and background</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.0/settings/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Settings</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.0/diagnostics/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Diagnostics and support</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.0/command-line/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Command line and launch</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.0/i18n/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Internationalization</span></a></li></ul></details></li><li class="astro-5nqrizwh"><details open class="astro-5nqrizwh"><summary class="astro-5nqrizwh"><span class="group-label astro-5nqrizwh"><span class="large astro-5nqrizwh">Templates</span></span><svg aria-hidden="true" class="caret astro-5nqrizwh astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="3"></sl-sidebar-restore><ul class="astro-5nqrizwh"><li class="astro-5nqrizwh"><a href="/1.3.0/templates/command-palette/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Command Palette</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.0/templates/quick-open/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">QuickOpen picker</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.0/templates/welcome/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Welcome page</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.0/templates/about/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">About window</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.0/templates/confirm-dialog/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Confirm dialog</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.0/templates/find-bar/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Find bar</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.0/templates/message-log/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Message Log</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.0/templates/settings-sync/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Settings Sync</span></a></li></ul></details></li><li class="astro-5nqrizwh"><details open class="astro-5nqrizwh"><summary class="astro-5nqrizwh"><span class="group-label astro-5nqrizwh"><span class="large astro-5nqrizwh">Shipping</span></span><svg aria-hidden="true" class="caret astro-5nqrizwh astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="4"></sl-sidebar-restore><ul class="astro-5nqrizwh"><li class="astro-5nqrizwh"><a href="/1.3.0/release/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Packaging, signing and release</span></a></li></ul></details></li><li class="astro-5nqrizwh"><details open class="astro-5nqrizwh"><summary class="astro-5nqrizwh"><span class="group-label astro-5nqrizwh"><span class="large astro-5nqrizwh">The family</span></span><svg aria-hidden="true" class="caret astro-5nqrizwh astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="5"></sl-sidebar-restore><ul class="astro-5nqrizwh"><li class="astro-5nqrizwh"><a href="/1.3.0/family/matrix/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Feature matrix</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.0/family/shared-features/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Shared features</span></a></li><li class="astro-5nqrizwh"><a href="/1.3.0/family/gaps/" class="astro-5nqrizwh"><span class="astro-5nqrizwh">Gaps per app</span></a></li></ul></details></li><li class="astro-5nqrizwh"><a href="/1.3.0/changelog/" aria-current="page" class="large astro-5nqrizwh"><span class="astro-5nqrizwh">Changelog</span></a></li></ul><script aria-hidden="true">
+		(() => {
+			const scroller = document.getElementById('starlight__sidebar');
+			if (!window._starlightScrollRestore || !scroller) return;
+			scroller.scrollTop = window._starlightScrollRestore;
+			delete window._starlightScrollRestore;
+		})();
+	</script></sl-sidebar-state-persist><div class="md:sl-hidden"><div class="mobile-preferences sl-flex astro-hlvk36qr"><div class="social-icons astro-hlvk36qr"><a href="https://github.com/adriandeleon/adl-desktop-apps-guidelines" rel="me" class="sl-flex astro-ixqknywc"><span class="sr-only astro-ixqknywc">GitHub</span><svg aria-hidden="true" class="astro-ixqknywc astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57L9 21.07c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.09-.73.09-.73 1.2.09 1.83 1.24 1.83 1.24 1.08 1.83 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18a4.65 4.65 0 0 1 1.23 3.22c0 4.61-2.8 5.63-5.48 5.92.42.36.81 1.1.81 2.22l-.01 3.29c0 .31.2.69.82.57A12 12 0 0 0 12 .3Z"/></svg></a></div><starlight-theme-select><label style="--sl-select-width: 6.25em" class="astro-yjtbfmae"><span class="sr-only astro-yjtbfmae">Select theme</span><svg aria-hidden="true" class="icon label-icon astro-yjtbfmae astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg><select autocomplete="off" class="astro-yjtbfmae"><option value="dark" class="astro-yjtbfmae">Dark</option><option value="light" class="astro-yjtbfmae">Light</option><option value="auto" selected class="astro-yjtbfmae">Auto</option></select><svg aria-hidden="true" class="icon caret astro-yjtbfmae astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg></label></starlight-theme-select><script>
+	StarlightThemeProvider.updatePickers();
+</script></div></div></div></sl-sidebar-pane></nav><div class="main-frame astro-krxyw6w2"><script type="module">var e=document.getElementById(`starlight__sidebar`),t=e?.querySelector(`sl-sidebar-state-persist`),n=`sl-sidebar-state`,r=()=>{let r=[],i=t?.dataset.hash||``;try{let e=sessionStorage.getItem(n),t=JSON.parse(e||`{}`);Array.isArray(t.open)&&t.hash===i&&(r=t.open)}catch{}return{hash:i,open:r,scroll:e?.scrollTop||0}},i=e=>{try{sessionStorage.setItem(n,JSON.stringify(e))}catch{}},a=()=>i(r()),o=(e,t)=>{let n=r();n.open[t]=e,i(n)};t?.addEventListener(`click`,e=>{if(!(e.target instanceof Element))return;let t=e.target.closest(`summary`)?.closest(`details`);if(!t)return;let n=t.querySelector(`sl-sidebar-restore`),r=parseInt(n?.dataset.index||``);isNaN(r)||o(!t.open,r)}),addEventListener(`visibilitychange`,()=>{document.visibilityState===`hidden`&&a()});</script><div class="lg:sl-flex astro-wh2afnfx"><div class="main-pane astro-wh2afnfx"><main data-pagefind-body class="astro-ffdeby5s" lang="en" dir="ltr"><div class="content-panel astro-brieias3"><div class="sl-container astro-brieias3"><h1 id="_top" class="astro-nczppgfy">Changelog</h1></div></div><div class="content-panel astro-brieias3"><div class="sl-container astro-brieias3"><div class="sl-markdown-content"><p>Each edition of Pauta is a version: a new or stronger rule is a minor version, a new <span class="lvl lvl-must">MUST</span> that existing apps fail is a
+major one, wording and facts a patch. The entries come from the repository’s <code dir="auto">CHANGELOG.md</code>, in
+<a href="https://keepachangelog.com/en/1.1.0/">Keep a Changelog</a> form.</p>
+<div class="editions"><section class="edition" id="1.3.0"><h2><a href="#1.3.0">1.3.0</a><time datetime="2026-11-06">6 November 2026</time></h2><h3 id="added">Added</h3>
+<ul>
+<li><strong>Icons and colour</strong>, a new Experience page: Inter on every scene and JetBrains Mono for code; the Caret &#x26; Ink
+palette as a swatch grid of each token’s light and dark value; the state vocabulary (amber not durable yet, red
+broken, green verified, accent an offer, periwinkle the keyboard and nothing else) named once on <code>.root</code> from the
+theme’s roles, with the contrast rules <code>StyleContrastTest</code> pins; the 28 themes and the separate editor themes;
+and the two icon families (kit line glyphs stroked, Material glyphs filled), their classes, sizes and licences,
+with what each of the six apps does. The checklist gains an Icons and colour group and the matrix three rows.</li>
+<li><strong>Toolbars and tooltips</strong>, a new Experience page: an icon-only button gets its tooltip and its accessible name from
+one helper, stays out of the Tab order and names its command and chord in the tooltip; groups are spaced, not
+ruled, on one chrome band with the menu bar and the tab strip; a toggle wears <code>:open</code> while its overlay shows; the
+pinned tail never overflows; and Editora’s customisable toolbar (drag to reorder, drag off to remove, Escape) as a
+MAY. An annotated mockup and a spec table from Editora’s <code>Icons</code>, <code>ToolbarCoordinator</code> and <code>ToolWindowManager</code>.</li>
+<li><strong>Tabs and tool panels</strong>, a new Experience page. The tab header is a graphic label that carries the states (<code>•</code> and
+amber italic for unsaved, a pin and bold for pinned, muted italic for read-only, the Git colours), is the drag
+handle for reordering, and opens into the editor with a three-sided border; bulk close skips pinned tabs and Reopen
+Closed Tab brings the last one back. Tool panels dock on three stripes, two windows a side, toggled by commands and
+restored from <code>workspace-state.json</code>, with the SplitPane divider as their only edge. An annotated mockup and a spec
+table from Editora’s <code>TabHeaders</code>, <code>ClosedTabs</code>, <code>Switcher</code> and <code>ToolWindowManager</code>; Torrenta’s sidebar and detail
+pane, Mirada’s panels and Termina’s panes beside them.</li>
+<li><strong>Tray and background</strong>, a new Experience page for the apps that keep working without their window: the tray icon
+(a StatusNotifierItem on Linux, AWT elsewhere, the app’s own mark recoloured by state), its text-only menu with the
+status line first and Quit last, close to tray only while an icon is actually up, <code>--minimized</code>, start at login as
+the OS’s own entry with nothing beside it, and desktop notifications through one <code>Notifier</code> with one switch per
+event. From Torrenta’s <code>tray/</code>, <code>os/Autostart</code> and <code>automation/Notifiers</code>, with Modula and nux. The checklist gains a
+Tray and background group and the matrix two rows.</li>
+<li><strong>QuickOpen picker template.</strong> The palette card with a title and a prompt, for choosing one thing from a list:
+anatomy, spec (620 px, 26 px rows that hug the matches, 12 before scrolling), behaviour (the supplier’s order until
+you type, the current value pre-selected, preview with an undo, row actions), what each app picks with it, and the
+strings. From Editora’s <code>QuickOpen</code>, <code>PickerKeys</code> and <code>OverlayHost</code>; Mirada’s <code>CommandPalette.Choices</code> is the
+same shape.</li>
+<li><strong>Welcome page template.</strong> Editora’s start page as a mockup with its anatomy: Start actions that are commands with
+their chords, recent projects and files a digit away, Customize, Help and the footer; the spec from <code>WelcomePane</code>,
+when the page shows and when it does not (the empty-state hint after the last tab), and Torrenta’s drop zone as
+the empty state for an app with no documents.</li>
+<li><strong>Confirm dialog</strong>, a template. The question before a destructive action: it names the thing and the consequence, the button names the action in red (<code>danger</code>), Cancel is the catalogue’s word with Escape behind it, and where an undo exists there is no question. Mockup, the three-answer unsaved-changes variant, a spec tied to Editora’s <code>CloseCoordinator</code> and <code>GitCoordinator.confirmDestructive</code> and Torrenta’s <code>RemoveConfirm</code>, and the strings.</li>
+<li><strong>Find bar</strong>, a template. In-scene and incremental with a count; Enter and Shift+Enter step, Escape closes the
+bar and gives the keyboard back; the keymap’s caret chords work in the field; big documents and scrollbacks are
+searched off the FX thread. Editora’s docked find and replace and Termina’s floating card as mockups, Torrenta’s
+filter box as the list app’s version.</li>
+</ul>
+<h3 id="fixed">Fixed</h3>
+<ul>
+<li><strong>The palette’s shared parts are named as the code has them.</strong> Editora’s caret-key helper is <code>TextInputKeymap</code>
+(<code>TextInputKeys</code> in Termina’s and Mirada’s copies), and Torrenta shares <code>MatchText</code> only, ranking with its own
+<code>CommandMatcher</code>; the Command Palette template and Shared features said all four were shared verbatim with all three.</li>
+</ul></section><section class="edition" id="1.2.0"><h2><a href="#1.2.0">1.2.0</a><time datetime="2026-11-06">6 November 2026</time></h2><h3 id="added">Added</h3>
+<ul>
+<li><strong>Menus</strong>, a new Experience page. The menu bar and right-click menus share one look: Inter 14 px rows of 34 px, a
+22 px icon column with the command’s own glyph, the chord right-aligned in its own column at 11 px in the keyboard
+colour, radius 8 and a shadow that falls below the card. Right-click menus MUST open one at a time, close on a press
+anywhere outside them (including inside the control they were opened on, which JavaFX’s auto-hide exempts), close on
+Escape and open from the Menu key at the selected row. Two annotated mockups, a spec table and the behaviour, all
+from Editora’s <code>MainMenuBar</code>, <code>ContextMenuDismissal</code>, <code>RowContextMenu</code> and <code>LazyContextMenu</code>. The checklist gains a
+Menus group and the feature matrix three menu rows.</li>
+<li><strong>What’s new, and a Changelog page.</strong> The overview shows the current edition’s changes; the Changelog page lists
+every edition under its own anchor. Both are rendered from <code>CHANGELOG.md</code>, so there is nothing to keep in step.</li>
+<li><strong>Its own domain: <a href="https://pauta-project.dev/">pauta-project.dev</a>.</strong> The old github.io address redirects there.</li>
+<li><strong>Five more principles</strong>, from what the apps already do: speed comes first; never claim what is not true;
+one source of truth for each fact; separate the decision from the UI, then test it; verify by driving the
+real app. The principles are now thirteen, in two groups: for the people using the apps and for the people
+building them. Code quality gates and the checklist follow.</li>
+<li><strong>Four rules where they belong.</strong> Settings: <em>Before adding a setting</em> (one right answer is not a setting; Modula’s
+car-radio test), <em>never trust a config file</em> (clamp on read, <code>.corrupt.bak</code>), and <em>Secrets stay out of files</em>
+(the OS keychain or session-only, no UI for dangerous escape hatches). Window shell: a destructive action asks
+first, its button names the action, and undo beats a question.</li>
+<li><strong>Principle 3: the UI never waits</strong>, and a <strong>Performance</strong> page behind it: keep the JavaFX application thread
+free (with the generation-guarded background shape every Editora service uses), coalesce hot-path work, bound
+memory, build only the first frame before it paints, and measure. The checklist gains a Performance group.</li>
+<li><strong>A name and a mark: Pauta.</strong> Spanish for a guideline, and for the ruled lines on writing paper. The mark (three
+periwinkle rules and a teal tick on the family’s Ink tile) is the favicon and the site logo; a 1280 × 640 card
+serves shared links. The README, the PDF and the footer carry the name. Sources and how to re-render them are in
+<code>branding/</code>.</li>
+<li><strong>Start from the template.</strong> The New app checklist and Repository documents link to
+<a href="https://github.com/adriandeleon/adl-desktop-app-template">adl-desktop-app-template</a>, a GitHub template
+repository that meets every MUST: a runnable app with its tests, CI and release workflows, and an example of
+every repository document.</li>
+</ul>
+<h3 id="changed">Changed</h3>
+<ul>
+<li><strong>Every content change is an edition.</strong> A change to a page bumps the version and gets its changelog section in the
+same commit; <code>AGENTS.md</code> says so and how.</li>
+<li><strong>The New app checklist can be ticked.</strong> Ticks are kept in the reader’s browser, a line above the groups counts
+them, and <em>Clear ticks</em> resets them.</li>
+<li><strong>Principles opens with Editora’s keymap picker</strong> instead of repeating the overview’s screenshot.</li>
+<li><strong>The “not found” dot is easier to see</strong>, in dark mode especially: an outline in the muted text colour.</li>
+<li><strong>The README links the new app template</strong> and describes the dot and pill conventions as they now work.</li>
+<li><strong>Levels read the same everywhere.</strong> MUST, SHOULD and MAY render as the level pill in prose and lists too
+(“<strong>MUST.</strong>”, “(SHOULD)”), not only in table cells; on the site and in the PDF.</li>
+<li><strong>Rule tables stack on a phone.</strong> A table with a Level column turns each row into a card with its level and
+Editora reference visible, instead of scrolling them off screen.</li>
+<li><strong>The feature matrix keeps its app row in view</strong> while a long table scrolls (wide screens).</li>
+<li><strong>Screenshot galleries leave no gap.</strong> Galleries are two to a row; with an odd count the first screenshot spans
+the row.</li>
+<li><strong>The overview is reorganised.</strong> The Editora screenshot sits beside the title, with the edition under the
+actions (side by side from 64rem, so the three actions stay on one row; stacked below that); <em>Where to start</em>
+and <em>How to read it</em> come before the family, which is now six even tiles with Editora
+marked as the reference.</li>
+</ul>
+<h3 id="fixed">Fixed</h3>
+<ul>
+<li><strong>The feature matrix no longer widens the page on a phone.</strong> Each matrix scrolls inside its own box, so the
+header’s search and menu stay on screen.</li>
+<li><strong>A ”—” outside the feature matrix stays a dash.</strong> Only matrix cells become status dots; the Homepage column of
+“What the apps are” no longer shows a “No” dot for apps without a homepage. The print build does the same.</li>
+<li><strong>Template mockups fit the column.</strong> Where a mockup is wider than the text column (Settings Sync and the Command
+Palette at laptop widths), it is scaled down to fit and says by how much, instead of being clipped.</li>
+</ul></section><section class="edition" id="1.1.0"><h2><a href="#1.1.0">1.1.0</a><time datetime="2026-11-06">6 November 2026</time></h2><h3 id="added">Added</h3>
+<ul>
+<li><strong>Visual templates</strong> for four shared surfaces: the Command Palette, the About window, the Message Log and the
+Settings Sync page. Each has an annotated mockup at the apps’ real sizes (light and dark), its anatomy, a spec
+table tied to Editora’s code, its behaviour, its exact strings, and the real screenshots from the apps.</li>
+</ul>
+<h3 id="fixed">Fixed</h3>
+<ul>
+<li><strong>The palette does not rank recently used commands first.</strong> Keyboard first said it did; Editora ranks by match
+score, with a query that names a title first.</li>
+</ul></section><section class="edition" id="1.0.0"><h2><a href="#1.0.0">1.0.0</a><time datetime="2026-11-06">6 November 2026</time></h2><h3 id="changed">Changed</h3>
+<ul>
+<li><strong>JDK 25 and JavaFX 27 are floors, not ceilings.</strong> The platform baseline asks for JDK 25 or newer (an open enforcer
+range) and JavaFX 27 or newer; the badges read 25+ and 27+.</li>
+<li><strong>Inter is a SHOULD</strong>, not a MUST.</li>
+<li><strong>Every repository document is a MUST except <code>TODO.md</code></strong>: <code>CONTRIBUTING.md</code>, <code>docs/</code> and <code>branding/</code> join the
+rest. The matrix gains a <code>CONTRIBUTING.md</code> row and the gaps table lists who lacks it; Torrenta and Modula are
+marked for committing only <code>CLAUDE.md</code>, with no <code>AGENTS.md</code>.</li>
+<li><strong>The checklist is grouped by area</strong>, each group linking to its page, with a hanging indent for wrapped items.</li>
+<li><strong>The feature matrix fits on the page.</strong> Its page is wider and notes under a dot wrap, so all six columns show
+without scrolling sideways.</li>
+</ul>
+<h3 id="added">Added</h3>
+<ul>
+<li><strong>First edition of the guidelines.</strong> Principles, platform baseline, repository documents, quality gates,
+keyboard-first interaction, window shell, Settings, diagnostics, command line, internationalization,
+packaging and signing, and a new app checklist — extracted from Editora.</li>
+<li><strong>The family pages.</strong> A feature matrix of Editora, Torrenta, Termina, Modula, Mirada and nux surveyed from
+each default branch on 2026-11-05, nineteen shared features worth standardizing, and the gaps per app.</li>
+<li><strong>Screenshots from the apps.</strong> 21 captioned figures across Principles, Platform, Keyboard, Window shell, Settings,
+Diagnostics and Internationalization, and a gallery of the family on the overview. New Editora captures of the
+Settings search, Message Log, Report a Problem and About; the rest come from the apps’ websites and READMEs.
+The PDF carries them too, and the single Markdown file links them from the repository.</li>
+<li><strong>The apps’ own icons.</strong> Each app’s icon, copied from its <code>branding/</code> folder, heads its column in the feature
+matrix, labels its row in the gaps table, captions its screenshot on the overview, and appears in the PDF and
+the README.</li>
+<li><strong>A Mirada screenshot.</strong> Mirada showing a folder of wallpapers with its info panel and thumbnail strip, on the
+overview and on Window shell beside Termina’s title bar.</li>
+<li><strong>Click a screenshot to see it large.</strong> Every screenshot on a page (and in the overview gallery) opens in a
+full-window viewer with its caption; ← and → step through the page’s screenshots, Esc or a click outside closes
+it. Screenshots take keyboard focus and open with Enter or Space.</li>
+<li><strong>Install methods.</strong> Packaging, signing and release covers Homebrew (a cask in <code>adriandeleon/homebrew-tap</code>) and
+winget (<code>AdrianDeLeon.&#x3C;App></code>) beside the GitHub release downloads, with what each needs and where each app
+stands.</li>
+<li><strong>CI/CD for GitHub Actions</strong> as a table of the three workflows and the rules every workflow follows, and as its
+own group in the checklist.</li>
+<li><strong>The six languages, as a floor.</strong> Internationalization lists them, says apps should add more, and what a new
+language takes (CJK font fallback, right-to-left orientation).</li>
+<li><strong>Homepage and GitHub links</strong> for every app on the overview and the feature matrix.</li>
+<li><strong>Repository documents screenshots</strong>: Editora’s repository root and the top of its README on GitHub.</li>
+<li><strong>Web version on GitHub Pages</strong> with search, light and dark themes, and PDF and single-Markdown downloads built
+in the same workflow.</li>
+</ul></section></div></div><footer class="sl-flex astro-yd7upq6w"><div class="meta sl-flex astro-yd7upq6w"><a href="https://github.com/adriandeleon/adl-desktop-apps-guidelines/edit/master/src/content/docs/changelog.mdx" class="sl-flex print:hidden astro-lfz5224o"><svg aria-hidden="true" class="astro-lfz5224o astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.2em;"><path d="M22 7.24a1 1 0 0 0-.29-.71l-4.24-4.24a1 1 0 0 0-1.1-.22 1 1 0 0 0-.32.22l-2.83 2.83L2.29 16.05a1 1 0 0 0-.29.71V21a1 1 0 0 0 1 1h4.24a1 1 0 0 0 .76-.29l10.87-10.93L21.71 8c.1-.1.17-.2.22-.33a1 1 0 0 0 0-.24v-.14l.07-.05ZM6.83 20H4v-2.83l9.93-9.93 2.83 2.83L6.83 20ZM18.17 8.66l-2.83-2.83 1.42-1.41 2.82 2.82-1.41 1.42Z"/></svg>Edit page</a><p>Last updated: <time datetime="2026-11-07T00:29:27.000Z">Nov 7, 2026</time></p></div><div class="pagination-links print:hidden astro-aoqaorxs" dir="ltr"><a href="/1.3.0/family/gaps/" rel="prev" class="astro-aoqaorxs"><svg aria-hidden="true" class="astro-aoqaorxs astro-4oohy4pg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.5rem;"><path d="M17 11H9.41l3.3-3.29a1.004 1.004 0 1 0-1.42-1.42l-5 5a1 1 0 0 0-.21.33 1 1 0 0 0 0 .76 1 1 0 0 0 .21.33l5 5a1.002 1.002 0 0 0 1.639-.325 1 1 0 0 0-.219-1.095L9.41 13H17a1 1 0 0 0 0-2Z"/></svg><span class="astro-aoqaorxs">Previous<br class="astro-aoqaorxs"><span class="link-title astro-aoqaorxs">Gaps per app</span></span></a></div></footer><p class="edition astro-jo6i4kqk">Pauta <strong class="astro-jo6i4kqk">1.3.0</strong> · <time datetime="2026-11-06" class="astro-jo6i4kqk">6 November 2026</time> · <a href="/1.3.0/changelog/" class="astro-jo6i4kqk">Changelog</a></p></div></div></main></div></div></div></div></body></html>

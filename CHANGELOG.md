@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-11-06
+
+### Added
+
+- **Documentation**, a new Foundations page, and documentation is a MUST. Every app has user documentation on its
+  website under `/docs/` (Getting started, a page per feature area, the keyboard reference, Settings, an FAQ), reached
+  from the app by a `help.documentation` command first in the Help menu and on the Welcome page; a one-line description
+  for every command; `docs/README.md` indexing the contributor guides, with `AGENTS.md`, `CONTRIBUTING.md` and `docs/`
+  each doing one job; and the docs change in the same PR as the code, the code winning when they disagree. Deep links
+  that open the running version's docs (`/docs/v-<version>/`), references generated from the source with a drift
+  check, decision records, Javadoc on its member and retaken screenshots are SHOULDs; per-command help from the palette
+  and a Help link on each Settings page are MAYs. From Editora's `AppInfo.docsUrl()`, `WindowCommandRegistrar`,
+  `MenuBarModel`, `WelcomePane`, `CommandPalette` and `SettingsFrameBits`, its `docs/README.md` and
+  `docs/conventions.md`, and the editora-website generators and `check-doc-commands.mjs`. The checklist gains a
+  Documentation group, the matrix three rows, and the gaps table the apps that fail the new MUSTs: Modula and nux have
+  no user docs beyond the README, and only Editora has a Help → Documentation command and a `docs/README.md`.
+
+### Changed
+
+- **Same app on every OS is principle 1.** Cross-OS consistency is the reason the family and the guide exist, so it
+  moves from ninth to first, now naming the same commands, keymaps and look as well as the same features and installer
+  quality, and the principles intro and the hero tagline say so. The former principles 1 to 8 are now 2 to 9; the
+  Documentation page's reference to *Never claim what is not true* follows.
+
 ## [1.3.2] - 2026-11-06
 
 ### Changed

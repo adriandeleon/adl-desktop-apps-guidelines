@@ -5,33 +5,35 @@ description: "The thirteen rules every other page follows from: ten for the peop
 
 ![Editora's keymap picker listing Emacs, CUA, Sublime Text, Visual Studio Code and IntelliJ IDEA over a Java file](../../assets/shots/editora-keymaps.png "Editora's keymap picker: five keymaps bind keys to the same commands.")
 
-These come from what the six apps already do. Editora is the reference; each principle names where else it is
-written down.
+These come from what the six apps already do. The first is the reason the family and this guide exist: one
+app that is the same on Windows, macOS and Linux. The other twelve are how the apps get there and stay there.
+Editora is the reference; each principle names where else it is written down.
 
 ## For the people using the apps
 
-1. **Keyboard first.** Every action works without a mouse. The mouse is a shortcut to commands, not the
+1. **Same app on every OS.** A user who moves between Windows, macOS and Linux finds the same features, the
+   same commands and keymaps, the same look and the same installer quality, and never relearns the app. Platform
+   differences live behind one class, never scattered `if (isMac)` checks. Every other principle serves this one.
+2. **Keyboard first.** Every action works without a mouse. The mouse is a shortcut to commands, not the
    other way round.
-2. **Every feature is a command.** One registry of commands with ids. Menus, toolbar buttons, the command
+3. **Every feature is a command.** One registry of commands with ids. Menus, toolbar buttons, the command
    palette and key bindings all run commands by id. Nothing is wired straight to logic.
-3. **Speed comes first.** Start-up and the app's core action (typing in Editora, stepping to the next image in
+4. **Speed comes first.** Start-up and the app's core action (typing in Editora, stepping to the next image in
    Mirada, a keystroke reaching the shell in Termina) are the product. When a feature pulls against them, the
    feature loses or waits until it can be made cheap. *(Mirada's "Priorities"; "fast first" in Termina and
    Mirada.)*
-4. **The UI never waits.** The JavaFX application thread only touches the scene graph. Disk, network,
+5. **The UI never waits.** The JavaFX application thread only touches the scene graph. Disk, network,
    processes, parsing and searching run on other threads and hand their result back; a keystroke, a scroll or a
    window opening never waits for them. See [Performance](../performance/).
-5. **Changes apply as they are made.** Settings have no Save button. A change reaches every open window.
-6. **Nothing fails silently.** Every failure reaches the status bar, the Message Log or the Debug Log, and
+6. **Changes apply as they are made.** Settings have no Save button. A change reaches every open window.
+7. **Nothing fails silently.** Every failure reaches the status bar, the Message Log or the Debug Log, and
    the user can turn any of it into a GitHub issue.
-7. **Never claim what is not true.** No link that looks like a link and does nothing, no "up to date" before
+8. **Never claim what is not true.** No link that looks like a link and does nothing, no "up to date" before
    an update check has answered, no setting that seems to apply when it cannot: a setting that waits for a
    restart says so on its own row. *(Modula's About, Editora's update status, Termina's settings rows.)*
-8. **Local first, nothing sent without asking.** No telemetry. The only automatic network call is a
+9. **Local first, nothing sent without asking.** No telemetry. The only automatic network call is a
    once-a-day release check the user can turn off. Problem reports are built locally and submitted by the
    user.
-9. **Same app on every OS.** Windows, macOS and Linux get the same features and the same installer
-   quality. Platform differences live behind one class, never scattered `if (isMac)` checks.
 10. **Users' data outlives versions.** Config files carry a schema version and migrate forward. An older
     build never overwrites a newer config.
 

@@ -18,7 +18,7 @@
 ![Version](https://img.shields.io/github/package-json/v/adriandeleon/adl-desktop-apps-guidelines?label=guidelines)
 ![Built with Starlight](https://img.shields.io/badge/built%20with-Starlight-0e8577)
 
-UI, UX and platform rules for the family of JavaFX desktop apps — [Editora](https://github.com/adriandeleon/Editora),
+UI, UX and platform rules so the family of JavaFX desktop apps is the same app on Windows, macOS and Linux — [Editora](https://github.com/adriandeleon/Editora),
 [Torrenta](https://github.com/adriandeleon/torrenta), [Termina](https://github.com/adriandeleon/Termina),
 [Modula](https://github.com/adriandeleon/Modula), [Mirada](https://github.com/adriandeleon/Mirada) and
 [nux](https://github.com/adriandeleon/nux). Editora is the reference implementation: every rule names the class
@@ -41,7 +41,7 @@ example of every repository document. Click **Use this template**, then run `scr
 | Part | Pages |
 |---|---|
 | Start here | Principles · New app checklist |
-| Foundations | Platform baseline (JDK 25, JavaFX 27, AtlantaFX, NullAway, Maven Wrapper) · Repository documents · Code quality gates (90% coverage) |
+| Foundations | Platform baseline (JDK 25, JavaFX 27, AtlantaFX, NullAway, Maven Wrapper) · Repository documents · Documentation (user docs on the website, `docs/`, Help → Documentation) · Code quality gates (90% coverage) |
 | Experience | Keyboard first & Command Palette · Window shell · Icons and color (Inter, the Caret & Ink palette, state colors, icon families) · Toolbars and tooltips · Tabs and tool panels · Menus (menu bar, right-click menus) · Tray and background (close to tray, start at login, notifications) · Settings (search, Git/GitHub sync) · Diagnostics (Message Log, Debug Log, updates, Report a Problem) · Command line · Internationalization |
 | Templates | Command Palette · QuickOpen picker · Welcome page · About window · Confirm dialog · Find bar · Message Log · Settings Sync |
 | Shipping | jpackage + JReleaser installers for macOS / Linux / Windows on arm64 and x64, signing, CI |

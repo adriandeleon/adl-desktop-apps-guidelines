@@ -22,9 +22,10 @@ done
 wt=build/versions-branch
 git worktree remove --force "${wt:?}" 2>/dev/null || true
 git worktree prune
-if git fetch --quiet origin versions 2>/dev/null; then
-  git worktree add --quiet --detach "$wt" FETCH_HEAD
-  git -C "$wt" switch --quiet -C versions FETCH_HEAD
+# The branch's tip by its remote-tracking ref: FETCH_HEAD did not resolve on the GitHub runner's git.
+if git fetch --quiet origin +versions:refs/remotes/origin/versions 2>/dev/null; then
+  git worktree add --quiet --detach "$wt" refs/remotes/origin/versions
+  git -C "$wt" switch --quiet -C versions refs/remotes/origin/versions
 elif git rev-parse --verify --quiet versions >/dev/null; then
   git worktree add --quiet "$wt" versions
 else

@@ -37,7 +37,7 @@ Editora (`../Editora`) is the reference implementation.
   Changelog page, the PDF and the Markdown download read them from there. To publish one: set the version and the date
   in `package.json`, head its changelog section `## [x.y.z] - YYYY-MM-DD`, commit, tag `vx.y.z`. A new or stronger
   rule is a minor version, a new MUST that existing apps fail is a major one, wording and facts a patch.
-- **Editions on the site.** Every page is served under its edition: `https://pauta-project.dev/2.0.0/principles/` is
+- **Editions on the site.** Every page is served under its edition: `https://pauta-project.dev/1.4.0/principles/` is
   permanent, `https://pauta-project.dev/latest/principles/` is always the newest edition, and the unnumbered address
   redirects to `latest/`. `scripts/build-site.mjs` (`npm run build`) builds this checkout twice, with `PAUTA_PATH`
   `latest` and the version (`astro.config.mjs` puts it in `base` and `outDir`), lays the earlier editions beside them

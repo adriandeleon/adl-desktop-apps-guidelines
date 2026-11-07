@@ -36,7 +36,8 @@ repository document, built to the Pauta edition its README names. Click **Use th
 or the [single Markdown file](https://pauta-project.dev/downloads/adl-desktop-apps-guidelines.md).
 Coding agents start at [`llms.txt`](https://pauta-project.dev/llms.txt): every edition also serves its rules as
 [`rules.json`](https://pauta-project.dev/latest/rules.json) and
-[`llms-full.txt`](https://pauta-project.dev/latest/llms-full.txt), with how to audit an app against them.
+[`llms-full.txt`](https://pauta-project.dev/latest/llms-full.txt), with how to audit an app against them; the [Coding agents and LLMs](https://pauta-project.dev/latest/coding-agents/)
+page explains them.
 Every edition stays online at its own address: [`/latest/`](https://pauta-project.dev/latest/) is always the newest,
 `/1.4.0/`, `/1.3.2/` and so on are permanent, and the header of every page switches between them.
 
@@ -44,7 +45,7 @@ Every edition stays online at its own address: [`/latest/`](https://pauta-projec
 
 | Part | Pages |
 |---|---|
-| Start here | Principles · New app checklist |
+| Start here | Principles · New app checklist · Coding agents and LLMs |
 | Foundations | Platform baseline (JDK 25, JavaFX 27, AtlantaFX, NullAway, Maven Wrapper) · Repository documents · Documentation (user docs on the website, `docs/`, Help → Documentation) · Code quality gates (90% coverage) |
 | Experience | Keyboard first & Command Palette · Window shell · Icons and color (Inter, the Caret & Ink palette, state colors, icon families) · Toolbars and tooltips · Tabs and tool panels · Menus (menu bar, right-click menus) · Tray and background (close to tray, start at login, notifications) · Settings (search, Git/GitHub sync) · Diagnostics (Message Log, Debug Log, updates, Report a Problem) · Command line · Internationalization |
 | Templates | Command Palette · QuickOpen picker · Welcome page · About window · Confirm dialog · Find bar · Message Log · Settings Sync |

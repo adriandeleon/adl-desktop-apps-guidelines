@@ -1,0 +1,59 @@
+---
+// The edition switcher: the edition this page belongs to, and the same page in any other one. The options are the
+// editions CHANGELOG.md knows at build time; public/versions.js adds those published since, so a page built long ago
+// still offers the newest edition. In the header on wide screens (SiteTitle.astro), in the menu on phones
+// (MobileMenuFooter.astro).
+import Select from "@astrojs/starlight/components/Select.astro";
+import pkg from "../../package.json";
+import text from "../../CHANGELOG.md?raw";
+import { parseEditions, released } from "../lib/editions.mjs";
+import { siteRoot, editionOf } from "../lib/site.mjs";
+
+const root = siteRoot(pkg);
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const here = editionOf(base, root);
+const versions = released(parseEditions(text)).map((e) => e.version);
+if (!versions.includes(pkg.version)) versions.unshift(pkg.version); // bumped before its changelog section was written
+const options = [
+  { value: "latest", label: `latest (${pkg.version})`, selected: here === "latest" },
+  ...versions.map((v) => ({ value: v, label: v, selected: here === v })),
+];
+---
+
+<pauta-edition-select class:list={["print:hidden", Astro.props.class]} data-root={root} data-base={base}>
+  <Select icon="open-book" label="Edition" options={options} width="9.5em" />
+</pauta-edition-select>
+
+<style>
+  pauta-edition-select { align-items: center; font-size: var(--sl-text-sm); }
+  pauta-edition-select :global(select) { font-variant-numeric: tabular-nums; }
+</style>
+
+<script>
+  class PautaEditionSelect extends HTMLElement {
+    connectedCallback() {
+      const select = this.querySelector("select");
+      if (!select) return;
+      const root = this.dataset.root ?? "/";
+      const base = this.dataset.base ?? "/";
+      // The page's path inside its edition: the same path in another edition, when that edition has the page.
+      const rest = location.pathname.startsWith(base) ? location.pathname.slice(base.length) : "";
+      select.addEventListener("change", async () => {
+        const home = `${root}${select.value}/`;
+        const page = home + rest;
+        try {
+          const r = await fetch(page, { method: "HEAD" });
+          location.href = r.ok ? page : home;
+        } catch {
+          location.href = home;
+        }
+      });
+      window.addEventListener("pageshow", (event) => {
+        if (!event.persisted) return; // restored from the back/forward cache: show this page's edition again
+        const marked = select.querySelector<HTMLOptionElement>("option[selected]")?.index;
+        if (marked !== undefined && marked !== select.selectedIndex) select.selectedIndex = marked;
+      });
+    }
+  }
+  customElements.define("pauta-edition-select", PautaEditionSelect);
+</script>

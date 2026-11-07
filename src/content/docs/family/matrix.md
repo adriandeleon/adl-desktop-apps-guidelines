@@ -4,7 +4,7 @@ description: "Which of the six apps has which platform piece, release step and f
 tableOfContents: false
 ---
 
-Surveyed on 2026-11-05 from each repository's default branch (the rows added in editions 1.2.0 and 1.3.0 on 2026-11-06). ● has it, ◐ partly or differently,
+Surveyed on 2026-11-05 from each repository's default branch (the rows added in editions 1.2.0, 1.3.0 and 1.4.0 on 2026-11-06). ● has it, ◐ partly or differently,
 — not found.
 
 **What the apps are.**
@@ -37,6 +37,9 @@ Surveyed on 2026-11-05 from each repository's default branch (the rows added in 
 | `AGENTS.md` canonical, `CLAUDE.md` a pointer | ● | ◐ `CLAUDE.md` only | ● | ◐ `CLAUDE.md` only | ● | ◐ copy |
 | `CONTRIBUTING.md` | ● | — | — | — | — | — |
 | `docs/` and `branding/` | ● | ● | ● | ● | ● | ● |
+| `docs/README.md` indexing the guides | ● | — | — | — | — | — |
+| User docs on the website (`/docs/`) | ● 43 pages, versioned | ● 19 pages | ● 16 pages | — README only | ● 11 pages | — README only |
+| Help → Documentation command | ● | — | — | — | — | — |
 | `bug_report.yml` issue form | ● | ● | — | — | — | — |
 | Dependabot | ● | ● | — | ● | — | ● |
 

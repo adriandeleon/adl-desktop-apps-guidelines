@@ -4,6 +4,8 @@
 import { createMarkdownProcessor } from "@astrojs/markdown-remark";
 import pkg from "../../package.json";
 import text from "../../CHANGELOG.md?raw"; // bundled at build time, so the page needs no file at run time
+import { parseEditions, isVersion } from "../lib/editions.mjs";
+import { siteRoot } from "../lib/site.mjs";
 
 interface Props {
   /** Only the edition package.json names (the overview's What's new); otherwise every edition. */
@@ -11,6 +13,7 @@ interface Props {
 }
 const { latest = false } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const root = siteRoot(pkg); // every released edition is served whole under root/<version>/
 
 const processor = await createMarkdownProcessor();
 /** The headline of each entry per group, for the overview's summary: the bold lead of a bullet, else its first sentence,
@@ -31,13 +34,8 @@ const headlines = (body: string) => {
 };
 
 const editions: { version: string; date?: string; html: string; groups: { label: string; leads: string[] }[] }[] = [];
-for (const chunk of text.split(/^## /m).slice(1)) {
-  const nl = chunk.indexOf("\n");
-  const head = chunk.slice(0, nl).trim();
-  const body = chunk.slice(nl + 1).trim();
-  const m = head.match(/^\[([^\]]+)\](?:\s*-\s*(\d{4}-\d{2}-\d{2}))?/);
-  if (!m || !body) continue; // an empty Unreleased section says nothing
-  editions.push({ version: m[1], date: m[2], html: (await processor.render(body)).code, groups: headlines(body) });
+for (const { version, date, body } of parseEditions(text)) {
+  editions.push({ version, date, html: (await processor.render(body)).code, groups: headlines(body) });
 }
 const current = editions.find((e) => e.version === pkg.version) ?? editions.find((e) => e.date);
 const shown = latest ? (current ? [current] : []) : editions;
@@ -79,6 +77,9 @@ const long = (d: string) =>
         <h2>
           <a href={`#${e.version.toLowerCase()}`}>{e.version}</a>
           {e.date && <time datetime={e.date}>{long(e.date)}</time>}
+          {isVersion(e.version) && e.date && (
+            <a class="browse" href={`${root}${e.version}/`}>Read this edition</a>
+          )}
         </h2>
         <Fragment set:html={e.html} />
       </section>

@@ -1,0 +1,19 @@
+---
+// Starlight's mobile menu footer (theme, social links) with the edition switcher, which the phone header has no room for.
+import Default from "@astrojs/starlight/components/MobileMenuFooter.astro";
+import EditionSelect from "./EditionSelect.astro";
+---
+
+<Default />
+<div class="edition-row">
+  <span>Edition</span>
+  <EditionSelect />
+</div>
+
+<style>
+  .edition-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    border-top: 1px solid var(--sl-color-gray-6); padding: 0.5rem 0; font-size: var(--sl-text-sm); color: var(--sl-color-gray-3);
+  }
+  .edition-row pauta-edition-select { display: flex; }
+</style>

@@ -138,6 +138,18 @@ document. Click **Use this template**, then run `scripts/rename.sh <AppName> <pa
 - [ ] `CONTRIBUTING.md`, `docs/` and `branding/`
 - [ ] `.github/ISSUE_TEMPLATE/bug_report.yml`
 
+## Documentation
+
+[Documentation](../documentation/)
+
+- [ ] User docs on the app's website under `/docs/`: Getting started, a page per feature area, the keyboard reference, Settings and an FAQ
+- [ ] Help → Documentation as a command (`help.documentation`), first in the Help menu after the Command Palette, and on the Welcome page
+- [ ] A one-line `command.<id>.desc` for every command, held by the parity test
+- [ ] `docs/README.md` indexes the contributor guides; `AGENTS.md` and `CONTRIBUTING.md` point into it
+- [ ] Docs change in the same PR as the code; when they disagree with the code, the code wins and the docs are fixed
+- [ ] Deep links from the app open the running version's docs, `/docs/v-<version>/` (SHOULD)
+- [ ] Command and keybinding references generated from the source, with a check that quoted ids and chords exist (SHOULD)
+
 ## Packaging and signing
 
 [Packaging, signing and release](../release/)

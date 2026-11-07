@@ -235,6 +235,9 @@ dialog.lightbox .lightbox-close { position: fixed; top: max(0.75rem, env(safe-ar
 .editions .edition h2 a { color: inherit; text-decoration: none; }
 .editions .edition h2 a:hover { color: var(--sl-color-accent); }
 .editions .edition h2 time { font-family: var(--sl-font-mono); font-size: var(--sl-text-sm); font-weight: 400; color: var(--sl-color-gray-3); }
+/* Each released edition is served whole at /<version>/; the heading offers it as a quiet link. */
+.editions .edition h2 .browse { margin-inline-start: auto; font-size: var(--sl-text-sm); font-weight: 400; color: var(--sl-color-gray-3); text-decoration: underline; text-decoration-color: var(--sl-color-gray-5); text-underline-offset: 0.2em; }
+.editions .edition h2 .browse:hover { color: var(--sl-color-accent); text-decoration-color: currentColor; }
 .editions .edition-meta { font-size: var(--sl-text-sm); color: var(--sl-color-gray-3); font-variant-numeric: tabular-nums; }
 .editions .edition-meta strong { color: var(--sl-color-white); }
 .editions.news { border: 1px solid var(--sl-color-gray-5); border-radius: 10px; padding: 1rem 1.25rem 1.25rem; background: var(--sl-color-gray-6); }

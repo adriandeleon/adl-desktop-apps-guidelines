@@ -6,18 +6,50 @@ description: "README, CHANGELOG, LICENSE, NOTICE, AGENTS.md and the rest of the 
 **Start from the template.** [adl-desktop-app-template](https://github.com/adriandeleon/adl-desktop-app-template) carries an example of every file on this page,
 filled in for a placeholder app, `ExampleApp`. `scripts/rename.sh <AppName> <package>` renames it to yours.
 
-| File | What it holds | Level |
-|---|---|---|
-| `README.md` | A landing page, about 200 lines: logo, badges, one-paragraph pitch, hero screenshot, highlights, install, build, command line, config folder, license. Detail lives on the website. | MUST |
-| `CHANGELOG.md` | [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.0/) + SemVer. An `## [Unreleased]` section with Added / Changed / Fixed / Removed; each entry opens with a bold one-line summary written for users. | MUST |
-| `LICENSE` | MIT, "Copyright (c) 2026 Adrián Arturo De León Saldivar". | MUST |
-| `NOTICE` | App name, copyright, "licensed under the MIT License", then every bundled third-party component with its license (Inter is OFL, AtlantaFX is MIT, OpenJFX is GPLv2+CPE…). Ship it inside the installers too. | MUST |
-| `AGENTS.md` (+ a one-line `CLAUDE.md` pointing to it) | Operational rules for coding agents: essential commands, worktree-per-task, change checklist. Not a changelog. | MUST |
-| `CONTRIBUTING.md` | How to build, test, format, and open a PR. | MUST |
-| `docs/` | `architecture.md`, `conventions.md`, `testing.md`, `gotchas.md`, `release.md`, `building-and-packaging.md`, `decisions/` (ADRs). | MUST |
-| `TODO.md` | The open list, kept in the same PR as the change. | MAY |
-| `.github/ISSUE_TEMPLATE/bug_report.yml` | Issue form whose field ids (`environment`, `report`) the in-app Report a Problem fills. | MUST |
-| `branding/` | Source SVG of the icon; generated PNG/ICNS/ICO live in `packaging/`. | MUST |
+- **REPO-01 · MUST.** `README.md` is a landing page of about 200 lines: logo, badges, a one-paragraph pitch, the
+  hero screenshot, highlights, install, build, command line, config folder, license. Detail lives on the website.
+  - *Check (code):* `README.md` is near 200 lines and has those parts, with links to the website for
+    the rest.
+  - *Reference:* Editora `README.md`.
+- **REPO-02 · MUST.** `CHANGELOG.md` follows [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.0/) and
+  SemVer: an `## [Unreleased]` section with Added / Changed / Fixed / Removed, and each entry opens with a bold
+  one-line summary written for users.
+  - *Check (code):* the file names Keep a Changelog and Semantic Versioning, starts with `## [Unreleased]`, and every
+    entry starts with `- **`.
+  - *Reference:* Editora `CHANGELOG.md`.
+- **REPO-03 · MUST.** `LICENSE` is MIT, "Copyright (c) 2026 Adrián Arturo De León Saldivar".
+  - *Check (code):* `LICENSE` opens with `MIT License` and that copyright line.
+  - *Reference:* Editora `LICENSE`.
+- **REPO-04 · MUST.** `NOTICE` gives the app name, the copyright, "licensed under the MIT License", then every
+  bundled third-party component with its license (Inter is OFL, AtlantaFX is MIT, OpenJFX is GPLv2+CPE…). It
+  ships inside the installers too.
+  - *Check (test):* a test fails when a runtime dependency in `pom.xml` has no `NOTICE` entry, and another when
+    `LICENSE` and `NOTICE` are not packaged.
+  - *Reference:* Editora `NOTICE`, `NoticeCoverageTest`, `BuildHygieneTest`.
+- **REPO-05 · MUST.** `AGENTS.md` holds the operational rules for coding agents: essential commands,
+  worktree-per-task, the change checklist. It is not a changelog. A short `CLAUDE.md` points to it.
+  - *Check (code):* `AGENTS.md` has sections for commands, worktrees and the change checklist; `CLAUDE.md` is a few
+    lines that send the reader to `AGENTS.md`.
+  - *Reference:* Editora `AGENTS.md`, `CLAUDE.md`.
+- **REPO-06 · MUST.** `CONTRIBUTING.md` says how to build, test, format, and open a PR.
+  - *Check (code):* `CONTRIBUTING.md` names the build, test and format commands and the PR step.
+  - *Reference:* Editora `CONTRIBUTING.md`.
+- **REPO-07 · MUST.** `docs/` holds `architecture.md`, `conventions.md`, `testing.md`, `gotchas.md`, `release.md`,
+  `building-and-packaging.md` and `decisions/` (ADRs).
+  - *Check (code):* each of those paths exists under `docs/`.
+  - *Reference:* Editora `docs/`.
+- **REPO-08 · MAY.** `TODO.md` holds the open list, kept in the same PR as the change.
+  - *Check (code):* `TODO.md` exists at the root.
+  - *Reference:* Editora `TODO.md`.
+- **REPO-09 · MUST.** `.github/ISSUE_TEMPLATE/bug_report.yml` is an issue form whose field ids (`environment`,
+  `report`) the in-app Report a Problem fills.
+  - *Check (code):* the form has fields with `id: environment` and `id: report`.
+  - *Reference:* Editora `.github/ISSUE_TEMPLATE/bug_report.yml`.
+- **REPO-10 · MUST.** `branding/` holds the source SVG of the icon. The PNG, ICNS and ICO generated from it sit
+  beside it or in `packaging/`.
+  - *Check (code):* `branding/` has an `.svg`; the `jpackage` icon paths in `pom.xml` point at the generated files.
+  - *Reference:* Editora `branding/editora-icon.svg`, with `editora.png`, `.icns` and `.ico` beside it; the
+    template keeps them in `packaging/icons/`.
 
 ![Editora's repository root on GitHub: branding, docs, AGENTS.md, CHANGELOG.md, CLAUDE.md, CONTRIBUTING.md, LICENSE, NOTICE, README.md and TODO.md, with the About sidebar](../../assets/shots/editora-github-root.png "Editora's repository root: every file on this page, with the homepage, Readme, MIT license and Contributing links GitHub derives from them.")
 

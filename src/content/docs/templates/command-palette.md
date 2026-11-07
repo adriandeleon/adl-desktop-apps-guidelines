@@ -3,11 +3,30 @@ title: "Command Palette"
 description: "The family's command palette: a 620 px in-scene card that finds and runs any command from the keyboard."
 ---
 
-<span class="lvl lvl-must">MUST</span> in every app. One palette per window, opened by `M-x` in the Emacs keymaps and
-`Ctrl/Cmd+Shift+P` in the others. It lists every registered command, so a command that exists is a command people
-can find. Reference: Editora's `ui/CommandPalette.java`; the pure parts (`FuzzyMatch`, `MatchText`, `PaletteKeys` and the
-caret-key helper, `TextInputKeymap` in Editora, `TextInputKeys` in the copies) are shared with Termina and Mirada.
+One palette per window lists every registered command, so a command that exists is a command people can find. The
+pure parts (`FuzzyMatch`, `MatchText`, the key helper, `PickerKeys` in Editora and `PaletteKeys` in the copies, and the
+caret-key helper, `TextInputKeymap` in Editora and `TextInputKeys` in the copies) are shared with Termina and Mirada.
 Torrenta shares `MatchText` and ranks with its own `CommandMatcher`.
+
+## Rules
+
+- **PAL-01 · MUST.** Every app has one Command Palette per window, opened by `palette.show`: `M-x` in the Emacs
+  keymap and `Ctrl+Shift+P` (`Cmd+Shift+P` on macOS) in the others.
+  - *Check (code):* the window builds one `CommandPalette`, and each bundled keymap binds that chord to
+    `palette.show`.
+  - *Reference:* Editora `ui/CommandPalette.java`, built once in `MainController`; `keymaps/emacs.json` (`M-x`),
+    `cua.json` and `vscode.json` (`C-S-p`), `cua.mac.json` (`Cmd-S-p`).
+- **PAL-02 · MUST.** The palette lists every registered command, with its title from `command.<id>` and its
+  description from `command.<id>.desc`.
+  - *Check (code):* the palette's rows come from the whole registry, filtered only by the query; a command that
+    cannot run stays listed, grayed. A catalog parity test fails on a command title with no `.desc`.
+  - *Reference:* Editora `CommandPalette.filter` (`registry.all()`), `MessagesTest`; the Spec table below.
+- **PAL-03 · MUST.** The palette is an in-scene overlay in the window's root `StackPane`, over a faint scrim, not a
+  `javafx.stage.Popup`.
+  - *Why:* on Windows a popup does not reliably take keyboard focus.
+  - *Check (code):* the palette shows its card through the overlay host installed in the root `StackPane`; no
+    `Popup` is created for it.
+  - *Reference:* Editora `ui/OverlayHost.java` (`install`), `CommandPalette.show`.
 
 ## Anatomy
 
@@ -55,14 +74,30 @@ Torrenta shares `MatchText` and ranks with its own `CommandMatcher`.
 
 ## Behavior
 
-- **Open:** the `palette.show` command, from its chord or a menu item. The query starts empty and lists every command.
-- **Type** to filter; the first *enabled* match is selected.
-- **Move:** ↑ ↓, `C-n` `C-p`, Page Up/Down. **Run:** Enter, or a click on an enabled row. The palette closes first,
-  then the command runs.
-- **Cancel:** Esc, `C-g`, or a click on the scrim. Focus returns to where it was.
-- **Docs:** `C-h` (or the first free chord of `C-h`, `F1`, `Shift+F1` in the active keymap) opens the selected
+- **PAL-04 · SHOULD.** The palette opens from the `palette.show` command, by its chord or a menu item, with an empty
+  query that lists every command.
+  - *Check (code):* `show` clears the field and filters on the empty query before the card appears.
+  - *Reference:* Editora `CommandPalette.show`.
+- **PAL-05 · SHOULD.** Typing filters the list, and the first *enabled* match is selected.
+  - *Check (test):* a test with a disabled command at the top finds the cursor on the first enabled row.
+  - *Reference:* Editora `CommandPalette.selectFirstEnabled`, `CommandPaletteDisabledFxTest`.
+- **PAL-06 · SHOULD.** ↑ ↓, `C-n` `C-p` and Page Up/Down move the selection; Enter, or a click on an enabled row, runs
+  the command. The palette closes first, then the command runs.
+  - *Check (code):* the run path hides the card before it calls the registry, and does nothing on a disabled row.
+  - *Reference:* Editora `CommandPalette.runSelected`, `PickerKeys`.
+- **PAL-07 · SHOULD.** Esc, `C-g` or a click on the scrim cancels, and focus returns to where it was.
+  - *Check (code):* the cancel key and a press on the backdrop both hide the overlay, and hiding focuses the node that
+    had focus before it opened.
+  - *Reference:* Editora `PickerKeys` (`CANCEL`), `OverlayHost` (`previousFocus`).
+- **PAL-08 · SHOULD.** `C-h`, or the first of `C-h`, `F1`, `Shift+F1` the active keymap leaves free, opens the selected
   command's page on the website, for the running version.
-- A live keymap switch re-renders the chips, the opener and the legend.
+  - *Check (code):* the docs chord is the first free one of the three, and the URL is built from the app's versioned
+    docs address.
+  - *Reference:* Editora `CommandPalette` (`PickerKeys.freeChord`, `docsUrl`), `AppInfo.docsUrl`.
+- **PAL-09 · SHOULD.** A live keymap switch re-renders the key chips, the opener chip and the key legend.
+  - *Check (code):* applying a new keymap calls the palette's rebind method, which rebuilds the opener, the legend and
+    the rows.
+  - *Reference:* Editora `CommandPalette.refreshBindings`, called from `SettingsReapply`.
 
 ## Copy
 

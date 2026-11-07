@@ -46,58 +46,120 @@ rules in `app.css`.
 
 ## Tabs
 
-- **MUST.** Every tab operation is a command, so it has a chord, a palette entry and a menu row: close, close others,
-  close all, close unmodified, close to the left and right, pin, reopen closed, next and previous. The tab's
-  [right-click menu](../menus/) lists them (`TabContextMenu`).
-- **MUST. The header is the title.** The Tab's own text stays empty; a graphic header carries the file-type glyph,
-  the markers and the title in a `.tab-title` label, which is what makes it a drag handle and lets each state set
-  its own color (`TabHeaders`). The tooltip is the full path.
-- **MUST. Bulk close skips pinned tabs.** `closeOtherTabs`, `closeAllTabs`, `closeUnmodifiedTabs` and
-  `eligibleToLeft` / `eligibleToRight` all filter on the pinned set; a pinned tab cannot be closed by accident. Pinning
-  moves the tab to the end of the pinned group, unpinning to just after it (`togglePin`, `moveToPinBoundary`).
-- **MUST. Reopen Closed Tab.** `ClosedTabs` keeps the files whose tabs this window closed, newest first, bounded to
-  twenty, a file listed once; reopening restores the caret. Termina brings back the *tab* (its shells, their
-  directories, the pane arrangement, the names the user gave them, its place in the strip) and not the scrollback,
-  because the process is gone and pretending otherwise would be worse than saying so. `C-S-t` in the CUA keymap;
-  Termina `Ctrl+Shift+Z`, `Cmd+Z` on macOS.
-- **Drag to reorder** with the feedback above (`TabHeaders.enableTabDrag`; Termina `installTabDrag` and the pure
-  `TabReorder.insertIndex`). In Termina a double-click on a tab renames it, and a pane dragged onto a tab joins it
-  (the whole header outlined, `tab-drop-into`).
-- **Git status on the tab** in the Project tree's colors: modified accent, added green, untracked olive, renamed
-  violet, deleted muted, conflict red (`TabGitStatus`). A read-only tab still shows it; an unsaved one shows amber.
-- **Switcher.** `C-x C-b` (Emacs) opens an IntelliJ-style list of the open files in tab order: `C-n` / `C-p` or the
-  arrows move, Enter or releasing Ctrl activates, `C-g` or Esc cancels, `C-d` or Backspace closes the highlighted
-  file. Its width is fixed to the longest path on each open so it never resizes while you move (`Switcher`).
-- **The window title** names the file, the project and the app, with a `•` prefix for an unsaved file.
-- **Tabs in the title bar** (SHOULD) through JavaFX 27's `HeaderBar`; see [Window shell](../window-shell/). The tab
-  bar can be hidden by a command (`view.toggleTabBar`, `.tab-pane.no-tab-header`).
+- **TABS-01 · MUST.** Every tab operation is a command, so it can be bound to a chord, is in the palette and has a
+  menu row: close, close others, close all, close unmodified, close to the left and right, pin, reopen closed, next
+  and previous. The tab's [right-click menu](../menus/) lists the ones that act on a tab.
+  - *Check (code):* each operation has a registered command id, and `TabContextMenu` lists the per-tab ones.
+  - *Reference:* Editora `ui/WindowCommandRegistrar.java` (`buffer.close`, `buffer.closeOthers`, `buffer.closeAll`,
+    `buffer.closeUnmodified`, `buffer.closeLeft`, `buffer.closeRight`, `buffer.togglePin`, `buffer.reopenClosed`,
+    `buffer.next`), `ui/TabContextMenu.java`. Editora has no previous-tab command yet.
+- **TABS-02 · MUST.** The header is the title: the Tab's own text stays empty, and a graphic header carries the
+  file-type glyph, the markers and the title in a `.tab-title` label. The tooltip is the full path.
+  - *Why:* the graphic is what makes the header a drag handle and lets each state set its own color.
+  - *Check (code):* every editor tab gets `setText("")` and a graphic with a `.tab-title` label; its tooltip is the
+    file's path.
+  - *Reference:* Editora `ui/TabHeaders.java`.
+- **TABS-03 · MUST.** The one header carries the states: a `• ` prefix in amber italic for unsaved, a pin and bold for
+  pinned, muted italic for read-only.
+  - *Check (code):* `app.css` styles `.tab-header.dirty`, `.tab-header.pinned` and `.tab-header.read-only`
+    `.tab-title`, and the header sets those classes.
+  - *Reference:* Editora `ui/TabHeaders.java`, `app.css`; the Unsaved, Pinned and Read-only rows of the Spec table
+    below.
+- **TABS-04 · MUST.** Bulk close skips pinned tabs: close others, close all, close unmodified and close to the left
+  or right never close a pinned tab.
+  - *Check (code):* `closeOtherTabs`, `closeAllTabs`, `closeUnmodifiedTabs` and `eligibleToLeft` /
+    `eligibleToRight` all filter on the pinned set.
+  - *Reference:* Editora `ui/MainController.java`.
+- **TABS-05 · MUST.** Pinning moves the tab to the end of the pinned group, unpinning to just after it.
+  - *Check (code):* `togglePin` calls `moveToPinBoundary`.
+  - *Reference:* Editora `ui/MainController.java` (`togglePin`), `ui/EditorArea.java` (`moveToPinBoundary`).
+- **TABS-06 · MUST.** Reopen Closed Tab brings back the files whose tabs this window closed, newest first, bounded
+  to twenty, a file listed once, with the caret where it was. In a terminal app the *tab* comes back (its shells,
+  their directories, the pane arrangement, the names the user gave them, its place in the strip) and not the
+  scrollback.
+  - *Why:* the process is gone, and pretending otherwise would be worse than saying so.
+  - *Check (test):* a unit test over the closed-tab list holds the order, the bound, the single entry per file and
+    the caret.
+  - *Reference:* Editora `ui/ClosedTabs.java`, `ClosedTabsTest`; `C-S-t` in the CUA keymap. Termina
+    `ui/ClosedTabs.java`, on `Ctrl+Shift+Z` (`Cmd+Z` on macOS).
+- **TABS-07 · SHOULD.** Tabs reorder by dragging, with the feedback shown above: the dragged header dimmed and an
+  accent line on the edge where it will land.
+  - *Check (by hand):* drag a tab along the strip and watch the landing edge.
+  - *Reference:* Editora `TabHeaders.enableTabDrag`; Termina `installTabDrag` and the pure `TabReorder.insertIndex`.
+    In Termina a double-click on a tab renames it, and a pane dragged onto a tab joins it (the whole header
+    outlined, `tab-drop-into`).
+- **TABS-08 · SHOULD.** A tab shows its file's Git status in the Project tree's colors: modified accent, added
+  green, untracked olive, renamed violet, deleted muted, conflict red. A read-only tab still shows it; an unsaved one
+  shows amber.
+  - *Check (test):* a test gives a changed file the same style class the Project tree uses.
+  - *Reference:* Editora `ui/TabGitStatus.java`, `TabGitStatusTest`.
+- **TABS-09 · SHOULD.** A switcher lists the open files in tab order: `C-x C-b` (Emacs) opens it, `C-n` / `C-p` or
+  the arrows move, Enter or releasing Ctrl activates, `C-g` or Esc cancels, `C-d` or Backspace closes the
+  highlighted file. Its width is fixed to the longest path on each open, so it never resizes while you move.
+  - *Check (by hand):* open it with several tabs and move through it; the list keeps its width.
+  - *Reference:* Editora `ui/Switcher.java`, `SwitcherFxTest`.
+- **TABS-10 · SHOULD.** The window title names the file, the project and the app, with a `●` prefix for an unsaved
+  file.
+  - *Check (code):* the code that sets the stage title adds all three and the marker.
+  - *Reference:* Editora `MainController.updateWindowTitle`.
+- **TABS-11 · SHOULD.** Tabs sit in the title bar through JavaFX 27's `HeaderBar`; see
+  [Window shell](../window-shell/).
+  - *Check (by hand):* the tab strip shares the title bar's row.
+  - *Reference:* Termina `ui/TerminalWindow.java`.
+- **TABS-12 · SHOULD.** A command hides the tab bar.
+  - *Check (code):* a registered command toggles the tab header.
+  - *Reference:* Editora `view.toggleTabBar`, `.tab-pane.no-tab-header` in `app.css`.
 
 ![Termina window with tabs in the title bar and a tab context menu](../../assets/shots/termina-tabs.png "Termina's tabs in the title bar, with a tab's right-click menu.")
 
 ## Tool panels
 
-- **MUST. A command toggles each panel** (`tool.<id>`: `M-1` … `M-0` in the Emacs keymap for ten of them),
-  and the stripe button is the same command with a glyph. The panel's content is built on first use.
-- **MUST. State is restored.** Which windows are open, on which side, in what order, hidden or shown, floating, and
-  every divider position go to `workspace-state.json` and come back on the next launch (`ToolWindowManager`).
-- **Three sides, two windows each.** Left, right and bottom stripes (`ToolWindow.Side`); a side holds at most two
-  windows stacked (Project over Structure, two consoles along the bottom), because "past that a side stops being a
-  dock and becomes a list of slivers" (`MAX_PER_SIDE`).
-- **Re-dock by dragging the stripe button** to another stripe, with the same dim-and-accent-line feedback as a tab;
-  an empty stripe appears as a dashed accent drop zone for the duration of the drag (`ToolWindowDock`).
-- **Float, maximize, resize and close from the keyboard**: `view.maximizeToolWindow` (`C-x f`),
-  `view.closeFocusedToolWindow` (`C-x 0`), the resize commands (`C-x S-.`, `C-x S-,`, `C-x S-6`). At most one
-  window is maximized at a time.
-- **Focus comes back.** Closing the panel that holds keyboard focus returns it to where it was in the editor
-  (`focusEditor`, a weak reference to the last editor focus owner).
-- **Hidden is not unavailable.** The user's show/hide choice for a stripe button is kept apart from a context-driven
-  hide (the Commit window outside a Git repository), so the second never clobbers the first (`ToolWindowVisibility`).
-- **A bottom window that is unusable at the default height asks for more on its first open**
-  (`setFirstOpenShare`); the user's own size wins afterwards. A stripe button badges a spinner while its window has
-  something under way (`busy`).
-- **Panels follow the active document where they should**: the Git UI follows the active tab's repository
-  (`GitPathScope`), the status bar's environment segment the active `.http` file, Local History the file whose tab
-  menu opened it.
+- **TABS-13 · MUST.** A command toggles each panel (`tool.<id>`: `M-1` … `M-0` in the Emacs keymap for ten of
+  them), and the stripe button is the same command with a glyph.
+  - *Check (code):* every tool window registers a `tool.<id>` command, and its stripe button runs it.
+  - *Reference:* Editora `ui/ToolWindowManager.java`, `keymaps/emacs.json`.
+- **TABS-14 · MUST.** A panel's content is built on first use.
+  - *Check (test):* an FX test holds that no closed tool window builds its panel before the first paint.
+  - *Reference:* Editora `LazyToolWindowsFxTest`.
+- **TABS-15 · MUST.** Panel state is restored: which windows are open, on which side, in what order, hidden or shown,
+  floating, and every divider position go to `workspace-state.json` and come back on the next launch.
+  - *Check (code):* the workspace state holds each of those, and the manager reads them back at startup.
+  - *Reference:* Editora `ui/ToolWindowManager.java`, `config/WorkspaceState.java`.
+- **TABS-16 · SHOULD.** Panels dock on three sides, left, right and bottom, and a side holds at most two windows
+  stacked (Project over Structure, two consoles along the bottom).
+  - *Why:* past that a side stops being a dock and becomes a list of slivers.
+  - *Check (code):* the sides are an enum of three and the per-side limit is two.
+  - *Reference:* Editora `ToolWindow.Side`, `ToolWindowManager.MAX_PER_SIDE`.
+- **TABS-17 · SHOULD.** A panel re-docks by dragging its stripe button to another stripe, with the same
+  dim-and-accent-line feedback as a tab; an empty stripe appears as a dashed accent drop zone for the duration of
+  the drag.
+  - *Check (by hand):* drag a stripe button to the opposite side.
+  - *Reference:* Editora `ui/ToolWindowDock.java`, `ToolWindowVisibilityTest` (an empty stripe shows while
+    dragging).
+- **TABS-18 · SHOULD.** Panels float, maximize, resize and close from the keyboard, and at most one window is
+  maximized at a time.
+  - *Check (code):* the commands are registered and bound in the Emacs keymap.
+  - *Reference:* Editora `view.floatToolWindow`, `view.maximizeToolWindow` (`C-x f`),
+    `view.closeFocusedToolWindow` (`C-x 0`), the resize commands (`C-x S-.`, `C-x S-,`, `C-x S-6`).
+- **TABS-19 · SHOULD.** Closing the panel that holds keyboard focus returns focus to where it was in the editor.
+  - *Check (code):* the manager keeps the last editor focus owner and refocuses it on close.
+  - *Reference:* Editora `ToolWindowManager.focusEditor`, a weak reference to the last editor focus owner.
+- **TABS-20 · SHOULD.** Hidden is not unavailable: the user's show/hide choice for a stripe button is kept apart
+  from a context-driven hide (the Commit window outside a Git repository), so the second never clobbers the first.
+  - *Check (test):* a unit test holds that a button shows only when visible and available.
+  - *Reference:* Editora `ui/ToolWindowVisibility.java`, `ToolWindowVisibilityTest`.
+- **TABS-21 · SHOULD.** A bottom window that is unusable at the default height asks for more on its first open;
+  the user's own size wins afterwards.
+  - *Check (test):* a test opens an output window taller while the others keep the side's size.
+  - *Reference:* Editora `ToolWindow.setFirstOpenShare`, `ToolWindowFirstOpenShareTest`.
+- **TABS-22 · SHOULD.** A stripe button badges a spinner while its window has something under way.
+  - *Check (test):* an FX test badges a busy window's stripe button without changing its size.
+  - *Reference:* Editora `ToolWindow.busy`, `ToolWindowManagerFxTest`.
+- **TABS-23 · SHOULD.** Panels follow the active document where they should: the Git UI follows the active tab's
+  repository, the status bar's environment segment the active `.http` file, Local History the file whose tab menu
+  opened it.
+  - *Check (by hand):* switch between tabs from two repositories with the Git window open.
+  - *Reference:* Editora `ui/GitPathScope.java`.
 
 The other apps dock their panels the same way without a stripe. Torrenta's filter **sidebar** sits down the left or
 the right of the list or nowhere, kept as two settings keys so hiding it keeps its side (`SidebarPlace`); its inner

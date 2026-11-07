@@ -3,12 +3,34 @@ title: "Confirm dialog"
 description: "The family's question before a destructive action: it names the thing, the button names the action in red, and Escape cancels."
 ---
 
-<span class="lvl lvl-must">MUST</span> before anything the user made is removed, deleted, discarded or overwritten,
-unless the action can be taken back instead (see [Window shell](../../window-shell/)). One question, asked the same
-way everywhere: the text names the thing and what happens to it, the confirming button is the action's own verb in
-red, and Cancel is the way out. Reference: Editora's `ui/CloseCoordinator.java` (unsaved changes, Quit) and
-`GitCoordinator.confirmDestructive`; Torrenta's `ui/RemoveConfirm.java` asks it for the torrent list, the RSS tab and
-every list in Settings.
+One question before anything the user made is removed, deleted, discarded or overwritten, asked the same way
+everywhere: the text names the thing and what happens to it, the confirming button is the action's own verb in red,
+and Cancel is the way out. An action that can be taken back needs no question (see
+[Window shell](../../window-shell/)).
+
+## Rules
+
+- **CONF-01 · MUST.** Before anything the user made is removed, deleted, discarded or overwritten, the app asks first,
+  unless the action can be taken back instead.
+  - *Check (code):* each destructive action calls a confirmation before it changes anything, or records an undo.
+  - *Reference:* Editora `ui/CloseCoordinator.java` (unsaved changes, Quit) and `GitCoordinator.confirmDestructive`;
+    Torrenta `ui/RemoveConfirm.java`, which asks it for the torrent list, the RSS tab and every list in Settings.
+- **CONF-02 · MUST.** The question names the thing and what happens to it.
+  - *Check (code):* every confirmation string names the thing, by an argument for its name or count or in its own
+    words ("Quit Editora?"), and says what happens to it.
+  - *Reference:* Editora `dialog.unsaved.header`, `dialog.discard.tracked`; Torrenta `RemoveConfirm.question`,
+    `Actions.removeQuestion`.
+- **CONF-03 · MUST.** The confirming button carries the action's own verb (Delete files, Remove, Discard, Quit), never
+  OK or Yes, in the `danger` style.
+  - *Check (code):* the action's `ButtonType` is named from the catalog and its button gets the `danger` style class.
+  - *Reference:* Editora `GitCoordinator.confirmDestructive`, `MainController.styleUnsavedChangesButtons`,
+    `styleQuitButtonAsDanger`; Torrenta `RemoveConfirm.ask`.
+- **CONF-04 · MUST.** Cancel is the way out: Escape and the window's close button both answer Cancel, and nothing is
+  lost on a dismissal.
+  - *Check (code):* Cancel has the `CANCEL_CLOSE` role, and the result defaults to Cancel when the dialog closes any
+    other way (`showAndWait().orElse(cancel)`).
+  - *Reference:* Editora `GitCoordinator.confirmDestructive`, `CloseCoordinator.unsavedAlert`; Torrenta
+    `RemoveConfirm.ask`.
 
 ## Anatomy
 
@@ -40,13 +62,18 @@ every list in Settings.
 </div>
 </div>
 
-- **Three answers** when saving is an option: Save (the `success` style, green), Discard (`danger`) and Cancel, in
-  that order. Save that fails leaves the tab open.
-- **A running program** is not the user's data, so Termina words the button Close and makes Cancel the default
-  button: dismissing the dialog by any route keeps the program alive.
-- **No question at all** where the action can be taken back. Mirada moves an image to the trash at once and offers
-  Undo; Torrenta asks before removing a torrent but also keeps the removal on its undo stack for ten minutes; closing a
-  clean tab asks nothing and Reopen Closed Tab brings it back.
+- **CONF-05 · SHOULD.** When saving is an option the question has three answers, in this order: Save (the `success`
+  style, green), Discard (`danger`) and Cancel. A Save that fails leaves the tab open.
+  - *Check (code):* the unsaved-changes alert sets Save, Discard and Cancel in that order and styles the first two.
+  - *Reference:* Editora `CloseCoordinator.unsavedAlert`, `MainController.styleUnsavedChangesButtons`.
+- **CONF-06 · SHOULD.** A question about ending a running program, which is not the user's data, words the button
+  Close and makes Cancel the default button, so dismissing the dialog by any route keeps the program alive.
+  - *Check (code):* the close-running-program alert calls `setDefaultButton(true)` on Cancel.
+  - *Reference:* Termina `ui/TerminalWindow.java` (`dialog.closeAnyway`).
+- **CONF-07 · SHOULD.** Where the action can be taken back, the app asks nothing and offers Undo instead.
+  - *Check (by hand):* close a clean tab and reopen it with Reopen Closed Tab; in Mirada, trash an image and undo.
+  - *Reference:* Mirada moves an image to the trash at once and offers Undo; Torrenta asks before removing a torrent
+    but also keeps the removal on its undo stack for ten minutes (`UndoStack.KEEP_MS`); Editora `ClosedTabs`.
 
 ## Spec
 
@@ -63,18 +90,28 @@ every list in Settings.
 
 ## Behavior
 
-- **Ask before, not after.** The question comes before anything changes; the removal runs only on the action button
-  (`RemoveConfirm.ask` returns true on that button alone).
-- **Ask once per gesture.** An action on many things asks one question with the count ("Remove these 3 torrents?",
-  Torrenta's "Apply to many torrents" for a bulk command). Closing every tab asks per unsaved buffer, selecting each
-  tab first so the user sees what the question is about, and remembers a Discard answer for exactly the state that was
-  shown (`CloseCoordinator.confirmSweep`).
-- **Escape cancels**, as does closing the dialog. Nothing is lost on a dismissal.
-- **Say what it costs.** A delete that cannot be undone says so; one that leaves the files says that instead. A
-  dangerous alternative (Force with Lease, Delete Anyway) is offered beside the safe one (Pull, then Push), red, and
-  only when the safe one has already failed.
-- **Testable without a screen.** The question's words come from pure code (`RemoveConfirm.header`, `question`) and
-  the capture hook answers the dialog through `answerForCapture`, so a UI test never has to press a native button.
+- **CONF-08 · SHOULD.** The question comes before anything changes, and the action runs only on the action button.
+  - *Check (code):* the helper returns true on the action button alone, and the caller acts only on true.
+  - *Reference:* Torrenta `RemoveConfirm.ask`; Editora `GitCoordinator.confirmDestructive`.
+- **CONF-09 · SHOULD.** One gesture asks one question. An action on many things asks once with the count ("Remove these
+  3 torrents?", Torrenta's "Apply to many torrents" for a bulk command). Closing every tab asks per unsaved buffer,
+  selecting each tab first so the user sees what the question is about, and remembers a Discard answer for exactly
+  the state that was shown.
+  - *Check (code):* a bulk command builds one question with a plural count; the close-all sweep selects each tab
+    before it asks.
+  - *Reference:* Torrenta `Actions.removeQuestion`; Editora `CloseCoordinator.confirmSweep`.
+- **CONF-10 · SHOULD.** A delete that cannot be undone says so; one that leaves the files says that instead.
+  - *Check (code):* "This cannot be undone." appears only in the strings of actions that cannot be undone.
+  - *Reference:* Editora `dialog.discard.tracked`; Torrenta `actions.removeQuestion.delete`.
+- **CONF-11 · SHOULD.** A dangerous alternative (Force with Lease, Delete Anyway) is offered beside the safe one (Pull,
+  then Push), in red, and only once the safe one has failed.
+  - *Check (code):* the force path is reached only from the safe command's failure result.
+  - *Reference:* Editora `GitBranchCoordinator.offerAfterRejection` (Force with Lease after a rejected push),
+    `confirmForceDelete` (Delete Anyway after `NOT_FULLY_MERGED`).
+- **CONF-12 · SHOULD.** The question can be tested without a screen: its words come from pure code, and a capture hook
+  answers the dialog, so a UI test never presses a native button.
+  - *Check (test):* a unit test covers the header and question for every kind, and UI tests set the capture answer.
+  - *Reference:* Torrenta `RemoveConfirm.header`, `question`, `answerForCapture`; `RemoveConfirmTest`.
 
 ## Copy
 

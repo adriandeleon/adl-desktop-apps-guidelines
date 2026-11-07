@@ -6,7 +6,7 @@ description: "Inter and JetBrains Mono, the Caret & Ink palette, state colors th
 One typeface pair, one palette, one color vocabulary and one way of drawing icons, so a tab, a status segment, a
 tree row and a Settings row say the same thing in the same way in every app. Reference: Editora's
 `styles/ui-font.css` and `ui/Fonts.java` (type), `styles/atlantafx-themes/editora-light.css` and `editora-dark.css`
-(the Caret & Ink palette, which Torrenta and Termina vendor verbatim), the `.root` block at the top of
+(the Caret & Ink palette, which Torrenta and Termina vendor), the `.root` block at the top of
 `styles/app.css` (the state vocabulary), `ui/Themes.java` and `ui/EditorThemes.java` (themes), `ui/Icons.java`,
 `ui/FileIcons.java`, `ui/MenuBarIcons.java` and `editor/MenuIcons.java` (icons), and `StyleContrastTest`, which
 pins the color rules.
@@ -19,24 +19,36 @@ timestamps.
 
 | Property | Value | Reference |
 |---|---|---|
-| UI family | Inter, in four faces, bundled in the app's resources and registered before any CSS is applied | `Fonts.UI`, `Fonts.load()`, `resources/com/editora/fonts/inter/` |
+| UI family | Inter, in four faces, bundled in the app's resources and registered before any CSS is applied | `Fonts.UI`, `Fonts.loadForFirstPaint`, `resources/com/editora/fonts/inter/` |
 | Root size | 14 px, the AtlantaFX theme's root size; popups pin absolute pixels where an owner's font would leak (see [Menus](../menus/)) | `MainMenuBar.UI_FONT_SIZE` |
-| How it is attached | A scene stylesheet (`ui-font.css`, one rule: `.root { -fx-font-family: "Inter" }`) on every window's scene, dialogs and popups included | `App.installUiFont` |
-| Monospace | JetBrains Mono by default; Cascadia Code, Fira Code, IBM Plex Mono and Source Code Pro are bundled as editor choices | `Fonts.DEFAULT`, `Fonts.FAMILIES` |
+| How it is attached | A scene stylesheet (`ui-font.css`, one `.root` rule whose `-fx-font-family` names Inter) on every window's scene, dialogs and popups included | `App.installUiFont` |
+| Monospace | JetBrains Mono by default; Cascadia Code, Fira Code, IBM Plex Mono and Source Code Pro are bundled as editor choices | `Fonts.DEFAULT`, `Fonts.BUNDLED` |
 
-- **MUST.** Attach Inter with a *scene* stylesheet, not a rule in the app stylesheet. Dialogs, the Settings window,
-  the palette, context menus and tooltips each live in a scene of their own that does not share `app.css`, and a
-  scene sheet is re-applied cleanly when the theme switches at run time (`setUserAgentStylesheet`). AtlantaFX
-  neither bundles nor names Inter, and JavaFX does not fall through a font-family list, so without the sheet the
-  whole interface renders in the platform's "System" face.
-- **MUST.** Bundle the font. Do not map the platform's own UI font (an earlier macOS-only sheet used San Francisco,
-  which JavaFX faux-bolds; Inter has a real bold on every platform). Editora's four faces are in
-  `src/main/resources/com/editora/fonts/inter/`.
-- Termina and Torrenta carry the same sheet and the same four Inter faces. Modula is the stated exception: IBM Plex
-  Mono everywhere, because every reading on a radio is a number (see *Before adding a setting* in
-  [Settings](../settings/)).
-- A line of UI text is `-color-fg-default`; secondary text `-color-fg-muted`. `-color-fg-subtle` is about 3:1 and
-  is for disabled or decorative text only (`StyleContrastTest.textThatMustBeReadUsesTheMutedRoleNotSubtle`).
+- **ICON-01 · MUST.** Inter is attached by a *scene* stylesheet on every window's scene, dialogs, popups and
+  tooltips included, not by a rule in the app stylesheet.
+  - *Why:* dialogs, the Settings window, the palette, context menus and tooltips each live in a scene of their own
+    that does not share `app.css`, and a scene sheet is re-applied cleanly when the theme switches at run time
+    (`setUserAgentStylesheet`). AtlantaFX neither bundles nor names Inter, and JavaFX does not fall through a
+    font-family list, so without the sheet the whole interface renders in the platform's "System" face.
+  - *Check (code):* a listener on `Window.getWindows()` adds `ui-font.css` to each window's scene, and to a new
+    scene when the window's scene changes; no `.root` rule in `app.css` sets `-fx-font-family`.
+  - *Reference:* Editora `App.installUiFont`, `styles/ui-font.css`. Termina and Torrenta carry the same sheet.
+- **ICON-02 · MUST.** The app bundles Inter's four faces and registers them before any CSS is applied; it never
+  maps the platform's own UI font.
+  - *Why:* an earlier macOS-only sheet used San Francisco, which JavaFX faux-bolds; Inter has a real bold on every
+    platform.
+  - *Check (code):* `Inter-Regular`, `Inter-Bold`, `Inter-Italic` and `Inter-BoldItalic` `.ttf` are under the app's
+    `fonts/inter/` with their `OFL.txt`, and `Font.loadFont` runs on them before the first window is shown.
+  - *Reference:* Editora `src/main/resources/com/editora/fonts/inter/`, `ui/Fonts.java` (`loadForFirstPaint`,
+    called from `App`). Termina and Torrenta bundle the same four faces.
+- **ICON-03 · SHOULD.** A line of UI text is `-color-fg-default` and secondary text `-color-fg-muted`;
+  `-color-fg-subtle` (about 3:1) is for disabled or decorative text only.
+  - *Check (test):* a test lists the selectors of text that must be read and fails when one uses
+    `-color-fg-subtle`.
+  - *Reference:* Editora `StyleContrastTest.textThatMustBeReadUsesTheMutedRoleNotSubtle`.
+
+Modula is the stated exception to ICON-01 and ICON-02: IBM Plex Mono everywhere, because every reading on a radio is
+a number (see *Before adding a setting* in [Settings](../settings/)).
 
 ## The palette: Caret & Ink
 
@@ -61,14 +73,23 @@ grounds, and **brace** periwinkle reserved for the keyboard. Amber, red and gree
 </div>
 </div>
 
-- The theme files follow the vendored AtlantaFX community themes: a `.root` block of `-color-*` tokens, then
-  component rules that reference only those tokens.
-- **SHOULD.** A new app ships the pair as its default theme. Torrenta and Termina copy
-  `editora-light.css` and `editora-dark.css` unchanged into their own `styles/`; the palette is the family's, not
-  the editor's.
-- Brace has no AtlantaFX role, so it is a literal: a `ladder()` over `-color-bg-default` that picks a deep ink on a
+- **ICON-04 · SHOULD.** A theme file follows the vendored AtlantaFX community themes: a `.root` block of `-color-*`
+  tokens, then component rules that reference only those tokens.
+  - *Check (code):* the file's first rule is `.root`, and no rule after it holds a `#` hex.
+  - *Reference:* Editora `styles/atlantafx-themes/editora-light.css`, `editora-dark.css`.
+- **ICON-05 · SHOULD.** A new app ships the Caret & Ink pair as its default theme, with `editora-light.css` and
+  `editora-dark.css` copied unchanged into its own `styles/`.
+  - *Why:* the palette is the family's, not the editor's.
+  - *Check (code):* the app's two files are identical to Editora's.
+  - *Reference:* Torrenta and Termina `styles/`. Both copies of `editora-dark.css` match Editora's; both copies of
+    `editora-light.css` still have the earlier `-color-accent-fg`, `-color-warning-fg` and `-color-success-fg`,
+    which Editora has since darkened.
+- **ICON-06 · SHOULD.** Brace (`-state-key`) is a `ladder()` over `-color-bg-default` that picks a deep ink on a
   light ground and a lighter periwinkle the darker the ground gets, and reads at 4.5:1 or more on every bundled
-  theme's default and subtle surfaces (`StyleContrastTest.theKeyboardPeriwinkleReadsOnEveryBundledAppTheme`).
+  theme's default and subtle surfaces.
+  - *Why:* Brace has no AtlantaFX role, so it has to be a literal.
+  - *Check (test):* a contrast test resolves the ladder against every bundled theme's grounds.
+  - *Reference:* Editora `app.css` (`.root`), `StyleContrastTest.theKeyboardPeriwinkleReadsOnEveryBundledAppTheme`.
 
 ## State colors
 
@@ -89,34 +110,82 @@ Each of the first four also has a `-bg` (the role's `-subtle`) and a `-hover` (t
 pill, a row tint and a hover state come from the same place. `.state-pill` is the shape (bold, radius 999, padding
 1 × 8); the color variant beside it carries the meaning.
 
-- **MUST.** No fixed hex in a component rule. A hex suits one theme; the roles track every theme for free. A
-  severity or debug color that is not a state token fails `StyleContrastTest.severityAndDebugColoursComeFromTheStateTokens`.
-- **MUST.** Readable text uses `-color-fg-muted` or stronger, which is 4.5:1 on the default, subtle and overlay
-  grounds in both flagship themes. Tinted text (`-color-<role>-fg`) reaches 4.5:1 on its own subtle fill and on
-  both grounds.
-- **MUST.** Ink on an emphasis fill is `-color-fg-emphasis`, never white: white on the dark accent is 1.68:1.
-- **MUST.** One focus ring, `-focus-ring: -color-accent-emphasis`, drawn by the `:focus-visible` block at the end
-  of `app.css`, at 3:1 or better on every surface (see [Keyboard first](../keyboard/)).
-- A brand hue the theme has no role for (periwinkle, olive, violet) is a `ladder()` of `-color-bg-default`, never a
-  fixed pair: the old fixed light hexes read at 3.2:1 on Editora Dark.
-- **SHOULD.** A pure test reads the stylesheets and does the WCAG arithmetic, as `StyleContrastTest` does; a
-  contrast regression is invisible in a code diff. Mirada's `AccentTest` checks that the accent reads as text on
-  both grounds; Termina's `ThemeTest` keeps every chromatic color of its terminal schemes legible.
+- **ICON-07 · MUST.** Each state color is named once, as a `-state-*` token on `.root` that chains to one of the
+  theme's roles (or a `ladder()` of its ground), and component rules use the token.
+  - *Check (code):* the `-state-*` tokens are declared only in the `.root` block at the top of `app.css`, each
+    chaining to a `-color-*` role or a `ladder()`.
+  - *Reference:* Editora `styles/app.css` (`.root`).
+- **ICON-08 · MUST.** No fixed hex in a component rule.
+  - *Why:* a hex suits one theme; the roles track every theme for free.
+  - *Check (code):* outside the `.root` token block, `app.css` holds no `#` hex. A test fails a severity or debug
+    color that is not a state token.
+  - *Reference:* Editora `StyleContrastTest.severityAndDebugColoursComeFromTheStateTokens`. Editora doesn't yet
+    pass the whole check: `.breakpoint-marker`, `.exec-arrow`, `.view-mode-bar`, `.recent-remove`,
+    `.personal-note-tooltip-content`, the fold-gutter markers and the default editor and Markdown preview palettes
+    in `app.css` still carry fixed hexes.
+- **ICON-09 · MUST.** Readable text uses `-color-fg-muted` or stronger, which is 4.5:1 on the default, subtle and
+  overlay grounds in both flagship themes.
+  - *Check (test):* a contrast test computes muted ink on each ground, and fails a readable selector set in
+    `-color-fg-subtle`.
+  - *Reference:* Editora `StyleContrastTest.textThatMustBeReadUsesTheMutedRoleNotSubtle`.
+- **ICON-10 · MUST.** Tinted text (`-color-<role>-fg`) reaches 4.5:1 on its own subtle fill and on both grounds.
+  - *Check (test):* a contrast test computes each role's `-fg` on its `-subtle`, on `-color-bg-subtle` and on
+    `-color-bg-default`, in both flagship themes.
+  - *Reference:* Editora `StyleContrastTest.lightTintedTextReachesAaOnItsOwnGroundAndOnTheSubtleSurface`,
+    `darkTintedTextStaysAa`.
+- **ICON-11 · MUST.** Ink on an emphasis fill is `-color-fg-emphasis`, never white.
+  - *Why:* white on the dark accent is 1.68:1.
+  - *Check (test):* a contrast test computes `-color-fg-emphasis` on each role's `-emphasis`, and the rules that
+    paint on an emphasis fill use it.
+  - *Reference:* Editora `StyleContrastTest.inkOnAnEmphasisFillIsTheThemesOnEmphasisColour`.
+- **ICON-12 · MUST.** One focus ring, `-focus-ring: -color-accent-emphasis`, drawn by the `:focus-visible` block at
+  the end of `app.css`, at 3:1 or better on every surface (see [Keyboard first](../keyboard/)).
+  - *Check (test):* a test reads `-focus-ring` from `.root` and computes it on the default, subtle, inset and
+    overlay grounds.
+  - *Reference:* Editora `app.css` (*Keyboard focus*),
+    `StyleContrastTest.theFocusRingIsAtLeastThreeToOneOnEverySurface`.
+- **ICON-13 · SHOULD.** A brand hue the theme has no role for (periwinkle, olive, violet) is a `ladder()` of
+  `-color-bg-default`, never a fixed pair.
+  - *Why:* the old fixed light hexes read at 3.2:1 on Editora Dark.
+  - *Check (test):* a contrast test resolves each ladder on every bundled theme's ground.
+  - *Reference:* Editora `app.css` (`-state-olive`, `-state-violet`, `-state-key`),
+    `StyleContrastTest.theGitOliveAndVioletFollowTheAppThemesGround`.
+- **ICON-14 · SHOULD.** A pure test reads the stylesheets and does the WCAG arithmetic.
+  - *Why:* a contrast regression is invisible in a code diff.
+  - *Check (code):* a test class reads the app's `.css` resources and computes contrast ratios without starting the
+    toolkit.
+  - *Reference:* Editora `StyleContrastTest`. Mirada's `AccentTest` checks that the accent reads as text on both
+    grounds; Termina's `ThemeTest` keeps every chromatic color of its terminal schemes legible.
 
 ## Themes
 
-- **MUST.** Light and dark, a "follow the system" choice, and a live switch without a restart (see
-  [Window shell](../window-shell/)). The first-run default is **Editora Light** (`Themes.DEFAULT`), which is also
-  the fallback for a theme name the app does not know.
-- Editora lists 28 app themes: the Caret & Ink pair, AtlantaFX's Primer, Nord, Cupertino and Dracula, and 21
-  community themes (Army, Autumn, Blacky, Blue, Browny, Fall, Navy, News, Spring, Summer, Winter, Yacht, with
-  light and dark variants) vendored unmodified from the MIT-licensed dlsc `atlantafx-themes` collection. User
-  themes under `<config>/themes/` join the list (`Themes.names()`).
-- **Editor themes are separate** (`EditorThemes`). The flagship pair carries its own editor stylesheet; every
-  community theme is served by one `adaptive` editor theme whose syntax palette is expressed in the theme's own
-  `-color-*` tokens, so it follows whatever ground the theme has.
-- Semantic colors never decorate: a theme may change the teal, the ground and the ink, but amber still means
-  "not durable yet".
+- **ICON-15 · MUST.** The app has light and dark themes and switches between them at run time, without a restart
+  (see [Window shell](../window-shell/)).
+  - *Check (code):* picking a theme calls `Application.setUserAgentStylesheet` in the running app.
+  - *Reference:* Editora `ui/Themes.java` (`applyAppTheme`).
+- **ICON-16 · MUST.** A "follow the system" choice applies the light or dark theme to match the system's color
+  scheme, and changes with it.
+  - *Check (code):* the theme setting has a system value, and a listener on
+    `Platform.getPreferences().colorSchemeProperty()` re-applies the theme.
+  - *Reference:* Mirada `settings/Settings.java` (`ThemeChoice.SYSTEM`), `ui/Theme.java`. Editora doesn't yet: its
+    theme picker lists named themes only.
+- **ICON-17 · MUST.** A theme name the app does not know falls back to the first-run default theme.
+  - *Check (code):* the lookup from a saved name to a theme ends in the default, not an exception.
+  - *Reference:* Editora `Themes.themeFor`, falling back to `Themes.DEFAULT` (Editora Light).
+- **ICON-18 · SHOULD.** Semantic colors never decorate: a theme may change the teal, the ground and the ink, but
+  amber still means "not durable yet", red "broken" and green "verified".
+  - *Check (code):* every rule that uses `-state-amber`, `-state-red` or `-state-green` marks one of the meanings in
+    the State colors table.
+  - *Reference:* Editora `app.css`.
+
+Editora lists 28 app themes: the Caret & Ink pair, AtlantaFX's Primer, Nord, Cupertino and Dracula, and 19
+community themes (Army, Autumn, Blacky, Blue, Browny, Fall, Navy, News, Spring, Summer, Winter, Yacht, several with
+light and dark variants) vendored unmodified from the MIT-licensed dlsc `atlantafx-themes` collection. User themes
+under `<config>/themes/` join the list (`Themes.names()`).
+
+**Editor themes are separate** (`EditorThemes`). The flagship pair carries its own editor stylesheet; every community
+theme is served by one `adaptive` editor theme whose syntax palette is expressed in the theme's own `-color-*`
+tokens, so it follows whatever ground the theme has.
 
 ![Editora's Settings page for themes and fonts](../../assets/shots/editora-themes-fonts.png "Settings: the theme picker with the Caret & Ink pair first, and the UI and editor fonts.")
 
@@ -142,23 +211,42 @@ are not interchangeable.
 | Drawn size | 16 × 1.2 = 19.2 px (`LINE_SCALE` = `ICON_SCALE` × 24 ÷ 16) | 24 × 0.8 = 19.2 px (`ICON_SCALE`) | `Icons` |
 | Used for | The chrome the kit draws: toolbar, tool stripe, tabs, and every action that has a kit glyph | Everything the kit specifies no glyph for: file types, context-menu rows, build-tool and browser brand marks | `Icons`, `FileIcons` |
 
-- **MUST.** One class per family on a node, never both. A line glyph is colored by its stroke, and any
-  `X .toolbar-icon` fill rule (there are dozens) would paint its outline solid. A glyph that moves family moves its
-  CSS with it.
-- **MUST.** The same action wears the same glyph wherever it is reached: Save is one floppy on the toolbar, in the
-  File menu and in a tab's menu. `MenuBarIcons` reuses `Icons`; `editor/MenuIcons` (the editor package may not
-  depend on `ui`) copies each twin's family and path data verbatim.
-- **MUST.** An icon-only control has a name: build it through `Icons.button` or `Icons.toolbarButton`, which set
-  the tooltip and the accessible text together (see [Keyboard first](../keyboard/)).
-- **SHOULD.** No invented glyph. A row gets an icon only where an existing glyph genuinely depicts it; a picture
-  that does not mean the thing beside it has to be read and then discounted. The column stays reserved so a menu
-  with a mix stays aligned (see [Menus](../menus/)).
-- **File icons** (`FileIcons`): a pure `iconKeyFor(name)` resolves a file name to a key (unit-tested without the
-  toolkit), `forFileName` turns the key into a node. Brand logos from Simple Icons, category glyphs (image,
-  archive, PDF, table, lock, JSON, settings) from Material, and the generic document glyph for anything unknown, so
-  a new type never regresses the look.
-- **Licenses.** Every glyph set and font is credited in `NOTICE`: Material Design Icons (Apache-2.0), Simple Icons
-  (CC0; the logos stay their owners' trademarks), Octicons and Seti UI (MIT), Inter and the monospace faces (OFL).
+- **ICON-19 · MUST.** A glyph node carries one family's style class, `icon-line` or `toolbar-icon`, never both.
+  - *Why:* a line glyph is colored by its stroke, and any `X .toolbar-icon` fill rule (there are dozens) would paint
+    its outline solid. A glyph that moves family moves its CSS with it.
+  - *Check (test):* a test builds every line glyph and fails when one also carries `toolbar-icon`.
+  - *Reference:* Editora `ui/Icons.java` (`line`, `of`),
+    `MenuIconFamilyFxTest.aLineGlyphIsNeverAlsoTaggedAsAFilledOne`.
+- **ICON-20 · MUST.** The same action wears the same glyph wherever it is reached: Save is one floppy on the
+  toolbar, in the File menu and in a tab's menu.
+  - *Check (test):* a test compares the path data and style class of each action's glyph across the icon classes.
+  - *Reference:* Editora `ui/MenuBarIcons.java` reuses `Icons`; `editor/MenuIcons.java` (the editor package may not
+    depend on `ui`) copies each twin's family and path data verbatim, held by
+    `MenuIconFamilyFxTest.everySharedActionUsesTheSameGlyphInBothIconSets`.
+- **ICON-21 · MUST.** An icon-only control has a name: it is built through `Icons.button` or `Icons.toolbarButton`,
+  which set the tooltip and the accessible text together (see [Keyboard first](../keyboard/)).
+  - *Check (code):* no icon-only `Button` is given a graphic outside those helpers without `Icons.name`.
+  - *Reference:* Editora `ui/Icons.java`. Editora doesn't yet pass the check on its main toolbar:
+    `WindowToolbar.setupButton` and `ToolbarCoordinator.buildExtraButton` set only the tooltip (see
+    [Toolbars and tooltips](../toolbars-and-tooltips/)).
+- **ICON-22 · SHOULD.** No invented glyph. A row gets an icon only where an existing glyph genuinely depicts it, and
+  the icon column stays reserved so a menu with a mix stays aligned (see [Menus](../menus/)).
+  - *Why:* a picture that does not mean the thing beside it has to be read and then discounted.
+  - *Check (test):* a test holds that a command with no fitting glyph maps to none.
+  - *Reference:* Editora `ui/MenuBarIcons.java`,
+    `MenuBarIconsTest.aCommandWithNoFittingGlyphGetsNoneRatherThanAnInventedOne`.
+- **ICON-23 · SHOULD.** A file's icon comes from a pure function from file name to icon key, unit-tested without the
+  toolkit, and any type it does not know gets the generic document glyph, so a new type never regresses the look.
+  - *Check (test):* a unit test resolves names to keys, an unknown one to the generic key.
+  - *Reference:* Editora `ui/FileIcons.java`: `iconKeyFor(name)` resolves the key, `forFileName` turns it into a
+    node; brand logos from Simple Icons, category glyphs (image, archive, PDF, table, lock, JSON, settings) from
+    Material. `FileIconsTest.unknownAndNullFallBackToGeneric`.
+- **ICON-24 · MUST.** Every glyph set and font the app ships is credited in `NOTICE` with its license.
+  - *Check (code):* each icon source named in the icon classes and each family under `fonts/` has an entry in
+    `NOTICE`.
+  - *Reference:* Editora `NOTICE`: Material Design Icons (Apache-2.0), Simple Icons (CC0; the logos stay their
+    owners' trademarks), Inter and the monospace faces (OFL), and the glyph sets inside the bundled Symbols Nerd
+    Font, Octicons and Seti UI (MIT) among them.
 
 ### In the apps
 

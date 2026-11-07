@@ -17,73 +17,162 @@ is no cross-building.
 | Windows x64 | `windows-latest` | `.msi`, fat jar |
 | Windows arm64 | — | **Not possible yet**: OpenJFX publishes no `win-aarch64` natives (JDK-8314064). ARM users run the x64 MSI under emulation. |
 
-- Downloads are named `<App>-<version>-<target>.<ext>`.
-- jpackage builds the installers through the Maven `dist` profile. **JReleaser** (`jreleaser.yml`) only
-  creates the GitHub release: it attaches the files, `checksums_sha256.txt` and the changelog section.
-- The maven version is the single source of truth: `-SNAPSHOT` on `master`, a tag `vX.Y.Z` releases, a
-  post-release job bumps to the next snapshot (Editora's `bump` job in `release.yml` opens that pull request).
-- GitHub releases are immutable, so a **release-asset check** fails the run before publishing when an
-  expected file is missing (Editora's "Verify the expected release assets" step in `release.yml`).
-- **Linux desktop integration**: a `.desktop` file whose `StartupWMClass` is the JavaFX app class, plus
-  AppStream metainfo `io.github.adriandeleon.<App>` (Torrenta's `packaging/linux/` holds both; Editora's
-  `packaging/linux/Editora.desktop` has the `StartupWMClass`, but its metainfo id predates the rule).
-- **AOT cache** (JDK 25 Leyden): a training run during packaging cuts start-up time; Linux legs run it under
-  `xvfb` (Editora's `scripts/aot_build.java`).
+- **REL-01 · MUST.** jpackage builds the installers for the five targets in the table above, each on its own
+  runner, through the Maven `dist` profile.
+  - *Check (code):* the release workflow's build matrix lists `linux-x64`, `linux-arm64`, `macos-arm64`,
+    `macos-x64` and `windows-x64` on those runners, and `pom.xml` has a `dist` profile.
+  - *Reference:* Editora `release.yml` (the `build` job), `pom.xml` (`dist`).
+- **REL-02 · SHOULD.** Downloads are named `<App>-<version>-<target>.<ext>`.
+  - *Check (code):* the release-asset check builds the expected names this way.
+  - *Reference:* Editora `scripts/release/CheckRelease.java` (`expectedAssets`).
+- **REL-03 · MUST.** **JReleaser** (`jreleaser.yml`) only creates the GitHub release: it builds nothing, and
+  attaches every file and `checksums_sha256.txt`.
+  - *Check (code):* `jreleaser.yml` attaches the build matrix's files and runs after the build jobs.
+  - *Reference:* Editora `jreleaser.yml`, the `release` job in `release.yml`.
+- **REL-04 · SHOULD.** The release notes are the version's section of `CHANGELOG.md`.
+  - *Check (code):* the release job hands JReleaser that section as the changelog.
+  - *Reference:* Torrenta `scripts/release/ReleaseNotes.java`. Editora's release notes are still its commit list.
+- **REL-05 · MUST.** The Maven version is the single source of truth: a tag `vX.Y.Z` releases the version in
+  `pom.xml`.
+  - *Check (code):* the release workflow fails when the tag and the pom version differ.
+  - *Reference:* Editora's "Check the tag against the pom version" step in `release.yml`.
+- **REL-06 · SHOULD.** `master` carries a `-SNAPSHOT` version, and a post-release job opens the pull request that
+  bumps it to the next snapshot.
+  - *Check (code):* the pom's version on `master` ends in `-SNAPSHOT`, and `release.yml` has the bump job.
+  - *Reference:* Editora's `bump` job in `release.yml`.
+- **REL-07 · SHOULD.** A **release-asset check** fails the run before publishing when an expected file is missing.
+  - *Why:* GitHub releases are immutable.
+  - *Check (code):* a step before JReleaser compares the gathered files with the expected list.
+  - *Reference:* Editora's "Verify the expected release assets" step in `release.yml`.
+- **REL-08 · SHOULD.** On Linux, a `.desktop` file's `StartupWMClass` is the JavaFX app class.
+  - *Why:* the running window then belongs to the menu entry and shows its icon.
+  - *Check (code):* `packaging/linux/<App>.desktop` sets `StartupWMClass=com.<app>.App`.
+  - *Reference:* Editora `packaging/linux/Editora.desktop`, Torrenta `packaging/linux/Torrenta.desktop`.
+- **REL-09 · SHOULD.** On Linux, AppStream metainfo has the id `io.github.adriandeleon.<App>`.
+  - *Check (code):* `packaging/linux/io.github.adriandeleon.<App>.metainfo.xml` carries that `<id>`.
+  - *Reference:* Torrenta `packaging/linux/`. Editora's metainfo id (`com.editora.Editora`) predates the rule.
+- **REL-10 · SHOULD.** Packaging trains an **AOT cache** (JDK 25 Leyden) to cut start-up time; Linux legs run the
+  training under `xvfb`.
+  - *Check (code):* the `dist` build runs a training launch with `-XX:AOTCacheOutput`, and the Linux release legs
+    install `xvfb`.
+  - *Reference:* Editora `scripts/aot_build.java`.
 
 ## Install methods
 
-| Channel | Platform | What the user runs | How it is published | Level |
-|---|---|---|---|---|
-| GitHub release | All | Download the `.dmg`, `.msi`, `.deb`, `.rpm`, `.AppImage` or `.tar.gz` | JReleaser attaches every file, with checksums | MUST |
-| Homebrew cask | macOS (Apple Silicon) | `brew install --cask adriandeleon/tap/<app>` | JReleaser's `brew` packager writes the cask to [`adriandeleon/homebrew-tap`](https://github.com/adriandeleon/homebrew-tap) | SHOULD |
-| winget | Windows x64 | `winget install AdrianDeLeon.<App>` | JReleaser's `winget` packager opens a pull request on [`microsoft/winget-pkgs`](https://github.com/microsoft/winget-pkgs) from the `adriandeleon` fork | SHOULD |
+- **REL-11 · MUST.** The GitHub release offers every download on every platform: the `.dmg`, `.msi`, `.deb`,
+  `.rpm`, `.AppImage` and `.tar.gz`, with checksums.
+  - *Check (code):* `jreleaser.yml` attaches each of these types.
+  - *Reference:* Editora `jreleaser.yml`.
+- **REL-12 · SHOULD.** On macOS (Apple Silicon) the app installs with
+  `brew install --cask adriandeleon/tap/<app>`: JReleaser's `brew` packager writes the cask to
+  [`adriandeleon/homebrew-tap`](https://github.com/adriandeleon/homebrew-tap). A cask takes exactly one artifact,
+  so it serves Apple Silicon, and Intel Macs use the `macos-x64` DMG.
+  - *Why:* the official homebrew-cask repository has notability rules a new project does not meet, so the family
+    shares one personal tap.
+  - *Check (code):* `jreleaser.yml` has a `brew` packager for that tap; `jreleaser package --basedir .` writes the
+    cask locally, to check it without releasing.
+  - *Reference:* Torrenta and Termina `jreleaser.yml`; Editora has no packager yet.
+- **REL-13 · SHOULD.** On Windows x64 the app installs with `winget install AdrianDeLeon.<App>`: JReleaser's
+  `winget` packager opens a pull request on [`microsoft/winget-pkgs`](https://github.com/microsoft/winget-pkgs)
+  from the `adriandeleon` fork. The package identifier is `AdrianDeLeon.<App>`, the moniker the app's lower-case
+  name.
+  - *Check (code):* `jreleaser.yml` has a `winget` packager with that identifier; `jreleaser package --basedir .`
+    writes the manifests locally.
+  - *Reference:* Torrenta and Termina `jreleaser.yml`; Editora has no packager yet.
+- **REL-14 · SHOULD.** Both packagers read a `PACKAGES_TOKEN` secret, a classic personal access token with `repo`
+  scope. Without it JReleaser skips both, and the GitHub release still publishes.
+  - *Why:* the workflow's own token cannot write to the tap or open a pull request on the fork.
+  - *Check (code):* `release.yml` passes `PACKAGES_TOKEN` to JReleaser and leaves the packagers out when it is
+    empty.
+  - *Reference:* Torrenta and Termina `release.yml`.
 
-- **One tap for the family.** The official homebrew-cask repository has notability rules a new project does not
-  meet, so the casks live in a personal tap. A cask takes exactly one artifact: it serves Apple Silicon, and
-  Intel Macs use the `macos-x64` DMG.
-- **winget is reviewed by Microsoft.** The first submission for a new publisher is checked by a person, not
-  merged automatically. The package identifier is `AdrianDeLeon.<App>`, the moniker the app's lower-case name.
-- **Both need a `PACKAGES_TOKEN` secret**, a classic personal access token with `repo` scope: the workflow's own
-  token cannot write to the tap or open a pull request on the fork. Without it JReleaser skips both packagers and
-  the GitHub release still publishes.
-- `jreleaser package --basedir .` writes the cask and the winget manifests locally, to check them without
-  releasing.
-- **Status on 2026-11-06:** the tap exists and holds no casks yet. Torrenta and Termina have both packagers
-  configured, waiting for the token. Mirada's first winget submission
-  ([microsoft/winget-pkgs#471599](https://github.com/microsoft/winget-pkgs/pull/471599)) is open.
+winget is reviewed by Microsoft: the first submission for a new publisher is checked by a person, not merged
+automatically.
+
+**Status on 2026-11-06:** the tap exists and holds no casks yet. Torrenta and Termina have both packagers
+configured, waiting for the token. Mirada's first winget submission
+([microsoft/winget-pkgs#471599](https://github.com/microsoft/winget-pkgs/pull/471599)) is open.
 
 ## Signing
 
-| Platform | How | Status in the family |
-|---|---|---|
-| macOS `.dmg` | Developer ID Application certificate (team 8JKSF797L8), hardened runtime with per-app entitlements, `notarytool` submission, stapled ticket, `spctl` check, then a smoke launch of the notarized app. Secrets per repo: `MACOS_CERT_P12`, `MACOS_CERT_PASSWORD`, `APPLE_API_KEY_P8`, `APPLE_API_KEY_ID`, `APPLE_API_ISSUER`. A tag without the secrets fails. | **Done** in all six |
-| Linux `.deb` `.rpm` `.AppImage` `.tar.gz` | One shared OpenPGP release key ("Adrian De Leon (release signing)"). A separate `sign-linux` job: `rpmsign` for `.rpm`, a debsigs origin signature for `.deb`, and an armoured `.asc` beside every file. Public key committed as `packaging/linux/signing-key.asc` and attached to each release. Secrets `LINUX_GPG_KEY`, `LINUX_GPG_PASSPHRASE`. Shared scripts `sign-linux-packages.sh` and `check-linux-signatures.sh`. | Editora, Torrenta, Termina, Modula; Mirada partly; nux not yet |
-| Windows `.msi` | Authenticode. **Open decision**: SignPath Foundation (free for OSS), Certum Open Source cert, or Azure Trusted Signing. Until then MSIs are unsigned and SmartScreen warns. | **Not done** in any app |
-| All | GitHub **build provenance attestations** (`actions/attest-build-provenance`) for every download; `gh attestation verify` checks them. | Editora, Termina |
+- **REL-15 · MUST.** The macOS `.dmg` is signed with the Developer ID Application certificate (team 8JKSF797L8),
+  with the hardened runtime and per-app entitlements, notarized with `notarytool`, stapled and checked with
+  `spctl`; then the notarized app is launched once.
+  - *Check (code):* `release.yml` imports `MACOS_CERT_P12` and `MACOS_CERT_PASSWORD`, notarizes with
+    `APPLE_API_KEY_P8`, `APPLE_API_KEY_ID` and `APPLE_API_ISSUER`, staples, runs `spctl` and launches the app.
+  - *Reference:* Editora's "Import signing certificate (macOS)" and "Notarize DMG (macOS)" steps in
+    `release.yml`, `packaging/macos/Editora.entitlements`. Done in all six apps.
+- **REL-16 · MUST.** Linux downloads are signed with the one shared OpenPGP release key ("Adrian De Leon (release
+  signing)") in a separate `sign-linux` job: `rpmsign` for the `.rpm`, a debsigs origin signature for the `.deb`,
+  and an armored `.asc` beside every file. The public key is committed as `packaging/linux/signing-key.asc` and
+  attached to each release.
+  - *Check (code):* `release.yml` has a `sign-linux` job that reads `LINUX_GPG_KEY` and `LINUX_GPG_PASSPHRASE`
+    and runs the shared scripts, and `packaging/linux/signing-key.asc` exists.
+  - *Reference:* Editora `scripts/release/sign-linux-packages.sh`, `scripts/release/check-linux-signatures.sh`.
+    Done in Editora, Torrenta, Termina and Modula; Mirada partly; nux not yet.
+- **REL-17 · SHOULD.** The Windows `.msi` is signed with Authenticode, once the certificate is chosen.
+  - *Check (code):* the Windows leg signs the `.msi` before it is uploaded.
+  - *Reference:* no app yet. **Open decision**: SignPath Foundation (free for OSS), a Certum Open Source
+    certificate, or Azure Trusted Signing. Until then MSIs are unsigned and SmartScreen warns.
+- **REL-18 · MUST.** Every download has a GitHub **build provenance attestation**
+  (`actions/attest-build-provenance`), which `gh attestation verify` checks.
+  - *Check (test):* a test keeps the attested files and the files JReleaser attaches the same list.
+  - *Reference:* Editora's "Attest build provenance" step in `release.yml`, `ReleaseSupplyChainTest`. Done in
+    Editora, Termina and Mirada.
 
-- Signing steps skip cleanly when the secrets are absent, so a fork or a dry run still builds.
-- The certificate renews before 2027-11-30; the Apple membership before 2027-10-31.
+The certificate renews before 2027-11-30; the Apple membership before 2027-10-31.
 
 ## CI/CD (GitHub Actions)
 
-| Workflow | When | What | Level |
-|---|---|---|---|
-| `ci.yml` | Every push to `master` and every pull request | **Format** (`spotless:check`) and **Build & Test** (`./mvnw verify`, coverage gate included) on JDK 25. Both are required status checks for `master`. | MUST |
-| `full-tests.yml` | Daily (cron), on a pull request labeled `full-ci`, and before every release | The full suite on Linux, macOS and Windows; flaky tests listed in the job summary. | SHOULD |
-| `release.yml` | A `v*` tag that matches the pom version; `workflow_dispatch` as a dry run | The five-target matrix, signing jobs, attestations, the release-asset check, JReleaser, then the bump to the next snapshot. A dry run builds and signs and publishes nothing. | MUST |
-
-Every workflow:
-
-- Pins each third-party action to a commit SHA, with its version in a comment
-  (`actions/setup-java@b843ebf… # v6.1.0`). Dependabot updates `github-actions` and `maven` weekly.
-- Starts from `permissions: contents: read`; only a job that publishes asks for write access, in its own block.
-- Sets up Temurin JDK 25 with `actions/setup-java` and `cache: maven`.
-- Puts `timeout-minutes` on every job, and uses `concurrency` to cancel a superseded pull-request run, never a run
-  on `master`.
-- Uploads the surefire reports when tests fail and the JaCoCo report always; writes the coverage totals to the
-  job summary (Editora's "Summarise coverage" step in `ci.yml`).
-- Skips signing cleanly when the secrets are absent (forks, dry runs); a tag without them fails (Editora's
-  "Import signing certificate (macOS)" step checks `MACOS_CERT_P12` first).
-- Launches the packaged app once on each OS before a release (a smoke test): Torrenta's "Smoke-test the
-  packaged app" step runs the launcher in every target's image. Editora runs only the notarized macOS app
-  (`--version`).
+- **REL-19 · MUST.** `ci.yml` runs on every push to `master` and every pull request: **Format**
+  (`spotless:check`) and **Build & Test** (`./mvnw verify`, coverage gate included) on JDK 25. Both are required
+  status checks for `master`.
+  - *Check (code):* `ci.yml` triggers on `push` to `master` and on `pull_request`, with the two jobs; the
+    repository's rules for `master` require both.
+  - *Reference:* Editora `ci.yml`.
+- **REL-20 · SHOULD.** `full-tests.yml` runs the full suite on Linux, macOS and Windows daily, on a pull request
+  labeled `full-ci`, and before every release, and lists flaky tests in the job summary.
+  - *Check (code):* `full-tests.yml` has a `schedule` and a `pull_request` trigger gated on the label, and the
+    release preflight waits for its run on the tagged commit.
+  - *Reference:* Editora `full-tests.yml`, `scripts/ci/ReportFlakes.java`, and the "Check that the Full tests
+    passed on this commit" step in `release.yml`.
+- **REL-21 · MUST.** `release.yml` runs on a `v*` tag that matches the pom version, with `workflow_dispatch` as a
+  dry run. It runs the five-target matrix, the signing jobs, attestations, the release-asset check, JReleaser, then
+  the bump to the next snapshot. A dry run builds and signs and publishes nothing.
+  - *Check (code):* `release.yml` triggers on the tag pattern and `workflow_dispatch`, and a dispatch runs
+    JReleaser with `--dry-run`.
+  - *Reference:* Editora `release.yml`.
+- **REL-22 · MUST.** Every workflow pins each third-party action to a commit SHA, with its version in a comment
+  (`actions/setup-java@b843ebf… # v6.1.0`).
+  - *Check (code):* every `uses:` in `.github/workflows/` ends in a 40-character SHA and a `# vX.Y.Z` comment.
+  - *Reference:* Editora `.github/workflows/`.
+- **REL-23 · MUST.** Dependabot updates `github-actions` and `maven` weekly.
+  - *Check (code):* `.github/dependabot.yml` lists both ecosystems with `interval: weekly`.
+  - *Reference:* Editora `.github/dependabot.yml`.
+- **REL-24 · MUST.** Every workflow starts from `permissions: contents: read`; only a job that needs write access
+  asks for it, in its own block.
+  - *Check (code):* each workflow's top-level `permissions` is `contents: read`, and every `write` sits in a job's
+    own `permissions`.
+  - *Reference:* Editora `release.yml`: `release` (publish), `bump` (the pull request) and `preflight` (start a
+    Full tests run).
+- **REL-25 · SHOULD.** Every workflow sets up JDK 25 with `actions/setup-java` and `cache: maven`.
+  - *Check (code):* each `setup-java` step has `java-version: '25'` and `cache: maven`.
+  - *Reference:* Editora uses Temurin in `ci.yml` and `full-tests.yml`, and Liberica for the release build, for
+    linux-aarch64 coverage.
+- **REL-26 · MUST.** Every job has `timeout-minutes`, and `concurrency` cancels a superseded pull-request run,
+  never a run on `master`.
+  - *Check (code):* every job sets `timeout-minutes`; `cancel-in-progress` is true only for `pull_request` events.
+  - *Reference:* Editora `ci.yml` (`cancel-in-progress: ${{ github.event_name == 'pull_request' }}`).
+- **REL-27 · MUST.** CI uploads the surefire reports even when tests fail, and the JaCoCo report; it writes the
+  coverage totals to the job summary.
+  - *Check (code):* the test reports upload under `if: always()`, and a step appends the totals to
+    `$GITHUB_STEP_SUMMARY`.
+  - *Reference:* Editora's "Upload test reports and coverage data" and "Summarise coverage" steps in `ci.yml`.
+- **REL-28 · MUST.** Signing skips cleanly when the secrets are absent (forks, dry runs), so they still build; a tag
+  without them fails.
+  - *Check (code):* each signing step checks its secrets first, skips without them, and fails on a tag push.
+  - *Reference:* Editora's "Import signing certificate (macOS)" step checks `MACOS_CERT_P12` first.
+- **REL-29 · MUST.** The packaged app is launched once on each OS before a release (a smoke test).
+  - *Check (code):* `release.yml` runs the packaged launcher on every target before JReleaser.
+  - *Reference:* Torrenta's "Smoke-test the packaged app" step runs the launcher in every target's image. Editora
+    runs only the notarized macOS app (`--version`, `--check-terminal`).

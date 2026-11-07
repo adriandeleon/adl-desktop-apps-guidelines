@@ -10,6 +10,7 @@ Editora (`../Editora`) is the reference implementation.
 - `npm run build` — the whole site into `dist/`: this edition at `latest/` and `<version>/`, every earlier edition
   from the `versions` branch, the root redirects (see **Editions on the site**)
 - `npm run preview` — serves `dist/` as deployed, at http://localhost:4321/
+- `npm run check` — fails on a malformed rule (`scripts/check-rules.mjs`); `npm run build` runs it first
 
 ## Rules
 
@@ -20,6 +21,21 @@ Editora (`../Editora`) is the reference implementation.
 - A rule states a level (MUST / SHOULD / MAY) and names the Editora class or file it comes from. Verify claims
   against the apps' code on their default branch, not from memory; when Editora and the guide disagree, the code
   wins and the guide is fixed in the same change.
+- **Rule IDs**: every rule is a list item, never a table row, that opens with `**KBD-07 · MUST.**`, one testable
+  statement, then sub-items `*Why:*` (only when there is a reason worth stating), `*Check (code|test|by
+  hand):*` (how an agent or a person verifies it in an app: what to grep or read, which test holds it, or what to do
+  in the running app) and `*Reference:*` (the Editora file, or the app that does it, or "no app yet"). IDs are
+  permanent: never renumber or reuse one; a removed rule's ID stays retired. `src/lib/rehype-status.mjs` makes the
+  item its anchor (`#kbd-07`) and `scripts/print-markup.py` renders it for print; `src/lib/rules.mjs` reads the
+  rules for `npm run check` and for what coding agents read, which every edition serves: `rules.json`, `llms.txt`
+  (also at the site root) and `llms-full.txt` (`src/pages/*.js`, `src/lib/llms.mjs`). Change all of them if the
+  syntax changes.
+  A rule that the checklist lists is a MUST unless the checklist says SHOULD; a rule it doesn't list is a SHOULD.
+  One prefix per page: PLAT platform, REPO repository, DOCS documentation, QUAL quality, PERF performance, KBD
+  keyboard, WIN window-shell, ICON icons-and-color, TBAR toolbars-and-tooltips, TABS tabs-and-panels, MENU menus,
+  TRAY tray-and-background, SET settings, DIAG diagnostics, CLI command-line, INTL i18n, REL release; templates PAL,
+  QOPEN, WELC, ABOUT, CONF, FIND, MLOG, SYNC. A new rule takes the page's next free number, wherever it sits.
+  Template pages keep their mockups and spec tables; their requirements are rules under `## Rules`.
 - Feature matrix cells start with `●`, `◐` or `—` (rendered as dots by `src/lib/rehype-status.mjs`; the print
   build does the same in `scripts/print-markup.py`). Change both if the convention changes.
 - Plain, direct sentences written for the app developer. No marketing copy. American spelling throughout (color,
@@ -47,7 +63,7 @@ Editora (`../Editora`) is the reference implementation.
   phone menu through `MobileMenuFooter.astro`) and the footer link the same page in another edition; a numbered folder carries `noindex`, so search engines index `latest/`.
   The `versions` branch holds one folder per published edition and nothing else: CI runs `scripts/archive-edition.sh
   --push` after each push to `master`, so the edition just deployed joins it (a rebuild replaces the folder). Never
-  edit that branch by hand; a lost or pre-2.0.0 edition is rebuilt from its tag with `scripts/archive-tag.sh vX.Y.Z`
+  edit that branch by hand; a lost or pre-1.4.0 edition is rebuilt from its tag with `scripts/archive-tag.sh vX.Y.Z`
   and archived with `scripts/archive-edition.sh build/editions/X.Y.Z`. Pages link with relative paths or
   `import.meta.env.BASE_URL`, which already includes the edition folder; `src/lib/site.mjs` gives the site root and
   the edition a page is served from.

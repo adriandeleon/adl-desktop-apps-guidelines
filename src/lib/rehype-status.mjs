@@ -1,6 +1,7 @@
 // Turns the guide's plain-text conventions into styled markup:
 //   ● / ◐ / — at the start of a feature-matrix cell → a status dot (the rest of the cell stays as its note)
 //   MUST / SHOULD / MAY anywhere in prose or a table cell → a level pill ("**MUST.**" and "(SHOULD)" included)
+//   "**KBD-07 · MUST.**" opening a list item → the rule's anchor and ID link, then its level pill
 // It also marks a table whose header names all six apps as a feature matrix (and wraps it so it scrolls on its
 // own on a narrow screen), and a table with a "Level" column as a rule table whose cells carry their column
 // name, so the table can stack into cards on a phone. The print build does the same in scripts/print-markup.py.
@@ -104,6 +105,27 @@ function table(node, parent, iconBase) {
   });
 }
 
+// A list item that opens with "**KBD-07 · MUST.**" is a rule: the item takes the ID as its anchor (#kbd-07), the ID
+// becomes a link to it and the level a pill.
+const RULE = /^([A-Z]{2,6}-\d{2,3}) · (MUST|SHOULD|MAY)\.$/;
+function ruleIds(tree) {
+  visit(tree, (li) => {
+    if (li.type !== "element" || li.tagName !== "li") return;
+    const host = li.children.find((c) => c.type === "element")?.tagName === "p" ? li.children.find((c) => c.type === "element") : li;
+    const i = host.children.findIndex((c) => !(c.type === "text" && !c.value.trim()));
+    const first = host.children[i];
+    const m = first?.type === "element" && first.tagName === "strong" && text(first).trim().match(RULE);
+    if (!m) return;
+    const id = m[1].toLowerCase();
+    (li.properties ??= {}).id = id;
+    addClass(li, "rule");
+    host.children.splice(i, 1,
+      { type: "element", tagName: "a", properties: { className: ["rule-id"], href: `#${id}` }, children: [{ type: "text", value: m[1] }] },
+      { type: "text", value: " " },
+      pill(m[2]));
+  });
+}
+
 // Level words become pills: a bold "MUST." alone is replaced by the pill, a "(SHOULD)" loses its brackets.
 function levels(node) {
   if (node.type === "mdxJsxFlowElement" || node.type === "mdxJsxTextElement" || node.type === "raw") return;
@@ -155,6 +177,7 @@ export default function rehypeStatus(options = {}) {
       }
     });
     for (const [node, parent] of tables) table(node, parent, iconBase);
+    ruleIds(tree);
     levels(tree);
   };
 }

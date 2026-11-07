@@ -28,6 +28,9 @@ s = re.sub(r"<table>.*?</table>", mark, s, flags=re.S)
 def pill(level):
     return f'<span class="lvl lvl-{level.lower()}">{level}</span>'
 s = re.sub(r"<strong>(MUST|SHOULD|MAY)\.?</strong>", lambda m: pill(m.group(1)), s)
+# A rule, "**KBD-07 · MUST.**" opening a list item: its ID, then its level pill.
+s = re.sub(r"<strong>([A-Z]{2,6}-\d{2,3}) · (MUST|SHOULD|MAY)\.</strong>",
+           lambda m: f'<span class="rule-id">{m.group(1)}</span> {pill(m.group(2))}', s)
 KEEP = re.compile(r"<(code|pre|kbd|a|h[1-6]|th|style|script|svg)\b|<span class=\"lvl|<div class=\"mock-stage")
 def levels(html):
     out, depth = [], []

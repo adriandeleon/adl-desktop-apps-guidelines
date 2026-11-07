@@ -66,42 +66,86 @@ title and chord come from the registry and the active keymap. Reference: Editora
 
 ## Rules
 
-- **MUST. Every icon-only button has a name.** Build it through one helper that sets the tooltip and the accessible
-  text from the same string (`Icons.button`, `Icons.name`; Torrenta's copy of both). A hand-rolled button gets the
-  tooltip and forgets the name, which is how Editora once had seven copies of the helper drifting apart, and how a
-  screen reader comes to announce "button". nux sets both by hand on its "?" button for the same reason.
-- **MUST. Toolbar buttons stay out of the Tab order.** `Icons.toolbarButton` sets `focusTraversable` to false: the
-  command, the palette and the menus reach the action, and Tab is for the content. Termina's search bar buttons do the
-  same. The [keyboard page](../keyboard/#focus-and-accessibility) has the general focus rules.
-- **MUST. The tooltip names the command and its chord**, read from the active keymap, never typed into a string:
-  "Save (C-x C-s)". Editora's catalog buttons (`ToolbarCoordinator`), its stripe buttons (`ToolWindowManager`),
-  Torrenta's `toolbar.withChord` and Mirada's header buttons all format it the same way.
-- **SHOULD. Groups by spacing, not rules.** Keep the `Separator` nodes (their padding is the gap) and make the line
-  transparent. Hiding a button group (Simple mode, a build tool that is not detected) runs
-  `collapseToolbarSeparators`, which hides leading, trailing and doubled separators so no gap is left standing on its
-  own, and shows them all again when nothing is hidden.
-- **SHOULD. One chrome band.** The menu bar, the toolbar and the tab strip share `-color-bg-subtle` and draw no
-  hairline between them; the breadcrumb, the bottom stripe and the status bar do the same at the bottom. Three rules
-  within forty pixels read as clutter, not structure.
-- **MUST. A toggle looks on while it is on.** A button that opens an overlay (Find, the palette, a split) and the
-  Simple mode button carry the `:open` pseudo-class while their state holds, so the way back out does not look like
-  the way in. Torrenta uses `:on` for Simple mode and `:active` for the alternative speed limit.
-- **MUST. The toolbar never holds the only way to an action.** Every icon in the customizable cluster is also in the
-  menus and the palette; that is what makes it safe to hide icons in a narrow window and to let the user remove them.
-  Editora's `toolbar/ToolbarCatalog.java` names each item by the id of the command it runs.
-- **MAY. A customizable toolbar.** Editora's cluster is a list of catalog ids in Settings (`toolbarLayout`),
-  sanitized on read and shared by every window. The bar's right-click menu offers *Customize Toolbar…* (or *Done*),
-  *Configure…* (the Settings page) and *Restore Default*. In customize mode the bar tints, buttons drag to reorder with
-  an accent insertion line and drag off the bar to remove; Escape leaves the mode. Pinned by
-  `ToolbarCustomizeModeFxTest` and `ToolbarCustomizationFxTest`.
-- **The bar's right-click menu is one menu**, reused across right-clicks, so showing it again moves it, and
-  `ContextMenuDismissal` closes it on a press anywhere, the toolbar included (`ToolbarContextMenuDismissFxTest`). The
-  bar runs at 18 px, and a popup inherits the font of the node it was shown from; the `.context-menu` rule that pins
-  menus to 14 px is what keeps this menu the size of every other (`ToolbarMenuFontFxTest`). See [Menus](../menus/).
-- **Tool window stripes are toolbars.** A stripe button is built like a toolbar button: tooltip with the chord,
-  accessible text bound to the window's title, a right-click menu with *Open in Split* and *Hide*. The right stripe's
-  first icon lines up with the editor's first line of text, not with the tab strip
-  (`ToolWindowStripeAlignmentFxTest`).
+- **TBAR-01 · MUST.** Every icon-only button has a name: one helper sets its tooltip and its accessible text from
+  the same string.
+  - *Why:* a hand-rolled button gets the tooltip and forgets the name, which is how Editora once had seven copies
+    of the helper drifting apart, and how a screen reader comes to announce "button".
+  - *Check (code):* every icon-only `Button` is built by `Icons.button` or `Icons.toolbarButton`, or passed to
+    `Icons.name`; none calls `setTooltip` without `setAccessibleText`.
+  - *Reference:* Editora `ui/Icons.java` (`button`, `toolbarButton`, `name`); Torrenta's copy of all three. nux sets
+    both by hand on its "?" button for the same reason. Editora doesn't yet on its main toolbar:
+    `WindowToolbar.setupButton` and `ToolbarCoordinator.buildExtraButton` set the tooltip only.
+- **TBAR-02 · MUST.** Toolbar buttons stay out of the Tab order: the command, the palette and the menus reach the
+  action, and Tab is for the content. The [keyboard page](../keyboard/#focus-and-accessibility) has the general
+  focus rules.
+  - *Check (code):* every button on a toolbar is built by `Icons.toolbarButton` or calls
+    `setFocusTraversable(false)`.
+  - *Reference:* Editora `Icons.toolbarButton`, used by the tool window toolbars (Git, Diff, Markdown lint); Termina's
+    search bar buttons; Mirada's header buttons. Editora doesn't yet on its main toolbar: the buttons built by
+    `WindowToolbar.setupButton` and `ToolbarCoordinator.buildExtraButton`, and the stripe buttons, take focus.
+- **TBAR-03 · MUST.** The tooltip names the command and its chord, read from the active keymap and never typed into
+  a string: "Save (C-x C-s)". An unbound command shows its title alone.
+  - *Check (code):* the tooltip is built from the command's title and the keymap's display chord for its id, and is
+    rebuilt when the keymap changes.
+  - *Reference:* Editora `WindowToolbar.setupButton` (`refreshToolbarTooltips`), `ToolbarCoordinator.buildExtraButton`
+    and `ToolWindowManager.tooltipFor`; Torrenta's `toolbar.withChord`. Mirada's header buttons use the same
+    "label (key)" form with the key written into the string.
+- **TBAR-04 · SHOULD.** Groups are separated by spacing, not rules: keep the `Separator` nodes (their padding is the
+  gap) and make the line transparent.
+  - *Check (code):* the stylesheet sets `.tool-bar .separator:vertical > .line` to a transparent border.
+  - *Reference:* Editora `app.css`. Torrenta's separators still draw a line.
+- **TBAR-05 · SHOULD.** Hiding a button group (Simple mode, a build tool that is not detected) hides the leading,
+  trailing and doubled separators it leaves, so no gap stands on its own, and shows them all again when nothing is
+  hidden.
+  - *Check (code):* every change to a toolbar item's visibility ends in one pass over the bar's separators.
+  - *Reference:* Editora `WindowChromeCoordinator.collapseToolbarSeparators`.
+- **TBAR-06 · SHOULD.** One chrome band: the menu bar, the toolbar and the tab strip share `-color-bg-subtle` and
+  draw no hairline between them; the breadcrumb, the bottom stripe and the status bar do the same at the bottom.
+  - *Why:* three rules within forty pixels read as clutter, not structure.
+  - *Check (by hand):* look at the top and the bottom of a window in a light and a dark theme for a line between
+    the bands.
+  - *Reference:* Editora `app.css` (`.menu-bar, .tool-bar`).
+- **TBAR-07 · MUST.** A toggle looks on while it is on: a button that opens an overlay (Find, the palette, a split)
+  and the Simple mode button carry the `:open` pseudo-class while their state holds, so the way back out does not
+  look like the way in.
+  - *Check (code):* each such button sets a pseudo-class from its state, and the stylesheet gives that state a fill.
+  - *Reference:* Editora `MainController.OPEN`, `WindowChromeCoordinator` (Simple mode), `.button:open` in
+    `app.css`. Torrenta uses `:on` for Simple mode and `:active` for the alternative speed limit.
+- **TBAR-08 · MUST.** The toolbar never holds the only way to an action: every icon in the customizable cluster is
+  also in the menus and the palette.
+  - *Why:* that is what makes it safe to hide icons in a narrow window and to let the user remove them.
+  - *Check (code):* every toolbar catalog item runs a registered command that a menu also lists.
+  - *Reference:* Editora `toolbar/ToolbarCatalog.java`: each item carries the `commandId` it runs; the only items
+    without one are declared special widgets, such as the Recent menu button (`ToolbarCatalogTest`).
+- **TBAR-09 · MAY.** The toolbar is customizable: the user reorders, removes and restores its buttons, and the
+  layout is saved in Settings and shared by every window.
+  - *Check (test):* FX tests drive customize mode, reorder and removal.
+  - *Reference:* Editora `ui/ToolbarCoordinator.java`, `ToolbarCustomizeModeFxTest`, `ToolbarCustomizationFxTest`.
+    The cluster is a list of catalog ids in Settings (`toolbarLayout`), sanitized on read. The bar's right-click
+    menu offers *Customize Toolbar…* (or *Done*), *Configure…* (the Settings page) and *Restore Default*. In
+    customize mode the bar tints, buttons drag to reorder with an accent insertion line and drag off the bar to
+    remove; Escape leaves the mode.
+- **TBAR-10 · MUST.** The bar's right-click menu is one menu, reused across right-clicks, so showing it again moves
+  it, and it closes on a press anywhere, the toolbar included.
+  - *Check (test):* an FX test right-clicks the bar twice and finds one menu, then presses on the bar and elsewhere
+    in the window and finds it closed.
+  - *Reference:* Editora `ToolbarCoordinator`, `ContextMenuDismissal`, `ToolbarContextMenuDismissFxTest`. See
+    [Menus](../menus/).
+- **TBAR-11 · SHOULD.** The bar's right-click menu is the size of every other menu (14 px), not the bar's 18 px.
+  - *Why:* a popup inherits the font of the node it was shown from; the `.context-menu` rule that pins menus to
+    14 px is what keeps this one in line.
+  - *Check (test):* an FX test opens the menu from the bar and reads its font size.
+  - *Reference:* Editora `app.css` (`.context-menu`), `ToolbarMenuFontFxTest`.
+- **TBAR-12 · SHOULD.** Tool window stripes are toolbars: a stripe button is built like a toolbar button, with the
+  chord in its tooltip, accessible text bound to the window's title, and a right-click menu with *Open in Split* and
+  *Hide*.
+  - *Check (code):* the stripe button's tooltip comes from the same title-and-chord format, and its
+    `accessibleTextProperty` is bound to the tool window's title.
+  - *Reference:* Editora `ToolWindowManager.register`, `tooltipFor`.
+- **TBAR-13 · SHOULD.** The right stripe's first icon lines up with the editor's first line of text, not with the
+  tab strip.
+  - *Check (test):* an FX test compares the first stripe button's top with the editor's first line.
+  - *Reference:* Editora `ToolWindowStripeAlignmentFxTest`.
 
 ## In the apps
 
@@ -109,7 +153,8 @@ title and chord come from the registry and the active keymap. Reference: Editora
 - **Torrenta**: the same `Icons.toolbarButton` and `Icons.name`, 32 px buttons, Simple mode as `:on`; its separators
   still draw a line.
 - **Mirada**: a `HeaderBar` title bar with flat icon buttons around the file name, stroked symbolic icons in the text
-  color, tooltips of the form "label (chord)"; no accessible names on the buttons.
+  color, tooltips of the form "label (key)"; each button's accessible text is set by hand, and the buttons are out
+  of the Tab order.
 - **Termina**: no main toolbar (its tabs are in the title bar); the search bar's buttons are 24 × 22 flat icons with
   tooltips, out of the Tab order.
 

@@ -105,10 +105,8 @@ description: "Commands, the Command Palette, keymaps, focus and accessibility."
   - *Why:* a bare AtlantaFX `ToggleSwitch` is mouse-only.
   - *Check (code):* no `new ToggleSwitch` outside the switch class.
   - *Reference:* Editora `ui/SettingSwitch.java`.
-- **KBD-19 · SHOULD.** Readable text uses `-color-fg-muted` or stronger; `-color-fg-subtle` (about 3:1) is for
-  disabled or decorative text only.
-  - *Check (test):* a pure contrast test over the stylesheets.
-  - *Reference:* Editora `StyleContrastTest`.
 - **KBD-20 · SHOULD.** Rows wrap instead of truncating to "…".
   - *Check (by hand):* run the app in German at 1024 px wide; no test catches a cut row.
   - *Reference:* Editora `messages_de.properties`.
+
+Readable text and its contrast are one rule, [ICON-09](../icons-and-color/#icon-09) on Icons and color.

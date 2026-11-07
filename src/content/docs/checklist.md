@@ -109,6 +109,9 @@ from a later edition.
 - [ ] A palette command for every setting
 - [ ] Versioned config in `~/.<app>`, with migrations and downgrade backups
 - [ ] Export and import of the config folder
+- [ ] Config read with suspicion: values clamped on load, an unreadable file kept as a backup and defaults loaded
+- [ ] No secret in a config file: keys and tokens in the OS keychain, a credential the app can ask for again in memory only
+- [ ] A secret in the wrong place refused (a sync URL with a password, an unredacted problem report), and an option that weakens security only a config key
 - [ ] Settings sync through a Git/GitHub repository (SHOULD)
 
 ## Diagnostics

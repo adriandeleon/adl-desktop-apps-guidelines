@@ -121,7 +121,7 @@ rules in `app.css`.
 - **TABS-14 · MUST.** A panel's content is built on first use.
   - *Check (test):* an FX test holds that no closed tool window builds its panel before the first paint.
   - *Reference:* Editora `LazyToolWindowsFxTest`.
-- **TABS-15 · MUST.** Panel state is restored: which windows are open, on which side, in what order, hidden or shown,
+- **TABS-15 · SHOULD.** Panel state is restored: which windows are open, on which side, in what order, hidden or shown,
   floating, and every divider position go to `workspace-state.json` and come back on the next launch.
   - *Check (code):* the workspace state holds each of those, and the manager reads them back at startup.
   - *Reference:* Editora `ui/ToolWindowManager.java`, `config/WorkspaceState.java`.

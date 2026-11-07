@@ -71,14 +71,17 @@ keymap, a theme, a language), not when the developer could not decide.
   - *Why:* an older build never clobbers a newer config.
   - *Check (test):* a test loads a too-new `settings.json` and finds the backup and the defaults.
   - *Reference:* Editora `ConfigVersioningTest` (`tooNewSettingsAreBackedUpAndDefaultsLoaded`).
-- **SET-11 · SHOULD.** Never trust a config file. Clamp every value to its valid range when it is **read**, not only
-  when it is written; an unknown value falls back to its default; a file that cannot be decoded is kept as
-  `<name>.corrupt.bak` and defaults load. A bad file never stops the app from starting.
+- **SET-11 · MUST.** Never trust a config file. Clamp every value to its valid range when it is **read**, not only
+  when it is written; an unknown value falls back to its default; a file that cannot be decoded is kept as a backup
+  (Editora names it `<name>.corrupt.bak`) and defaults load. A bad file never stops the app from starting.
   - *Why:* config is plain JSON (or properties) and people edit it by hand. A hand-edited two-million-line
     scrollback must not exhaust memory at the next launch (Termina).
-  - *Check (test):* a test loads out-of-range numbers and an unparseable file.
-  - *Reference:* Editora `ConfigLoadProblemsTest` (`outOfRangeNumbersAreClampedOnLoad`,
-    `anUnparseableFileIsReportedWithItsBackup`).
+  - *Check (test):* a test loads out-of-range numbers and an unparseable file, including one that makes the parser
+    throw something other than an `IOException` (a malformed `\uXXXX` escape in a `.properties` file).
+  - *Reference:* Editora `config/migration/ConfigMigrations.java` (`keepCorrupt`), `ConfigLoadProblemsTest`
+    (`outOfRangeNumbersAreClampedOnLoad`, `anUnparseableFileIsReportedWithItsBackup`); Termina
+    `config/Settings.java`, `SettingsTest` (`aMalformedEscapeNoLongerStopsTheAppStarting`). Torrenta, Modula, Mirada
+    and nux keep no backup, and in Torrenta and nux a malformed escape stops the app from starting.
 - **SET-12 · MUST.** Export configuration writes a timestamped `.zip` of the config folder; Import restores from
   one.
   - *Check (test):* tests over the zip's name and contents, and an import that replaces only the ticked parts.
@@ -87,25 +90,29 @@ keymap, a theme, a language), not when the developer could not decide.
 
 ## Secrets stay out of files
 
-- **SET-13 · SHOULD.** No secret goes in a config file. API keys and tokens go to the operating system's keychain:
+- **SET-13 · MUST.** No secret goes in a config file. API keys and tokens go to the operating system's keychain:
   macOS Keychain, Windows Credential Manager, the Secret Service on Linux. Calls may block on a prompt, so they run
   off the FX thread.
   - *Check (code):* no key or token field in the settings model; reads and writes go through the secret store.
-  - *Reference:* Editora `secrets/SecretStore.java`.
-- **SET-14 · SHOULD.** A credential the app can ask for again lives in memory for the session only and is never
+  - *Reference:* Editora `secrets/SecretStore.java`, `config/ApiKeyVault.java`. Editora doesn't yet: `Settings`
+    keeps the AI keys as a fallback for when no keychain answers, and saving a key from Settings writes the keychain
+    on the FX thread. Torrenta keeps its proxy password, Torznab key and remote-profile passwords in plain text.
+- **SET-14 · MUST.** A credential the app can ask for again lives in memory for the session only and is never
   written. Work that needs it waits until the user has signed in this session; do not "fix" that by storing the
   password.
   - *Check (code):* the credential is a field of a runtime object, absent from every config class.
   - *Reference:* nux's UPS login (`app/CommandRunner.java`).
-- **SET-15 · SHOULD.** A secret in the wrong place is refused. A repository URL with a password or token in it is
-  refused, with the fix ([Settings Sync](../templates/settings-sync/)); a problem report redacts tokens, hosts and
-  home paths before anyone sees it ([Diagnostics](../diagnostics/)).
+- **SET-15 · MUST.** A secret in the wrong place is refused. A repository URL with a password or token in it is
+  refused, with the fix ([Settings Sync](../templates/settings-sync/)); a problem report redacts tokens, credentials,
+  e-mail addresses, user names and home paths before anyone sees it ([Diagnostics](../diagnostics/)).
   - *Check (by hand):* paste `https://user:token@host/repo.git` as the sync repository.
-  - *Reference:* Editora `ui/SettingsSyncPage.java` (`settings.sync.repo.credentials`).
-- **SET-16 · SHOULD.** An option that weakens security has no UI: it exists only as a key in the config file, so
+  - *Reference:* Editora `ui/SettingsSyncPage.java` (`settings.sync.repo.credentials`), `sync/SyncEngine.java`
+    (`hasCredentials`, checked again at sync time), `report/Redactor.java`.
+- **SET-16 · MUST.** An option that weakens security has no UI: it exists only as a key in the config file, so
   nobody turns it on by clicking.
   - *Check (code):* no Settings row or command writes such a key.
-  - *Reference:* nux's trust-all TLS (`tlsTrustAll` in `config/Config.java`).
+  - *Reference:* nux's trust-all TLS (`tlsTrustAll` in `config/Config.java`). Editora doesn't yet: *Require
+    registry signature* for plugins is a Settings checkbox and the `plugins.toggleRequireSignature` command.
 
 ## Settings Sync (Git / GitHub)
 

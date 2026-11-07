@@ -15,7 +15,7 @@ description: "JDK, JavaFX, AtlantaFX, NullAway, Maven Wrapper, tests and coverag
 - **PLAT-03 · MUST.** The app builds on **JavaFX 27 or newer**.
   - *Check (code):* `pom.xml` sets `javafx.version` to 27 or later.
   - *Reference:* Editora `pom.xml`.
-- **PLAT-04 · SHOULD.** The app is one named JPMS module, `com.<app>`, whose `module-info.java` opens only what
+- **PLAT-04 · MUST.** The app is one named JPMS module, `com.<app>`, whose `module-info.java` opens only what
   reflection, FXML and Jackson need.
   - *Check (code):* `src/main/java/module-info.java` declares `module com.<app>`; each `opens` line serves FXML,
     Jackson or another reflective reader.

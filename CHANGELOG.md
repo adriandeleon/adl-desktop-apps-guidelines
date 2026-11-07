@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.2] - 2026-11-06
+
+### Added
+
+- **Coding agents and LLMs.** A new page under *Start here* explains what every edition serves to coding agents
+  (`llms.txt`, `llms-full.txt`, `rules.json`) and where each lives, what a rule looks like as JSON, how an app's
+  `AGENTS.md` points its agent at the edition in `pauta.version` rather than `latest/`, how to have an agent build a
+  feature to a page's rules, how to run and check an audit, and how to compare two editions' rules before moving an
+  app to the newer one. The overview and the README link it. It adds no rules.
+
 ## [2.0.1] - 2026-11-06
 
 ### Changed

@@ -6,9 +6,10 @@ description: "Everything a new app needs before its first release, grouped by ar
 Each group links to the page with the rules and the Editora code to copy. Everything here is a MUST unless it says
 SHOULD.
 
-**Start from the template.** [adl-desktop-app-template](https://github.com/adriandeleon/adl-desktop-app-template) is a GitHub template repository that already
-ticks every MUST on this list: a small runnable app with its tests, CI and release workflows and every repository
-document. Click **Use this template**, then run `scripts/rename.sh <AppName> <package>`.
+**Start from the template.** [adl-desktop-app-template](https://github.com/adriandeleon/adl-desktop-app-template) is a GitHub template repository: a
+small runnable app with its tests, CI and release workflows and every repository document, built to the edition its
+README names. Click **Use this template**, run `scripts/rename.sh <AppName> <package>`, then add any rule on this list
+from a later edition.
 
 ## Platform
 

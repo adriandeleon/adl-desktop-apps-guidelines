@@ -3,10 +3,16 @@ title: "Message Log"
 description: "The family's Message Log: the session's status-bar messages, newest first, opened from the status bar."
 ---
 
-<span class="lvl lvl-must">MUST</span> in every app with a status bar. The status bar's echo line shows one message
-and replaces it with the next; the Message Log keeps them, so nothing the app said is lost because it scrolled past.
-Reference: Editora's `ui/MessageLog.java` (the model, no JavaFX) and `ui/MessageLogPopup.java` (the view); Torrenta
-carries the same pair.
+The status bar's echo line shows one message and replaces it with the next; the Message Log keeps them, so nothing
+the app said is lost because it scrolled past.
+
+## Rules
+
+- **MLOG-01 · MUST.** Every app with a status bar keeps a Message Log: the session's status-bar messages, newest
+  first, opened from the status bar.
+  - *Check (code):* every status-bar message is also added to one log model, and a view lists that model.
+  - *Reference:* Editora `ui/MessageLog.java` (the model, no JavaFX) and `ui/MessageLogPopup.java` (the view);
+    Torrenta carries the same pair.
 
 ## Anatomy
 
@@ -43,7 +49,7 @@ carries the same pair.
 
 | Property | Value | Reference |
 |---|---|---|
-| Kind | A popup anchored just above the status bar's echo area, over the window | `MessageLogPopup.show` |
+| Kind | A card in the shared in-scene overlay host, anchored just above the status bar's echo area, over the window | `MessageLogPopup.show`, `OverlayHost` |
 | Size | 773 px wide; the list 336 px high, scrolling past that | `WIDTH`, `LIST_HEIGHT` |
 | Card | `-color-bg-overlay`, radius 12, like the palette | `.message-log` |
 | Rows | Padding 2 4, radius 5; selected row `-state-sel` | `.message-log-list .list-cell` |
@@ -54,12 +60,28 @@ carries the same pair.
 
 ## Behavior
 
-- **Open:** click the echo line or the unread-error count, or run `view.messageLog`.
-- **Close:** Esc, `C-g`, or a click outside. **Copy:** `Ctrl/Cmd+C` copies the selected entries.
-- **Severity comes from the message key** (`StatusSeverity`): a key ending in `Failed` or `Error` is an error, one
-  with `cannot` or `invalid` a warning. Name new keys accordingly, or report through the error channel directly.
-- Opening the log, or clearing it, resets the unread-error count. An unread error is never evicted silently: the
-  count keeps it even when the entry drops off the end.
+- **MLOG-02 · SHOULD.** A click on the echo line or on the unread-error count opens the log, as does the
+  `view.messageLog` command.
+  - *Check (code):* both status-bar nodes run `view.messageLog` on a click.
+  - *Reference:* Editora `StatusBar` (`echo`, `unreadErrors`), `StatusBar.showMessageLog`.
+- **MLOG-03 · SHOULD.** Esc, `C-g` or a click outside closes the log.
+  - *Check (code):* the card's key handler hides it on Escape and `C-g`; the overlay's backdrop hides it on a press.
+  - *Reference:* Editora `MessageLogPopup`, `OverlayHost`.
+- **MLOG-04 · SHOULD.** `Ctrl+C` (`Cmd+C` on macOS) copies the selected entries.
+  - *Check (code):* the card's key handler copies the selection on the shortcut-down C.
+  - *Reference:* Editora `MessageLogPopup.copySelection`.
+- **MLOG-05 · SHOULD.** A message's severity comes from its key: a `status.*` key whose last segment contains `fail`
+  or `error` is an error, one containing `cannot` or `invalid` a warning. Name new keys accordingly, or report through
+  the error channel directly.
+  - *Check (test):* a severity test classifies keys by those rules.
+  - *Reference:* Editora `ui/StatusSeverity.java` (`ofKey`), `StatusSeverityTest`.
+- **MLOG-06 · SHOULD.** Opening the log, or clearing it, resets the unread-error count.
+  - *Check (code):* opening the log marks it read, and `clear` zeroes the count.
+  - *Reference:* Editora `MessageLog.markRead`, `MessageLog.clear`, `StatusBar.showMessageLog`.
+- **MLOG-07 · SHOULD.** An unread error is never evicted silently: the count keeps it even when the entry drops off
+  the end.
+  - *Check (test):* an error pushed past the capacity still counts as unread.
+  - *Reference:* Editora `MessageLogSeverityTest` (`anEvictedErrorStillCounts`).
 
 ## Copy
 

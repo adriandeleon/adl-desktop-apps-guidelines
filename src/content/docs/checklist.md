@@ -116,7 +116,7 @@ document. Click **Use this template**, then run `scripts/rename.sh <AppName> <pa
 
 - [ ] Status-bar echo and Message Log
 - [ ] Debug Log with a session file, and an uncaught exception handler
-- [ ] Daily update check with an off switch; About shows versions and update status
+- [ ] Daily update check with an off switch; About shows versions, the Pauta edition and update status
 - [ ] Report a Problem (redacted, prefilled GitHub issue) and `--report`
 
 ## Command line and languages

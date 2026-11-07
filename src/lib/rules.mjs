@@ -1,0 +1,113 @@
+// The guide's rules, read from the page Markdown (AGENTS.md, "Rule IDs"). A rule is a list item that opens with
+// "**KBD-07 · MUST.**", then sub-items "*Why:*", "*Check (code|test|by hand):*" and "*Reference:*". Shared by the
+// rules.json, llms.txt and llms-full.txt endpoints (src/pages/) and scripts/check-rules.mjs, which fails the build
+// on a malformed rule.
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+
+const HEAD = /^- \*\*([A-Z]{2,6})-(\d{2,3}) · (MUST|SHOULD|MAY)\.\*\*\s*(.*)$/;
+const LOOSE = /\*\*[A-Z]{2,6}-\d/;
+const SUB = /^ {2}- \*(Why|Check \((code|test|by hand)\)|Reference):\*\s*(.*)$/;
+
+/** Page slugs in reading order, from pages.json. */
+export function pageOrder(pagesJson) {
+  return pagesJson.groups.flatMap((g) => g.items);
+}
+
+function frontmatter(text) {
+  const m = text.match(/^---\n([\s\S]*?)\n---\n/);
+  const get = (key) => m?.[1].match(new RegExp(`^${key}:\\s*"?(.*?)"?\\s*$`, "m"))?.[1] ?? "";
+  const offset = m ? m[0].split("\n").length - 1 : 0; // so problems name the file's own line numbers
+  return { title: get("title"), description: get("description"), body: m ? text.slice(m[0].length) : text, offset };
+}
+
+const join_ = (lines) => lines.map((l) => l.trim()).join(" ").trim();
+
+/**
+ * One page's rules.
+ * @returns {{ slug, title, description, prefix, rules: object[], problems: string[] }}
+ */
+export function parsePage(slug, text) {
+  const { title, description, body, offset } = frontmatter(text);
+  const lines = body.split("\n");
+  const rules = [];
+  const problems = [];
+  let section = "";
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (/^## /.test(line)) section = line.slice(3).trim();
+    if (/^\|.*\bLevel\b.*\|\s*$/.test(line)) problems.push(`${slug}:${i + 1 + offset}: a table with a Level column; rules are list items`);
+    const m = line.match(HEAD);
+    if (!m) {
+      if (LOOSE.test(line)) problems.push(`${slug}:${i + 1 + offset}: malformed rule head: ${line.slice(0, 60)}`);
+      continue;
+    }
+    const block = [line];
+    while (i + 1 < lines.length && lines[i + 1].startsWith("  ")) block.push(lines[++i]);
+    const id = `${m[1]}-${m[2]}`;
+    const rule = { id, prefix: m[1], number: Number(m[2]), level: m[3], section, text: "", why: null, check: null, reference: null, markdown: block.join("\n") };
+    const statement = [m[4]];
+    let current = null; // the sub-item being continued
+    for (const l of block.slice(1)) {
+      const s = l.match(SUB);
+      if (s) {
+        current = { label: s[1], kind: s[2], lines: [s[3]] };
+        if (s[1] === "Why") rule.why !== null ? problems.push(`${slug}: ${id} has two Why lines`) : (rule.why = current);
+        else if (s[1] === "Reference") rule.reference !== null ? problems.push(`${slug}: ${id} has two Reference lines`) : (rule.reference = current);
+        else rule.check !== null ? problems.push(`${slug}: ${id} has two Check lines`) : (rule.check = current);
+      } else if (/^ {2}- /.test(l)) {
+        problems.push(`${slug}: ${id} has a sub-item that is not Why, Check or Reference: ${l.trim().slice(0, 50)}`);
+        current = null;
+      } else if (current && /^ {4}/.test(l)) current.lines.push(l);
+      else if (!current) statement.push(l);
+      else problems.push(`${slug}: ${id} has a line outside its sub-items: ${l.trim().slice(0, 50)}`);
+    }
+    rule.text = join_(statement);
+    if (rule.why) rule.why = join_(rule.why.lines);
+    if (rule.reference) rule.reference = join_(rule.reference.lines);
+    else problems.push(`${slug}: ${id} has no Reference line`);
+    if (rule.check) rule.check = { kind: rule.check.kind, text: join_(rule.check.lines) };
+    else problems.push(`${slug}: ${id} has no Check line`);
+    rules.push(rule);
+  }
+  const prefixes = [...new Set(rules.map((r) => r.prefix))];
+  if (prefixes.length > 1) problems.push(`${slug}: several prefixes (${prefixes.join(", ")}); a page has one`);
+  // IDs are permanent (AGENTS.md): a retired rule leaves a gap and a new one takes the next free number wherever it
+  // sits, so only a repeat is wrong.
+  const seen = new Set();
+  for (const r of rules) {
+    if (seen.has(r.id)) problems.push(`${slug}: ${r.id} is used twice`);
+    seen.add(r.id);
+  }
+  return { slug, title, description, prefix: prefixes[0] ?? null, rules, problems };
+}
+
+/** Every page in pages.json order, read from src/content/docs under `root`. */
+export function readRules(root = process.cwd()) {
+  const pagesJson = JSON.parse(readFileSync(join(root, "pages.json"), "utf8"));
+  const pages = pageOrder(pagesJson).map((slug) => {
+    const base = join(root, "src/content/docs", slug);
+    let text;
+    try { text = readFileSync(`${base}.md`, "utf8"); } catch { text = readFileSync(`${base}.mdx`, "utf8"); }
+    return parsePage(slug, text);
+  });
+  const problems = pages.flatMap((p) => p.problems);
+  const owner = new Map();
+  for (const p of pages) {
+    if (!p.prefix) continue;
+    if (owner.has(p.prefix)) problems.push(`${p.slug}: prefix ${p.prefix} is also ${owner.get(p.prefix)}'s`);
+    owner.set(p.prefix, p.slug);
+  }
+  return { pages, problems };
+}
+
+/** Relative Markdown links ("](../menus/)") made absolute against the page's own address. */
+export function absoluteLinks(markdown, pageUrl) {
+  return markdown.replace(/\]\((?!https?:|#|mailto:)([^)\s]+)\)/g, (_, href) => `](${new URL(href, pageUrl).href})`);
+}
+
+/** Where an edition lives: https://pauta-project.dev/2.0.0/ for package.json's url and version. */
+export function editionUrl(pkg, edition = pkg.version) {
+  const url = new URL(pkg.guidelines.url);
+  return `${url.origin}${url.pathname.replace(/\/?$/, "/")}${edition}/`;
+}

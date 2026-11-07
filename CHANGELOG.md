@@ -7,6 +7,58 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-11-06
+
+### Added
+
+- **About names the Pauta edition.** The About window now MUST show the edition of these guidelines the app
+  implements: a *Built to Pauta x.y.z* link to that edition's own address (`https://pauta-project.dev/x.y.z/`, not
+  `latest/`) and a `Pauta: x.y.z` line in the environment block, so *Copy details* carries it. The number is the
+  edition the app meets, not the newest, and comes from a `pauta.version` property in `pom.xml` read by `AppInfo`.
+  No app does this yet; the matrix has a row for it and every app's gaps list it. Window shell and the checklist say
+  the same.
+- **Coding agents can read the rules.** Every edition serves `rules.json` (each rule's ID, level, page, section,
+  address, text, why, check and reference), `llms-full.txt` (every rule as Markdown in one file) and `llms.txt`
+  (the index, which says how to audit an app: find the edition it names, take each rule's check, report pass, fail,
+  not applicable or manual with `file:line` evidence). The site root carries the latest `llms.txt`. Every link points
+  at the numbered edition, so a citation never moves. The overview links them.
+- **A malformed rule fails the build.** `npm run check` fails on a rule head that doesn't match, an ID used twice, a
+  prefix on two pages, a rule without its Check or Reference line, or a table with a Level column; `npm run build`
+  runs it first.
+
+### Changed
+
+- **Every rule has an ID, a level and a check.** 352 rules, from `PLAT-01` to `SYNC-02`, each with a permanent
+  anchor (`#kbd-07`), a level, a *Check* line (237 by reading the code, 80 by a named test, 35 by hand in the running
+  app) and a *Reference* line naming the code. People and coding agents can audit an app rule by rule and cite what
+  they find. Rule tables became lists, so a page has one shape for every rule; template pages keep their mockups and
+  spec tables and open with a *Rules* section. The overview explains IDs once, and `AGENTS.md` lists each page's
+  prefix.
+- **Levels.** A rule that had a level keeps it. One that had none takes the checklist's level, or SHOULD when the
+  checklist doesn't list it, so no app fails a new MUST. That makes MUSTs, among others, of the palette chord,
+  overlay and command catalog keys, the Emacs and CUA keymaps, keymap layers, the icon-button helper, the FX test
+  tag, the release supply-chain steps, `--help` / `--version` / `--config-dir` / `--dev`, single instance, the find
+  bar's Enter and Escape, the shared tray package, Settings search and live apply, and the six catalogs; and SHOULDs
+  of `--new-instance`, `--no-session` and `[files…]`, which the command-line page only listed.
+- **Split and narrowed.** Rules that held two requirements were split: keymap presets are now Emacs and CUA (MUST)
+  and IntelliJ, VS Code and Sublime (SHOULD). Some rules were narrowed to what was meant: the rule against chords in
+  translated text covers only command chords (Enter, Tab, Esc and a shell's keys may be written), the Settings chord
+  is CUA's, an unknown theme falls back to the first-run default, a permission is write only where a job needs it,
+  and an empty picker may say so in the status line instead. Tab reachability names toolbar buttons as the exception
+  Toolbars and tooltips already makes.
+- **Checked against the apps.** Converting each rule meant checking it against the apps' default branches, and the
+  pages had facts wrong. Editora has 19 community themes, not 21; the window title's unsaved marker is `●`; the
+  Redactor keeps hosts and drops e-mail addresses and credentials; the generated icons live in `branding/`; Editora's
+  release build uses Liberica; the Message Log is a card in `OverlayHost`, not a popup; Home and End move the caret
+  in a picker and `Ctrl/Cmd+Home/End` jump rows; `StatusSeverity` reads `fail` or `error` in a `status.*` key's last
+  segment; the font classes are `Fonts.BUNDLED` and `Fonts.loadForFirstPaint`; adding a language also means listing
+  it in `Messages.LANGUAGES` and `MessagesTest`.
+- **Where Editora falls short.** A rule Editora fails now says so in its Reference instead of claiming it passes:
+  fixed hexes left in `app.css`, about twenty FX tests without the `fx` tag, an exit wait on the common pool, the
+  main toolbar's buttons without accessible text and in the Tab order, Shift+Enter in the editor's find bar, no
+  follow-the-system theme, no previous-tab command, settings without a palette command, and the uncaught-exception
+  echo no app shows; Editora's Universal Argument title still carries `C-u`.
+
 ## [1.4.1] - 2026-11-06
 
 ### Changed

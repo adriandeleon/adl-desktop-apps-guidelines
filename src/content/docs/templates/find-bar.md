@@ -3,12 +3,25 @@ title: "Find bar"
 description: "The family's find bar: in-scene, incremental, with a count; Enter and Shift+Enter step, Escape gives the keyboard back."
 ---
 
-<span class="lvl lvl-must">MUST</span> wherever there is text to search: an editor, a read-only console, a terminal's
-scrollback. The bar is part of the window, never a popup, and it searches as you type. A list app filters instead of
-finding (Torrenta's box above the transfers), with the same field and the same Escape. Reference: Editora's
-`ui/FindReplaceBar.java` (the editor's find and replace), with `ui/ConsoleFindBar.java` and `ui/TerminalFindBar.java`
-as the same shape over a console and a terminal; Termina's `ui/SearchBar.java`; Torrenta's `Omnibox` and
-`FilterQuery`. Mirada has no text to search: its *Find Image…* is a picker, see the [QuickOpen template](../quick-open/).
+The bar for searching text: in an editor, a read-only console, a terminal's scrollback. It is part of the window and
+searches as you type. Mirada has no text to search: its *Find Image…* is a picker, see the
+[QuickOpen template](../quick-open/).
+
+## Rules
+
+- **FIND-01 · MUST.** Wherever there is text to search, the app has a find bar that is part of the window, never a
+  popup.
+  - *Check (code):* the bar is a node in the window's scene graph (docked or floating); no `Popup` or `Stage` is
+    created for it.
+  - *Reference:* Editora `ui/FindReplaceBar.java` (the editor's find and replace), with `ui/ConsoleFindBar.java` and
+    `ui/TerminalFindBar.java` as the same shape over a console and a terminal; Termina `ui/SearchBar.java`.
+- **FIND-02 · MUST.** The bar searches as you type and shows a match count.
+  - *Check (code):* the query field's text listener runs the search (debounced) and updates the count label.
+  - *Reference:* Editora `FindReplaceBar` (`debounce`, `find.count`); Termina `SearchBar` (`search.count`).
+- **FIND-03 · MUST.** A list app filters instead of finding, with the same field and the same Escape.
+  - *Check (code):* the list's filter field filters as it is typed, and Escape in it empties it or gives focus back
+    to the list.
+  - *Reference:* Torrenta `Omnibox`, `FilterQuery`, `MainWindow.onOmniboxKey`.
 
 ## Anatomy
 
@@ -81,29 +94,64 @@ read as one family: a lens, the field as the card's own text, the count, a regex
 
 ## Behavior
 
-- **Open:** the find command, `C-s` in the Emacs keymap and `Ctrl/Cmd+F` in CUA, Sublime, VS Code and IntelliJ
-  (`find.show`; `F3` as well in CUA and Sublime). Termina: `Ctrl+Shift+F`, `Cmd+F` on macOS, since a plain
-  `Ctrl+letter` belongs to the shell. The command while the bar is already open finds the next match (Editora) or
-  puts the caret back in the field (Termina).
-- **Type** and the search runs: every match highlighted, the first one at or after the caret selected and scrolled
-  to. The anchor is the caret at open time, so refining the query does not run away down the document.
-- **Step:** Enter next, Shift+Enter previous, wrapping around at the ends. In a terminal the directions are up and
-  down the scrollback. Editora: Alt+Enter turns every match into a caret.
-- **Close:** Escape or the close button. The highlights go, a search still pending is canceled so nothing moves
-  after the bar is gone, and focus returns to the editor, the console or the shell. In Termina the Escape is
-  consumed in the field and never reaches the shell, and the terminal's own key and mouse filters leave every event
-  aimed at the bar alone (`fromSearchBar`).
-- **Keys in the field.** The keymap's caret and editing chords (`C-a`, `C-e`, `C-k`, `C-y`, `Ctrl+V/X/C/Z`) act on
-  the field, not on the document (`TextInputKeymap.installShared`; Termina's and Mirada's `TextInputKeys`). Find's own
-  chords stay global, so next, previous, replace and close work while the field has focus.
-- **Nothing found** is one status-line message ("Not found: x") or the count "No matches". No beep, no dialog.
-- **Replace** keeps case when *AB* is on; a replacement that is too slow stops with "Replace stopped: the pattern is
-  too slow" instead of hanging the window.
-- **A filter box** (Torrenta's omnibox) is the list app's version: plain words filter the names as they are typed,
-  `key:value` terms become chips, `>` runs a command. `Ctrl+K` focuses it and is drawn in the box as a key badge.
-  Escape peels one layer: a box with something in it empties, an empty one gives the list back. The box is out of the
-  Tab order so a fresh launch does not land every keystroke in it, and the window's own chords (undo,
-  `Ctrl+Alt+1…9`) do not fire while a text field has focus: `Ctrl+Z` there is the field's own undo.
+- **FIND-04 · SHOULD.** The find command (`find.show`) opens the bar: `C-s` in the Emacs keymap and `Ctrl/Cmd+F` in
+  CUA, Sublime, VS Code and IntelliJ, with `F3` as well in CUA and Sublime. A terminal uses `Ctrl+Shift+F`, `Cmd+F` on
+  macOS, since a plain `Ctrl+letter` belongs to the shell. The command while the bar is already open finds the next
+  match (Editora) or puts the caret back in the field (Termina).
+  - *Check (code):* each bundled keymap binds that chord to the find command; the command steps when the bar is
+    shown.
+  - *Reference:* Editora `keymaps/*.json`, `MainController.findShowOrNext`; Termina `TerminalWindow` (`menu.find`,
+    `MenuAction.appChord`).
+- **FIND-05 · SHOULD.** Typing highlights every match and selects and scrolls to the first one at or after the caret.
+  The anchor is the caret at open time, so refining the query does not run away down the document.
+  - *Check (code):* the search starts from an anchor saved when the bar opens, not from the current selection.
+  - *Reference:* Editora `FindReplaceBar` (`searchAnchor`, `recompute`).
+- **FIND-06 · MUST.** Enter steps to the next match and Shift+Enter to the previous one, wrapping around at the ends. In
+  a terminal the directions are up and down the scrollback.
+  - *Check (code):* the query field's key handler steps forward on Enter and backward on Shift+Enter.
+  - *Reference:* Editora `ConsoleFindBar`, `TerminalFindBar`; Termina `SearchBar`. Editora's editor bar
+    (`FindReplaceBar`) does not yet: its field steps forward on Enter, and back only with the previous button,
+    `find.showBackward` (`C-r`, `Shift+F3`) or `find.previous`. Alt+Enter there turns every match into a caret.
+- **FIND-07 · MUST.** Escape or the close button closes the bar: the highlights go, a search still pending is canceled
+  so nothing moves after the bar is gone, and focus returns to the editor, the console or the shell.
+  - *Check (code):* the close path stops the debounces, cancels the running search, clears the highlights and focuses
+    the text it searched.
+  - *Reference:* Editora `FindReplaceBar.hideBar`.
+- **FIND-08 · SHOULD.** In a terminal, Escape is consumed in the field and never reaches the shell, and the terminal's
+  own key and mouse filters leave every event aimed at the bar alone.
+  - *Check (code):* the field consumes Escape, and the terminal's filters return early for events from the bar.
+  - *Reference:* Termina `SearchBar`, `TerminalView.fromSearchBar`.
+- **FIND-09 · SHOULD.** The keymap's caret and editing chords (`C-a`, `C-e`, `C-k`, `C-y`, `Ctrl+V/X/C/Z`) act on the
+  field, not on the document. Find's own chords stay global, so next, previous, replace and close work while the field
+  has focus.
+  - *Check (code):* the find fields install the shared text-input keymap.
+  - *Reference:* Editora `TextInputKeymap.installShared`; Termina's and Mirada's `TextInputKeys`.
+- **FIND-10 · SHOULD.** Nothing found is one status-line message ("Not found: x") or the count "No matches". No beep,
+  no dialog.
+  - *Check (code):* the no-match path sets `find.notFound` or `search.none` and opens nothing.
+  - *Reference:* Editora `FindReplaceBar` (`find.notFound`); Termina `SearchBar` (`search.none`).
+- **FIND-11 · SHOULD.** Replace keeps each match's case when *AB* (preserve case) is on.
+  - *Check (test):* a test replaces with preserve case on and finds each match's casing kept.
+  - *Reference:* Editora `FindReplaceBarFxTest` (`preserveCaseFollowsEachMatchesCasing`).
+- **FIND-12 · SHOULD.** A replacement that is too slow stops with "Replace stopped: the pattern is too slow" instead of
+  hanging the window.
+  - *Check (test):* a catastrophic regex in Replace All aborts.
+  - *Reference:* Editora `find.replaceTimeout`, `FindReplaceBarFxTest`
+    (`catastrophicRegexInReplaceAllAbortsInsteadOfHanging`).
+- **FIND-13 · SHOULD.** A list app's filter box filters the names as plain words are typed, turns `key:value` terms into
+  chips and runs a command after `>`. `Ctrl+K` focuses it and is drawn in the box as a key badge.
+  - *Check (code):* the box's text listener filters, and its badge is read from the filter command's chord.
+  - *Reference:* Torrenta `Omnibox`, `MainWindow.buildFilterBar`.
+- **FIND-14 · SHOULD.** Escape in a filter box peels one layer: a box with something in it empties, an empty one gives
+  the list back.
+  - *Check (code):* the box's Escape handler clears a non-empty box and otherwise focuses the list.
+  - *Reference:* Torrenta `MainWindow.onOmniboxKey`.
+- **FIND-15 · SHOULD.** The filter box is out of the Tab order, so a fresh launch does not land every keystroke in it,
+  and the window's own chords (undo, `Ctrl+Alt+1…9`) do not fire while a text field has focus: `Ctrl+Z` there is the
+  field's own undo.
+  - *Check (code):* the box is not focus-traversable, and the window's chord handlers return early when the focus
+    owner is a `TextInputControl`.
+  - *Reference:* Torrenta `MainWindow.buildFilterBar`, `MainWindow` window chords.
 
 ## Copy
 

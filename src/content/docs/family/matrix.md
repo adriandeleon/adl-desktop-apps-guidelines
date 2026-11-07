@@ -4,7 +4,7 @@ description: "Which of the six apps has which platform piece, release step and f
 tableOfContents: false
 ---
 
-Surveyed on 2026-11-05 from each repository's default branch (the rows added in editions 1.2.0, 1.3.0 and 1.4.0 on 2026-11-06). ● has it, ◐ partly or differently,
+Surveyed on 2026-11-05 from each repository's default branch (the rows added in editions 1.2.0, 1.3.0, 1.4.0 and 2.0.0 on 2026-11-06). ● has it, ◐ partly or differently,
 — not found.
 
 **What the apps are.**
@@ -85,6 +85,7 @@ Surveyed on 2026-11-05 from each repository's default branch (the rows added in 
 | Update notification (GitHub releases) | ● | ● | ● | ● | — | ● |
 | Report a Problem → GitHub issue (+ `--report`) | ● | ● | — | — | — | — |
 | About window with runtime versions | ● | ● | ● | ● | ● | ● |
+| About names the Pauta edition it implements | — | — | — | — | — | — |
 | Welcome page | ● | ● | — | — | — | — |
 | Confirm dialog: named red action button, Escape cancels, or undo instead | ● | ● `RemoveConfirm` + undo | ◐ asks, button not red | — presets remove on one click | ◐ trash is undoable, no question | — nothing to confirm |
 | Doctor / diagnosis | ● | ◐ per torrent | — | ◐ native libs | — | — |

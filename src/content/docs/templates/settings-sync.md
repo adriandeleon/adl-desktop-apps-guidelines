@@ -3,11 +3,23 @@ title: "Settings Sync"
 description: "The family's Sync settings page: keep user data the same on every computer through a Git repository the user owns."
 ---
 
-<span class="lvl lvl-should">SHOULD</span> in every app with user data worth carrying between computers (snippets,
-templates, shortcuts, profiles, saved views). A page in the Settings window, found by searching "sync". No server and
-no account of ours: the store is a private Git repository the user owns, reached through their own Git credentials.
-Reference: Editora's `sync/` package (`SyncEngine`, `SyncMerge`, `SyncAccount`) and `ui/SettingsSync.java`, with
-the page in `SettingsWindow`; Torrenta and Termina carry the same package.
+Keeps the user's data (snippets, templates, shortcuts, profiles, saved views) the same on every computer. No server
+and no account of ours: the store is a private Git repository the user owns.
+
+## Rules
+
+- **SYNC-01 · SHOULD.** An app with user data worth carrying between computers offers Settings Sync, on a page of its
+  own in the Settings window that the Settings search finds by "sync".
+  - *Check (by hand):* open Settings, search "sync", and land on the Sync page.
+  - *Reference:* Editora `ui/SettingsSync.java` (the service) and `ui/SettingsSyncPage.java`, built by
+    `SettingsWindow` (`Category.SYNC`).
+- **SYNC-02 · SHOULD.** The store is a Git repository the user owns, reached through their own Git credentials (a
+  credential helper or an SSH key), with no server or account of ours. A URL with a password or token in it is refused.
+  - *Check (code):* the sync package runs `git` against the user's URL, and the page refuses a URL with credentials
+    in it.
+  - *Reference:* Editora `sync/` package (`SyncEngine`, `SyncMerge`, `SyncAccount`), `SyncEngine.hasCredentials`;
+    Termina carries the same package, Torrenta its own `sync/` with `SyncEngine` and `SyncAccount`; the Spec table
+    below.
 
 ## Anatomy
 

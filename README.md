@@ -24,11 +24,14 @@ UI, UX and platform rules so the family of JavaFX desktop apps is the same app o
 [nux](https://github.com/adriandeleon/nux). Editora is the reference implementation: every rule names the class
 or file to copy from.
 
-**Pauta 1.4.1 · 6 November 2026.** The version and date live in `package.json`; [CHANGELOG.md](CHANGELOG.md) says what each edition changed.
+**Pauta 2.0.0 · 6 November 2026.** The version and date live in `package.json`; [CHANGELOG.md](CHANGELOG.md) says what each edition changed.
 
 📖 **Read it at [pauta-project.dev](https://pauta-project.dev/)**
 — or download the [PDF](https://pauta-project.dev/downloads/adl-desktop-apps-guidelines.pdf)
 or the [single Markdown file](https://pauta-project.dev/downloads/adl-desktop-apps-guidelines.md).
+Coding agents start at [`llms.txt`](https://pauta-project.dev/llms.txt): every edition also serves its rules as
+[`rules.json`](https://pauta-project.dev/latest/rules.json) and
+[`llms-full.txt`](https://pauta-project.dev/latest/llms-full.txt), with how to audit an app against them.
 Every edition stays online at its own address: [`/latest/`](https://pauta-project.dev/latest/) is always the newest,
 `/1.4.0/`, `/1.3.2/` and so on are permanent, and the header of every page switches between them.
 
@@ -58,15 +61,19 @@ npm run dev        # http://localhost:4321/
 npm run print      # PDF + single Markdown into public/downloads (needs pandoc and Chrome)
 npm run build      # the whole site into dist/: this edition at latest/ and <version>/, earlier editions beside them
 npm run preview    # serves dist/ as deployed
+npm run check      # fails on a malformed rule; the build runs it first
 ```
 
 Conventions: in a feature matrix (a table whose header names the apps), a cell starting with `●`, `◐` or `—`
 renders as a status dot, the rest of the cell being its note; elsewhere a `—` stays a dash. `MUST`, `SHOULD` and
 `MAY` render as a level pill wherever they appear in prose, lists or tables, including `**MUST.**` and `(SHOULD)`.
+A rule is a list item that opens with its ID and level, `**KBD-07 · MUST.**`, followed by *Why*, *Check* and
+*Reference* lines; [AGENTS.md](AGENTS.md) has the details and each page's prefix.
 
 Every push to `master` builds the downloads and the site and deploys them to GitHub Pages. The site carries every
 edition: the one just built at `/latest/` and `/<version>/`, the earlier ones from the `versions` branch, where CI
-archives each edition it deploys.
+archives each edition it deploys. CI also tags each new edition `v<version>`, and on every pull request
+`scripts/check-edition.mjs` fails a change that adds more than one edition or reuses a number.
 
 ## License
 

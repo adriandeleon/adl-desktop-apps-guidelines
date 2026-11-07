@@ -114,6 +114,8 @@ table.matrix td:first-child { min-width: 240px; }
 .lvl-must { background: var(--caret-soft); color: var(--caret); }
 .lvl-should { background: var(--brace-soft); color: var(--brace); }
 .lvl-may { background: var(--code-bg); color: var(--ink-muted); }
+.rule-id { font-family: var(--font-mono); font-size: 0.8rem; font-weight: 600; }
+li:has(> .rule-id) > ul { font-size: 0.9em; color: var(--ink-muted); }
 
 ul.task-list, ul:has(> li > input[type="checkbox"]) { list-style: none; padding-left: 0; }
 li > input[type="checkbox"] { accent-color: var(--caret); margin-right: 8px; }

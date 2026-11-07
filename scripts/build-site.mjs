@@ -6,6 +6,7 @@
 //   dist/versions.json        every edition and which one is latest; public/versions.js reads it on every page
 //   dist/<page>/index.html    a redirect to latest/<page>/ for every page, so links from before editions had folders work
 //   dist/downloads/, CNAME, 404.html, versions.js   copies of the latest edition's: GitHub Pages reads them at the root
+//   dist/llms.txt             the latest edition's, where coding agents look for it (src/lib/llms.mjs)
 import { spawnSync } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
@@ -25,6 +26,10 @@ const run = (cmd, args, options = {}) => {
     process.exit(r.status ?? 1);
   }
 };
+
+// 0. Every rule well formed (scripts/check-rules.mjs): rules.json and llms-full.txt are built from them.
+step("rules");
+run("node", ["scripts/check-rules.mjs"]);
 
 // 1. This edition, twice: at latest/ and at its own number.
 rmSync("dist", { recursive: true, force: true });
@@ -58,7 +63,7 @@ if (!ref) {
 // 3. The root: what GitHub Pages reads there, and the editions list.
 step("root files and versions.json");
 const latest = "dist/latest";
-for (const name of ["CNAME", "404.html", "versions.js", "downloads"]) {
+for (const name of ["CNAME", "404.html", "versions.js", "downloads", "llms.txt"]) {
   if (existsSync(join(latest, name))) cpSync(join(latest, name), join("dist", name), { recursive: true });
 }
 const dates = Object.fromEntries(released(parseEditions(readFileSync("CHANGELOG.md", "utf8"))).map((e) => [e.version, e.date]));

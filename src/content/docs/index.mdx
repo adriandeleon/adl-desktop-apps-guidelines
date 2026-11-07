@@ -56,6 +56,14 @@ export const icon = (app) => `${base}icons/${app}.svg`;
   <p><span class="lvl lvl-may">MAY</span> A pattern worth copying when the app grows into it.</p>
 </div>
 
+Every rule has a permanent ID, such as `KBD-07`, that links to the rule itself and is never reused. Under the rule,
+*Check* says how to verify it in an app: by reading the code, by a named test, or by hand in the running app.
+*Reference* names where Editora, or another app, does it. An app cites a rule by its ID and the edition it meets, and
+anyone, person or coding agent, can audit it rule by rule. For coding agents, every edition serves
+<a href={`${import.meta.env.BASE_URL.replace(/\/?$/, "/")}llms.txt`}>llms.txt</a>, how to use these rules, and every
+rule in one file as <a href={`${import.meta.env.BASE_URL.replace(/\/?$/, "/")}llms-full.txt`}>Markdown</a> or
+<a href={`${import.meta.env.BASE_URL.replace(/\/?$/, "/")}rules.json`}>JSON</a>.
+
 When this guide and Editora disagree, check Editora's code, then fix whichever is wrong.
 
 ## The family

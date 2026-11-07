@@ -3,11 +3,23 @@ title: "QuickOpen picker"
 description: "The family's list picker: the palette card with a title and a prompt, for choosing one thing from a list by typing."
 ---
 
-<span class="lvl lvl-should">SHOULD</span> serve every "choose one from a list" moment: recent files, themes, keymaps,
-a setting's values, a branch to compare with. It is the [Command Palette](../command-palette/) card with a title over
-the field and a prompt in it, so a list choice is made the way a command is run: type a few letters, Enter. Reference:
-Editora's `ui/QuickOpen.java` (one generic class, instantiated about sixty times), driven by `PickerKeys` and shown
-by `OverlayHost`. The [keyboard page](../../keyboard/) states the rule; this page is the shape.
+The picker for every "choose one from a list" moment: recent files, themes, keymaps, a setting's values, a branch to
+compare with. It is the [Command Palette](../command-palette/) card with a title over the field and a prompt in it, so
+a list choice is made the way a command is run: type a few letters, Enter. The [keyboard page](../../keyboard/)
+states the rule; this page is the shape.
+
+## Rules
+
+- **QOPEN-01 · SHOULD.** One picker serves every list choice: recent files, themes, keymaps, a setting's values, a
+  branch to compare with.
+  - *Check (code):* those choices are instances of one generic picker class; there is no second list-picker class or
+    `ChoiceDialog` for them.
+  - *Reference:* Editora `ui/QuickOpen.java` (one generic class, instantiated more than seventy times), driven by
+    `PickerKeys`.
+- **QOPEN-02 · SHOULD.** The picker is the palette's card in the shared in-scene overlay host, with a title naming the
+  command over the field and a prompt in the field; never a `javafx.stage.Popup`.
+  - *Check (code):* the picker shows its card through the overlay host and sets a title and a prompt text.
+  - *Reference:* Editora `QuickOpen.setOverlayHost`, `ui/OverlayHost.java`; the Spec table below.
 
 ## Anatomy
 
@@ -51,28 +63,58 @@ by `OverlayHost`. The [keyboard page](../../keyboard/) states the rule; this pag
 
 ## Behavior
 
-- **Open** from a command. The items are read fresh on every showing and snapshotted, so typing filters a stable
-  list; a source that answers late (an outline the language server has not returned yet) calls `reload()`.
-- **Nothing typed:** the supplier's own order, which is the meaningful one (recency for recent files, document
-  order for symbols), with the current value pre-selected when there is one. **Typing** ranks by fuzzy score; ties keep
-  their order so rows do not shuffle under the cursor between keystrokes.
-- **Move:** the active keymap's line and page chords (`nav.lineDown`, `nav.pageUp`, …) plus ↑ ↓, Page Up/Down, Home and End,
-  which always work. **Choose:** Enter, or a click on a row. The card hides first, then the choice runs, so focus is
+- **QOPEN-03 · SHOULD.** The items are read fresh on every showing and snapshotted, so typing filters a stable list. A
+  source that answers late (an outline the language server has not returned yet) calls `reload()`.
+  - *Check (code):* `show` calls the items supplier; `reload` re-reads it and keeps the query.
+  - *Reference:* Editora `QuickOpen.show`, `QuickOpen.reload`.
+- **QOPEN-04 · SHOULD.** With nothing typed the list keeps the supplier's own order (recency for recent files, document
+  order for symbols), with the current value pre-selected when there is one.
+  - *Check (code):* the empty query passes the items through unsorted and selects the `setCurrentItem` value.
+  - *Reference:* Editora `QuickOpen.filter`, `setCurrentItem`.
+- **QOPEN-05 · SHOULD.** Typing ranks by fuzzy score, and ties keep the supplier's order, so rows do not shuffle under
+  the cursor between keystrokes.
+  - *Check (code):* the sort's last tiebreak is the supplier's index.
+  - *Reference:* Editora `QuickOpen.filter`.
+- **QOPEN-06 · SHOULD.** The active keymap's line and page chords (`nav.lineDown`, `nav.pageUp`, …) move the selection,
+  as do ↑ ↓, Page Up/Down and `Ctrl+Home`/`Ctrl+End` (`Cmd` on macOS), which always work; plain Home and End stay
+  with the field's caret. Enter or a click on a row chooses; the card hides first, then the choice runs, so focus is
   already back where it belongs.
-- **Cancel:** Esc, `C-g`, or a click on the scrim. The host restores focus. A picker that previewed something
-  undoes it.
-- **Preview (MAY).** `setPreview(onPreview, onCancelled)` previews the highlighted row as the selection moves and
-  undoes it on cancel: Recent Locations shows each place and returns to the origin on Esc. A preview without an undo
-  is worse than none. Nothing is previewed for the row the picker opens on, only for one the user moved to. The theme
-  and keymap pickers do not preview; they apply on Enter.
-- **Row actions (MAY).** `addRowAction(key, legend, action)` acts on the highlighted row and keeps the picker open
-  (the breakpoints picker enables or removes one), re-reading the list afterwards and keeping the cursor in place.
-- **Empty list:** a placeholder sentence in the list (`setPlaceholder`), never a blank card.
-- **One card at a time.** The host shows one card; opening a picker replaces whatever card was up.
-- **Relatives.** The Open Files `Switcher` lists tabs in tab order, opens on the current one and closes a file with
-  `C-d` or Backspace. `FileFinder` is the Emacs `find-file` field with Tab completion. `MultiSelectPicker` ticks
-  several rows with Space where exactly one would be wrong. `BranchPopup` and `GitStashPopup` are sectioned pickers
-  with their own actions. All of them use `PickerKeys`, so they move, accept and cancel alike.
+  - *Check (code):* the accept path hides the card before it calls the choice handler.
+  - *Reference:* Editora `QuickOpen` (`hide()` then `onChoose`), `PickerKeys.resolve`.
+- **QOPEN-07 · SHOULD.** Esc, `C-g` or a click on the scrim cancels, and the host restores focus. A picker that
+  previewed something undoes it.
+  - *Check (test):* a test previews a row, dismisses the picker and finds the preview undone.
+  - *Reference:* Editora `OverlayHost` (`previousFocus`), `QuickOpenPreviewFxTest`
+    (`dismissingRestoresWhatWasPreviewed`).
+- **QOPEN-08 · MAY.** A picker previews the highlighted row as the selection moves and undoes the preview on cancel
+  (Recent Locations shows each place and returns to the origin on Esc). A preview without an undo is worse than none,
+  and nothing is previewed for the row the picker opens on, only for one the user moved to. The theme and keymap
+  pickers do not preview; they apply on Enter.
+  - *Check (test):* opening previews nothing, moving previews, choosing does not restore.
+  - *Reference:* Editora `QuickOpen.setPreview(onPreview, onCancelled)`, `QuickOpenPreviewFxTest`.
+- **QOPEN-09 · MAY.** A row action acts on the highlighted row and keeps the picker open (the breakpoints picker
+  enables or removes one), re-reading the list afterwards and keeping the cursor in place.
+  - *Check (test):* a row action runs on the highlighted row and the picker stays up.
+  - *Reference:* Editora `QuickOpen.addRowAction(key, legend, action)`, `QuickOpenPreviewFxTest`
+    (`aRowActionActsOnTheHighlightedRowAndKeepsThePickerOpen`).
+- **QOPEN-10 · SHOULD.** A picker that can open on an empty list shows a placeholder sentence in it, never a blank
+  card. A picker with nothing to offer may instead say so in the status line and not open.
+  - *Check (code):* each picker whose source can be empty either calls `setPlaceholder` or returns before `show` with
+    a status message.
+  - *Reference:* Editora `QuickOpen.setPlaceholder` (`BreakpointsPicker`); `NavigationCoordinator`
+    (`status.nav.noRecentLocations`).
+- **QOPEN-11 · SHOULD.** The host shows one card at a time; opening a picker replaces whatever card was up.
+  - *Check (code):* the host's `show` removes the previous card before it adds the new one, and keeps the original
+    focus owner.
+  - *Reference:* Editora `OverlayHost.show`.
+- **QOPEN-12 · SHOULD.** The picker's relatives move, accept and cancel with the same keys as the picker.
+  - *Check (code):* each relative maps its keys through `PickerKeys`.
+  - *Reference:* Editora `Switcher`, `FileFinder`, `MultiSelectPicker`, `BranchPopup`, `GitStashPopup`.
+
+The relatives: the Open Files `Switcher` lists tabs in tab order, opens on the current one and closes a file with
+`C-d` or Backspace. `FileFinder` is the Emacs `find-file` field with Tab completion. `MultiSelectPicker` ticks several
+rows with Space where exactly one would be wrong. `BranchPopup` and `GitStashPopup` are sectioned pickers with their
+own actions.
 
 ## Uses
 

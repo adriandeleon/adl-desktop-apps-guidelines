@@ -5,37 +5,63 @@ description: "Status bar, themes, title bar, dialogs, Welcome, About, window sta
 
 ![Editora's Welcome tab](../../assets/shots/editora-welcome.png "Editora's Welcome page: Start actions with their chords, Recent Projects, Recent Files and Customize.")
 
-- **Status bar**, always present (toggleable). Its left side is the *echo area*: one line of feedback for
-  the last action. Errors are red, warnings amber. Clicking it opens the Message Log. Editora's
-  `ui/StatusBar.java` (`status-echo-error`, `status-echo-warn`; a click runs `view.messageLog`) and the
-  [Message Log template](../templates/message-log/).
-- **Themes**: light and dark AtlantaFX themes plus a "follow the system" choice, switchable at run time
-  without a restart. Semantic colors: amber = not durable yet (unsaved, read-only), red = broken,
-  green = verified or added. Editora's `ui/Themes.java` (`applyAppTheme`) switches at run time and
-  `ui/WindowColorScheme.java` tells every window's frame which scheme it is in; Mirada's `ui/Theme.java`
-  (`ThemeChoice.SYSTEM`) follows the system's color scheme as it changes.
-- **Title bar**: SHOULD use JavaFX 27's `HeaderBar` with `StageStyle.EXTENDED` to put the menu or tabs in
-  the title bar, with a decorated-window fallback, and `useSystemMenuBar` on macOS. Editora's
-  `ui/ExtendedWindow.java`.
-- **Native dialogs** go through one helper (`Dialogs.styled`) because a dialog is its own scene and does
-  not inherit the app stylesheet or the UI font.
-- **A destructive action asks first, and says what it does.** Removing, deleting, discarding or overwriting
-  something the user made goes through one confirm helper (Torrenta's `RemoveConfirm`, Editora's save
-  decisions). The question names the thing ("Remove 3 torrents?"), the confirm button names the action
-  (Remove, Discard, Overwrite), never OK or Yes, and Escape cancels. Where the action can be undone instead
-  (Torrenta's `UndoStack`, Termina's and Editora's reopen-closed-tab), prefer the undo over the question.
-- **Welcome page** when there is nothing to restore: Start actions (which run commands), Recent items, a
-  Customize block (keymap and theme), Help links. Editora's `ui/WelcomePane.java`; see the
-  [Welcome template](../templates/welcome/).
-- **About** shows version, build, runtime (Java and JavaFX versions), license, links, and the result of the
-  last update check. Editora's `ui/AboutDialog.java`; see the [About template](../templates/about/).
-- **Window state**: size, position, maximized state and open items are restored on the next launch; a
-  `--no-session` flag skips the restore. Editora's `config/WorkspaceState.java` (`windowX` … `windowMaximized`),
-  `ui/WindowSessionCoordinator.java`, and `App.noSessionFlag`.
-- **Zoom**: UI and content zoom from the keyboard (`Ctrl/Cmd +`, `-`, `0`), persisted. Editora zooms content:
-  `view.textZoomIn`, `view.textZoomOut` and `view.textZoomReset`, kept in `Settings.fontZoom`.
-- **Modes** (MAY): Zen (no chrome), Simple (fewer menus for new users), Expert. Editora's
-  `ui/WindowChromeCoordinator.java` (`toggleZen`, `applySimpleMode`) over the truth table in `ui/Chrome.java`.
+- **WIN-01 · MUST.** A status bar is always present (it can be toggled). Its left side is the *echo area*: one line
+  of feedback for the last action, errors in red and warnings in amber. Clicking it opens the Message Log.
+  - *Check (code):* the echo label switches between an error and a warning style class, and its click handler runs
+    the Message Log command.
+  - *Reference:* Editora `ui/StatusBar.java` (`status-echo-error`, `status-echo-warn`; a click runs
+    `view.messageLog`) and the [Message Log template](../templates/message-log/).
+- **WIN-02 · MUST.** Light and dark AtlantaFX themes and a "follow the system" choice, switchable at run time
+  without a restart. Semantic colors: amber is not durable yet (unsaved, read-only), red is broken, green is verified
+  or added. See [Icons and color](../icons-and-color/).
+  - *Check (code):* one place applies the app theme to every open window, and the theme list has a system choice
+    that follows the OS color scheme as it changes.
+  - *Reference:* Editora `ui/Themes.java` (`applyAppTheme`) switches at run time and `ui/WindowColorScheme.java` tells
+    every window's frame which scheme it is in; Mirada `ui/Theme.java` (`ThemeChoice.SYSTEM`) follows the system.
+    Editora has no system choice yet.
+- **WIN-03 · SHOULD.** The title bar uses JavaFX 27's `HeaderBar` with `StageStyle.EXTENDED` to carry the menu or
+  tabs, with a decorated-window fallback, and `useSystemMenuBar` on macOS.
+  - *Check (code):* the main stage is created `StageStyle.EXTENDED` with a `HeaderBar`, a setting falls back to a
+    decorated window, and the menu bar sets `useSystemMenuBar` on macOS.
+  - *Reference:* Editora `ui/ExtendedWindow.java`, `ui/MainMenuBar.java`.
+- **WIN-04 · SHOULD.** Native dialogs go through one helper that attaches the app stylesheet and the UI font.
+  - *Why:* a dialog is its own scene and inherits neither.
+  - *Check (code):* every `Alert` and `Dialog` the app builds passes through the helper.
+  - *Reference:* Editora `ui/Dialogs.java` (`Dialogs.styled`).
+- **WIN-05 · MUST.** A destructive action asks first, and says what it does. Removing, deleting, discarding or
+  overwriting something the user made goes through one confirm helper: the question names the thing ("Remove 3
+  torrents?"), the confirm button names the action (Remove, Discard, Overwrite), never OK or Yes, and Escape cancels.
+  Where the action can be undone instead, the undo is better than the question. See the
+  [Confirm dialog template](../templates/confirm-dialog/).
+  - *Check (code):* each destructive action calls the one confirm helper before it changes anything, or records an
+    undo.
+  - *Reference:* Torrenta `RemoveConfirm` and `UndoStack`; Editora's save decisions (`ui/CloseCoordinator.java`);
+    Termina's and Editora's reopen-closed-tab.
+- **WIN-06 · SHOULD.** A Welcome page when there is nothing to restore: Start actions (which run commands), Recent
+  items, a Customize block (keymap and theme) and Help links. See the [Welcome template](../templates/welcome/).
+  - *Check (by hand):* start the app with no session to restore.
+  - *Reference:* Editora `ui/WelcomePane.java`.
+- **WIN-07 · MUST.** About shows the version, the build, the Pauta edition the app implements, the runtime (Java and
+  JavaFX versions), the license, links, and the result of the last update check. See the
+  [About template](../templates/about/).
+  - *Check (code):* the About window reads the version, build and edition from `AppInfo` and shows the update
+    checker's last answer.
+  - *Reference:* Editora `ui/AboutDialog.java`. No app names its Pauta edition yet.
+- **WIN-08 · SHOULD.** Window size, position, maximized state and open items are restored on the next launch;
+  `--no-session` skips the restore.
+  - *Check (test):* a round-trip test of the saved workspace state, and a test that `--no-session` is honored.
+  - *Reference:* Editora `config/WorkspaceState.java` (`windowX` … `windowMaximized`),
+    `ui/WindowSessionCoordinator.java`, `App.noSessionFlag`; tests `WorkspaceStateV29Test`, `AppArgsTest`,
+    `NoSessionStartupFxTest`.
+- **WIN-09 · SHOULD.** UI and content zoom from the keyboard (`Ctrl/Cmd +`, `-`, `0`), kept across launches.
+  - *Check (code):* zoom in, out and reset are commands bound in every keymap, and the zoom level is a saved
+    setting.
+  - *Reference:* Editora zooms content only: `view.textZoomIn`, `view.textZoomOut` and `view.textZoomReset`, kept in
+    `Settings.fontZoom`.
+- **WIN-10 · MAY.** Modes: Zen (no chrome), Simple (fewer menus for new users), Expert.
+  - *Check (code):* each mode is a command, and one truth table decides which chrome each mode shows.
+  - *Reference:* Editora `ui/WindowChromeCoordinator.java` (`toggleZen`, `applySimpleMode`) over the truth table in
+    `ui/Chrome.java`.
 
 ![Mirada with its file name and folder in a HeaderBar title bar, an info panel and a thumbnail strip](../../assets/shots/mirada-main.png "Mirada's HeaderBar title bar carries the file name and folder; the info panel and thumbnails are commands too.")
 ![Termina window with tabs in the title bar and a tab context menu](../../assets/shots/termina-tabs.png "Termina puts its tabs in the title bar with JavaFX 27's HeaderBar.")

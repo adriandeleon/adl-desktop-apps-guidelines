@@ -81,24 +81,38 @@ of the next menu button. The offset must be at least the radius; Editora pins it
 <li><span class="pin">7</span><span><strong>Card.</strong> Radius 8; the shadow falls below the menu (offset ≥ radius), so nothing invisible covers the bar.</span></li>
 </ol>
 
-- **MUST.** Every item is a command from the registry, with its title from `command.<id>`, its chord from the
-  active keymap and its enabled state from the command's gate. The bar assembles and refreshes; it holds no
-  behavior of its own (`MenuBarModel` over `CommandRegistry`).
-- **MUST.** No `KeyCombination` accelerators. In the in-window bar each row is a `CustomMenuItem` laying out
-  icon, title, spacer and chord. On the **macOS system menu bar** (`useSystemMenuBar`) the native menu draws text
-  only and no graphics, so there the chord is appended to the title and rows carry no icon, which is also the
-  platform's convention.
-- **Enablement is re-read on every open** (`refreshEnablement`), titles and chords on a keymap or locale change.
-  A menu built before Git finished detecting a repository must not stay grayed out.
-- **Simple mode** shows a shorter menu, rebuilt only when the mode actually changes (`MainMenuBar.setSimple`,
-  `MenuBarModel.menus(simple)`).
+- **MENU-01 · MUST.** Every menu-bar item is a command from the registry, with its title from `command.<id>`, its
+  chord from the active keymap and its enabled state from the command's gate. The bar assembles and refreshes; it
+  holds no behavior of its own.
+  - *Check (code):* the bar's model lists command ids only, and every row runs its id through the registry.
+  - *Reference:* Editora `ui/MenuBarModel.java` over `command/CommandRegistry.java`, `ui/MainMenuBar.java`.
+- **MENU-02 · MUST.** Menu-bar rows use no `KeyCombination` accelerators. In the in-window bar each row is a
+  `CustomMenuItem` laying out icon, title, spacer and chord. On the macOS system menu bar (`useSystemMenuBar`) the
+  chord is appended to the title and rows carry no icon.
+  - *Why:* Emacs chords are multi-key, which a `KeyCombination` cannot express, and on macOS an accelerator would
+    bypass the key dispatcher. The native macOS menu draws text only and no graphics, which is also the platform's
+    convention.
+  - *Check (code):* no `setAccelerator` in the menu-bar classes.
+  - *Reference:* Editora `ui/MainMenuBar.java` (`rowContent`, `refresh`).
+- **MENU-03 · SHOULD.** Enablement is re-read every time a menu opens, and titles and chords on a keymap or locale
+  change.
+  - *Why:* a menu built before Git finished detecting a repository must not stay grayed out.
+  - *Check (test):* an FX test detects a repository after the window is built and finds the menu enabled.
+  - *Reference:* Editora `MainMenuBar.refreshEnablement`, `MenuBarEnablementFxTest`.
+- **MENU-04 · SHOULD.** Simple mode shows a shorter menu, rebuilt only when the mode actually changes.
+  - *Check (code):* the bar rebuilds only when the simple flag differs from the current one.
+  - *Reference:* Editora `MainMenuBar.setSimple`, `MenuBarModel.menus(simple)`.
 
 ![Editora's View menu open with toggle commands and their chords](../../assets/shots/editora-menu-bar.png "Editora's View menu: icons where a glyph fits, chords in one periwinkle column. An earlier build: rows now drop the menu's own name from their titles.")
 
 ## Right-click menus
 
-<span class="lvl lvl-must">MUST</span> on every list row, tree row, tab, editor and read-only console: the actions for
-*that* thing, each one a command. The mockup is an editor tab's menu, shortened; Editora's has twenty-five rows.
+- **MENU-05 · MUST.** Every list row, tree row, tab, editor and read-only console has a right-click menu with the
+  actions for *that* thing, each one a command.
+  - *Check (by hand):* right-click each kind of thing; every row's action is also in the palette.
+  - *Reference:* Editora `ui/TabContextMenu.java`, `ui/RowContextMenu.java`, `ui/ConsoleContextMenu.java`.
+
+The mockup is an editor tab's menu, shortened; Editora's has twenty-five rows.
 
 <div class="mock-stage">
 <div class="m-ctx-stage" role="img" aria-label="Mockup of a tab's right-click menu">
@@ -135,37 +149,55 @@ of the next menu button. The offset must be at least the radius; Editora pins it
 
 ### Behavior
 
-- **MUST. One menu at a time.** A right-click while a menu is open replaces it; the first one closes before the
-  second shows. JavaFX stacks a second menu beside the first when each row owns its own `ContextMenu`, and the
-  stale one is then no longer dismissible. Editora's `ContextMenuDismissal` closes every open right-click menu
-  on the press that opens the next; Modula's `RadioPane` hides the previous menu before showing a new one;
-  Termina keeps one menu per view and shows it again.
-- **MUST. A press anywhere outside the menu closes it**, including inside the control the menu was opened on.
-  JavaFX's auto-hide deliberately ignores a press on the menu's *owner node*, so a stock menu on a tree or a
-  text area stays open when the user clicks another row or the text. The press is not consumed: a click in a
-  list still selects the row, and a right-click on another row opens that row's menu straight away. Install the
-  fix once, at startup, for every current and future window (`ContextMenuDismissal.install()` in `App`); drop-downs
-  opened by a plain click (menu buttons, choice boxes, the menu bar) keep the stock behavior, and a menu that turned
-  auto-hide off is left alone. Pinned by `ContextMenuDismissalFxTest`.
-- **MUST. Escape closes it** and focus goes back where it was. In a terminal the Escape must not reach the shell
-  (Termina's `onKeyPressed` filter hides the menu and consumes the key).
-- **MUST. Reachable from the keyboard.** The Menu key and <kbd>Shift+F10</kbd> arrive at the focused control, not at
-  a row's cell, so a menu installed on cells never saw them. `RowContextMenu.install(tree)` re-fires the request at
-  the selected row's cell, scrolled into view first, so every row action a mouse can reach the keyboard can too.
-- **Right-click selects first.** In an editor, a right-click outside every selection moves the caret to the click
-  (so Paste lands there); inside a selection it keeps carets and selections (so Cut and Copy act on what was
-  clicked). From the keyboard the target is the caret (`ContextMenuTarget`). In a list, the menu is the clicked
-  row's.
-- **Built when asked for.** A menu attached to something that exists once per open file is built for every file
-  and opened for almost none, so `LazyContextMenu.of(build)` builds the items on the first showing, and an
-  `onShowing` handler sets the labels, enablement and visibility for *this* showing, then collapses the
-  separators. A read-only console's menu is just Select All and Copy, both disabled while it is empty
-  (`ConsoleContextMenu`).
-- **Destructive rows** carry the `danger` class and follow the [window shell](../window-shell/) rule: the action
-  asks first with a button that names it, or is undoable.
-- **Terminal views (MAY).** A program that grabbed the mouse owns the right-click; <kbd>Shift</kbd>+right-click always
-  opens the menu, and the keyboard request is never contested (Termina's `shouldShowMenu`, with
-  `ContextMenuContentionTest`).
+- **MENU-06 · MUST.** One right-click menu at a time: a right-click while a menu is open replaces it, and the first
+  one closes before the second shows.
+  - *Why:* JavaFX stacks a second menu beside the first when each row owns its own `ContextMenu`, and the stale one
+    is then no longer dismissible.
+  - *Check (test):* an FX test right-clicks another row with a menu open and finds one menu showing.
+  - *Reference:* Editora `ui/ContextMenuDismissal.java` closes every open right-click menu on the press that opens
+    the next (`ContextMenuDismissalFxTest`); Modula's `RadioPane` hides the previous menu before showing a new one;
+    Termina keeps one menu per view and shows it again.
+- **MENU-07 · MUST.** A press anywhere outside a right-click menu closes it, including inside the control the menu
+  was opened on. The press is not consumed: a click in a list still selects the row, and a right-click on another
+  row opens that row's menu straight away. Drop-downs opened by a plain click (menu buttons, choice boxes, the menu
+  bar) keep the stock behavior, and a menu that turned auto-hide off is left alone.
+  - *Why:* JavaFX's auto-hide deliberately ignores a press on the menu's *owner node*, so a stock menu on a tree or
+    a text area stays open when the user clicks another row or the text.
+  - *Check (test):* an FX test clicks inside the owner control and in another window, and the menu closes.
+  - *Reference:* Editora `ContextMenuDismissal.install()`, called once in `App` at startup for every current and
+    future window; `ContextMenuDismissalFxTest`.
+- **MENU-08 · MUST.** Escape closes a right-click menu and focus goes back where it was. In a terminal the Escape
+  does not reach the shell.
+  - *Check (by hand):* open a menu, press Escape, and type: the keys reach the control that had focus.
+  - *Reference:* the stock `ContextMenu` hide-on-Escape (Spec below); Termina's `onKeyPressed` filter hides the menu
+    and consumes the key (`TerminalView`).
+- **MENU-09 · MUST.** The Menu key and <kbd>Shift+F10</kbd> open the selected row's menu, scrolled into view first,
+  so every row action a mouse can reach the keyboard can too.
+  - *Why:* those keys arrive at the focused control, not at a row's cell, so a menu installed on cells never saw
+    them.
+  - *Check (test):* an FX test sends a keyboard request to a tree and a list and finds the selected row's menu,
+    anchored to that row.
+  - *Reference:* Editora `RowContextMenu.install(tree)`, `RowContextMenuFxTest`.
+- **MENU-10 · SHOULD.** A right-click selects first. In an editor, a right-click outside every selection moves the
+  caret to the click (so Paste lands there); inside a selection it keeps carets and selections (so Cut and Copy act
+  on what was clicked). From the keyboard the target is the caret. In a list, the menu is the clicked row's.
+  - *Check (by hand):* select a word, right-click elsewhere and paste; then right-click inside a selection and copy.
+  - *Reference:* Editora `editor/ContextMenuTarget.java`.
+- **MENU-11 · SHOULD.** A menu attached to something that exists once per open file is built when first shown, and
+  set up for each showing: an `onShowing` handler sets the labels, enablement and visibility for *this* showing,
+  then collapses the separators.
+  - *Why:* such a menu is built for every file and opened for almost none.
+  - *Check (code):* per-file menus are created through `LazyContextMenu.of(build)`.
+  - *Reference:* Editora `ui/LazyContextMenu.java`, `LazyContextMenuFxTest`. A read-only console's menu is just
+    Select All and Copy, both disabled while it is empty (`ConsoleContextMenu`).
+- **MENU-12 · SHOULD.** A destructive row carries the `danger` class. The action follows the
+  [window shell](../window-shell/) rule: it asks first with a button that names it, or is undoable.
+  - *Check (code):* rows that delete, discard or reset add `danger` to their style classes.
+  - *Reference:* Editora `.menu-item.danger` in `app.css`, `ui/BranchPopup.java`.
+- **MENU-13 · MAY.** In a terminal view, a program that grabbed the mouse owns the right-click;
+  <kbd>Shift</kbd>+right-click always opens the menu, and the keyboard request is never contested.
+  - *Check (test):* a pure test of when the menu shows, per mouse mode, Shift and trigger.
+  - *Reference:* Termina's `TerminalView.shouldShowMenu`, `ContextMenuContentionTest`.
 
 ### Spec
 

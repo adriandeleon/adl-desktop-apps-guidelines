@@ -6,7 +6,7 @@ description: "Keep the JavaFX application thread free, coalesce work, bound memo
 A desktop app is judged by how it feels under the hand: a key that lags or a window that hangs while it reads a
 file is a defect, not a slow feature. These rules come from Editora's
 [`docs/performance.md`](https://github.com/adriandeleon/Editora/blob/master/docs/performance.md), the contract
-every change on a hot path there must honour.
+every change on a hot path there must honor.
 
 ## The UI thread
 

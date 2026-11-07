@@ -90,7 +90,7 @@ Surveyed on 2026-11-05 from each repository's default branch (the rows added in 
 | Light / dark / follow system, live switch | ● | ● | ● | ● | ● | ● |
 | Caret & Ink theme pair (Editora Light / Dark) | ● authored | ● vendored | ● vendored | — | — Cupertino | — Primer |
 | Icons as themed SVG paths, one style class per family | ● two families | ● two families | ● filled, menus | ◐ transport glyphs | ● hand-drawn stroked | — tray bitmap |
-| State colours from theme roles, contrast-tested | ● `StyleContrastTest` | ◐ roles, no test | ◐ roles; terminal schemes tested | — fixed hexes | ◐ accent tested | ◐ roles, no test |
+| State colors from theme roles, contrast-tested | ● `StyleContrastTest` | ◐ roles, no test | ◐ roles; terminal schemes tested | — fixed hexes | ◐ accent tested | ◐ roles, no test |
 | Extended title bar (`HeaderBar`, `StageStyle.EXTENDED`) | ● | ◐ opt-in | ● | — | ● | — |
 | Desktop notifications | ● | ● | ● | ● | — | ● |
 | Tray icon (SNI over D-Bus, AWT fallback) | — | ● | — | ● | — | ● |

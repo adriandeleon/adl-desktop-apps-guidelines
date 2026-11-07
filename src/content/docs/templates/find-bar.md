@@ -79,7 +79,7 @@ read as one family: a lens, the field as the card's own text, the count, a regex
 | Bad regex | Said in place, never by a dialog: the status line ("Bad regex: …") or, in Termina, the field in `-color-danger-fg` and the count "Invalid" | `find.badRegex`, `.search-field:invalid` |
 | Focus | The bar and its buttons are out of the Tab order; in a terminal Tab belongs to the shell | `setFocusTraversable(false)` |
 
-## Behaviour
+## Behavior
 
 - **Open:** the find command, `C-s` in the Emacs keymap and `Ctrl/Cmd+F` in CUA, Sublime, VS Code and IntelliJ
   (`find.show`; `F3` as well in CUA and Sublime). Termina: `Ctrl+Shift+F`, `Cmd+F` on macOS, since a plain
@@ -89,7 +89,7 @@ read as one family: a lens, the field as the card's own text, the count, a regex
   to. The anchor is the caret at open time, so refining the query does not run away down the document.
 - **Step:** Enter next, Shift+Enter previous, wrapping around at the ends. In a terminal the directions are up and
   down the scrollback. Editora: Alt+Enter turns every match into a caret.
-- **Close:** Escape or the close button. The highlights go, a search still pending is cancelled so nothing moves
+- **Close:** Escape or the close button. The highlights go, a search still pending is canceled so nothing moves
   after the bar is gone, and focus returns to the editor, the console or the shell. In Termina the Escape is
   consumed in the field and never reaches the shell, and the terminal's own key and mouse filters leave every event
   aimed at the bar alone (`fromSearchBar`).

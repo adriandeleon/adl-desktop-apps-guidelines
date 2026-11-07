@@ -54,5 +54,5 @@ jobs:
         uses: actions/deploy-pages@v5
         with:
           # Pages sometimes sits in "updating_pages" for over ten minutes (the action's default wait), and a
-          # cancelled deployment cannot be re-run: its ID is the commit SHA. Wait longer instead.
+          # canceled deployment cannot be re-run: its ID is the commit SHA. Wait longer instead.
           timeout: 1200000

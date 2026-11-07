@@ -1,15 +1,15 @@
 ---
-title: "Icons and colour"
-description: "Inter and JetBrains Mono, the Caret & Ink palette, state colours that mean one thing, themes, and the two icon families."
+title: "Icons and color"
+description: "Inter and JetBrains Mono, the Caret & Ink palette, state colors that mean one thing, themes, and the two icon families."
 ---
 
-One typeface pair, one palette, one colour vocabulary and one way of drawing icons, so a tab, a status segment, a
+One typeface pair, one palette, one color vocabulary and one way of drawing icons, so a tab, a status segment, a
 tree row and a Settings row say the same thing in the same way in every app. Reference: Editora's
 `styles/ui-font.css` and `ui/Fonts.java` (type), `styles/atlantafx-themes/editora-light.css` and `editora-dark.css`
 (the Caret & Ink palette, which Torrenta and Termina vendor verbatim), the `.root` block at the top of
 `styles/app.css` (the state vocabulary), `ui/Themes.java` and `ui/EditorThemes.java` (themes), `ui/Icons.java`,
 `ui/FileIcons.java`, `ui/MenuBarIcons.java` and `editor/MenuIcons.java` (icons), and `StyleContrastTest`, which
-pins the colour rules.
+pins the color rules.
 
 ## Type
 
@@ -69,9 +69,9 @@ grounds, and **brace** periwinkle reserved for the keyboard. Amber, red and gree
   light ground and a lighter periwinkle the darker the ground gets, and reads at 4.5:1 or more on every bundled
   theme's default and subtle surfaces (`StyleContrastTest.theKeyboardPeriwinkleReadsOnEveryBundledAppTheme`).
 
-## State colours
+## State colors
 
-A colour is a meaning, named once on `.root` and referenced everywhere. The same state wears the same colour in a
+A color is a meaning, named once on `.root` and referenced everywhere. The same state wears the same color in a
 tab, a status segment, a tree row, a picker and a Settings row.
 
 | Token | Chains to | Meaning | Where it appears |
@@ -86,10 +86,10 @@ tab, a status segment, a tree row, a picker and a Settings row.
 
 Each of the first four also has a `-bg` (the role's `-subtle`) and a `-hover` (the role's `-muted`) variant, so a
 pill, a row tint and a hover state come from the same place. `.state-pill` is the shape (bold, radius 999, padding
-1 × 8); the colour variant beside it carries the meaning.
+1 × 8); the color variant beside it carries the meaning.
 
 - **MUST.** No fixed hex in a component rule. A hex suits one theme; the roles track every theme for free. A
-  severity or debug colour that is not a state token fails `StyleContrastTest.severityAndDebugColoursComeFromTheStateTokens`.
+  severity or debug color that is not a state token fails `StyleContrastTest.severityAndDebugColoursComeFromTheStateTokens`.
 - **MUST.** Readable text uses `-color-fg-muted` or stronger, which is 4.5:1 on the default, subtle and overlay
   grounds in both flagship themes. Tinted text (`-color-<role>-fg`) reaches 4.5:1 on its own subtle fill and on
   both grounds.
@@ -100,7 +100,7 @@ pill, a row tint and a hover state come from the same place. `.state-pill` is th
   fixed pair: the old fixed light hexes read at 3.2:1 on Editora Dark.
 - **SHOULD.** A pure test reads the stylesheets and does the WCAG arithmetic, as `StyleContrastTest` does; a
   contrast regression is invisible in a code diff. Mirada's `AccentTest` checks that the accent reads as text on
-  both grounds; Termina's `ThemeTest` keeps every chromatic colour of its terminal schemes legible.
+  both grounds; Termina's `ThemeTest` keeps every chromatic color of its terminal schemes legible.
 
 ## Themes
 
@@ -114,14 +114,14 @@ pill, a row tint and a hover state come from the same place. `.state-pill` is th
 - **Editor themes are separate** (`EditorThemes`). The flagship pair carries its own editor stylesheet; every
   community theme is served by one `adaptive` editor theme whose syntax palette is expressed in the theme's own
   `-color-*` tokens, so it follows whatever ground the theme has.
-- Semantic colours never decorate: a theme may change the teal, the ground and the ink, but amber still means
+- Semantic colors never decorate: a theme may change the teal, the ground and the ink, but amber still means
   "not durable yet".
 
 ![Editora's Settings page for themes and fonts](../../assets/shots/editora-themes-fonts.png "Settings: the theme picker with the Caret & Ink pair first, and the UI and editor fonts.")
 
 ## Icons
 
-Every icon is an SVG path drawn in code, coloured by the stylesheet so it follows the theme, and returned as a
+Every icon is an SVG path drawn in code, colored by the stylesheet so it follows the theme, and returned as a
 fresh node per call (a JavaFX node has one parent). There are two families, mid-migration to the UI Kit, and they
 are not interchangeable.
 
@@ -136,12 +136,12 @@ are not interchangeable.
 |---|---|---|---|
 | Source | The UI Kit's 16-unit outline glyphs, drawn for the kit | Material Design 24 dp single-path glyphs (Apache-2.0), plus Simple Icons brand marks (CC0) | `Icons.line`, `Icons.of`, `NOTICE` |
 | Style class | `icon-line` | `toolbar-icon` | `app.css` |
-| Colour | `-fx-stroke: -color-fg-muted`, stroke width 1.3, round caps and joins, fill transparent | `-fx-fill: -color-fg-muted` | `.icon-line`, `.toolbar-icon` |
+| Color | `-fx-stroke: -color-fg-muted`, stroke width 1.3, round caps and joins, fill transparent | `-fx-fill: -color-fg-muted` | `.icon-line`, `.toolbar-icon` |
 | Hover, disabled | `-color-fg-default` on hover, `-color-fg-subtle` disabled; every context mirrors the matching rule of the other family | The same | `.button:hover .icon-line`, `.button:hover .toolbar-icon` |
 | Drawn size | 16 × 1.2 = 19.2 px (`LINE_SCALE` = `ICON_SCALE` × 24 ÷ 16) | 24 × 0.8 = 19.2 px (`ICON_SCALE`) | `Icons` |
 | Used for | The chrome the kit draws: toolbar, tool stripe, tabs, and every action that has a kit glyph | Everything the kit specifies no glyph for: file types, context-menu rows, build-tool and browser brand marks | `Icons`, `FileIcons` |
 
-- **MUST.** One class per family on a node, never both. A line glyph is coloured by its stroke, and any
+- **MUST.** One class per family on a node, never both. A line glyph is colored by its stroke, and any
   `X .toolbar-icon` fill rule (there are dozens) would paint its outline solid. A glyph that moves family moves its
   CSS with it.
 - **MUST.** The same action wears the same glyph wherever it is reached: Save is one floppy on the toolbar, in the
@@ -156,7 +156,7 @@ are not interchangeable.
   toolkit), `forFileName` turns the key into a node. Brand logos from Simple Icons, category glyphs (image,
   archive, PDF, table, lock, JSON, settings) from Material, and the generic document glyph for anything unknown, so
   a new type never regresses the look.
-- **Licences.** Every glyph set and font is credited in `NOTICE`: Material Design Icons (Apache-2.0), Simple Icons
+- **Licenses.** Every glyph set and font is credited in `NOTICE`: Material Design Icons (Apache-2.0), Simple Icons
   (CC0; the logos stay their owners' trademarks), Octicons and Seti UI (MIT), Inter and the monospace faces (OFL).
 
 ### In the apps
@@ -165,7 +165,7 @@ are not interchangeable.
 |---|---|---|
 | Editora | Both families, `ui/Icons`, `FileIcons`, `MenuBarIcons`, `editor/MenuIcons` | 19.2 px on the toolbar and in menus |
 | Torrenta | Both families, copied from Editora as `Icons.Glyph`, which knows its box and resizes with `at(px)`; the toolbar is all line glyphs (stroke 1.5, `-torrenta-icon`) | 17 px toolbar, 16 px menu and tab (`MENU_SIZE`), 13 px sidebar |
-| Termina | Material filled, `ui/MenuIcons`, coloured by `.menu-icon` (`-color-fg-muted`; `-color-fg-default` focused; subtle and half opacity disabled) | 24 × 0.7 = 16.8 px, menus only |
-| Mirada | Hand-drawn stroked paths on a 24-unit grid, two-unit strokes, round caps, in GNOME's symbolic style, so nothing carries a licence; `.icon` strokes `-color-fg-default` | 16 px, centred in a 16 px box |
+| Termina | Material filled, `ui/MenuIcons`, colored by `.menu-icon` (`-color-fg-muted`; `-color-fg-default` focused; subtle and half opacity disabled) | 24 × 0.7 = 16.8 px, menus only |
+| Mirada | Hand-drawn stroked paths on a 24-unit grid, two-unit strokes, round caps, in GNOME's symbolic style, so nothing carries a license; `.icon` strokes `-color-fg-default` | 16 px, centered in a 16 px box |
 | Modula | `Glyphs`: the transport symbols (tune, seek, star) as shapes, because the characters are missing from most faces and render differently on every platform | 11 px |
 | nux | No in-window icons; the tray icon is rendered as a bitmap by severity (`TrayIconRenderer`) | Tray only |

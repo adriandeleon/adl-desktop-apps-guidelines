@@ -59,11 +59,11 @@ document. Click **Use this template**, then run `scripts/rename.sh <AppName> <pa
 - [ ] A Welcome page when there is nothing to restore, or an empty state that names the ways in with their chords (SHOULD)
 - [ ] Every destructive action asks first through one helper: the question names the thing, the button names the action in the `danger` style, Escape cancels; or the action is undoable instead
 
-## Icons and colour
+## Icons and color
 
-[Icons and colour](../icons-and-colour/)
+[Icons and color](../icons-and-color/)
 
-- [ ] Inter attached to every scene by a scene stylesheet; state colours named once on `.root` from the theme's roles, no fixed hex in a component rule
+- [ ] Inter attached to every scene by a scene stylesheet; state colors named once on `.root` from the theme's roles, no fixed hex in a component rule
 - [ ] Readable text in `-color-fg-muted` or stronger, `-color-fg-emphasis` on an emphasis fill; a pure contrast test over the stylesheets (SHOULD)
 - [ ] Icons as themed SVG paths in one `Icons` class, one style class per family, the same glyph for an action everywhere it is reached
 
@@ -133,7 +133,7 @@ document. Click **Use this template**, then run `scripts/rename.sh <AppName> <pa
 
 - [ ] `README.md` with the badge row and a light/dark hero screenshot
 - [ ] `CHANGELOG.md` in Keep a Changelog format
-- [ ] MIT `LICENSE`, and `NOTICE` with every third-party licence
+- [ ] MIT `LICENSE`, and `NOTICE` with every third-party license
 - [ ] `AGENTS.md`, with a one-line `CLAUDE.md` pointing to it
 - [ ] `CONTRIBUTING.md`, `docs/` and `branding/`
 - [ ] `.github/ISSUE_TEMPLATE/bug_report.yml`
@@ -159,7 +159,7 @@ document. Click **Use this template**, then run `scripts/rename.sh <AppName> <pa
 - [ ] Every third-party action pinned to a commit SHA
 - [ ] Dependabot for `github-actions` and `maven`
 - [ ] `permissions: contents: read` by default; write only in publishing jobs
-- [ ] `timeout-minutes` on every job; superseded pull-request runs cancelled
+- [ ] `timeout-minutes` on every job; superseded pull-request runs canceled
 - [ ] Test and coverage reports uploaded; coverage totals in the job summary
 - [ ] Signing skipped without secrets, but a tag without them fails
 - [ ] A smoke launch of the packaged app on each OS before release

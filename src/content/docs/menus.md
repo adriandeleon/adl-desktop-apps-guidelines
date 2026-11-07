@@ -40,7 +40,7 @@ rendered a third larger than every other menu in the app).
 | Icon column | 22 px, reserved even when the row has no glyph, so a menu with a mix stays aligned; 8 px to the title | `MainMenuBar.ICON_COLUMN`, `rowContent` |
 | Icon | The command's glyph, the same one as on the toolbar and in the palette (Save is the same floppy everywhere), filled `-color-fg-muted` | `Icons`, `MenuBarIcons`, `.toolbar-icon` |
 | Title | `-color-fg-default` | `.menu-item-title` |
-| Chord | Right-aligned in its own column, 11 px, in the keyboard colour (`-state-key`, brace periwinkle); at least 18 px from the title column | `.menu-item-chord`, `alignChordColumns` |
+| Chord | Right-aligned in its own column, 11 px, in the keyboard color (`-state-key`, brace periwinkle); at least 18 px from the title column | `.menu-item-chord`, `alignChordColumns` |
 | Submenu row | Laid out like a command row, with an invisible chord as wide as the menu's widest, so the arrow lands at the right edge | `nestedMenu`, `.menu-submenu` |
 | Card | Radius 8; shadow `rgba(27,30,42,0.28)`, radius 16, **offset Y 16** | `.context-menu` |
 | Danger item | Text in `-color-danger-fg` | `.menu-item.danger` |
@@ -83,13 +83,13 @@ of the next menu button. The offset must be at least the radius; Editora pins it
 
 - **MUST.** Every item is a command from the registry, with its title from `command.<id>`, its chord from the
   active keymap and its enabled state from the command's gate. The bar assembles and refreshes; it holds no
-  behaviour of its own (`MenuBarModel` over `CommandRegistry`).
+  behavior of its own (`MenuBarModel` over `CommandRegistry`).
 - **MUST.** No `KeyCombination` accelerators. In the in-window bar each row is a `CustomMenuItem` laying out
   icon, title, spacer and chord. On the **macOS system menu bar** (`useSystemMenuBar`) the native menu draws text
   only and no graphics, so there the chord is appended to the title and rows carry no icon, which is also the
   platform's convention.
 - **Enablement is re-read on every open** (`refreshEnablement`), titles and chords on a keymap or locale change.
-  A menu built before Git finished detecting a repository must not stay greyed out.
+  A menu built before Git finished detecting a repository must not stay grayed out.
 - **Simple mode** shows a shorter menu, rebuilt only when the mode actually changes.
 
 ![Editora's View menu open with toggle commands and their chords](../../assets/shots/editora-menu-bar.png "Editora's View menu: icons where a glyph fits, chords in one periwinkle column. An earlier build: rows now drop the menu's own name from their titles.")
@@ -126,13 +126,13 @@ of the next menu button. The offset must be at least the radius; Editora pins it
 <ol class="anatomy">
 <li><span class="pin">1</span><span><strong>Anchored at the pointer.</strong> The menu's top-left corner is the click. From the keyboard (Menu key or <kbd>Shift+F10</kbd>) it opens under the selected row, a quarter of the way in and never off a narrow one, or just below the caret in an editor; never in the middle of the control.</span></li>
 <li><span class="pin">2</span><span><strong>Every row has an icon</strong>, the command's own. The one exception is a <code>CheckMenuItem</code>, whose tick lives in the graphic column.</span></li>
-<li><span class="pin">3</span><span><strong>Greyed, not hidden.</strong> An action that does not apply right now (Save on an unchanged file, Reveal on an unsaved one) stays in place, dimmed. Only a row that cannot apply to this thing at all is hidden (the Git submenu on an untitled buffer).</span></li>
+<li><span class="pin">3</span><span><strong>Grayed, not hidden.</strong> An action that does not apply right now (Save on an unchanged file, Reveal on an unsaved one) stays in place, dimmed. Only a row that cannot apply to this thing at all is hidden (the Git submenu on an untitled buffer).</span></li>
 <li><span class="pin">4</span><span><strong>Separators</strong> group the rows; one that hiding has left alone hides too.</span></li>
 <li><span class="pin">5</span><span><strong>Submenu</strong> for a family of actions (Git: stage, unstage, revert, compare, history), with its own icon.</span></li>
 <li><span class="pin">6</span><span><strong>Labels follow state.</strong> Encrypt… becomes Lock File on an encrypted buffer, Pin Tab becomes Unpin Tab. Decided on every showing, not when the menu was built.</span></li>
 </ol>
 
-### Behaviour
+### Behavior
 
 - **MUST. One menu at a time.** A right-click while a menu is open replaces it; the first one closes before the
   second shows. JavaFX stacks a second menu beside the first when each row owns its own `ContextMenu`, and the
@@ -144,7 +144,7 @@ of the next menu button. The offset must be at least the radius; Editora pins it
   text area stays open when the user clicks another row or the text. The press is not consumed: a click in a
   list still selects the row, and a right-click on another row opens that row's menu straight away. Install the
   fix once, at startup, for every current and future window (`ContextMenuDismissal.install()` in `App`); drop-downs
-  opened by a plain click (menu buttons, choice boxes, the menu bar) keep the stock behaviour, and a menu that turned
+  opened by a plain click (menu buttons, choice boxes, the menu bar) keep the stock behavior, and a menu that turned
   auto-hide off is left alone. Pinned by `ContextMenuDismissalFxTest`.
 - **MUST. Escape closes it** and focus goes back where it was. In a terminal the Escape must not reach the shell
   (Termina's `onKeyPressed` filter hides the menu and consumes the key).

@@ -10,7 +10,7 @@ tile, the same corner radius and teal gradient, two shapes only so it reads at 3
 | `pauta.png`, `pauta-{256,128,64,32,16}.png` | Rendered sizes. |
 | `social-card.html` → `social-preview.png` | The 1280 × 640 card for shared links (`public/og.png`) and the GitHub repository's social preview. |
 
-Colours and type are the family's own (Editora's Caret & Ink: Ink `#1B1E2A`, periwinkle `#9AA2D4`, teal
+Colors and type are the family's own (Editora's Caret & Ink: Ink `#1B1E2A`, periwinkle `#9AA2D4`, teal
 `#5EEAD4`→`#22B8A6`; Inter and JetBrains Mono). Pauta adds none.
 
 Re-render after changing the mark:

@@ -3,7 +3,7 @@ title: "Diagnostics and support"
 description: "Message Log, Debug Log, update notification, Report a Problem, Doctor and crash recovery."
 ---
 
-| Feature | Behaviour | Level | Editora reference |
+| Feature | Behavior | Level | Editora reference |
 |---|---|---|---|
 | **Message Log** | Session-only history of every echo-area message with `HH:mm:ss` times, newest first, bounded. Opened by clicking the status message; Esc closes; Clear empties it. | MUST | `ui/MessageLog`, `ui/MessageLogPopup` |
 | **Debug Log** | Captures all `java.util.logging` records and uncaught exceptions in memory (bounded) **and** mirrors them to `<app>-session.log` in the config folder, keeping the previous one as `<app>-session.prev.log` so a crash is still visible next launch. A modeless window with Refresh, Copy, Clear, Export and Report a Problem. The only way to see logs in a packaged build. | MUST | `ui/DebugLog`, `ui/DebugLogWindow` |
@@ -16,7 +16,7 @@ description: "Message Log, Debug Log, update notification, Report a Problem, Doc
 ![Editora's Message Log popup above the status bar](../../assets/shots/editora-message-log.png "Clicking the status message opens the Message Log: this session's messages, newest first.")
 ![Editora's Report a Problem window](../../assets/shots/editora-report-problem.png "Report a Problem: a redacted, editable report that opens as a prefilled GitHub issue.")
 
-![Editora's About window](../../assets/shots/editora-about.png "About: version, runtime, licence, links and the update status.")
+![Editora's About window](../../assets/shots/editora-about.png "About: version, runtime, license, links and the update status.")
 ![Editora's Doctor page](../../assets/shots/editora-doctor.png "Doctor: each external tool with its version, or what to install.")
 
 Secrets never reach a log, a report or a config file: see [Secrets stay out of files](../settings/#secrets-stay-out-of-files).

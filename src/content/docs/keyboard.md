@@ -9,7 +9,7 @@ description: "Commands, the Command Palette, keymaps, focus and accessibility."
 - Command ids are dotted and grouped by area: `file.open`, `view.toggleStatusBar`, `help.reportProblem`.
 - Titles come from `command.<id>` and palette descriptions from `command.<id>.desc` in the message
   catalogs, so a registered command is localized and discoverable without extra work.
-- A command that cannot run in the current context is shown greyed with a tooltip that says why, not
+- A command that cannot run in the current context is shown grayed with a tooltip that says why, not
   hidden.
 
 ## Command Palette

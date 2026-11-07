@@ -1,12 +1,12 @@
 ---
 title: "Toolbars and tooltips"
-description: "Icon-only buttons that have a name, groups by spacing, one chrome band, the customisable toolbar, and tooltips that share the menus' card."
+description: "Icon-only buttons that have a name, groups by spacing, one chrome band, the customizable toolbar, and tooltips that share the menus' card."
 ---
 
 A toolbar is the fast path to commands that are also in the [menus](../menus/) and the
 [Command Palette](../templates/command-palette/): nothing lives only on it. Every button is a command, so its icon,
 title and chord come from the registry and the active keymap. Reference: Editora's `ui/Icons.java` (`button`,
-`toolbarButton`, `name`), `ui/ToolbarCoordinator.java` (the customisable bar), `ui/WindowChromeCoordinator.java`
+`toolbarButton`, `name`), `ui/ToolbarCoordinator.java` (the customizable bar), `ui/WindowChromeCoordinator.java`
 (`collapseToolbarSeparators`), `ui/ToolWindowManager.java` (the tool window stripes) and the `.tool-bar`,
 `.toolbar-button`, `.tool-stripe-button` and `.tooltip` rules in `app.css`.
 
@@ -46,7 +46,7 @@ title and chord come from the registry and the active keymap. Reference: Editora
 <li><span class="pin">1</span><span><strong>Icon button</strong>, 28 px: padding 3 × 5, radius 4, no border, the glyph in <code>-color-fg-muted</code> and <code>-color-fg-default</code> under the pointer. It has a name even though it shows none: the same string is its tooltip and its accessible text.</span></li>
 <li><span class="pin">2</span><span><strong>Group gap.</strong> A vertical <code>Separator</code> node whose line is transparent: its padding is what separates the groups. No drawn rule.</span></li>
 <li><span class="pin">3</span><span><strong>Tooltip.</strong> The command's title and its chord in the active keymap, "Save (C-x C-s)". A popup window with the menus' radius 8.</span></li>
-<li><span class="pin">4</span><span><strong>Open toggle.</strong> A button whose overlay is showing (Find, the palette, a split) wears <code>:open</code>: an accent-subtle fill and the glyph in the accent colour. Simple mode's own button does the same while the mode is on.</span></li>
+<li><span class="pin">4</span><span><strong>Open toggle.</strong> A button whose overlay is showing (Find, the palette, a split) wears <code>:open</code>: an accent-subtle fill and the glyph in the accent color. Simple mode's own button does the same while the mode is on.</span></li>
 <li><span class="pin">5</span><span><strong>One band.</strong> The menu bar, the toolbar and the tab strip sit on <code>-color-bg-subtle</code> with no hairline between them; spacing does the grouping.</span></li>
 <li><span class="pin">6</span><span><strong>Pinned tail.</strong> The project picker, About and Quit live in their own container beside the <code>ToolBar</code>, so a narrow window overflows the icons (which are all in the menus too) and never the tail.</span></li>
 </ol>
@@ -61,7 +61,7 @@ title and chord come from the registry and the active keymap. Reference: Editora
 | Group gap | A vertical `Separator` with its line transparent; its 0.75 em padding is the gap | `.tool-bar .separator:vertical > .line` |
 | Tail | Its own container (`.toolbar-tail`), same insets and font as the bar, never overflowed | `ToolbarOverflowFxTest` |
 | Tooltip | `<title> (<chord>)`, the chord from `KeymapManager.displayChord`; only the title when unbound; radius 8 like the menus | `ToolbarCoordinator.buildExtraButton`, `ToolWindowManager.tooltipFor`, `.tooltip` |
-| Stripe button | A toolbar button on the tool window rail: min 24 px, padding 9 × 5, radius 6, 8 px apart on a 30 px rail; the same muted, hover and `:open` colours; the bottom stripe adds a 14 px label | `.tool-stripe-button`, `ToolWindowManager.register` |
+| Stripe button | A toolbar button on the tool window rail: min 24 px, padding 9 × 5, radius 6, 8 px apart on a 30 px rail; the same muted, hover and `:open` colors; the bottom stripe adds a 14 px label | `.tool-stripe-button`, `ToolWindowManager.register` |
 | Customize mode | The bar tinted `-color-accent-subtle`, a move cursor, the dragged button at 0.4 opacity, a 2 px accent insertion line on the drop target's edge | `.tool-bar.toolbar-customizing`, `.toolbar-drop-before` |
 
 ## Rules
@@ -86,10 +86,10 @@ title and chord come from the registry and the active keymap. Reference: Editora
 - **MUST. A toggle looks on while it is on.** A button that opens an overlay (Find, the palette, a split) and the
   Simple mode button carry the `:open` pseudo-class while their state holds, so the way back out does not look like
   the way in. Torrenta uses `:on` for Simple mode and `:active` for the alternative speed limit.
-- **MUST. The toolbar never holds the only way to an action.** Every icon in the customisable cluster is also in the
+- **MUST. The toolbar never holds the only way to an action.** Every icon in the customizable cluster is also in the
   menus and the palette; that is what makes it safe to hide icons in a narrow window and to let the user remove them.
-- **MAY. A customisable toolbar.** Editora's cluster is a list of catalog ids in Settings (`toolbarLayout`),
-  sanitised on read and shared by every window. The bar's right-click menu offers *Customize Toolbar…* (or *Done*),
+- **MAY. A customizable toolbar.** Editora's cluster is a list of catalog ids in Settings (`toolbarLayout`),
+  sanitized on read and shared by every window. The bar's right-click menu offers *Customize Toolbar…* (or *Done*),
   *Configure…* (the Settings page) and *Restore Default*. In customize mode the bar tints, buttons drag to reorder with
   an accent insertion line and drag off the bar to remove; Escape leaves the mode. Pinned by
   `ToolbarCustomizeModeFxTest` and `ToolbarCustomizationFxTest`.
@@ -104,11 +104,11 @@ title and chord come from the registry and the active keymap. Reference: Editora
 
 ## In the apps
 
-- **Editora**: the customisable cluster, the pinned tail, the stripes.
+- **Editora**: the customizable cluster, the pinned tail, the stripes.
 - **Torrenta**: the same `Icons.toolbarButton` and `Icons.name`, 32 px buttons, Simple mode as `:on`; its separators
   still draw a line.
 - **Mirada**: a `HeaderBar` title bar with flat icon buttons around the file name, stroked symbolic icons in the text
-  colour, tooltips of the form "label (chord)"; no accessible names on the buttons.
+  color, tooltips of the form "label (chord)"; no accessible names on the buttons.
 - **Termina**: no main toolbar (its tabs are in the title bar); the search bar's buttons are 24 × 22 flat icons with
   tooltips, out of the Tab order.
 

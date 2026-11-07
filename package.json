@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "astro dev",
     "print": "bash scripts/build-print.sh",
-    "build": "astro build",
+    "build": "node scripts/build-site.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },

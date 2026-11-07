@@ -1,0 +1,102 @@
+#!/usr/bin/env node
+// The whole site, every edition in its own folder (AGENTS.md, "Editions on the site"):
+//   dist/latest/              this checkout, built with base <root>/latest
+//   dist/<version>/           this checkout again, built with base <root>/<version> (package.json's version)
+//   dist/<earlier version>/   every edition published before, from the `versions` branch (scripts/archive-edition.sh)
+//   dist/versions.json        every edition and which one is latest; public/versions.js reads it on every page
+//   dist/<page>/index.html    a redirect to latest/<page>/ for every page, so links from before editions had folders work
+//   dist/downloads/, CNAME, 404.html, versions.js   copies of the latest edition's: GitHub Pages reads them at the root
+import { spawnSync } from "node:child_process";
+import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { dirname, join, relative } from "node:path";
+import { compareVersions, isVersion, parseEditions, released } from "../src/lib/editions.mjs";
+
+process.chdir(new URL("..", import.meta.url).pathname);
+const pkg = JSON.parse(readFileSync("package.json", "utf8"));
+const { version } = pkg;
+const url = new URL(pkg.guidelines.url);
+const root = url.pathname.replace(/\/?$/, "/");
+const step = (what) => console.log(`\n▶ ${what}`);
+
+const run = (cmd, args, options = {}) => {
+  const r = spawnSync(cmd, args, { stdio: "inherit", ...options });
+  if (r.status !== 0) {
+    console.error(`${cmd} ${args.join(" ")} failed`);
+    process.exit(r.status ?? 1);
+  }
+};
+
+// 1. This edition, twice: at latest/ and at its own number.
+rmSync("dist", { recursive: true, force: true });
+for (const edition of ["latest", version]) {
+  step(`astro build → dist/${edition}/`);
+  run("npx", ["astro", "build"], { env: { ...process.env, PAUTA_PATH: edition } });
+}
+
+// 2. The earlier editions, archived on the `versions` branch: origin's if reachable, else a local one.
+step("earlier editions from the versions branch");
+const git = (...args) => spawnSync("git", args, { encoding: "utf8" });
+const shallow = git("rev-parse", "--is-shallow-repository").stdout.trim() === "true";
+git("fetch", "--quiet", ...(shallow ? ["--depth=1"] : []), "origin", "versions:refs/remotes/origin/versions");
+const ref = ["origin/versions", "versions"].find((r) => git("rev-parse", "--verify", "--quiet", `${r}^{commit}`).status === 0);
+const earlier = [];
+if (!ref) {
+  console.warn("No `versions` branch reachable: the site carries this edition alone.");
+} else {
+  const archive = "build/versions";
+  rmSync(archive, { recursive: true, force: true });
+  mkdirSync(archive, { recursive: true });
+  run("sh", ["-c", `git archive ${ref} | tar -x -C ${archive}`]);
+  for (const v of readdirSync(archive).filter((d) => isVersion(d) && d !== version && statSync(join(archive, d)).isDirectory())) {
+    cpSync(join(archive, v), join("dist", v), { recursive: true });
+    earlier.push(v);
+  }
+  earlier.sort(compareVersions);
+  console.log(earlier.length ? `${ref}: ${earlier.join(", ")}` : `${ref} holds no other edition`);
+}
+
+// 3. The root: what GitHub Pages reads there, and the editions list.
+step("root files and versions.json");
+const latest = "dist/latest";
+for (const name of ["CNAME", "404.html", "versions.js", "downloads"]) {
+  if (existsSync(join(latest, name))) cpSync(join(latest, name), join("dist", name), { recursive: true });
+}
+const dates = Object.fromEntries(released(parseEditions(readFileSync("CHANGELOG.md", "utf8"))).map((e) => [e.version, e.date]));
+const versions = [...new Set([version, ...earlier])].sort(compareVersions);
+writeFileSync(
+  "dist/versions.json",
+  JSON.stringify(
+    { latest: version, versions: versions.map((v) => ({ version: v, date: dates[v] ?? null, path: `${root}${v}/` })) },
+    null,
+    2,
+  ) + "\n",
+);
+
+// 4. A redirect for every page at its old, unnumbered address. The script keeps the fragment; the meta tag is the fallback.
+step("redirects from the unnumbered addresses");
+let redirects = 0;
+const walk = (dir) => {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const path = join(dir, entry.name);
+    if (entry.isDirectory()) walk(path);
+    else if (entry.name === "index.html") {
+      const rest = relative(latest, dirname(path)).replace(/\\/g, "/");
+      const target = `${root}latest/${rest ? `${rest}/` : ""}`;
+      const stub = join("dist", rest, "index.html");
+      if (existsSync(stub)) continue; // an edition's folder, never a page's
+      mkdirSync(dirname(stub), { recursive: true });
+      writeFileSync(
+        stub,
+        `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Pauta</title><meta name="robots" content="noindex">` +
+          `<link rel="canonical" href="${url.origin}${target}"><meta http-equiv="refresh" content="0; url=${target}">` +
+          `<script>location.replace(${JSON.stringify(target)} + location.hash)</script></head>` +
+          `<body><p>Pauta's pages now live under an edition: <a href="${target}">${target}</a>.</p></body></html>\n`,
+      );
+      redirects++;
+    }
+  }
+};
+walk(latest);
+console.log(`${redirects} redirects`);
+
+console.log(`\nPauta ${version} built: latest/ and ${versions.join(", ")} in dist/`);

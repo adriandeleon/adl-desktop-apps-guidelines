@@ -29,6 +29,8 @@ or file to copy from.
 📖 **Read it at [pauta-project.dev](https://pauta-project.dev/)**
 — or download the [PDF](https://pauta-project.dev/downloads/adl-desktop-apps-guidelines.pdf)
 or the [single Markdown file](https://pauta-project.dev/downloads/adl-desktop-apps-guidelines.md).
+Every edition stays online at its own address: [`/latest/`](https://pauta-project.dev/latest/) is always the newest,
+`/2.0.0/`, `/1.3.2/` and so on are permanent, and the header of every page switches between them.
 
 🧰 **Starting a new app?** Use [adl-desktop-app-template](https://github.com/adriandeleon/adl-desktop-app-template),
 a GitHub template repository that meets every MUST: a runnable app with its tests, CI and release workflows, and an
@@ -54,14 +56,17 @@ The pages are Markdown in [`src/content/docs/`](src/content/docs/); their order 
 npm ci
 npm run dev        # http://localhost:4321/
 npm run print      # PDF + single Markdown into public/downloads (needs pandoc and Chrome)
-npm run build      # static site into dist/
+npm run build      # the whole site into dist/: this edition at latest/ and <version>/, earlier editions beside them
+npm run preview    # serves dist/ as deployed
 ```
 
 Conventions: in a feature matrix (a table whose header names the apps), a cell starting with `●`, `◐` or `—`
 renders as a status dot, the rest of the cell being its note; elsewhere a `—` stays a dash. `MUST`, `SHOULD` and
 `MAY` render as a level pill wherever they appear in prose, lists or tables, including `**MUST.**` and `(SHOULD)`.
 
-Every push to `master` builds the downloads and the site and deploys them to GitHub Pages.
+Every push to `master` builds the downloads and the site and deploys them to GitHub Pages. The site carries every
+edition: the one just built at `/latest/` and `/<version>/`, the earlier ones from the `versions` branch, where CI
+archives each edition it deploys.
 
 ## License
 

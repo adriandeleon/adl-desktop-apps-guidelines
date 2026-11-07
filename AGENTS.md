@@ -5,9 +5,11 @@ Editora (`../Editora`) is the reference implementation.
 
 ## Commands
 
-- `npm run dev` — local site at http://localhost:4321/
+- `npm run dev` — local site at http://localhost:4321/ (one edition, at the root)
 - `npm run print` — builds `public/downloads/` (PDF + single Markdown); needs pandoc, python3 and Chrome
-- `npm run build` — static site into `dist/`
+- `npm run build` — the whole site into `dist/`: this edition at `latest/` and `<version>/`, every earlier edition
+  from the `versions` branch, the root redirects (see **Editions on the site**)
+- `npm run preview` — serves `dist/` as deployed, at http://localhost:4321/
 
 ## Rules
 
@@ -35,6 +37,20 @@ Editora (`../Editora`) is the reference implementation.
   Changelog page, the PDF and the Markdown download read them from there. To publish one: set the version and the date
   in `package.json`, head its changelog section `## [x.y.z] - YYYY-MM-DD`, commit, tag `vx.y.z`. A new or stronger
   rule is a minor version, a new MUST that existing apps fail is a major one, wording and facts a patch.
+- **Editions on the site.** Every page is served under its edition: `https://pauta-project.dev/2.0.0/principles/` is
+  permanent, `https://pauta-project.dev/latest/principles/` is always the newest edition, and the unnumbered address
+  redirects to `latest/`. `scripts/build-site.mjs` (`npm run build`) builds this checkout twice, with `PAUTA_PATH`
+  `latest` and the version (`astro.config.mjs` puts it in `base` and `outDir`), lays the earlier editions beside them
+  from the `versions` branch, copies `CNAME`, `404.html`, `versions.js` and `downloads/` to the root for GitHub Pages,
+  and writes `versions.json`, the list every page reads (`public/versions.js`) to offer editions published after it
+  and, on an earlier edition, to point at the latest. The header's switcher (`src/components/EditionSelect.astro`, in the
+  phone menu through `MobileMenuFooter.astro`) and the footer link the same page in another edition; a numbered folder carries `noindex`, so search engines index `latest/`.
+  The `versions` branch holds one folder per published edition and nothing else: CI runs `scripts/archive-edition.sh
+  --push` after each push to `master`, so the edition just deployed joins it (a rebuild replaces the folder). Never
+  edit that branch by hand; a lost or pre-2.0.0 edition is rebuilt from its tag with `scripts/archive-tag.sh vX.Y.Z`
+  and archived with `scripts/archive-edition.sh build/editions/X.Y.Z`. Pages link with relative paths or
+  `import.meta.env.BASE_URL`, which already includes the edition folder; `src/lib/site.mjs` gives the site root and
+  the edition a page is served from.
 - **Where the site lives.** `package.json`'s `guidelines.url` is the only place the site's address is written;
   `astro.config.mjs` derives `site` and `base` from it, and the PDF and Markdown downloads print it. Pages link
   with relative paths or `import.meta.env.BASE_URL`, never a hard-coded `/adl-desktop-apps-guidelines/`.

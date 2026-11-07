@@ -177,6 +177,8 @@ dialog.lightbox .lightbox-close { position: fixed; top: max(0.75rem, env(safe-ar
 }
 .levels-legend .lvl { display: table; margin-bottom: 0.4rem; }
 .edition-badge { font-family: var(--sl-font-mono); font-size: var(--sl-text-xs); color: var(--sl-color-gray-3); letter-spacing: 0.02em; }
+.edition-badge a { color: inherit; text-decoration: underline; text-decoration-color: var(--sl-color-gray-5); text-underline-offset: 0.2em; }
+.edition-badge a:hover { color: var(--sl-color-accent); text-decoration-color: currentColor; }
 
 /* Rule tables (a "Level" column) on a phone: each row stacks into a card, the area as its title and every other
    cell under its column's name, so the level and the Editora reference are never off-screen. */
@@ -220,6 +222,14 @@ dialog.lightbox .lightbox-close { position: fixed; top: max(0.75rem, env(safe-ar
 
 /* Editions rendered from CHANGELOG.md (src/components/Changelog.astro): What's new on the overview, every edition on
    the Changelog page. */
+.editions .edition-index { display: flex; align-items: baseline; gap: 0.75rem 1rem; flex-wrap: wrap; margin-bottom: 2.5rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--rule); font-size: var(--sl-text-sm); }
+.editions .edition-index > span { color: var(--sl-color-gray-3); }
+.editions .edition-index ul { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; margin: 0; padding: 0; list-style: none; }
+.editions .edition-index li { display: flex; align-items: baseline; gap: 0.4rem; margin: 0; }
+.editions .edition-index a { font-family: var(--sl-font-mono); font-variant-numeric: tabular-nums; color: var(--sl-color-white); text-decoration: none; }
+.editions .edition-index a:hover { color: var(--sl-color-accent); }
+.editions .edition-index .latest { font-size: var(--sl-text-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--sl-color-accent); }
+.editions .edition-index + .edition { margin-top: 0; }
 .editions .edition + .edition { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--rule); }
 .editions .edition h2 { display: flex; align-items: baseline; gap: 0.75rem; flex-wrap: wrap; }
 .editions .edition h2 a { color: inherit; text-decoration: none; }
@@ -228,5 +238,7 @@ dialog.lightbox .lightbox-close { position: fixed; top: max(0.75rem, env(safe-ar
 .editions .edition-meta { font-size: var(--sl-text-sm); color: var(--sl-color-gray-3); font-variant-numeric: tabular-nums; }
 .editions .edition-meta strong { color: var(--sl-color-white); }
 .editions.news { border: 1px solid var(--sl-color-gray-5); border-radius: 10px; padding: 1rem 1.25rem 1.25rem; background: var(--sl-color-gray-6); }
-.editions.news h3 { font-size: var(--sl-text-base); margin-top: 1.25rem; }
-.editions.news ul { font-size: var(--sl-text-sm); }
+.editions.news .edition-meta { margin: 0; }
+.editions.news .edition-summary { margin-top: 0.5rem; font-size: var(--sl-text-sm); }
+.editions.news .edition-summary strong { color: var(--sl-color-white); margin-inline-end: 0.25rem; }
+.editions.news .edition-more { margin-top: 0.75rem; font-size: var(--sl-text-sm); }

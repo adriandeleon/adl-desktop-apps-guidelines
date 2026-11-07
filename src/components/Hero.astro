@@ -6,6 +6,7 @@ import Default from "@astrojs/starlight/components/Hero.astro";
 import { Image } from "astro:assets";
 import pkg from "../../package.json";
 
+const changelog = `${import.meta.env.BASE_URL.replace(/\/?$/, "/")}changelog/`;
 const { data } = Astro.locals.starlightRoute.entry;
 const image = data.hero?.image && "file" in data.hero.image ? data.hero.image : undefined;
 if (image && data.hero) data.hero = { ...data.hero, image: undefined };
@@ -16,7 +17,9 @@ if (image && data.hero) data.hero = { ...data.hero, image: undefined };
     <div class="hero-with-shot">
       <div class="hero-copy">
         <Default />
-        <p class="edition-badge">Version {pkg.version} · {pkg.guidelines.date}</p>
+        <p class="edition-badge">
+          <a href={changelog} title="Every edition and what it changed">Version {pkg.version}</a> · {pkg.guidelines.date}
+        </p>
       </div>
       <Image
         class="hero-shot"

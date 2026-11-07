@@ -13,14 +13,31 @@ const { latest = false } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
 
 const processor = await createMarkdownProcessor();
-const editions: { version: string; date?: string; html: string }[] = [];
+/** The headline of each entry per group, for the overview's summary: the bold lead of a bullet, else its first sentence,
+ *  as plain text. A group longer than MOST headlines ends with "and N more". */
+const MOST = 6;
+const plain = (md: string) => md.replace(/\[([^\]]+)\]\([^)]*\)/g, "$1").replace(/[`*_]/g, "").replace(/\.$/, "").trim();
+const headlines = (body: string) => {
+  const groups: { label: string; leads: string[] }[] = [];
+  for (const line of body.split("\n")) {
+    const h = line.match(/^### (.+)/);
+    if (h) { groups.push({ label: h[1].trim(), leads: [] }); continue; }
+    const b = line.match(/^- (?:\*\*(.+?)\*\*|([^.]+))/);
+    if (b && groups.length) groups.at(-1)!.leads.push(plain(b[1] ?? b[2]));
+  }
+  return groups
+    .filter((g) => g.leads.length)
+    .map((g) => ({ ...g, more: Math.max(0, g.leads.length - MOST), leads: g.leads.slice(0, MOST) }));
+};
+
+const editions: { version: string; date?: string; html: string; groups: { label: string; leads: string[] }[] }[] = [];
 for (const chunk of text.split(/^## /m).slice(1)) {
   const nl = chunk.indexOf("\n");
   const head = chunk.slice(0, nl).trim();
   const body = chunk.slice(nl + 1).trim();
   const m = head.match(/^\[([^\]]+)\](?:\s*-\s*(\d{4}-\d{2}-\d{2}))?/);
   if (!m || !body) continue; // an empty Unreleased section says nothing
-  editions.push({ version: m[1], date: m[2], html: (await processor.render(body)).code });
+  editions.push({ version: m[1], date: m[2], html: (await processor.render(body)).code, groups: headlines(body) });
 }
 const current = editions.find((e) => e.version === pkg.version) ?? editions.find((e) => e.date);
 const shown = latest ? (current ? [current] : []) : editions;
@@ -29,20 +46,42 @@ const long = (d: string) =>
 ---
 
 <div class:list={["editions", { news: latest }]}>
-  {shown.map((e) => (
-    <section class="edition" id={latest ? undefined : e.version.toLowerCase()}>
-      {latest ? (
+  {!latest && (
+    <nav class="edition-index" aria-label="Editions">
+      <span>Editions</span>
+      <ul>
+        {editions.map((e) => (
+          <li>
+            <a href={`#${e.version.toLowerCase()}`}>{e.version}</a>
+            {e.version === current?.version && <span class="latest">latest</span>}
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )}
+  {shown.map((e) =>
+    latest ? (
+      <section class="edition">
         <p class="edition-meta">
-          Edition <strong>{e.version}</strong>{e.date && <> · <time datetime={e.date}>{long(e.date)}</time></>} ·{" "}
-          <a href={`${base}changelog/`}>All editions</a>
+          Edition <strong>{e.version}</strong>{e.date && <> · <time datetime={e.date}>{long(e.date)}</time></>}
         </p>
-      ) : (
+        {e.groups.map((g) => (
+          <p class="edition-summary">
+            <strong>{g.label}</strong> {g.leads.join(" · ")}{g.more > 0 && ` and ${g.more} more`}
+          </p>
+        ))}
+        <p class="edition-more">
+          <a href={`${base}changelog/`}>Everything that changed, and every earlier edition</a>
+        </p>
+      </section>
+    ) : (
+      <section class="edition" id={e.version.toLowerCase()}>
         <h2>
           <a href={`#${e.version.toLowerCase()}`}>{e.version}</a>
           {e.date && <time datetime={e.date}>{long(e.date)}</time>}
         </h2>
-      )}
-      <Fragment set:html={e.html} />
-    </section>
-  ))}
+        <Fragment set:html={e.html} />
+      </section>
+    )
+  )}
 </div>

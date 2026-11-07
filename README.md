@@ -26,9 +26,9 @@ or file to copy from.
 
 **Pauta 1.2.0 · 6 November 2026.** The version and date live in `package.json`; [CHANGELOG.md](CHANGELOG.md) says what each edition changed.
 
-📖 **Read it at [adriandeleon.github.io/adl-desktop-apps-guidelines](https://adriandeleon.github.io/adl-desktop-apps-guidelines/)**
-— or download the [PDF](https://adriandeleon.github.io/adl-desktop-apps-guidelines/downloads/adl-desktop-apps-guidelines.pdf)
-or the [single Markdown file](https://adriandeleon.github.io/adl-desktop-apps-guidelines/downloads/adl-desktop-apps-guidelines.md).
+📖 **Read it at [pauta-project.dev](https://pauta-project.dev/)**
+— or download the [PDF](https://pauta-project.dev/downloads/adl-desktop-apps-guidelines.pdf)
+or the [single Markdown file](https://pauta-project.dev/downloads/adl-desktop-apps-guidelines.md).
 
 🧰 **Starting a new app?** Use [adl-desktop-app-template](https://github.com/adriandeleon/adl-desktop-app-template),
 a GitHub template repository that meets every MUST: a runnable app with its tests, CI and release workflows, and an
@@ -51,7 +51,7 @@ The pages are Markdown in [`src/content/docs/`](src/content/docs/); their order 
 
 ```bash
 npm ci
-npm run dev        # http://localhost:4321/adl-desktop-apps-guidelines/
+npm run dev        # http://localhost:4321/
 npm run print      # PDF + single Markdown into public/downloads (needs pandoc and Chrome)
 npm run build      # static site into dist/
 ```

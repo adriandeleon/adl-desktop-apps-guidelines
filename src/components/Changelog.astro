@@ -10,7 +10,7 @@ interface Props {
   latest?: boolean;
 }
 const { latest = false } = Astro.props;
-const base = "/adl-desktop-apps-guidelines";
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
 
 const processor = await createMarkdownProcessor();
 const editions: { version: string; date?: string; html: string }[] = [];
@@ -34,7 +34,7 @@ const long = (d: string) =>
       {latest ? (
         <p class="edition-meta">
           Edition <strong>{e.version}</strong>{e.date && <> · <time datetime={e.date}>{long(e.date)}</time></>} ·{" "}
-          <a href={`${base}/changelog/`}>All editions</a>
+          <a href={`${base}changelog/`}>All editions</a>
         </p>
       ) : (
         <h2>

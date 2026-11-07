@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Menus group and the feature matrix three menu rows.
 - **What's new, and a Changelog page.** The overview shows the current edition's changes; the Changelog page lists
   every edition under its own anchor. Both are rendered from `CHANGELOG.md`, so there is nothing to keep in step.
+- **Its own domain: [pauta-project.dev](https://pauta-project.dev/).** The old github.io address redirects there.
 - **Five more principles**, from what the apps already do: speed comes first; never claim what is not true;
   one source of truth for each fact; separate the decision from the UI, then test it; verify by driving the
   real app. The principles are now thirteen, in two groups: for the people using the apps and for the people

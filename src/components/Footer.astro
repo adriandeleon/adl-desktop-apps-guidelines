@@ -6,7 +6,7 @@ import pkg from "../../package.json";
 const date = new Date(`${pkg.guidelines.date}T00:00:00Z`).toLocaleDateString("en-GB", {
   day: "numeric", month: "long", year: "numeric", timeZone: "UTC",
 });
-const changelog = "/adl-desktop-apps-guidelines/changelog/";
+const changelog = `${import.meta.env.BASE_URL.replace(/\/?$/, "/")}changelog/`;
 ---
 
 <Default><slot /></Default>

@@ -13,7 +13,7 @@ report needs. Reference: Editora's `ui/AboutDialog.java`; Torrenta (`AboutDialog
 <div class="mock-stage">
 <div class="m-card m-dialog" role="img" aria-label="Mockup of the About window">
 <div class="titlebar">About Editora</div>
-<div class="m-about-head"><img src="/adl-desktop-apps-guidelines/icons/editora.svg" alt="" /><div><div class="m-row"><span class="m-about-name">Editora</span><span class="pin">1</span></div><div class="m-about-version">Version 0.27.0 <span class="pin">2</span></div><div class="m-about-tagline">A keyboard-driven, cross-platform programmer's text editor.</div></div></div>
+<div class="m-about-head"><img src="../../icons/editora.svg" alt="" /><div><div class="m-row"><span class="m-about-name">Editora</span><span class="pin">1</span></div><div class="m-about-version">Version 0.27.0 <span class="pin">2</span></div><div class="m-about-tagline">A keyboard-driven, cross-platform programmer's text editor.</div></div></div>
 <div><div class="m-row"><span class="m-link" style="font-weight:700">Update available: 0.28.0</span><span class="pin">3</span></div><div class="m-subtle" style="font-size:12px">Last checked 5 minutes ago. <span class="m-link">Check now</span></div></div>
 <div class="m-muted">© 2026 Adrián Arturo De León Saldivar <span class="pin">4</span></div>
 <div style="display:flex;flex-direction:column;gap:2px"><span class="m-row"><span class="m-link">MIT License</span><span class="pin">5</span></span><span class="m-link">Homepage</span><span class="m-link">Source code and releases</span><span class="m-link">Settings: ~/.editora/settings.json</span></div>

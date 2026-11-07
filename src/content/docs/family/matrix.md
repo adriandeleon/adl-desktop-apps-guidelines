@@ -4,7 +4,7 @@ description: "Which of the six apps has which platform piece, release step and f
 tableOfContents: false
 ---
 
-Surveyed on 2026-11-05 from each repository's default branch (the menu rows on 2026-11-06). ● has it, ◐ partly or differently,
+Surveyed on 2026-11-05 from each repository's default branch (the rows added in editions 1.2.0 and 1.3.0 on 2026-11-06). ● has it, ◐ partly or differently,
 — not found.
 
 **What the apps are.**
@@ -63,11 +63,17 @@ Surveyed on 2026-11-05 from each repository's default branch (the menu rows on 2
 | | Editora | Torrenta | Termina | Modula | Mirada | nux |
 |---|:-:|:-:|:-:|:-:|:-:|:-:|
 | Command registry + Command Palette (in-scene overlay) | ● | ● | ● | ● | ● | ● |
+| QuickOpen-style pickers for lists | ● | — palette only | — palette only | — palette only | ● `Choices` | — palette only |
+| Find bar: in-scene, incremental, count, Esc returns focus | ● find and replace | ◐ filter box | ● floating card | — | — picker | — |
 | Keymap presets | ● 9 | — | — | — | — | — |
 | Keybinding editor / shortcuts reference | ● | ● | ● | — | ◐ | — |
 | Menu rows carry the command's icon | ● | ● | ● | — | ● | — tray only |
 | Chord shown beside each menu row | ● own column | ◐ native accelerator | — | ● | ● | — |
 | Right-click menu: one at a time, any outside press closes it | ● every window | ◐ stock auto-hide | ◐ terminal view | ◐ radio pane | ◐ stock auto-hide | — |
+| Icon-only buttons carry an accessible name | ● `Icons.name` | ● | — tooltip only | — tooltip only | ◐ badges only | ● by hand |
+| Toolbar tooltips show the command's chord | ● | ● | — no toolbar | — | ● | — |
+| Tab strip: unsaved and pinned states, drag to reorder, reopen closed | ● | — | ◐ reorder and reopen, no pin | — | — | — |
+| Panels toggled by commands, placement remembered | ● stripes, dock, float | ● sidebar and detail pane | ◐ panes in a tab | — | ◐ info panel and strip | — |
 | Settings window | ● | ● | ● | ● | ● | ● |
 | Settings search | ● | ● | ● | — | — | — |
 | Settings sync (Git / GitHub via `gh`) | ● | ● | ● | — | — | — |
@@ -77,13 +83,19 @@ Surveyed on 2026-11-05 from each repository's default branch (the menu rows on 2
 | Report a Problem → GitHub issue (+ `--report`) | ● | ● | — | — | — | — |
 | About window with runtime versions | ● | ● | ● | ● | ● | ● |
 | Welcome page | ● | ● | — | — | — | — |
+| Confirm dialog: named red action button, Escape cancels, or undo instead | ● | ● `RemoveConfirm` + undo | ◐ asks, button not red | — presets remove on one click | ◐ trash is undoable, no question | — nothing to confirm |
 | Doctor / diagnosis | ● | ◐ per torrent | — | ◐ native libs | — | — |
 | Single instance (hand off to running app) | ● | ● | — | — | — | ● |
 | `--config-dir` and other CLI flags | ● | ● | ● | — | — | ◐ |
 | Light / dark / follow system, live switch | ● | ● | ● | ● | ● | ● |
+| Caret & Ink theme pair (Editora Light / Dark) | ● authored | ● vendored | ● vendored | — | — Cupertino | — Primer |
+| Icons as themed SVG paths, one style class per family | ● two families | ● two families | ● filled, menus | ◐ transport glyphs | ● hand-drawn stroked | — tray bitmap |
+| State colours from theme roles, contrast-tested | ● `StyleContrastTest` | ◐ roles, no test | ◐ roles; terminal schemes tested | — fixed hexes | ◐ accent tested | ◐ roles, no test |
 | Extended title bar (`HeaderBar`, `StageStyle.EXTENDED`) | ● | ◐ opt-in | ● | — | ● | — |
 | Desktop notifications | ● | ● | ● | ● | — | ● |
 | Tray icon (SNI over D-Bus, AWT fallback) | — | ● | — | ● | — | ● |
+| Close to tray, only while an icon is up | — | ● | — | ● | — | ● |
+| Start at login (XDG, LaunchAgent, `HKCU` Run) and `--minimized` | — | ● | — | — | — | ● |
 | Window geometry restore | ● | ● | ● | — | ● | — |
 | Config export / import | ● | — | — | — | — | — |
 | Plugins | ● | — | — | — | — | — |

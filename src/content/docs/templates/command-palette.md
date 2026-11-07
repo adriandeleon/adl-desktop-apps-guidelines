@@ -5,8 +5,9 @@ description: "The family's command palette: a 620 px in-scene card that finds an
 
 <span class="lvl lvl-must">MUST</span> in every app. One palette per window, opened by `M-x` in the Emacs keymaps and
 `Ctrl/Cmd+Shift+P` in the others. It lists every registered command, so a command that exists is a command people
-can find. Reference: Editora's `ui/CommandPalette.java`; the pure parts (`FuzzyMatch`, `MatchText`, `PaletteKeys`,
-`TextInputKeys`) are shared verbatim with Termina, Torrenta and Mirada.
+can find. Reference: Editora's `ui/CommandPalette.java`; the pure parts (`FuzzyMatch`, `MatchText`, `PaletteKeys` and the
+caret-key helper, `TextInputKeymap` in Editora, `TextInputKeys` in the copies) are shared with Termina and Mirada.
+Torrenta shares `MatchText` and ranks with its own `CommandMatcher`.
 
 ## Anatomy
 

@@ -9,9 +9,9 @@ guideline:
 1. **`AppInfo` + `build-info.properties`.** Version, build time and commit come from a Maven-filtered
    resource, read by About, `--version`, the update check and problem reports. *(all six)*
 2. **Shared `update/` package** (`UpdateCheck` pure parser, `UpdateService`, `ReleaseInfo`). *(5 apps)*
-3. **Pure palette core shared verbatim**: `FuzzyMatch`, `MatchText`, `KeyChord`, `PaletteKeys`,
-   `TextInputKeys`. Emacs-style caret keys work inside the palette's query field. *(Editora → Termina →
-   Mirada, Torrenta)*
+3. **Pure palette core shared**: `FuzzyMatch`, `MatchText`, `KeyChord`, `PaletteKeys` and the caret-key helper
+   (`TextInputKeymap` in Editora, `TextInputKeys` in the copies). Emacs-style caret keys work inside the palette's
+   query field. *(Editora → Termina → Mirada; Torrenta takes `MatchText` only)*
 4. **Shortcuts reference window**: a searchable list of every key, opened from Help. *(Termina, Mirada)*
 5. **Extended title bar** with JavaFX 27 `HeaderBar` and `StageStyle.EXTENDED`, falling back to a
    decorated window; the macOS system menu bar via `useSystemMenuBar`. *(Editora, Termina, Mirada,

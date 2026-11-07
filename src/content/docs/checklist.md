@@ -49,6 +49,39 @@ document. Click **Use this template**, then run `scripts/rename.sh <AppName> <pa
 - [ ] One `CommandRegistry`: every action is a command with an id
 - [ ] Command Palette as an in-scene overlay, not a `Popup`
 - [ ] Emacs and CUA keymaps at least, with user overrides on top
+- [ ] One QuickOpen-style picker for every list choice (themes, keymaps, recent items, a setting's values), in the overlay host (SHOULD)
+- [ ] A find bar in the scene wherever there is text to search: searches as you type with a count, Enter and Shift+Enter step, Escape closes it and returns focus (`FindReplaceBar`, Termina's `SearchBar`)
+
+## Window shell
+
+[Window shell](../window-shell/) · [Welcome page](../templates/welcome/) · [Confirm dialog](../templates/confirm-dialog/)
+
+- [ ] A Welcome page when there is nothing to restore, or an empty state that names the ways in with their chords (SHOULD)
+- [ ] Every destructive action asks first through one helper: the question names the thing, the button names the action in the `danger` style, Escape cancels; or the action is undoable instead
+
+## Icons and colour
+
+[Icons and colour](../icons-and-colour/)
+
+- [ ] Inter attached to every scene by a scene stylesheet; state colours named once on `.root` from the theme's roles, no fixed hex in a component rule
+- [ ] Readable text in `-color-fg-muted` or stronger, `-color-fg-emphasis` on an emphasis fill; a pure contrast test over the stylesheets (SHOULD)
+- [ ] Icons as themed SVG paths in one `Icons` class, one style class per family, the same glyph for an action everywhere it is reached
+
+## Toolbars and tooltips
+
+[Toolbars and tooltips](../toolbars-and-tooltips/)
+
+- [ ] Icon-only buttons built by one helper that sets the tooltip and the accessible name (`Icons.button`, `Icons.name`)
+- [ ] Toolbar buttons out of the Tab order; every tooltip names the command and its chord from the active keymap
+- [ ] Groups separated by spacing on one chrome band, no hairlines; a toggle wears `:open` while it is on (SHOULD)
+
+## Tabs and panels
+
+[Tabs and tool panels](../tabs-and-panels/)
+
+- [ ] One tab header carries the states: `•` and amber italic for unsaved, a pin and bold for pinned, muted italic for read-only (`TabHeaders`)
+- [ ] Bulk close skips pinned tabs, and Reopen Closed Tab brings the last one back with its caret (`ClosedTabs`)
+- [ ] Panels toggled by commands, with side, order and divider positions restored on the next launch (`ToolWindowManager`) (SHOULD)
 
 ## Menus
 
@@ -57,6 +90,15 @@ document. Click **Use this template**, then run `scripts/rename.sh <AppName> <pa
 - [ ] Menu rows are commands: icon, title and chord from the registry and the active keymap, no `KeyCombination` accelerators
 - [ ] Right-click menus close on a press anywhere outside them and never stack (`ContextMenuDismissal` installed at startup)
 - [ ] Right-click menus open from the Menu key and Shift+F10 at the selected row (`RowContextMenu`)
+
+## Tray and background
+
+[Tray and background](../tray-and-background/) (for an app that keeps working without its window)
+
+- [ ] The shared `tray/` package: StatusNotifierItem on Linux, AWT elsewhere, created off the FX thread, and the app fully usable without one
+- [ ] Closing the window hides it only while an icon is up and the setting says so; Quit is explicit and one path
+- [ ] Start at login writes the OS entry (XDG autostart, LaunchAgent, `HKCU` Run) with no setting beside it, `--minimized` behind the icon (SHOULD)
+- [ ] Desktop notifications through one `Notifier`, off the FX thread, one switch per event
 
 ## Settings
 

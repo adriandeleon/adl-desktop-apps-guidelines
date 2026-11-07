@@ -24,7 +24,7 @@ UI, UX and platform rules for the family of JavaFX desktop apps — [Editora](ht
 [nux](https://github.com/adriandeleon/nux). Editora is the reference implementation: every rule names the class
 or file to copy from.
 
-**Pauta 1.1.0 · 6 November 2026.** The version and date live in `package.json`; [CHANGELOG.md](CHANGELOG.md) says what each edition changed.
+**Pauta 1.2.0 · 6 November 2026.** The version and date live in `package.json`; [CHANGELOG.md](CHANGELOG.md) says what each edition changed.
 
 📖 **Read it at [adriandeleon.github.io/adl-desktop-apps-guidelines](https://adriandeleon.github.io/adl-desktop-apps-guidelines/)**
 — or download the [PDF](https://adriandeleon.github.io/adl-desktop-apps-guidelines/downloads/adl-desktop-apps-guidelines.pdf)
@@ -40,7 +40,7 @@ example of every repository document. Click **Use this template**, then run `scr
 |---|---|
 | Start here | Principles · New app checklist |
 | Foundations | Platform baseline (JDK 25, JavaFX 27, AtlantaFX, NullAway, Maven Wrapper) · Repository documents · Code quality gates (90% coverage) |
-| Experience | Keyboard first & Command Palette · Window shell · Settings (search, Git/GitHub sync) · Diagnostics (Message Log, Debug Log, updates, Report a Problem) · Command line · Internationalization |
+| Experience | Keyboard first & Command Palette · Window shell · Menus (menu bar, right-click menus) · Settings (search, Git/GitHub sync) · Diagnostics (Message Log, Debug Log, updates, Report a Problem) · Command line · Internationalization |
 | Shipping | jpackage + JReleaser installers for macOS / Linux / Windows on arm64 and x64, signing, CI |
 | The family | Feature matrix of the six apps · Shared features · Gaps per app |
 

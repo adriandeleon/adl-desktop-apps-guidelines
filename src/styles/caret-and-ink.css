@@ -217,3 +217,16 @@ dialog.lightbox .lightbox-close { position: fixed; top: max(0.75rem, env(safe-ar
 .checklist-progress .reset:focus-visible { outline: 2px solid var(--sl-color-accent); outline-offset: 2px; }
 .checklist-progress .note { flex-basis: 100%; font-size: var(--sl-text-xs); color: var(--sl-color-gray-3); }
 @media (prefers-reduced-motion: reduce) { .checklist-progress .fill { transition: none; } }
+
+/* Editions rendered from CHANGELOG.md (src/components/Changelog.astro): What's new on the overview, every edition on
+   the Changelog page. */
+.editions .edition + .edition { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--rule); }
+.editions .edition h2 { display: flex; align-items: baseline; gap: 0.75rem; flex-wrap: wrap; }
+.editions .edition h2 a { color: inherit; text-decoration: none; }
+.editions .edition h2 a:hover { color: var(--sl-color-accent); }
+.editions .edition h2 time { font-family: var(--sl-font-mono); font-size: var(--sl-text-sm); font-weight: 400; color: var(--sl-color-gray-3); }
+.editions .edition-meta { font-size: var(--sl-text-sm); color: var(--sl-color-gray-3); font-variant-numeric: tabular-nums; }
+.editions .edition-meta strong { color: var(--sl-color-white); }
+.editions.news { border: 1px solid var(--sl-color-gray-5); border-radius: 10px; padding: 1rem 1.25rem 1.25rem; background: var(--sl-color-gray-6); }
+.editions.news h3 { font-size: var(--sl-text-base); margin-top: 1.25rem; }
+.editions.news ul { font-size: var(--sl-text-sm); }

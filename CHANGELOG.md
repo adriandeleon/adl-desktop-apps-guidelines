@@ -7,8 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-11-06
+
 ### Added
 
+- **Menus**, a new Experience page. The menu bar and right-click menus share one look: Inter 14 px rows of 34 px, a
+  22 px icon column with the command's own glyph, the chord right-aligned in its own column at 11 px in the keyboard
+  colour, radius 8 and a shadow that falls below the card. Right-click menus MUST open one at a time, close on a press
+  anywhere outside them (including inside the control they were opened on, which JavaFX's auto-hide exempts), close on
+  Escape and open from the Menu key at the selected row. Two annotated mockups, a spec table and the behaviour, all
+  from Editora's `MainMenuBar`, `ContextMenuDismissal`, `RowContextMenu` and `LazyContextMenu`. The checklist gains a
+  Menus group and the feature matrix three menu rows.
+- **What's new, and a Changelog page.** The overview shows the current edition's changes; the Changelog page lists
+  every edition under its own anchor. Both are rendered from `CHANGELOG.md`, so there is nothing to keep in step.
 - **Five more principles**, from what the apps already do: speed comes first; never claim what is not true;
   one source of truth for each fact; separate the decision from the UI, then test it; verify by driving the
   real app. The principles are now thirteen, in two groups: for the people using the apps and for the people
@@ -31,6 +42,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Every content change is an edition.** A change to a page bumps the version and gets its changelog section in the
+  same commit; `AGENTS.md` says so and how.
 - **The New app checklist can be ticked.** Ticks are kept in the reader's browser, a line above the groups counts
   them, and *Clear ticks* resets them.
 - **Principles opens with Editora's keymap picker** instead of repeating the overview's screenshot.

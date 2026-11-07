@@ -22,6 +22,7 @@
       "items": [
         "keyboard",
         "window-shell",
+        "menus",
         "settings",
         "diagnostics",
         "command-line",

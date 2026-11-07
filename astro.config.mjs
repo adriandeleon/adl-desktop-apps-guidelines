@@ -46,6 +46,7 @@ export default defineConfig({
       sidebar: [
         { label: "Overview", link: "/" },
         ...pages.groups.map((g) => ({ label: g.label, items: g.items.map((slug) => ({ slug })) })),
+        { label: "Changelog", link: "/changelog/" },
       ],
     }),
   ],

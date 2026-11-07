@@ -88,6 +88,7 @@ title and chord come from the registry and the active keymap. Reference: Editora
   the way in. Torrenta uses `:on` for Simple mode and `:active` for the alternative speed limit.
 - **MUST. The toolbar never holds the only way to an action.** Every icon in the customizable cluster is also in the
   menus and the palette; that is what makes it safe to hide icons in a narrow window and to let the user remove them.
+  Editora's `toolbar/ToolbarCatalog.java` names each item by the id of the command it runs.
 - **MAY. A customizable toolbar.** Editora's cluster is a list of catalog ids in Settings (`toolbarLayout`),
   sanitized on read and shared by every window. The bar's right-click menu offers *Customize Toolbar…* (or *Done*),
   *Configure…* (the Settings page) and *Restore Default*. In customize mode the bar tints, buttons drag to reorder with

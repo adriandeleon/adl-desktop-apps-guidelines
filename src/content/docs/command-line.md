@@ -18,6 +18,7 @@ Every app accepts at least:
   local endpoint and exits (`ipc/SingleInstance`). On macOS, `openFiles` Apple Events reach the running
   app (`MacOpenFiles`). An advisory lock tells two processes on one folder about each other
   (`config/InstanceLock`).
-- The headless-AWT guard is the first statement of `main`.
+- The headless-AWT guard (`java.awt.headless=true`) is set at the top of `main`, before any AWT class loads
+  (`App.main`).
 - A `.app` launched from Finder inherits a stripped `PATH`: resolve external tools through the login shell's
-  `PATH`.
+  `PATH` (`process/ProcessRunner.augmentedPath`).

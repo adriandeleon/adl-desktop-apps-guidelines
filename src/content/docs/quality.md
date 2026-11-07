@@ -19,7 +19,8 @@ description: "NullAway, coverage floors and the guard tests that pay for themsel
   - *Contrast*: text tokens keep their ratios in every theme (`StyleContrastTest`).
   - *Release supply chain*: signing and attestation steps stay where they are (`ReleaseSupplyChainTest`).
 - **No sleeps in tests.** Own workers and FX callbacks with a scope (`AsyncTestScope`) and use latches.
-- **A test window writes only inside its temp folders**, never in the real home directory.
+- **A test window writes only inside its temp folders**, never in the real home directory. The command sweep
+  checks it after running every command (`CommandSweepFxTest.leftInTheHomeDirectory`).
 - **Verify UI work in the running app** ([principle 13](../principles/#for-the-people-building-them)): a capture
   hook or headless screenshot of the real window, with real key and mouse events, before a UI change is called
   done.

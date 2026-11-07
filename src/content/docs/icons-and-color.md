@@ -30,7 +30,8 @@ timestamps.
   neither bundles nor names Inter, and JavaFX does not fall through a font-family list, so without the sheet the
   whole interface renders in the platform's "System" face.
 - **MUST.** Bundle the font. Do not map the platform's own UI font (an earlier macOS-only sheet used San Francisco,
-  which JavaFX faux-bolds; Inter has a real bold on every platform).
+  which JavaFX faux-bolds; Inter has a real bold on every platform). Editora's four faces are in
+  `src/main/resources/com/editora/fonts/inter/`.
 - Termina and Torrenta carry the same sheet and the same four Inter faces. Modula is the stated exception: IBM Plex
   Mono everywhere, because every reading on a radio is a number (see *Before adding a setting* in
   [Settings](../settings/)).

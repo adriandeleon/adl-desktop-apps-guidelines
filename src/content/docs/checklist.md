@@ -50,6 +50,14 @@ document. Click **Use this template**, then run `scripts/rename.sh <AppName> <pa
 - [ ] Command Palette as an in-scene overlay, not a `Popup`
 - [ ] Emacs and CUA keymaps at least, with user overrides on top
 
+## Menus
+
+[Menus](../menus/)
+
+- [ ] Menu rows are commands: icon, title and chord from the registry and the active keymap, no `KeyCombination` accelerators
+- [ ] Right-click menus close on a press anywhere outside them and never stack (`ContextMenuDismissal` installed at startup)
+- [ ] Right-click menus open from the Menu key and Shift+F10 at the selected row (`RowContextMenu`)
+
 ## Settings
 
 [Settings](../settings/)

@@ -7,8 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-11-06
+
 ### Added
 
+- **Menus**, a new Experience page. The menu bar and right-click menus share one look: Inter 14 px rows of 34 px, a
+  22 px icon column with the command's own glyph, the chord right-aligned in its own column at 11 px in the keyboard
+  colour, radius 8 and a shadow that falls below the card. Right-click menus MUST open one at a time, close on a press
+  anywhere outside them (including inside the control they were opened on, which JavaFX's auto-hide exempts), close on
+  Escape and open from the Menu key at the selected row. Two annotated mockups, a spec table and the behaviour, all
+  from Editora's `MainMenuBar`, `ContextMenuDismissal`, `RowContextMenu` and `LazyContextMenu`. The checklist gains a
+  Menus group and the feature matrix three menu rows.
+- **What's new, and a Changelog page.** The overview shows the current edition's changes; the Changelog page lists
+  every edition under its own anchor. Both are rendered from `CHANGELOG.md`, so there is nothing to keep in step.
 - **Its own domain: [pauta-project.dev](https://pauta-project.dev/).** The old github.io address redirects there.
 - **Five more principles**, from what the apps already do: speed comes first; never claim what is not true;
   one source of truth for each fact; separate the decision from the UI, then test it; verify by driving the
@@ -32,6 +43,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Every content change is an edition.** A change to a page bumps the version and gets its changelog section in the
+  same commit; `AGENTS.md` says so and how.
+- **The New app checklist can be ticked.** Ticks are kept in the reader's browser, a line above the groups counts
+  them, and *Clear ticks* resets them.
+- **Principles opens with Editora's keymap picker** instead of repeating the overview's screenshot.
+- **The "not found" dot is easier to see**, in dark mode especially: an outline in the muted text colour.
+- **The README links the new app template** and describes the dot and pill conventions as they now work.
 - **Levels read the same everywhere.** MUST, SHOULD and MAY render as the level pill in prose and lists too
   ("**MUST.**", "(SHOULD)"), not only in table cells; on the site and in the PDF.
 - **Rule tables stack on a phone.** A table with a Level column turns each row into a card with its level and
@@ -40,7 +58,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Screenshot galleries leave no gap.** Galleries are two to a row; with an odd count the first screenshot spans
   the row.
 - **The overview is reorganised.** The Editora screenshot sits beside the title, with the edition under the
-  actions; *Where to start* and *How to read it* come before the family, which is now six even tiles with Editora
+  actions (side by side from 64rem, so the three actions stay on one row; stacked below that); *Where to start*
+  and *How to read it* come before the family, which is now six even tiles with Editora
   marked as the reference.
 
 ### Fixed

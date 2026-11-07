@@ -192,3 +192,35 @@ ol.anatomy > li > .pin { margin-top: 0.1rem; }
 .m-states { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
 .m-state { background: var(--m-surface); border: 1px solid var(--m-border); border-radius: 8px; padding: 10px 12px; font-size: 12px; min-width: 200px; }
 .m-state .cap { font: 600 10px/1 var(--m-mono); color: var(--m-subtle); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+
+/* Menus: Inter 14 px rows 34 px high (padding 8 × 12), a 22 px icon column, the chord right-aligned in the
+   keyboard colour at 11 px, radius 8 and a shadow that falls below the card. */
+.m-menu { width: max-content; min-width: 230px; padding: 4px 0; border-radius: 8px; font-size: 14px; box-shadow: 0 16px 16px -6px rgb(27 30 42 / 0.28); }
+.m-menu .mi { position: relative; display: flex; align-items: center; height: 34px; padding: 8px 12px; white-space: nowrap; }
+.m-menu .mi .ic { width: 22px; flex: none; display: flex; align-items: center; }
+.m-menu .mi .ic svg { width: 15px; height: 15px; fill: var(--m-muted); }
+.m-menu .mi .t { margin-left: 8px; color: var(--m-fg); }
+.m-menu .mi .k { margin-left: auto; padding-left: 18px; font: 11px/1 var(--m-font); color: var(--m-key); min-width: 56px; text-align: right; }
+.m-menu .mi .k.ghost { visibility: hidden; }
+.m-menu .mi .arrow { margin-left: auto; padding-left: 18px; color: var(--m-muted); font-size: 16px; line-height: 1; }
+.m-menu .mi.sub .k.ghost + .arrow { margin-left: 8px; }
+.m-menu .mi.off .t { color: var(--m-subtle); }
+.m-menu .mi.off .ic svg { opacity: 0.5; }
+.m-menu .mi.danger .t { color: var(--m-red); }
+.m-menu .sep { position: relative; height: 1px; margin: 4px 0; background: var(--m-border); }
+.m-menu.ctx { position: absolute; left: 92px; top: 30px; }
+
+/* The menu bar: a band of buttons with the open menu dropped under its own button. */
+.m-menubar-stage { position: relative; width: 560px; height: 300px; margin-inline-start: 26px; }
+.m-menubar { display: flex; align-items: center; gap: 0; padding: 0 4px; height: 28px; border-radius: 6px 6px 0 0; background: var(--m-sunken); border: 1px solid var(--m-border); font-size: 13px; color: var(--m-fg); }
+.m-menubar .mb { position: relative; padding: 3px 10px; border-radius: 4px; }
+.m-menubar .mb.on { background: var(--m-sel); color: var(--m-accent-fg); font-weight: 600; }
+.m-menubar-stage .m-menu { position: absolute; left: 4px; top: 30px; }
+
+/* A tab strip with a tab's right-click menu under the pointer. */
+.m-ctx-stage { position: relative; width: 460px; height: 470px; margin-inline: 26px; }
+.m-tabs { display: flex; gap: 2px; padding: 4px 6px 0; height: 32px; border-radius: 6px 6px 0 0; background: var(--m-sunken); border: 1px solid var(--m-border); border-bottom: 0; font-size: 12px; color: var(--m-muted); }
+.m-tabs .tab { display: flex; align-items: center; gap: 8px; padding: 0 12px; border-radius: 5px 5px 0 0; }
+.m-tabs .tab.on { background: var(--m-surface); color: var(--m-fg); box-shadow: inset 0 2px 0 var(--m-accent); }
+.m-tabs .tab.dirty { color: var(--m-amber); }
+.m-tabs .tab .x { color: var(--m-subtle); }

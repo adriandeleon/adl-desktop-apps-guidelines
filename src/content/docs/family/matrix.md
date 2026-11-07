@@ -4,7 +4,7 @@ description: "Which of the six apps has which platform piece, release step and f
 tableOfContents: false
 ---
 
-Surveyed on 2026-11-05 from each repository's default branch. ● has it, ◐ partly or differently,
+Surveyed on 2026-11-05 from each repository's default branch (the menu rows on 2026-11-06). ● has it, ◐ partly or differently,
 — not found.
 
 **What the apps are.**
@@ -65,6 +65,9 @@ Surveyed on 2026-11-05 from each repository's default branch. ● has it, ◐ pa
 | Command registry + Command Palette (in-scene overlay) | ● | ● | ● | ● | ● | ● |
 | Keymap presets | ● 9 | — | — | — | — | — |
 | Keybinding editor / shortcuts reference | ● | ● | ● | — | ◐ | — |
+| Menu rows carry the command's icon | ● | ● | ● | — | ● | — tray only |
+| Chord shown beside each menu row | ● own column | ◐ native accelerator | — | ● | ● | — |
+| Right-click menu: one at a time, any outside press closes it | ● every window | ◐ stock auto-hide | ◐ terminal view | ◐ radio pane | ◐ stock auto-hide | — |
 | Settings window | ● | ● | ● | ● | ● | ● |
 | Settings search | ● | ● | ● | — | — | — |
 | Settings sync (Git / GitHub via `gh`) | ● | ● | ● | — | — | — |

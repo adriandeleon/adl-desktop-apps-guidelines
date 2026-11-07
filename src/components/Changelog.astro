@@ -1,0 +1,48 @@
+---
+// CHANGELOG.md (Keep a Changelog) rendered on the site: the current edition as "What's new" on the overview, and
+// every edition on the Changelog page, each under its own anchor. The file stays the one source of what changed.
+import { createMarkdownProcessor } from "@astrojs/markdown-remark";
+import pkg from "../../package.json";
+import text from "../../CHANGELOG.md?raw"; // bundled at build time, so the page needs no file at run time
+
+interface Props {
+  /** Only the edition package.json names (the overview's What's new); otherwise every edition. */
+  latest?: boolean;
+}
+const { latest = false } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+
+const processor = await createMarkdownProcessor();
+const editions: { version: string; date?: string; html: string }[] = [];
+for (const chunk of text.split(/^## /m).slice(1)) {
+  const nl = chunk.indexOf("\n");
+  const head = chunk.slice(0, nl).trim();
+  const body = chunk.slice(nl + 1).trim();
+  const m = head.match(/^\[([^\]]+)\](?:\s*-\s*(\d{4}-\d{2}-\d{2}))?/);
+  if (!m || !body) continue; // an empty Unreleased section says nothing
+  editions.push({ version: m[1], date: m[2], html: (await processor.render(body)).code });
+}
+const current = editions.find((e) => e.version === pkg.version) ?? editions.find((e) => e.date);
+const shown = latest ? (current ? [current] : []) : editions;
+const long = (d: string) =>
+  new Date(`${d}T00:00:00Z`).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+---
+
+<div class:list={["editions", { news: latest }]}>
+  {shown.map((e) => (
+    <section class="edition" id={latest ? undefined : e.version.toLowerCase()}>
+      {latest ? (
+        <p class="edition-meta">
+          Edition <strong>{e.version}</strong>{e.date && <> · <time datetime={e.date}>{long(e.date)}</time></>} ·{" "}
+          <a href={`${base}changelog/`}>All editions</a>
+        </p>
+      ) : (
+        <h2>
+          <a href={`#${e.version.toLowerCase()}`}>{e.version}</a>
+          {e.date && <time datetime={e.date}>{long(e.date)}</time>}
+        </h2>
+      )}
+      <Fragment set:html={e.html} />
+    </section>
+  ))}
+</div>

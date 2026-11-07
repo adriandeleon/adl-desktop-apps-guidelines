@@ -24,11 +24,15 @@ UI, UX and platform rules for the family of JavaFX desktop apps — [Editora](ht
 [nux](https://github.com/adriandeleon/nux). Editora is the reference implementation: every rule names the class
 or file to copy from.
 
-**Pauta 1.1.0 · 6 November 2026.** The version and date live in `package.json`; [CHANGELOG.md](CHANGELOG.md) says what each edition changed.
+**Pauta 1.2.0 · 6 November 2026.** The version and date live in `package.json`; [CHANGELOG.md](CHANGELOG.md) says what each edition changed.
 
 📖 **Read it at [pauta-project.dev](https://pauta-project.dev/)**
 — or download the [PDF](https://pauta-project.dev/downloads/adl-desktop-apps-guidelines.pdf)
 or the [single Markdown file](https://pauta-project.dev/downloads/adl-desktop-apps-guidelines.md).
+
+🧰 **Starting a new app?** Use [adl-desktop-app-template](https://github.com/adriandeleon/adl-desktop-app-template),
+a GitHub template repository that meets every MUST: a runnable app with its tests, CI and release workflows, and an
+example of every repository document. Click **Use this template**, then run `scripts/rename.sh <AppName> <package>`.
 
 ## What it covers
 
@@ -36,7 +40,7 @@ or the [single Markdown file](https://pauta-project.dev/downloads/adl-desktop-ap
 |---|---|
 | Start here | Principles · New app checklist |
 | Foundations | Platform baseline (JDK 25, JavaFX 27, AtlantaFX, NullAway, Maven Wrapper) · Repository documents · Code quality gates (90% coverage) |
-| Experience | Keyboard first & Command Palette · Window shell · Settings (search, Git/GitHub sync) · Diagnostics (Message Log, Debug Log, updates, Report a Problem) · Command line · Internationalization |
+| Experience | Keyboard first & Command Palette · Window shell · Menus (menu bar, right-click menus) · Settings (search, Git/GitHub sync) · Diagnostics (Message Log, Debug Log, updates, Report a Problem) · Command line · Internationalization |
 | Shipping | jpackage + JReleaser installers for macOS / Linux / Windows on arm64 and x64, signing, CI |
 | The family | Feature matrix of the six apps · Shared features · Gaps per app |
 
@@ -52,8 +56,9 @@ npm run print      # PDF + single Markdown into public/downloads (needs pandoc a
 npm run build      # static site into dist/
 ```
 
-Table conventions: a cell starting with `●`, `◐` or `—` renders as a status dot (the rest of the cell is its note);
-a cell starting with `MUST`, `SHOULD` or `MAY` renders as a level pill.
+Conventions: in a feature matrix (a table whose header names the apps), a cell starting with `●`, `◐` or `—`
+renders as a status dot, the rest of the cell being its note; elsewhere a `—` stays a dash. `MUST`, `SHOULD` and
+`MAY` render as a level pill wherever they appear in prose, lists or tables, including `**MUST.**` and `(SHOULD)`.
 
 Every push to `master` builds the downloads and the site and deploys them to GitHub Pages.
 

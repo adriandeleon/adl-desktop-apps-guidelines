@@ -24,6 +24,7 @@ hero:
 
 import { CardGrid, LinkCard } from "@astrojs/starlight/components";
 import { Image } from "astro:assets";
+import Changelog from "../../components/Changelog.astro";
 import editora from "../../assets/shots/editora-palette.png";
 import torrenta from "../../assets/shots/torrenta-main.png";
 import termina from "../../assets/shots/termina-main.png";
@@ -42,6 +43,10 @@ export const icon = (app) => `${base}icons/${app}.svg`;
   <LinkCard title="Feature matrix" href={`${base}family/matrix/`} description="Which of the six apps has which piece today." />
   <LinkCard title="Gaps per app" href={`${base}family/gaps/`} description="What each app still misses against this guide." />
 </CardGrid>
+
+## What's new
+
+<Changelog latest />
 
 ## How to read it
 

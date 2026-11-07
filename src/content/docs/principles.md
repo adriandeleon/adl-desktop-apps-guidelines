@@ -3,7 +3,7 @@ title: "Principles"
 description: "The thirteen rules every other page follows from: ten for the people using the apps, three for the people building them."
 ---
 
-![Editora editing a Java file with the project tree, minimap and status bar](../../assets/shots/editora-hero.png "Editora, the reference implementation: one window where every action is a command, reachable from a keymap or the palette.")
+![Editora's keymap picker listing Emacs, CUA, Sublime Text, Visual Studio Code and IntelliJ IDEA over a Java file](../../assets/shots/editora-keymaps.png "Editora's keymap picker: five keymaps bind keys to the same commands.")
 
 These come from what the six apps already do. Editora is the reference; each principle names where else it is
 written down.

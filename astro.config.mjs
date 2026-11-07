@@ -29,6 +29,7 @@ export default defineConfig({
       head: [
         { tag: "script", attrs: { src: at("lightbox.js"), defer: true } },
         { tag: "script", attrs: { src: at("mock-fit.js"), defer: true } },
+        { tag: "script", attrs: { src: at("checklist.js"), defer: true } },
         { tag: "meta", attrs: { property: "og:image", content: absolute("og.png") } },
         { tag: "meta", attrs: { property: "og:image:width", content: "1280" } },
         { tag: "meta", attrs: { property: "og:image:height", content: "640" } },
@@ -53,6 +54,7 @@ export default defineConfig({
       sidebar: [
         { label: "Overview", link: "/" },
         ...pages.groups.map((g) => ({ label: g.label, items: g.items.map((slug) => ({ slug })) })),
+        { label: "Changelog", link: "/changelog/" },
       ],
     }),
   ],

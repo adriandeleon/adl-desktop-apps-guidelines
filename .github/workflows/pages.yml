@@ -11,7 +11,8 @@ permissions:
 
 concurrency:
   group: pages-${{ github.ref }}
-  cancel-in-progress: true
+  # A canceled run on master would leave its edition untagged and unarchived.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
@@ -22,6 +23,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # the edition check compares with the base commit and the tags
+      - name: Check the edition
+        # One edition per change, numbered above master's and every tag (scripts/check-edition.mjs).
+        if: github.event_name != 'workflow_dispatch'
+        run: node scripts/check-edition.mjs "${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || github.event.before }}"
       - name: Install pandoc
         # From pandoc's own GitHub release, not apt: the runner's apt mirror has hung for over six minutes.
         timeout-minutes: 3
@@ -39,14 +46,17 @@ jobs:
         uses: withastro/action@v6
         with:
           node-version: 24
-      - name: Keep this edition on the versions branch
+      - name: Tag the edition and keep it on the versions branch
+        # Only CI tags: v<version> on master's commit, once (scripts/check-edition.mjs --tag).
         if: github.event_name == 'push'
         env:
           GIT_AUTHOR_NAME: github-actions[bot]
           GIT_AUTHOR_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
           GIT_COMMITTER_NAME: github-actions[bot]
           GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
-        run: ./scripts/archive-edition.sh --push
+        run: |
+          node scripts/check-edition.mjs --tag "${{ github.event.before }}"
+          ./scripts/archive-edition.sh --push
 
   deploy:
     if: github.event_name != 'pull_request'

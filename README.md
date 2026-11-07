@@ -72,7 +72,8 @@ A rule is a list item that opens with its ID and level, `**KBD-07 · MUST.**`, f
 
 Every push to `master` builds the downloads and the site and deploys them to GitHub Pages. The site carries every
 edition: the one just built at `/latest/` and `/<version>/`, the earlier ones from the `versions` branch, where CI
-archives each edition it deploys.
+archives each edition it deploys. CI also tags each new edition `v<version>`, and on every pull request
+`scripts/check-edition.mjs` fails a change that adds more than one edition or reuses a number.
 
 ## License
 

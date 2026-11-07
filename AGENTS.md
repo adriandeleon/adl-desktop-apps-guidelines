@@ -11,6 +11,8 @@ Editora (`../Editora`) is the reference implementation.
   from the `versions` branch, the root redirects (see **Editions on the site**)
 - `npm run preview` — serves `dist/` as deployed, at http://localhost:4321/
 - `npm run check` — fails on a malformed rule (`scripts/check-rules.mjs`); `npm run build` runs it first
+- `node scripts/check-edition.mjs` — fails when this branch's edition clashes with `origin/master` or a tag (see
+  **Several sessions at once**)
 
 ## Rules
 
@@ -51,8 +53,19 @@ Editora (`../Editora`) is the reference implementation.
 - Never commit `dist/`, `build/` or `public/downloads/`.
 - **Editions.** `package.json` holds the version and `guidelines.date`; the footer, the hero, *What's new*, the
   Changelog page, the PDF and the Markdown download read them from there. To publish one: set the version and the date
-  in `package.json`, head its changelog section `## [x.y.z] - YYYY-MM-DD`, commit, tag `vx.y.z`. A new or stronger
-  rule is a minor version, a new MUST that existing apps fail is a major one, wording and facts a patch.
+  in `package.json`, head its changelog section `## [x.y.z] - YYYY-MM-DD`, commit. A new or stronger rule is a minor
+  version, a new MUST that existing apps fail is a major one, wording and facts a patch.
+- **Several sessions at once.** Other sessions may be working in this repository at the same time, so:
+  - Work in your own worktree and branch, never in a checkout another session is using.
+  - Choose the version last, just before you push: `git fetch origin`, rebase on `origin/master`, and take the next
+    number after `origin/master`'s version and the newest `v*` tag on origin (`git ls-remote --tags origin`). If
+    someone else took it meanwhile, renumber; don't stack a second edition on top.
+  - One edition per branch. A change that grows keeps its one changelog section and raises its number if it must,
+    instead of adding sections.
+  - Never create or push a tag. CI tags `v<version>` on `master`'s commit after the merge.
+  - Run `node scripts/check-edition.mjs` before you push. CI runs it on every pull request and push to `master`; it
+    fails on more than one edition in a change, a number at or below master's or a tag on origin, a content change
+    without an edition, or a changelog that doesn't match `package.json`.
 - **Editions on the site.** Every page is served under its edition: `https://pauta-project.dev/1.4.0/principles/` is
   permanent, `https://pauta-project.dev/latest/principles/` is always the newest edition, and the unnumbered address
   redirects to `latest/`. `scripts/build-site.mjs` (`npm run build`) builds this checkout twice, with `PAUTA_PATH`

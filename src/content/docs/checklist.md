@@ -51,7 +51,7 @@ from a later edition.
 - [ ] Command Palette as an in-scene overlay, not a `Popup`
 - [ ] Emacs and CUA keymaps at least, with user overrides on top
 - [ ] One QuickOpen-style picker for every list choice (themes, keymaps, recent items, a setting's values), in the overlay host (SHOULD)
-- [ ] A find bar in the scene wherever there is text to search: searches as you type with a count, Enter and Shift+Enter step, Escape closes it and returns focus (`FindReplaceBar`, Termina's `SearchBar`)
+- [ ] A find bar in the scene wherever there is text to search: searches as you type with a count, Enter and Shift+Enter step, Escape closes it and returns focus (`FindReplaceBar`, Termina's [`SearchBar`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/SearchBar.java))
 
 ## Window shell
 

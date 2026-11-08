@@ -4,17 +4,17 @@ description: "The family's start page: Start actions with their chords, recent i
 ---
 
 The page shown when there is no session to restore, and the answer to "what do I do now?". The text rules are in
-Editora's `ui/WelcomeText.java` and the strings under `welcome.*`.
+Editora's [`ui/WelcomeText.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WelcomeText.java) and the strings under `welcome.*`.
 
 ## Rules
 
 - **WELC-01 · SHOULD.** An app that opens files or projects shows a Welcome page when there is no session to restore.
   - *Check (code):* startup with nothing restored opens the Welcome page.
-  - *Reference:* Editora `ui/WelcomePane.java`, `MainController.addWelcomeTab`.
+  - *Reference:* Editora [`ui/WelcomePane.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WelcomePane.java), [`MainController.addWelcomeTab`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java).
 - **WELC-02 · SHOULD.** An app whose window *is* its content shows its own empty state instead, with the same
   ingredients: the ways in, each with its chord.
   - *Check (by hand):* start the app with nothing in it and read the empty state's keys.
-  - *Reference:* Torrenta `ui/Welcome.java` (see In the apps below).
+  - *Reference:* Torrenta [`ui/Welcome.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/Welcome.java) (see In the apps below).
 
 ## Anatomy
 
@@ -88,41 +88,41 @@ Editora's `ui/WelcomeText.java` and the strings under `welcome.*`.
   `--no-session`), by the `view.welcome` command (Help → Welcome Page), and when the tab strip is empty after a
   project swap. Standalone diff startup suppresses it while its worker reads the files.
   - *Check (code):* those three paths open the one Welcome tab; the diff startup holds a flag that skips it.
-  - *Reference:* Editora `MainController.addWelcomeTab`, `showWelcomeIfNoTabs`; `WindowSessionCoordinator`
+  - *Reference:* Editora [`MainController.addWelcomeTab`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java), `showWelcomeIfNoTabs`; [`WindowSessionCoordinator`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowSessionCoordinator.java)
     (`suppressWelcome`).
 - **WELC-04 · SHOULD.** Closing the last file tab does not bring the page back. The editor area shows its own quiet
   hint instead: Open File, Open Folder, Command Palette and Welcome Page, each with its chord, and takes focus so
   chords still reach the window.
   - *Check (test):* closing the last tab shows the hint and opening a tab hides it.
-  - *Reference:* Editora `ui/EditorEmptyState.java`, `EditorEmptyStateFxTest`.
+  - *Reference:* Editora [`ui/EditorEmptyState.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/EditorEmptyState.java), [`EditorEmptyStateFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/EditorEmptyStateFxTest.java).
 - **WELC-05 · SHOULD.** The page is rebuilt on every show, so the recents, the Projects and Git toggles, the keymap and
   the theme are current. A refresh keeps the focus where it was.
   - *Check (code):* showing the page calls `refresh`, which re-requests focus when the page had it.
-  - *Reference:* Editora `WelcomePane.refresh`.
+  - *Reference:* Editora [`WelcomePane.refresh`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WelcomePane.java).
 - **WELC-06 · SHOULD.** The recent lists offer no file that no longer exists and no project whose root is gone. Remote
   files are kept unchecked.
   - *Check (code):* the recent files pass through the same filter as the toolbar's dropdown; projects are kept only
     when their root is a directory.
-  - *Reference:* Editora `RecentFiles.showable`, `WelcomePane`.
+  - *Reference:* Editora [`RecentFiles.showable`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/RecentFiles.java), [`WelcomePane`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WelcomePane.java).
 - **WELC-07 · SHOULD.** Remove from recent files asks first, through the caller, then refreshes the page.
   - *Check (code):* the remover the page is given shows a confirmation before it removes the entry.
-  - *Reference:* Editora `WelcomePane.setRecentRemover`; `MainController` (`dialog.removeRecent.*`).
+  - *Reference:* Editora [`WelcomePane.setRecentRemover`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WelcomePane.java); [`MainController`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java) (`dialog.removeRecent.*`).
 - **WELC-08 · SHOULD.** The digits 1 to 9 open the numbered entries: typed characters only, with no modifier, so chords
   and Enter are untouched.
   - *Check (code):* the digit handler is on `KEY_TYPED` and ignores Ctrl, Alt and Meta.
-  - *Reference:* Editora `WelcomePane.onKeyTyped`.
+  - *Reference:* Editora [`WelcomePane.onKeyTyped`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WelcomePane.java).
 - **WELC-09 · SHOULD.** Saved SFTP sites appear as their own section; a click opens the connection form prefilled.
   The section is hidden when there are none.
   - *Check (code):* the page adds a Remote Sites section only when the saved-sites list is not empty.
-  - *Reference:* Editora `WelcomePane` (`remoteSites`, `welcome.remote`).
+  - *Reference:* Editora [`WelcomePane`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WelcomePane.java) (`remoteSites`, `welcome.remote`).
 - **WELC-10 · SHOULD.** Customize runs `keymap.select` and `theme.setAppTheme`; a change made there re-renders the page,
   chords included.
   - *Check (code):* the Customize links run those two commands.
-  - *Reference:* Editora `WelcomePane` (`customizeRow`).
+  - *Reference:* Editora [`WelcomePane`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WelcomePane.java) (`customizeRow`).
 - **WELC-11 · SHOULD.** The Welcome tab is not a document: its menu is Close only, with no Save, Rename or Pin, and the
   title bar shows the app or project name, not a file.
   - *Check (code):* the Welcome tab's context menu holds one Close item.
-  - *Reference:* Editora `MainController.addWelcomeTab`.
+  - *Reference:* Editora [`MainController.addWelcomeTab`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java).
 
 ## Copy
 

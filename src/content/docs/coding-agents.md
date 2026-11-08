@@ -66,7 +66,7 @@ An app is built to one edition, the one `pauta.version` in its `pom.xml` names (
 MUSTs the app doesn't meet yet, and an agent that reads them will "fix" what nobody asked it to.
 
 Say so in the app's `AGENTS.md` ([Repository documents](../repository/)), next to the line that names the edition.
-The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s `AGENTS.md` already names its edition in its first lines;
+The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`AGENTS.md`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/AGENTS.md) already names its edition in its first lines;
 add the addresses:
 
 ```markdown

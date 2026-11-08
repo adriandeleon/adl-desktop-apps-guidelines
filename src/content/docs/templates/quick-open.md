@@ -14,12 +14,12 @@ states the rule; this page is the shape.
   branch to compare with.
   - *Check (code):* those choices are instances of one generic picker class; there is no second list-picker class or
     `ChoiceDialog` for them.
-  - *Reference:* Editora `ui/QuickOpen.java` (one generic class, instantiated more than seventy times), driven by
-    `PickerKeys`.
+  - *Reference:* Editora [`ui/QuickOpen.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java) (one generic class, instantiated more than seventy times), driven by
+    [`PickerKeys`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java).
 - **QOPEN-02 · SHOULD.** The picker is the palette's card in the shared in-scene overlay host, with a title naming the
   command over the field and a prompt in the field; never a `javafx.stage.Popup`.
   - *Check (code):* the picker shows its card through the overlay host and sets a title and a prompt text.
-  - *Reference:* Editora `QuickOpen.setOverlayHost`, `ui/OverlayHost.java`; the Spec table below.
+  - *Reference:* Editora [`QuickOpen.setOverlayHost`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java), [`ui/OverlayHost.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java); the Spec table below.
 
 ## Anatomy
 
@@ -66,50 +66,50 @@ states the rule; this page is the shape.
 - **QOPEN-03 · SHOULD.** The items are read fresh on every showing and snapshotted, so typing filters a stable list. A
   source that answers late (an outline the language server has not returned yet) calls `reload()`.
   - *Check (code):* `show` calls the items supplier; `reload` re-reads it and keeps the query.
-  - *Reference:* Editora `QuickOpen.show`, `QuickOpen.reload`.
+  - *Reference:* Editora [`QuickOpen.show`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java), [`QuickOpen.reload`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java).
 - **QOPEN-04 · SHOULD.** With nothing typed the list keeps the supplier's own order (recency for recent files, document
   order for symbols), with the current value pre-selected when there is one.
   - *Check (code):* the empty query passes the items through unsorted and selects the `setCurrentItem` value.
-  - *Reference:* Editora `QuickOpen.filter`, `setCurrentItem`.
+  - *Reference:* Editora [`QuickOpen.filter`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java), `setCurrentItem`.
 - **QOPEN-05 · SHOULD.** Typing ranks by fuzzy score, and ties keep the supplier's order, so rows do not shuffle under
   the cursor between keystrokes.
   - *Check (code):* the sort's last tiebreak is the supplier's index.
-  - *Reference:* Editora `QuickOpen.filter`.
+  - *Reference:* Editora [`QuickOpen.filter`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java).
 - **QOPEN-06 · SHOULD.** The active keymap's line and page chords (`nav.lineDown`, `nav.pageUp`, …) move the selection,
   as do ↑ ↓, Page Up/Down and `Ctrl+Home`/`Ctrl+End` (`Cmd` on macOS), which always work; plain Home and End stay
   with the field's caret. Enter or a click on a row chooses; the card hides first, then the choice runs, so focus is
   already back where it belongs.
   - *Check (code):* the accept path hides the card before it calls the choice handler.
-  - *Reference:* Editora `QuickOpen` (`hide()` then `onChoose`), `PickerKeys.resolve`.
+  - *Reference:* Editora [`QuickOpen`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java) (`hide()` then `onChoose`), [`PickerKeys.resolve`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java).
 - **QOPEN-07 · SHOULD.** Esc, `C-g` or a click on the scrim cancels, and the host restores focus. A picker that
   previewed something undoes it.
   - *Check (test):* a test previews a row, dismisses the picker and finds the preview undone.
-  - *Reference:* Editora `OverlayHost` (`previousFocus`), `QuickOpenPreviewFxTest`
+  - *Reference:* Editora [`OverlayHost`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java) (`previousFocus`), [`QuickOpenPreviewFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/QuickOpenPreviewFxTest.java)
     (`dismissingRestoresWhatWasPreviewed`).
 - **QOPEN-08 · MAY.** A picker previews the highlighted row as the selection moves and undoes the preview on cancel
   (Recent Locations shows each place and returns to the origin on Esc). A preview without an undo is worse than none,
   and nothing is previewed for the row the picker opens on, only for one the user moved to. The theme and keymap
   pickers do not preview; they apply on Enter.
   - *Check (test):* opening previews nothing, moving previews, choosing does not restore.
-  - *Reference:* Editora `QuickOpen.setPreview(onPreview, onCancelled)`, `QuickOpenPreviewFxTest`.
+  - *Reference:* Editora [`QuickOpen.setPreview(onPreview, onCancelled)`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java), [`QuickOpenPreviewFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/QuickOpenPreviewFxTest.java).
 - **QOPEN-09 · MAY.** A row action acts on the highlighted row and keeps the picker open (the breakpoints picker
   enables or removes one), re-reading the list afterwards and keeping the cursor in place.
   - *Check (test):* a row action runs on the highlighted row and the picker stays up.
-  - *Reference:* Editora `QuickOpen.addRowAction(key, legend, action)`, `QuickOpenPreviewFxTest`
+  - *Reference:* Editora [`QuickOpen.addRowAction(key, legend, action)`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java), [`QuickOpenPreviewFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/QuickOpenPreviewFxTest.java)
     (`aRowActionActsOnTheHighlightedRowAndKeepsThePickerOpen`).
 - **QOPEN-10 · SHOULD.** A picker that can open on an empty list shows a placeholder sentence in it, never a blank
   card. A picker with nothing to offer may instead say so in the status line and not open.
   - *Check (code):* each picker whose source can be empty either calls `setPlaceholder` or returns before `show` with
     a status message.
-  - *Reference:* Editora `QuickOpen.setPlaceholder` (`BreakpointsPicker`); `NavigationCoordinator`
+  - *Reference:* Editora [`QuickOpen.setPlaceholder`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java) ([`BreakpointsPicker`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/BreakpointsPicker.java)); [`NavigationCoordinator`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/NavigationCoordinator.java)
     (`status.nav.noRecentLocations`).
 - **QOPEN-11 · SHOULD.** The host shows one card at a time; opening a picker replaces whatever card was up.
   - *Check (code):* the host's `show` removes the previous card before it adds the new one, and keeps the original
     focus owner.
-  - *Reference:* Editora `OverlayHost.show`.
+  - *Reference:* Editora [`OverlayHost.show`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java).
 - **QOPEN-12 · SHOULD.** The picker's relatives move, accept and cancel with the same keys as the picker.
   - *Check (code):* each relative maps its keys through `PickerKeys`.
-  - *Reference:* Editora `Switcher`, `FileFinder`, `MultiSelectPicker`, `BranchPopup`, `GitStashPopup`.
+  - *Reference:* Editora [`Switcher`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Switcher.java), [`FileFinder`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/FileFinder.java), [`MultiSelectPicker`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MultiSelectPicker.java), [`BranchPopup`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/BranchPopup.java), [`GitStashPopup`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/GitStashPopup.java).
 
 The relatives: the Open Files `Switcher` lists tabs in tab order, opens on the current one and closes a file with
 `C-d` or Backspace. `FileFinder` is the Emacs `find-file` field with Tab completion. `MultiSelectPicker` ticks several
@@ -120,8 +120,8 @@ own actions.
 
 | App | Picked with it | Reference |
 |---|---|---|
-| Editora | Recent files (with file icons), recent locations (previewed), bookmarks, the structure outline, tool windows, open files, projects, keymap, app and editor theme, spell language, a setting's values (opened on the current value), branches, tags and commits to compare with, remotes, commit message history, the kill ring, Occur lines, external tools, macros, the debug main class, breakpoints, agent models | `NavigationCoordinator`, `EditorSettingsCoordinator`, `DiffCoordinator`, `DebugCoordinator`, `BreakpointsPicker` |
-| Mirada | Go to bookmark…, Open recent folder…: the palette shown over a list of names with a detail per row and an "open" legend | `CommandPalette.Choices`, `ViewerWindow` |
+| Editora | Recent files (with file icons), recent locations (previewed), bookmarks, the structure outline, tool windows, open files, projects, keymap, app and editor theme, spell language, a setting's values (opened on the current value), branches, tags and commits to compare with, remotes, commit message history, the kill ring, Occur lines, external tools, macros, the debug main class, breakpoints, agent models | [`NavigationCoordinator`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/NavigationCoordinator.java), [`EditorSettingsCoordinator`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/EditorSettingsCoordinator.java), [`DiffCoordinator`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/DiffCoordinator.java), [`DebugCoordinator`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/DebugCoordinator.java), [`BreakpointsPicker`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/BreakpointsPicker.java) |
+| Mirada | Go to bookmark…, Open recent folder…: the palette shown over a list of names with a detail per row and an "open" legend | [`CommandPalette.Choices`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/CommandPalette.java), [`ViewerWindow`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/ViewerWindow.java) |
 | Termina, Torrenta, Modula, nux | Commands only; profiles and other lists are menus or combo boxes today | `CommandPalette` in each |
 
 ## Copy

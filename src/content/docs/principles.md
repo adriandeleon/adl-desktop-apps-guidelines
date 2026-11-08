@@ -43,7 +43,7 @@ Editora is the reference; each principle names where else it is written down.
     update check and problem reports through a filtered `build-info.properties`. A key binding is declared once,
     so the menu and the accelerator cannot disagree. A list that repeats a fact (About's dependencies, the
     coverage table in the docs) has a test that fails when the two drift, in both directions.
-    *(Modula's `DependenciesTest`, nux and Torrenta's `AppInfo`, Editora's `BuildHygieneTest`.)*
+    *(Modula's [`DependenciesTest`](https://github.com/adriandeleon/Modula/blob/master/src/test/java/com/modula/DependenciesTest.java), nux and Torrenta's `AppInfo`, Editora's [`BuildHygieneTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/packaging/BuildHygieneTest.java).)*
 12. **Separate the decision from the UI, then test it.** Anything with a rule in it (which key does what, sort
     order, when a bar shows, whether a color is legible) is a small pure method or class with its own unit
     tests. UI classes stay thin and only wire decisions to controls. *(Termina, Torrenta, Mirada and nux

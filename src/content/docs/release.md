@@ -21,48 +21,48 @@ is no cross-building.
   runner, through the Maven `dist` profile.
   - *Check (code):* the release workflow's build matrix lists `linux-x64`, `linux-arm64`, `macos-arm64`,
     `macos-x64` and `windows-x64` on those runners, and `pom.xml` has a `dist` profile.
-  - *Reference:* Editora `release.yml` (the `build` job), `pom.xml` (`dist`).
+  - *Reference:* Editora [`release.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/release.yml) (the `build` job), [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml) (`dist`).
 - **REL-02 · SHOULD.** Downloads are named `<App>-<version>-<target>.<ext>`.
   - *Check (code):* the release-asset check builds the expected names this way.
-  - *Reference:* Editora `scripts/release/CheckRelease.java` (`expectedAssets`).
+  - *Reference:* Editora [`scripts/release/CheckRelease.java`](https://github.com/adriandeleon/Editora/blob/master/scripts/release/CheckRelease.java) (`expectedAssets`).
 - **REL-03 · MUST.** **JReleaser** (`jreleaser.yml`) only creates the GitHub release: it builds nothing, and
   attaches every file and `checksums_sha256.txt`.
   - *Check (code):* `jreleaser.yml` attaches the build matrix's files and runs after the build jobs.
-  - *Reference:* Editora `jreleaser.yml`, the `release` job in `release.yml`.
+  - *Reference:* Editora [`jreleaser.yml`](https://github.com/adriandeleon/Editora/blob/master/jreleaser.yml), the `release` job in [`release.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/release.yml).
 - **REL-04 · SHOULD.** The release notes are the version's section of `CHANGELOG.md`.
   - *Check (code):* the release job hands JReleaser that section as the changelog.
-  - *Reference:* Torrenta `scripts/release/ReleaseNotes.java`. Editora's release notes are still its commit list.
+  - *Reference:* Torrenta [`scripts/release/ReleaseNotes.java`](https://github.com/adriandeleon/torrenta/blob/master/scripts/release/ReleaseNotes.java). Editora's release notes are still its commit list.
 - **REL-05 · MUST.** The Maven version is the single source of truth: a tag `vX.Y.Z` releases the version in
   `pom.xml`.
   - *Check (code):* the release workflow fails when the tag and the pom version differ.
-  - *Reference:* Editora's "Check the tag against the pom version" step in `release.yml`.
+  - *Reference:* Editora's "Check the tag against the pom version" step in [`release.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/release.yml).
 - **REL-06 · SHOULD.** `master` carries a `-SNAPSHOT` version, and a post-release job opens the pull request that
   bumps it to the next snapshot.
   - *Check (code):* the pom's version on `master` ends in `-SNAPSHOT`, and `release.yml` has the bump job.
-  - *Reference:* Editora's `bump` job in `release.yml`.
+  - *Reference:* Editora's `bump` job in [`release.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/release.yml).
 - **REL-07 · SHOULD.** A **release-asset check** fails the run before publishing when an expected file is missing.
   - *Why:* GitHub releases are immutable.
   - *Check (code):* a step before JReleaser compares the gathered files with the expected list.
-  - *Reference:* Editora's "Verify the expected release assets" step in `release.yml`.
+  - *Reference:* Editora's "Verify the expected release assets" step in [`release.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/release.yml).
 - **REL-08 · SHOULD.** On Linux, a `.desktop` file's `StartupWMClass` is the JavaFX app class.
   - *Why:* the running window then belongs to the menu entry and shows its icon.
   - *Check (code):* `packaging/linux/<App>.desktop` sets `StartupWMClass=com.<app>.App`.
-  - *Reference:* Editora `packaging/linux/Editora.desktop`, Torrenta `packaging/linux/Torrenta.desktop`.
+  - *Reference:* Editora [`packaging/linux/Editora.desktop`](https://github.com/adriandeleon/Editora/blob/master/packaging/linux/Editora.desktop), Torrenta [`packaging/linux/Torrenta.desktop`](https://github.com/adriandeleon/torrenta/blob/master/packaging/linux/Torrenta.desktop).
 - **REL-09 · SHOULD.** On Linux, AppStream metainfo has the id `io.github.adriandeleon.<App>`.
   - *Check (code):* `packaging/linux/io.github.adriandeleon.<App>.metainfo.xml` carries that `<id>`.
-  - *Reference:* Torrenta `packaging/linux/`. Editora's metainfo id (`com.editora.Editora`) predates the rule.
+  - *Reference:* Torrenta [`packaging/linux/`](https://github.com/adriandeleon/torrenta/tree/master/packaging/linux). Editora's metainfo id (`com.editora.Editora`) predates the rule.
 - **REL-10 · SHOULD.** Packaging trains an **AOT cache** (JDK 25 Leyden) to cut start-up time; Linux legs run the
   training under `xvfb`.
   - *Check (code):* the `dist` build runs a training launch with `-XX:AOTCacheOutput`, and the Linux release legs
     install `xvfb`.
-  - *Reference:* Editora `scripts/aot_build.java`.
+  - *Reference:* Editora [`scripts/aot_build.java`](https://github.com/adriandeleon/Editora/blob/master/scripts/aot_build.java).
 
 ## Install methods
 
 - **REL-11 · MUST.** The GitHub release offers every download on every platform: the `.dmg`, `.msi`, `.deb`,
   `.rpm`, `.AppImage` and `.tar.gz`, with checksums.
   - *Check (code):* `jreleaser.yml` attaches each of these types.
-  - *Reference:* Editora `jreleaser.yml`.
+  - *Reference:* Editora [`jreleaser.yml`](https://github.com/adriandeleon/Editora/blob/master/jreleaser.yml).
 - **REL-12 · SHOULD.** On macOS (Apple Silicon) the app installs with
   `brew install --cask adriandeleon/tap/<app>`: JReleaser's `brew` packager writes the cask to
   [`adriandeleon/homebrew-tap`](https://github.com/adriandeleon/homebrew-tap). A cask takes exactly one artifact,
@@ -101,14 +101,14 @@ configured, waiting for the token. Mirada's first winget submission
   - *Check (code):* `release.yml` imports `MACOS_CERT_P12` and `MACOS_CERT_PASSWORD`, notarizes with
     `APPLE_API_KEY_P8`, `APPLE_API_KEY_ID` and `APPLE_API_ISSUER`, staples, runs `spctl` and launches the app.
   - *Reference:* Editora's "Import signing certificate (macOS)" and "Notarize DMG (macOS)" steps in
-    `release.yml`, `packaging/macos/Editora.entitlements`. Done in all six apps.
+    [`release.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/release.yml), [`packaging/macos/Editora.entitlements`](https://github.com/adriandeleon/Editora/blob/master/packaging/macos/Editora.entitlements). Done in all six apps.
 - **REL-16 · MUST.** Linux downloads are signed with the one shared OpenPGP release key ("Adrian De Leon (release
   signing)") in a separate `sign-linux` job: `rpmsign` for the `.rpm`, a debsigs origin signature for the `.deb`,
   and an armored `.asc` beside every file. The public key is committed as `packaging/linux/signing-key.asc` and
   attached to each release.
   - *Check (code):* `release.yml` has a `sign-linux` job that reads `LINUX_GPG_KEY` and `LINUX_GPG_PASSPHRASE`
     and runs the shared scripts, and `packaging/linux/signing-key.asc` exists.
-  - *Reference:* Editora `scripts/release/sign-linux-packages.sh`, `scripts/release/check-linux-signatures.sh`.
+  - *Reference:* Editora [`scripts/release/sign-linux-packages.sh`](https://github.com/adriandeleon/Editora/blob/master/scripts/release/sign-linux-packages.sh), [`scripts/release/check-linux-signatures.sh`](https://github.com/adriandeleon/Editora/blob/master/scripts/release/check-linux-signatures.sh).
     Done in Editora, Torrenta, Termina and Modula; Mirada partly; nux not yet.
 - **REL-17 · SHOULD.** The Windows `.msi` is signed with Authenticode, once the certificate is chosen.
   - *Check (code):* the Windows leg signs the `.msi` before it is uploaded.
@@ -117,7 +117,7 @@ configured, waiting for the token. Mirada's first winget submission
 - **REL-18 · MUST.** Every download has a GitHub **build provenance attestation**
   (`actions/attest-build-provenance`), which `gh attestation verify` checks.
   - *Check (test):* a test keeps the attested files and the files JReleaser attaches the same list.
-  - *Reference:* Editora's "Attest build provenance" step in `release.yml`, `ReleaseSupplyChainTest`. Done in
+  - *Reference:* Editora's "Attest build provenance" step in [`release.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/release.yml), [`ReleaseSupplyChainTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/packaging/ReleaseSupplyChainTest.java). Done in
     Editora, Termina and Mirada.
 
 The certificate renews before 2027-11-30; the Apple membership before 2027-10-31.
@@ -129,45 +129,45 @@ The certificate renews before 2027-11-30; the Apple membership before 2027-10-31
   status checks for `master`.
   - *Check (code):* `ci.yml` triggers on `push` to `master` and on `pull_request`, with the two jobs; the
     repository's rules for `master` require both.
-  - *Reference:* Editora `ci.yml`.
+  - *Reference:* Editora [`ci.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/ci.yml).
 - **REL-20 · SHOULD.** `full-tests.yml` runs the full suite on Linux, macOS and Windows daily, on a pull request
   labeled `full-ci`, and before every release, and lists flaky tests in the job summary.
   - *Check (code):* `full-tests.yml` has a `schedule` and a `pull_request` trigger gated on the label, and the
     release preflight waits for its run on the tagged commit.
-  - *Reference:* Editora `full-tests.yml`, `scripts/ci/ReportFlakes.java`, and the "Check that the Full tests
-    passed on this commit" step in `release.yml`.
+  - *Reference:* Editora [`full-tests.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/full-tests.yml), [`scripts/ci/ReportFlakes.java`](https://github.com/adriandeleon/Editora/blob/master/scripts/ci/ReportFlakes.java), and the "Check that the Full tests
+    passed on this commit" step in [`release.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/release.yml).
 - **REL-21 · MUST.** `release.yml` runs on a `v*` tag that matches the pom version, with `workflow_dispatch` as a
   dry run. It runs the five-target matrix, the signing jobs, attestations, the release-asset check, JReleaser, then
   the bump to the next snapshot. A dry run builds and signs and publishes nothing.
   - *Check (code):* `release.yml` triggers on the tag pattern and `workflow_dispatch`, and a dispatch runs
     JReleaser with `--dry-run`.
-  - *Reference:* Editora `release.yml`.
+  - *Reference:* Editora [`release.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/release.yml).
 - **REL-22 · MUST.** Every workflow pins each third-party action to a commit SHA, with its version in a comment
   (`actions/setup-java@b843ebf… # v6.1.0`).
   - *Check (code):* every `uses:` in `.github/workflows/` ends in a 40-character SHA and a `# vX.Y.Z` comment.
-  - *Reference:* Editora `.github/workflows/`.
+  - *Reference:* Editora [`.github/workflows/`](https://github.com/adriandeleon/Editora/tree/master/.github/workflows).
 - **REL-23 · MUST.** Dependabot updates `github-actions` and `maven` weekly.
   - *Check (code):* `.github/dependabot.yml` lists both ecosystems with `interval: weekly`.
-  - *Reference:* Editora `.github/dependabot.yml`.
+  - *Reference:* Editora [`.github/dependabot.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/dependabot.yml).
 - **REL-24 · MUST.** Every workflow starts from `permissions: contents: read`; only a job that needs write access
   asks for it, in its own block.
   - *Check (code):* each workflow's top-level `permissions` is `contents: read`, and every `write` sits in a job's
     own `permissions`.
-  - *Reference:* Editora `release.yml`: `release` (publish), `bump` (the pull request) and `preflight` (start a
+  - *Reference:* Editora [`release.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/release.yml): `release` (publish), `bump` (the pull request) and `preflight` (start a
     Full tests run).
 - **REL-25 · SHOULD.** Every workflow sets up JDK 25 with `actions/setup-java` and `cache: maven`.
   - *Check (code):* each `setup-java` step has `java-version: '25'` and `cache: maven`.
-  - *Reference:* Editora uses Temurin in `ci.yml` and `full-tests.yml`, and Liberica for the release build, for
+  - *Reference:* Editora uses Temurin in [`ci.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/ci.yml) and [`full-tests.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/full-tests.yml), and Liberica for the release build, for
     linux-aarch64 coverage.
 - **REL-26 · MUST.** Every job has `timeout-minutes`, and `concurrency` cancels a superseded pull-request run,
   never a run on `master`.
   - *Check (code):* every job sets `timeout-minutes`; `cancel-in-progress` is true only for `pull_request` events.
-  - *Reference:* Editora `ci.yml` (`cancel-in-progress: ${{ github.event_name == 'pull_request' }}`).
+  - *Reference:* Editora [`ci.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/ci.yml) (`cancel-in-progress: ${{ github.event_name == 'pull_request' }}`).
 - **REL-27 · MUST.** CI uploads the surefire reports even when tests fail, and the JaCoCo report; it writes the
   coverage totals to the job summary.
   - *Check (code):* the test reports upload under `if: always()`, and a step appends the totals to
     `$GITHUB_STEP_SUMMARY`.
-  - *Reference:* Editora's "Upload test reports and coverage data" and "Summarise coverage" steps in `ci.yml`.
+  - *Reference:* Editora's "Upload test reports and coverage data" and "Summarise coverage" steps in [`ci.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/ci.yml).
 - **REL-28 · MUST.** Signing skips cleanly when the secrets are absent (forks, dry runs), so they still build; a tag
   without them fails.
   - *Check (code):* each signing step checks its secrets first, skips without them, and fails on a tag push.

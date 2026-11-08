@@ -11,7 +11,7 @@ the app said is lost because it scrolled past.
 - **MLOG-01 · MUST.** Every app with a status bar keeps a Message Log: the session's status-bar messages, newest
   first, opened from the status bar.
   - *Check (code):* every status-bar message is also added to one log model, and a view lists that model.
-  - *Reference:* Editora `ui/MessageLog.java` (the model, no JavaFX) and `ui/MessageLogPopup.java` (the view);
+  - *Reference:* Editora [`ui/MessageLog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLog.java) (the model, no JavaFX) and [`ui/MessageLogPopup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java) (the view);
     Torrenta carries the same pair.
 
 ## Anatomy
@@ -63,25 +63,25 @@ the app said is lost because it scrolled past.
 - **MLOG-02 · SHOULD.** A click on the echo line or on the unread-error count opens the log, as does the
   `view.messageLog` command.
   - *Check (code):* both status-bar nodes run `view.messageLog` on a click.
-  - *Reference:* Editora `StatusBar` (`echo`, `unreadErrors`), `StatusBar.showMessageLog`.
+  - *Reference:* Editora [`StatusBar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusBar.java) (`echo`, `unreadErrors`), [`StatusBar.showMessageLog`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusBar.java).
 - **MLOG-03 · SHOULD.** Esc, `C-g` or a click outside closes the log.
   - *Check (code):* the card's key handler hides it on Escape and `C-g`; the overlay's backdrop hides it on a press.
-  - *Reference:* Editora `MessageLogPopup`, `OverlayHost`.
+  - *Reference:* Editora [`MessageLogPopup`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java), [`OverlayHost`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java).
 - **MLOG-04 · SHOULD.** `Ctrl+C` (`Cmd+C` on macOS) copies the selected entries.
   - *Check (code):* the card's key handler copies the selection on the shortcut-down C.
-  - *Reference:* Editora `MessageLogPopup.copySelection`.
+  - *Reference:* Editora [`MessageLogPopup.copySelection`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java).
 - **MLOG-05 · SHOULD.** A message's severity comes from its key: a `status.*` key whose last segment contains `fail`
   or `error` is an error, one containing `cannot` or `invalid` a warning. Name new keys accordingly, or report through
   the error channel directly.
   - *Check (test):* a severity test classifies keys by those rules.
-  - *Reference:* Editora `ui/StatusSeverity.java` (`ofKey`), `StatusSeverityTest`.
+  - *Reference:* Editora [`ui/StatusSeverity.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusSeverity.java) (`ofKey`), [`StatusSeverityTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StatusSeverityTest.java).
 - **MLOG-06 · SHOULD.** Opening the log, or clearing it, resets the unread-error count.
   - *Check (code):* opening the log marks it read, and `clear` zeroes the count.
-  - *Reference:* Editora `MessageLog.markRead`, `MessageLog.clear`, `StatusBar.showMessageLog`.
+  - *Reference:* Editora [`MessageLog.markRead`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLog.java), [`MessageLog.clear`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLog.java), [`StatusBar.showMessageLog`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusBar.java).
 - **MLOG-07 · SHOULD.** An unread error is never evicted silently: the count keeps it even when the entry drops off
   the end.
   - *Check (test):* an error pushed past the capacity still counts as unread.
-  - *Reference:* Editora `MessageLogSeverityTest` (`anEvictedErrorStillCounts`).
+  - *Reference:* Editora [`MessageLogSeverityTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/MessageLogSeverityTest.java) (`anEvictedErrorStillCounts`).
 
 ## Copy
 

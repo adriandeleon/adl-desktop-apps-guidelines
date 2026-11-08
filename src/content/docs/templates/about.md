@@ -4,7 +4,7 @@ description: "The family's About panel: identity, update status, license, links 
 ---
 
 The About window answers "what exactly am I running?" in one place, and its details are what a bug report needs.
-Torrenta (`AboutDialog`), Termina, Modula, Mirada and nux (`AboutWindow`) follow Editora's order.
+Torrenta ([`AboutDialog`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/AboutDialog.java)), Termina, Modula, Mirada and nux (`AboutWindow`) follow Editora's order.
 
 ## Rules
 
@@ -12,21 +12,21 @@ Torrenta (`AboutDialog`), Termina, Modula, Mirada and nux (`AboutWindow`) follow
   macOS the application menu's About item.
   - *Check (code):* `help.about` is registered and listed in the Help menu, and the macOS application menu's About
     item runs it.
-  - *Reference:* Editora `ui/AboutDialog.java`, `ui/MenuBarModel.java` (`help.about` in the Help menu).
+  - *Reference:* Editora [`ui/AboutDialog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/AboutDialog.java), [`ui/MenuBarModel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java) (`help.about` in the Help menu).
 - **ABOUT-02 · MUST.** About shows the version and build, the Pauta edition (see below), the runtime, the license,
   links, and the result of the last update check.
   - *Check (code):* the window reads the version, build and edition from `AppInfo`, the same text as `--version`,
     and shows the update checker's last answer.
-  - *Reference:* Editora `ui/AboutDialog.java`, `AppInfo`; the Spec table below.
+  - *Reference:* Editora [`ui/AboutDialog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/AboutDialog.java), [`AppInfo`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/AppInfo.java); the Spec table below.
 - **ABOUT-03 · SHOULD.** *Copy details* copies the environment block and leaves the window open; its label becomes
   "Copied".
   - *Check (code):* the button sits in the content, not the dialog's button bar, so pressing it can't close the
     window.
-  - *Reference:* Editora `AboutDialog` (`about.copyDetails`, `about.copied`).
+  - *Reference:* Editora [`AboutDialog`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/AboutDialog.java) (`about.copyDetails`, `about.copied`).
 - **ABOUT-04 · SHOULD.** The update status claims nothing before a check has answered: with no answer, or with the
   check switched off, it says it has not checked, never "up to date".
   - *Check (code):* the status falls back to the not-checked text when the checker has no result.
-  - *Reference:* Editora `AboutDialog` (`about.notChecked`); the states below.
+  - *Reference:* Editora [`AboutDialog`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/AboutDialog.java) (`about.notChecked`); the states below.
 
 ## Anatomy
 
@@ -62,7 +62,7 @@ Config: ~/.editora</div><span class="pin">6</span></div>
 ## Pauta edition
 
 About names the edition of these guidelines the app implements, so a user, a bug report and a reviewer all know which
-rules the app answers to. No app does it yet; the app template names its edition in its README and `AGENTS.md` only.
+rules the app answers to. No app does it yet; the app template names its edition in its README and [`AGENTS.md`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/AGENTS.md) only.
 
 - **ABOUT-05 · MUST.** The edition appears in two places: a link, *Built to Pauta 2.0.0*, among the others, and a
   line `Pauta: 2.0.0` in the environment block, right after the commit, so *Copy details* carries it.

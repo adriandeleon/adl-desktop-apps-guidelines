@@ -5,9 +5,9 @@ description: "The tab strip and its states, reorder and reopen, and the tool pan
 
 A window shows its documents in a **tab strip** and its tools in **panels** docked beside or under them. Both are
 driven by commands, both remember their state, and both draw their chrome as one band with the toolbar, not as boxes
-inside boxes. Reference: Editora's `ui/TabHeaders.java` (the tab header), `ui/ClosedTabs.java`, `ui/Switcher.java`,
-`ui/ToolWindowManager.java`, `ui/ToolWindowPanel.java` and the `.tab-pane`, `.tool-stripe` and `.tool-window`
-rules in `app.css`.
+inside boxes. Reference: Editora's [`ui/TabHeaders.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabHeaders.java) (the tab header), [`ui/ClosedTabs.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ClosedTabs.java), [`ui/Switcher.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Switcher.java),
+[`ui/ToolWindowManager.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolWindowManager.java), [`ui/ToolWindowPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolWindowPanel.java) and the `.tab-pane`, `.tool-stripe` and `.tool-window`
+rules in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css).
 
 <div class="mock-stage">
 <div class="m-tp-window" role="img" aria-label="Mockup of a tab strip with pinned, active, unsaved, read-only and dragged tabs over a tool panel beside the editor">
@@ -50,29 +50,29 @@ rules in `app.css`.
   menu row: close, close others, close all, close unmodified, close to the left and right, pin, reopen closed, next
   and previous. The tab's [right-click menu](../menus/) lists the ones that act on a tab.
   - *Check (code):* each operation has a registered command id, and `TabContextMenu` lists the per-tab ones.
-  - *Reference:* Editora `ui/WindowCommandRegistrar.java` (`buffer.close`, `buffer.closeOthers`, `buffer.closeAll`,
+  - *Reference:* Editora [`ui/WindowCommandRegistrar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowCommandRegistrar.java) (`buffer.close`, `buffer.closeOthers`, `buffer.closeAll`,
     `buffer.closeUnmodified`, `buffer.closeLeft`, `buffer.closeRight`, `buffer.togglePin`, `buffer.reopenClosed`,
-    `buffer.next`), `ui/TabContextMenu.java`. Editora has no previous-tab command yet.
+    `buffer.next`), [`ui/TabContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabContextMenu.java). Editora has no previous-tab command yet.
 - **TABS-02 · MUST.** The header is the title: the Tab's own text stays empty, and a graphic header carries the
   file-type glyph, the markers and the title in a `.tab-title` label. The tooltip is the full path.
   - *Why:* the graphic is what makes the header a drag handle and lets each state set its own color.
   - *Check (code):* every editor tab gets `setText("")` and a graphic with a `.tab-title` label; its tooltip is the
     file's path.
-  - *Reference:* Editora `ui/TabHeaders.java`.
+  - *Reference:* Editora [`ui/TabHeaders.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabHeaders.java).
 - **TABS-03 · MUST.** The one header carries the states: a `• ` prefix in amber italic for unsaved, a pin and bold for
   pinned, muted italic for read-only.
   - *Check (code):* `app.css` styles `.tab-header.dirty`, `.tab-header.pinned` and `.tab-header.read-only`
     `.tab-title`, and the header sets those classes.
-  - *Reference:* Editora `ui/TabHeaders.java`, `app.css`; the Unsaved, Pinned and Read-only rows of the Spec table
+  - *Reference:* Editora [`ui/TabHeaders.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabHeaders.java), [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css); the Unsaved, Pinned and Read-only rows of the Spec table
     below.
 - **TABS-04 · MUST.** Bulk close skips pinned tabs: close others, close all, close unmodified and close to the left
   or right never close a pinned tab.
   - *Check (code):* `closeOtherTabs`, `closeAllTabs`, `closeUnmodifiedTabs` and `eligibleToLeft` /
     `eligibleToRight` all filter on the pinned set.
-  - *Reference:* Editora `ui/MainController.java`.
+  - *Reference:* Editora [`ui/MainController.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java).
 - **TABS-05 · MUST.** Pinning moves the tab to the end of the pinned group, unpinning to just after it.
   - *Check (code):* `togglePin` calls `moveToPinBoundary`.
-  - *Reference:* Editora `ui/MainController.java` (`togglePin`), `ui/EditorArea.java` (`moveToPinBoundary`).
+  - *Reference:* Editora [`ui/MainController.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java) (`togglePin`), [`ui/EditorArea.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/EditorArea.java) (`moveToPinBoundary`).
 - **TABS-06 · MUST.** Reopen Closed Tab brings back the files whose tabs this window closed, newest first, bounded
   to twenty, a file listed once, with the caret where it was. In a terminal app the *tab* comes back (its shells,
   their directories, the pane arrangement, the names the user gave them, its place in the strip) and not the
@@ -80,35 +80,35 @@ rules in `app.css`.
   - *Why:* the process is gone, and pretending otherwise would be worse than saying so.
   - *Check (test):* a unit test over the closed-tab list holds the order, the bound, the single entry per file and
     the caret.
-  - *Reference:* Editora `ui/ClosedTabs.java`, `ClosedTabsTest`; `C-S-t` in the CUA keymap. Termina
-    `ui/ClosedTabs.java`, on `Ctrl+Shift+Z` (`Cmd+Z` on macOS).
+  - *Reference:* Editora [`ui/ClosedTabs.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ClosedTabs.java), [`ClosedTabsTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ClosedTabsTest.java); `C-S-t` in the CUA keymap. Termina
+    [`ui/ClosedTabs.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/ClosedTabs.java), on `Ctrl+Shift+Z` (`Cmd+Z` on macOS).
 - **TABS-07 · SHOULD.** Tabs reorder by dragging, with the feedback shown above: the dragged header dimmed and an
   accent line on the edge where it will land.
   - *Check (by hand):* drag a tab along the strip and watch the landing edge.
-  - *Reference:* Editora `TabHeaders.enableTabDrag`; Termina `installTabDrag` and the pure `TabReorder.insertIndex`.
+  - *Reference:* Editora [`TabHeaders.enableTabDrag`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabHeaders.java); Termina `installTabDrag` and the pure [`TabReorder.insertIndex`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TabReorder.java).
     In Termina a double-click on a tab renames it, and a pane dragged onto a tab joins it (the whole header
     outlined, `tab-drop-into`).
 - **TABS-08 · SHOULD.** A tab shows its file's Git status in the Project tree's colors: modified accent, added
   green, untracked olive, renamed violet, deleted muted, conflict red. A read-only tab still shows it; an unsaved one
   shows amber.
   - *Check (test):* a test gives a changed file the same style class the Project tree uses.
-  - *Reference:* Editora `ui/TabGitStatus.java`, `TabGitStatusTest`.
+  - *Reference:* Editora [`ui/TabGitStatus.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabGitStatus.java), [`TabGitStatusTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/TabGitStatusTest.java).
 - **TABS-09 · SHOULD.** A switcher lists the open files in tab order: `C-x C-b` (Emacs) opens it, `C-n` / `C-p` or
   the arrows move, Enter or releasing Ctrl activates, `C-g` or Esc cancels, `C-d` or Backspace closes the
   highlighted file. Its width is fixed to the longest path on each open, so it never resizes while you move.
   - *Check (by hand):* open it with several tabs and move through it; the list keeps its width.
-  - *Reference:* Editora `ui/Switcher.java`, `SwitcherFxTest`.
+  - *Reference:* Editora [`ui/Switcher.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Switcher.java), [`SwitcherFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/SwitcherFxTest.java).
 - **TABS-10 · SHOULD.** The window title names the file, the project and the app, with a `●` prefix for an unsaved
   file.
   - *Check (code):* the code that sets the stage title adds all three and the marker.
-  - *Reference:* Editora `MainController.updateWindowTitle`.
+  - *Reference:* Editora [`MainController.updateWindowTitle`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java).
 - **TABS-11 · SHOULD.** Tabs sit in the title bar through JavaFX 27's `HeaderBar`; see
   [Window shell](../window-shell/).
   - *Check (by hand):* the tab strip shares the title bar's row.
-  - *Reference:* Termina `ui/TerminalWindow.java`.
+  - *Reference:* Termina [`ui/TerminalWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalWindow.java).
 - **TABS-12 · SHOULD.** A command hides the tab bar.
   - *Check (code):* a registered command toggles the tab header.
-  - *Reference:* Editora `view.toggleTabBar`, `.tab-pane.no-tab-header` in `app.css`.
+  - *Reference:* Editora `view.toggleTabBar`, `.tab-pane.no-tab-header` in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css).
 
 ![Termina window with tabs in the title bar and a tab context menu](../../assets/shots/termina-tabs.png "Termina's tabs in the title bar, with a tab's right-click menu.")
 
@@ -117,24 +117,24 @@ rules in `app.css`.
 - **TABS-13 · MUST.** A command toggles each panel (`tool.<id>`: `M-1` … `M-0` in the Emacs keymap for ten of
   them), and the stripe button is the same command with a glyph.
   - *Check (code):* every tool window registers a `tool.<id>` command, and its stripe button runs it.
-  - *Reference:* Editora `ui/ToolWindowManager.java`, `keymaps/emacs.json`.
+  - *Reference:* Editora [`ui/ToolWindowManager.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolWindowManager.java), [`keymaps/emacs.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/emacs.json).
 - **TABS-14 · MUST.** A panel's content is built on first use.
   - *Check (test):* an FX test holds that no closed tool window builds its panel before the first paint.
-  - *Reference:* Editora `LazyToolWindowsFxTest`.
+  - *Reference:* Editora [`LazyToolWindowsFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/LazyToolWindowsFxTest.java).
 - **TABS-15 · SHOULD.** Panel state is restored: which windows are open, on which side, in what order, hidden or shown,
   floating, and every divider position go to `workspace-state.json` and come back on the next launch.
   - *Check (code):* the workspace state holds each of those, and the manager reads them back at startup.
-  - *Reference:* Editora `ui/ToolWindowManager.java`, `config/WorkspaceState.java`.
+  - *Reference:* Editora [`ui/ToolWindowManager.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolWindowManager.java), [`config/WorkspaceState.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/WorkspaceState.java).
 - **TABS-16 · SHOULD.** Panels dock on three sides, left, right and bottom, and a side holds at most two windows
   stacked (Project over Structure, two consoles along the bottom).
   - *Why:* past that a side stops being a dock and becomes a list of slivers.
   - *Check (code):* the sides are an enum of three and the per-side limit is two.
-  - *Reference:* Editora `ToolWindow.Side`, `ToolWindowManager.MAX_PER_SIDE`.
+  - *Reference:* Editora [`ToolWindow.Side`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolWindow.java), [`ToolWindowManager.MAX_PER_SIDE`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolWindowManager.java).
 - **TABS-17 · SHOULD.** A panel re-docks by dragging its stripe button to another stripe, with the same
   dim-and-accent-line feedback as a tab; an empty stripe appears as a dashed accent drop zone for the duration of
   the drag.
   - *Check (by hand):* drag a stripe button to the opposite side.
-  - *Reference:* Editora `ui/ToolWindowDock.java`, `ToolWindowVisibilityTest` (an empty stripe shows while
+  - *Reference:* Editora [`ui/ToolWindowDock.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolWindowDock.java), [`ToolWindowVisibilityTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ToolWindowVisibilityTest.java) (an empty stripe shows while
     dragging).
 - **TABS-18 · SHOULD.** Panels float, maximize, resize and close from the keyboard, and at most one window is
   maximized at a time.
@@ -143,23 +143,23 @@ rules in `app.css`.
     `view.closeFocusedToolWindow` (`C-x 0`), the resize commands (`C-x S-.`, `C-x S-,`, `C-x S-6`).
 - **TABS-19 · SHOULD.** Closing the panel that holds keyboard focus returns focus to where it was in the editor.
   - *Check (code):* the manager keeps the last editor focus owner and refocuses it on close.
-  - *Reference:* Editora `ToolWindowManager.focusEditor`, a weak reference to the last editor focus owner.
+  - *Reference:* Editora [`ToolWindowManager.focusEditor`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolWindowManager.java), a weak reference to the last editor focus owner.
 - **TABS-20 · SHOULD.** Hidden is not unavailable: the user's show/hide choice for a stripe button is kept apart
   from a context-driven hide (the Commit window outside a Git repository), so the second never clobbers the first.
   - *Check (test):* a unit test holds that a button shows only when visible and available.
-  - *Reference:* Editora `ui/ToolWindowVisibility.java`, `ToolWindowVisibilityTest`.
+  - *Reference:* Editora [`ui/ToolWindowVisibility.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolWindowVisibility.java), [`ToolWindowVisibilityTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ToolWindowVisibilityTest.java).
 - **TABS-21 · SHOULD.** A bottom window that is unusable at the default height asks for more on its first open;
   the user's own size wins afterwards.
   - *Check (test):* a test opens an output window taller while the others keep the side's size.
-  - *Reference:* Editora `ToolWindow.setFirstOpenShare`, `ToolWindowFirstOpenShareTest`.
+  - *Reference:* Editora [`ToolWindow.setFirstOpenShare`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolWindow.java), [`ToolWindowFirstOpenShareTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ToolWindowFirstOpenShareTest.java).
 - **TABS-22 · SHOULD.** A stripe button badges a spinner while its window has something under way.
   - *Check (test):* an FX test badges a busy window's stripe button without changing its size.
-  - *Reference:* Editora `ToolWindow.busy`, `ToolWindowManagerFxTest`.
+  - *Reference:* Editora [`ToolWindow.busy`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolWindow.java), [`ToolWindowManagerFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ToolWindowManagerFxTest.java).
 - **TABS-23 · SHOULD.** Panels follow the active document where they should: the Git UI follows the active tab's
   repository, the status bar's environment segment the active `.http` file, Local History the file whose tab menu
   opened it.
   - *Check (by hand):* switch between tabs from two repositories with the Git window open.
-  - *Reference:* Editora `ui/GitPathScope.java`.
+  - *Reference:* Editora [`ui/GitPathScope.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/GitPathScope.java).
 
 The other apps dock their panels the same way without a stripe. Torrenta's filter **sidebar** sits down the left or
 the right of the list or nowhere, kept as two settings keys so hiding it keeps its side (`SidebarPlace`); its inner

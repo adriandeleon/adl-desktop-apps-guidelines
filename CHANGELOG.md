@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.0.1] - 2026-11-07
+
+### Changed
+
+- **References link to the code.** Every file and class a rule names in Editora, Torrenta, Termina, Mirada, Modula,
+  nux, the app template or editora-website links to it on GitHub, on that repository's default branch: about 740
+  links, in the *Reference* lines, the spec tables and the prose. Names that don't point at one file in one
+  repository (a file every app has, a glob, a class several apps share, what *Gaps per app* says an app lacks) stay
+  plain text. No rule changed.
+
 ## [4.0.0] - 2026-11-07
 
 ### Added

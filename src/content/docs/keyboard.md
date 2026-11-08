@@ -43,10 +43,9 @@ description: "Commands, the Command Palette, keymaps, focus and accessibility."
     keystrokes.
   - *Check (code):* the palette and every picker add their node to the root `StackPane`; none creates a `Popup`.
   - *Reference:* Editora [`ui/CommandPalette.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java).
-- **KBD-08 · SHOULD.** The same picker serves every other list choice: recent files, themes, keymaps, a setting's
-  values.
-  - *Check (code):* no second list-picker class or `ChoiceDialog` for those choices.
-  - *Reference:* Editora [`ui/QuickOpen.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java).
+
+Every other list choice (recent files, themes, keymaps, a setting's values) uses the same picker:
+[QOPEN-01](../templates/quick-open/#qopen-01).
 
 ![Editora's command palette filtered to Git commands](../../assets/shots/editora-palette.png "Editora: M-x over the editor; typing git lists every Git command.")
 ![Torrenta's command palette listing Rename, Remove and Force Resume with shortcuts](../../assets/shots/torrenta-palette.png "Torrenta: the same palette, filtered to torrent actions with their shortcuts.")
@@ -97,16 +96,11 @@ description: "Commands, the Command Palette, keymaps, focus and accessibility."
 - **KBD-16 · SHOULD.** The keyboard focus ring is one layer of `:focus-visible` rules at the end of `app.css`.
   - *Check (test):* an FX test tabs to each control family and asserts the ring.
   - *Reference:* Editora [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) (*Keyboard focus*, one layer for every control), [`FocusRingFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/FocusRingFxTest.java).
-- **KBD-17 · MUST.** Icon-only buttons are built by one helper that sets both the tooltip and the accessible text.
-  - *Check (code):* no icon-only `Button` is built outside the helper.
-  - *Reference:* Editora [`ui/Icons.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Icons.java) ([`Icons.button`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Icons.java)). Editora's main toolbar doesn't yet:
-    [`WindowToolbar.setupButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowToolbar.java) and [`ToolbarCoordinator.buildExtraButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolbarCoordinator.java) set the tooltip but no accessible text.
 - **KBD-18 · SHOULD.** On/off rows use a keyboard-operable switch with the `TOGGLE_BUTTON` role.
   - *Why:* a bare AtlantaFX `ToggleSwitch` is mouse-only.
   - *Check (code):* no `new ToggleSwitch` outside the switch class.
   - *Reference:* Editora [`ui/SettingSwitch.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingSwitch.java).
-- **KBD-20 · SHOULD.** Rows wrap instead of truncating to "…".
-  - *Check (by hand):* run the app in German at 1024 px wide; no test catches a cut row.
-  - *Reference:* Editora [`messages_de.properties`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/i18n/messages_de.properties).
 
-Readable text and its contrast are one rule, [ICON-09](../icons-and-color/#icon-09) on Icons and color.
+Related rules on other pages: every icon-only button gets its name from one helper,
+[TBAR-01](../toolbars-and-tooltips/#tbar-01); rows wrap instead of being cut short in every language,
+[INTL-04](../i18n/#intl-04); readable text and its contrast are one rule, [ICON-09](../icons-and-color/#icon-09).

@@ -51,7 +51,9 @@ rule is:
 ```
 
 - **`id`** is permanent. It is never renumbered or reused; a removed rule leaves a gap. The prefix names the page
-  (`KBD` is Keyboard first), and `llms.txt` lists every page's prefix.
+  (`KBD` is Keyboard first), and `llms.txt` lists every page's prefix. `rules.json` ends with `retired`, every ID no
+  longer in use: the `edition` that removed it and `see`, the rule that holds its requirement now (with its `seeUrl`),
+  or `null`. A `pauta.json` entry for a retired ID is stale; move it to the `see` rule, if the app still misses it.
 - **`level`** is MUST (a release blocker for a new app), SHOULD (expected unless the app has a stated reason) or
   MAY (worth copying when the app grows into it).
 - **`check.kind`** says how the rule is verified: `code` by reading or searching the source, `test` by a named test
@@ -130,7 +132,7 @@ The report reads like this:
 
 ```text
 KBD-07   MUST    pass     src/main/java/com/example/app/ui/CommandPalette.java:57
-KBD-17   MUST    fail     src/main/java/com/example/app/ui/MainToolbar.java:88 builds an icon button by hand
+TBAR-01  MUST    fail     src/main/java/com/example/app/ui/MainToolbar.java:88 builds an icon button by hand
 KBD-15   SHOULD  manual   Tab order needs the running app
 TRAY-01  MUST    n/a      the app has no tray icon
 MENU-14  MUST    pending  pauta.json: issue #212
@@ -158,8 +160,8 @@ diff <(curl -s https://pauta-project.dev/$old/rules.json | jq -r '.rules[] | "\(
      <(curl -s https://pauta-project.dev/$new/rules.json | jq -r '.rules[] | "\(.id) \(.level)"' | sort)
 ```
 
-A line only in the new edition is a new rule or a raised level; one only in the old is a retired rule or a lowered
-level. Give the agent that list and the new edition's `llms-full.txt`, have it meet each new MUST or record it in `pauta.json`,
+A line only in the new edition is a new rule or a raised level; one only in the old is a retired rule (the new
+edition's `retired` list says where it went) or a lowered level. Give the agent that list and the new edition's `llms-full.txt`, have it meet each new MUST or record it in `pauta.json`,
 replace `src/test/resources/pauta-rules.json` with the new edition's, then change `pauta.version`, `AGENTS.md` and the
 README together ([PAUTA-11](../conformance/#pauta-11)).
 

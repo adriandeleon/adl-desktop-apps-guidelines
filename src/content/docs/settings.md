@@ -54,8 +54,8 @@ keymap, a theme, a language), not when the developer could not decide.
 
 ## Config folder and schema
 
-- **SET-07 · MUST.** Config lives in `~/.<app>`: `~/.<app>-dev` for `--dev`, any folder via `--config-dir` or
-  `<APP>_CONFIG_DIR`.
+- **SET-07 · MUST.** Config lives in `~/.<app>`, unless `<APP>_CONFIG_DIR` or a command-line flag
+  ([CLI-02](../command-line/#cli-02)) names another folder.
   - *Check (code):* one resolver picks the folder, in the order `--config-dir`, the environment variable, the
     default.
   - *Reference:* Editora [`App`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java) and [`ConfigManager.configDirFor`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/ConfigManager.java), [`ConfigDirTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/config/ConfigDirTest.java).
@@ -116,12 +116,10 @@ keymap, a theme, a language), not when the developer could not decide.
 
 ## Settings Sync (Git / GitHub)
 
-- **SET-17 · SHOULD.** Settings, keybindings and user data can sync, optionally, through a Git repository the user
-  owns.
-  - *Check (by hand):* set up Sync on two machines and change a setting on one.
-  - *Reference:* Editora [`sync/SyncEngine.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/sync/SyncEngine.java), [`docs/subsystems/settings-sync.md`](https://github.com/adriandeleon/Editora/blob/master/docs/subsystems/settings-sync.md). Editora syncs key bindings
-    and user data (snippets, abbreviations, templates, the dictionary), not the rest of `settings.json`; Torrenta
-    syncs its settings file ([`sync/SyncEngine.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/sync/SyncEngine.java)).
+An app with user data worth carrying between computers offers sync, on its own Settings page
+([SYNC-01](../templates/settings-sync/#sync-01)), into a Git repository the user owns
+([SYNC-02](../templates/settings-sync/#sync-02)). The rules below are how it behaves.
+
 - **SET-18 · SHOULD.** Setup is by pasting a repo URL, or **Create on GitHub** through the `gh` CLI. The account
   that can read the repo is pinned per clone, so machines with two GitHub accounts work.
   - *Check (test):* a test remembers the first account that can read the repository and uses it without asking

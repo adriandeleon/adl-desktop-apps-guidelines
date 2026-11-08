@@ -66,7 +66,7 @@ not apply, the ones it does differently on purpose, and the ones still pending. 
 <div class="m-pw-item"><span class="m-link m-pw-id">MENU-16</span><span class="m-pw-level">MUST</span><span class="m-grow">Some menus draw in a smaller font than the rest. <span class="m-link">#44</span></span></div>
 <div class="m-pw-item"><span class="m-link m-pw-id">SYNC-01</span><span class="m-pw-level">SHOULD</span><span class="m-grow">Settings can't be synced between computers yet. <span class="m-link">#38</span></span></div>
 <div class="m-pw-group">Deviation</div>
-<div class="m-pw-item"><span class="m-link m-pw-id">WIN-06</span><span class="m-pw-level">SHOULD</span><span class="m-grow">Mirada opens straight to your last folder instead of a Welcome page; with none, its empty state names the ways in. <span class="m-link">Decision 0004</span></span><span class="pin">6</span></div>
+<div class="m-pw-item"><span class="m-link m-pw-id">WELC-01</span><span class="m-pw-level">SHOULD</span><span class="m-grow">Mirada opens straight to your last folder instead of a Welcome page; with none, its empty state names the ways in. <span class="m-link">Decision 0004</span></span><span class="pin">6</span></div>
 <div class="m-pw-group">Not applicable</div>
 <div class="m-pw-item"><span class="m-link m-pw-id">TABS-06</span><span class="m-pw-level">MUST</span><span class="m-grow">Mirada has no tabs: it shows one folder in one window.</span></div>
 </div>

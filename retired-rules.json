@@ -1,0 +1,25 @@
+{
+  "comment": "Rule IDs no longer in use. An ID is never reused (AGENTS.md, \"Rule IDs\"): npm run check fails when one comes back, and scripts/check-edition.mjs fails a change that retires an ID without listing it here. `edition` is the first edition without the rule; `see` is the rule that now holds its requirement, or null.",
+  "retired": [
+    { "id": "ICON-03", "edition": "3.0.0", "see": "ICON-09" },
+    { "id": "KBD-19", "edition": "3.0.0", "see": "ICON-09" },
+    { "id": "ICON-22", "edition": "4.0.0", "see": "MENU-14" },
+    { "id": "TBAR-11", "edition": "4.0.0", "see": "MENU-16" },
+    { "id": "PLAT-07", "edition": "4.3.0", "see": "ICON-02" },
+    { "id": "QUAL-01", "edition": "4.3.0", "see": "PLAT-09" },
+    { "id": "QUAL-12", "edition": "4.3.0", "see": "INTL-08" },
+    { "id": "QUAL-14", "edition": "4.3.0", "see": "ICON-14" },
+    { "id": "DOCS-19", "edition": "4.3.0", "see": "REPO-01" },
+    { "id": "KBD-08", "edition": "4.3.0", "see": "QOPEN-01" },
+    { "id": "KBD-17", "edition": "4.3.0", "see": "TBAR-01" },
+    { "id": "KBD-20", "edition": "4.3.0", "see": "INTL-04" },
+    { "id": "WIN-02", "edition": "4.3.0", "see": "ICON-16" },
+    { "id": "WIN-05", "edition": "4.3.0", "see": "CONF-01" },
+    { "id": "WIN-06", "edition": "4.3.0", "see": "WELC-01" },
+    { "id": "WIN-07", "edition": "4.3.0", "see": "ABOUT-02" },
+    { "id": "ICON-21", "edition": "4.3.0", "see": "TBAR-01" },
+    { "id": "SET-17", "edition": "4.3.0", "see": "SYNC-01" },
+    { "id": "PAL-03", "edition": "4.3.0", "see": "KBD-07" },
+    { "id": "MLOG-01", "edition": "4.3.0", "see": "DIAG-01" }
+  ]
+}

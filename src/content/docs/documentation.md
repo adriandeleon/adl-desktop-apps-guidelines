@@ -54,8 +54,9 @@ repository's [`docs/README.md`](https://github.com/adriandeleon/Editora/blob/mas
     [`MainController`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java) holding most), [`GenRoadmap.java`](https://github.com/adriandeleon/editora-website/blob/master/scripts/GenRoadmap.java), [`GenFeatures.java`](https://github.com/adriandeleon/editora-website/blob/master/scripts/GenFeatures.java); [`scripts/check-doc-commands.mjs`](https://github.com/adriandeleon/editora-website/blob/master/scripts/check-doc-commands.mjs)
     (`npm run check:docs`).
 - **DOCS-05 · MUST.** Release notes are written for users. Each `CHANGELOG.md` entry opens with a bold one-line
-  summary ([Repository documents](../repository/)); the GitHub release carries the section, the Welcome page's
-  *What's New* opens this build's release, and the website's What's new is generated from the same file.
+  summary ([Repository documents](../repository/)); the Welcome page's *What's New* opens this build's release,
+  and the website's What's new is generated from the same file. The GitHub release carrying the section is
+  [REL-04](../release/#rel-04).
   - *Check (code):* the Welcome page's *What's New* opens `AppInfo.releaseNotesUrl()`; the website's What's new
     is generated from `CHANGELOG.md`.
   - *Reference:* Editora [`AppInfo.releaseNotesUrl()`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/AppInfo.java), [`WelcomePane`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WelcomePane.java) (`welcome.whatsNew`); editora-website
@@ -148,9 +149,6 @@ The documentation is one command away, so nobody has to know the website's addre
   - *Why:* a stale screenshot claims what is not true.
   - *Check (code):* the app has a capture hook or a headless harness that writes the real window to a PNG.
   - *Reference:* `DevCapture` ([Shared features](../family/shared-features/)); Editora's headless harness.
-- **DOCS-19 · MUST.** The README defers. It is about 200 lines: pitch, hero, highlights, install, build, command
-  line, config folder, license, and links into the website's docs. It carries no feature catalog, so it changes
-  only when those facts do.
-  - *Check (code):* `README.md` is near 200 lines and links to the website's docs instead of listing every
-    feature.
-  - *Reference:* [Repository documents](../repository/); Editora [`docs/conventions.md#docs-in-the-same-pr`](https://github.com/adriandeleon/Editora/blob/master/docs/conventions.md#docs-in-the-same-pr).
+
+The README's own shape, about 200 lines that leave the detail to the website's docs, is
+[REPO-01](../repository/#repo-01).

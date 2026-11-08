@@ -31,12 +31,6 @@ description: "JDK, JavaFX, AtlantaFX, NullAway, Maven Wrapper, tests and coverag
   - *Reference:* Editora [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css); [`StyleContrastTest.severityAndDebugColoursComeFromTheStateTokens`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java) holds the
     severity and debug colors. Editora's [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) still has fixed hexes in a few component rules (the breakpoint
     markers, the execution arrow, the editor area's defaults).
-- **PLAT-07 · SHOULD.** The app bundles **Inter** (Regular, Bold, Italic, BoldItalic and `OFL.txt`), registers it
-  with `Font.loadFont` before any stylesheet, and attaches `ui-font.css` to every scene and dialog pane.
-  - *Why:* the family has one look on every OS.
-  - *Check (code):* the four Inter `.ttf` files and `OFL.txt` are in the resources; one place loads them before
-    the first stylesheet, and one listener adds `ui-font.css` to every window's scene.
-  - *Reference:* Editora [`ui/Fonts.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Fonts.java); [`App.installUiFont`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java).
 - **PLAT-08 · MUST.** The build is **Maven** with the **Maven Wrapper** committed (`mvnw`, `mvnw.cmd`,
   `.mvn/wrapper/`), so `./mvnw` works on a clean machine.
   - *Check (code):* `mvnw`, `mvnw.cmd` and `.mvn/wrapper/maven-wrapper.properties` are in the repository.
@@ -60,14 +54,18 @@ description: "JDK, JavaFX, AtlantaFX, NullAway, Maven Wrapper, tests and coverag
   - *Check (code):* the `jacoco-check` execution is bound to `verify` with `BUNDLE` limits of 0.90 `LINE` and
     0.90 `METHOD`.
   - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml) `jacoco-check`.
-- **PLAT-13 · SHOULD.** The app logs through `java.util.logging`, captured in-app by the Debug Log.
-  - *Check (code):* the Debug Log adds a handler to the root `java.util.logging` logger; the app's own code
-    imports no other logging API.
+- **PLAT-13 · SHOULD.** The app logs through `java.util.logging` and no other logging API. The Debug Log captures
+  it: [DIAG-02](../diagnostics/#diag-02).
+  - *Check (code):* the app's own code imports no logging API other than `java.util.logging`.
   - *Reference:* Editora [`ui/DebugLog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/DebugLog.java).
-- **PLAT-14 · SHOULD.** JSON config files are Jackson POJOs, each with a `SCHEMA_VERSION`.
-  - *Check (code):* every class written to the config folder declares `SCHEMA_VERSION` and a `schemaVersion`
-    field.
+- **PLAT-14 · SHOULD.** Config files are JSON, read and written by Jackson as plain classes (POJOs). Their schema
+  versions and migrations are [SET-09](../settings/#set-09).
+  - *Check (code):* every class written to the config folder is read and written through Jackson's
+    `ObjectMapper`; no store builds or parses its JSON by hand.
   - *Reference:* Editora [`config/Settings`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/Settings.java), [`config/migration/ConfigSchema.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/migration/ConfigSchema.java).
+
+The app's typeface is Inter, bundled and registered before any CSS and attached to every scene:
+[ICON-01](../icons-and-color/#icon-01) and [ICON-02](../icons-and-color/#icon-02).
 
 ![Editora's Appearance settings page with font, theme and editor theme choices and a code preview](../../assets/shots/editora-themes-fonts.png "Settings → Appearance in Editora: language, fonts, app theme and editor theme, with a live preview.")
 

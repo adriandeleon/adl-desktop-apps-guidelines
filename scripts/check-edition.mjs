@@ -11,11 +11,12 @@
 //     carries an `Edition: none` trailer (a format change: typos, links, markup);
 //   - the rules gained, lost or re-leveled an ID, but the change keeps the version or raises only the patch: that is at
 //     least a minor (AGENTS.md, "Version numbers"). Whether a minor should be a major is the author's call;
+//   - a rule's ID is gone but retired-rules.json doesn't list it, with this version as its edition;
 //   - a new version isn't above the base's and above every tag on origin, or its tag is already taken.
 // Tags are CI's: nothing else creates or pushes them.
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
-import { pageOrder, parsePage } from "../src/lib/rules.mjs";
+import { pageOrder, parsePage, readRetired } from "../src/lib/rules.mjs";
 
 const args = process.argv.slice(2);
 const tag = args[0] === "--tag";
@@ -85,6 +86,14 @@ for (const [id, level] of after) {
   else if (before.get(id) !== level) ruleChanges.push(`${id} ${before.get(id)} -> ${level}`);
 }
 for (const id of before.keys()) if (!after.has(id)) ruleChanges.push(`${id} retired`);
+// A retired ID is recorded, so it is never reused (scripts/check-rules.mjs) and agents can see where it went.
+const retiredIn = new Map(readRetired().map((r) => [r.id, r.edition]));
+for (const id of before.keys()) {
+  if (after.has(id)) continue;
+  if (!retiredIn.has(id)) errors.push(`${id} is retired, but retired-rules.json doesn't list it`);
+  else if (retiredIn.get(id) !== version) errors.push(`retired-rules.json says ${id} was retired in ${retiredIn.get(id)}, but this edition is ${version}`);
+}
+
 const [major, minor] = parse(version);
 const [baseMajor, baseMinor] = parse(baseVersion);
 if (ruleChanges.length && major === baseMajor && minor === baseMinor) {

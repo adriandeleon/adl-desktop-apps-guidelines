@@ -98,7 +98,25 @@ export function readRules(root = process.cwd()) {
     if (owner.has(p.prefix)) problems.push(`${p.slug}: prefix ${p.prefix} is also ${owner.get(p.prefix)}'s`);
     owner.set(p.prefix, p.slug);
   }
-  return { pages, problems };
+  // A retired ID never comes back, and the rule it points readers to exists.
+  const retired = readRetired(root);
+  const live = new Set(pages.flatMap((p) => p.rules.map((r) => r.id)));
+  for (const r of retired) {
+    if (live.has(r.id)) problems.push(`${r.id} is retired (retired-rules.json, ${r.edition}); a new rule takes the page's next free number`);
+    if (r.see && !live.has(r.see)) problems.push(`retired-rules.json: ${r.id} points to ${r.see}, which is not a rule`);
+  }
+  return { pages, retired, problems };
+}
+
+/** The retired IDs, from retired-rules.json under `root`: `{ id, edition, see }`, `see` being the rule that holds the
+ *  requirement now, or null. */
+export function readRetired(root = process.cwd()) {
+  try {
+    return JSON.parse(readFileSync(join(root, "retired-rules.json"), "utf8")).retired;
+  } catch (e) {
+    if (e.code === "ENOENT") return [];
+    throw e;
+  }
 }
 
 /** Relative Markdown links ("](../menus/)") made absolute against the page's own address. */

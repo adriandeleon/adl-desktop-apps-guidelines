@@ -115,8 +115,9 @@ skipped and why.
    `file:line`. A failed MUST blocks a release.
 4. A rule applies to every app unless its text names the apps it covers ("An app with user documents…").
 5. Read the app's `pauta.json` ([Conformance](../conformance/)). A rule it lists is reported as its kind
-   (`not-applicable`, `deviation` or `pending`), not as a failure. An unmet rule it doesn't list, an entry for a rule
-   that passes, and a deviation or pending entry with no link are findings.
+   (`not-applicable`, `deviation`, `pending`, or in a template `app-only`), not as a failure; MAYs need no entry. An
+   unmet rule it doesn't list, an entry for a rule that passes, and a deviation or pending entry with no link are
+   findings.
 
 A prompt as short as this one is enough:
 

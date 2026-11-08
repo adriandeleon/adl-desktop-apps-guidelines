@@ -15,9 +15,9 @@ its `fail` and `n/a` lines are the exceptions.
 
 | Conformance | The app meets… | About says |
 |---|---|---|
-| **Complete** | every MUST of its edition, met or not applicable, and every SHOULD, met, not applicable or a recorded deviation | Built to Pauta 4.1.0 · Pauta conformance: Complete |
-| **Core** | every MUST in the same way; one or more SHOULDs are still pending | Built to Pauta 4.1.0 · Pauta conformance: Core |
-| **Partial** | not every MUST: one or more MUSTs are still pending | Working toward Pauta 4.1.0 · Pauta conformance: Partial |
+| **Complete** | every MUST of its edition, met or not applicable, and every SHOULD, met, not applicable or a recorded deviation | Built to Pauta 4.2.0 · Pauta conformance: Complete |
+| **Core** | every MUST in the same way; one or more SHOULDs are still pending | Built to Pauta 4.2.0 · Pauta conformance: Core |
+| **Partial** | not every MUST: one or more MUSTs are still pending | Working toward Pauta 4.2.0 · Pauta conformance: Partial |
 
 "Built to an edition" keeps its meaning: the app meets that edition's MUSTs. Core and Complete are the two ways to be
 built to it; a Partial app is working toward it and says so. MAY rules never count. A deviation, which only a SHOULD can
@@ -38,36 +38,43 @@ moved to a newer one with new MUSTs. A new app is not released at Partial.
   - *Why:* [*One source of truth for each fact*](../principles/#for-the-people-building-them). A conformance typed
     in by hand stays "Complete" after a pending exception is added.
   - *Check (test):* a unit test of the helper (`PautaConformance`, or the app's equivalent) covers all three and
-    shows that deviations and not-applicable entries leave the result alone.
+    shows that deviation, not-applicable and app-only entries leave the result alone.
   - *Reference:* no app yet.
 - **PAUTA-03 · MUST.** A new app's first release is at Core or Complete: the [New app checklist](../checklist/)'s
-  MUSTs are release blockers, and recording one as pending does not lift that.
+  MUSTs are release blockers, and recording one as pending does not lift that. A template repository is never
+  released as an app, so this rule is for the app made from it and the template records no entry for it.
   - *Check (by hand):* the About window of the app's first release says Core or Complete.
   - *Reference:* no app yet.
 
 ## Exceptions
 
-An exception is one rule the app does not meet as written. There are three kinds, and each one asks for something
-different.
+An exception is one MUST or SHOULD the app does not meet as written; MAYs never need one. There are three kinds for
+an app, and a fourth for a template repository; each one asks for something different.
 
 | Kind | Means | Needs |
 |---|---|---|
 | `not-applicable` | The rule applies to every app, but its subject does not exist in this one: no tabs to reopen, no setting to sync | A reason |
 | `deviation` | A SHOULD only: the app does it differently on purpose, and would make the same choice again | A reason and a decision record |
 | `pending` | The app does not do it yet | A reason and an issue |
+| `app-only` | A template only: the rule needs what each app made from it has of its own, such as its website, its screenshots or its repository settings | A reason |
 
-- **PAUTA-04 · MUST.** Every rule of the edition that the app does not meet has an exception, and every exception
-  names a rule the app does not meet. An unmet rule with no entry is a failed audit, not an exception; an entry for
-  a rule the app now meets is removed in the same change that meets it.
+- **PAUTA-04 · MUST.** Every MUST and SHOULD of the edition that the app does not meet has an exception, and every
+  exception names a rule the app does not meet. An unmet rule with no entry is a failed audit, not an exception; an
+  entry for a rule the app now meets is removed in the same change that meets it. A rule checked by hand counts like
+  any other: someone checks it in the running app before the conformance is claimed, and one that fails is pending.
   - *Why:* [*Never claim what is not true*](../principles/#for-the-people-using-the-apps). The list is the app's
     claim; it has to be whole and current.
   - *Check (by hand):* audit the app against its edition ([Coding agents and LLMs](../coding-agents/#audit-an-app));
-    every `fail` and `n/a` line is in `pauta.json`, and no entry is for a rule that passes.
+    every MUST and SHOULD `fail` and `n/a` line is in `pauta.json`, every `manual` line has been checked by a person,
+    and no entry is for a rule that passes.
   - *Reference:* no app yet.
-- **PAUTA-05 · MUST.** A rule whose own text or page limits it to apps with a feature ("An app with user data worth
-  carrying between computers…", the [Tray and background](../tray-and-background/) page) needs no entry in an app
-  without that feature. `not-applicable` is for a rule that reads as applying to every app.
-  - *Check (code):* no `not-applicable` entry names a rule whose text or page already scopes it.
+- **PAUTA-05 · MUST.** A rule limited to apps with a feature needs no entry in an app without that feature. A rule is
+  limited when its own text says so ("An app with user data worth carrying between computers…"), when its page or
+  section opens by saying so (the [Tray and background](../tray-and-background/) page), or when it details a rule
+  that is limited (WELC-03 onward detail the Welcome page of [WELC-01](../templates/welcome/#welc-01)).
+  `not-applicable` is for a rule that reads as applying to every app.
+  - *Check (code):* no `not-applicable` entry names a rule whose text, page, section or parent rule already limits
+    it.
   - *Reference:* no app yet.
 - **PAUTA-06 · MUST.** A `deviation` is a choice, not a gap, and only a SHOULD can have one: a SHOULD is expected
   unless the app has a stated reason, and the deviation is that reason. It links a decision record in
@@ -78,14 +85,29 @@ different.
   - *Check (code):* every `deviation` entry names a SHOULD, and its `link` opens a file under `docs/decisions/` that
     names the rule's ID.
   - *Reference:* no app yet.
-- **PAUTA-07 · MUST.** A `pending` exception links an open issue in the app's repository that names the rule's ID and
-  edition, "MENU-14 (Pauta 4.1.0)". Closing the issue removes the entry.
-  - *Check (code):* every `pending` entry's `link` is an issue URL in the app's repository.
+- **PAUTA-07 · MUST.** A `pending` exception links an open issue in the app's own repository that names the rule's
+  ID and edition, "MENU-14 (Pauta 4.2.0)". One issue may hold several rules, one per page for example, if it names
+  each one that way. Closing the issue removes its entries.
+  - *Check (code):* every `pending` entry's `link` is an issue URL in the app's repository whose text names that
+    entry's rule ID and edition.
   - *Reference:* no app yet.
 - **PAUTA-08 · MUST.** Each exception's `reason` is one plain sentence for the person using the app, in English like
   the changelog: what is different and, for a deviation, what they get instead. No rule text, no class names.
   - *Check (by hand):* read each reason in the Pauta window as a user would.
   - *Reference:* no app yet.
+- **PAUTA-16 · MUST.** A template repository, one that new apps are made from, sets `"template": true` in its
+  `pauta.json` and records as `app-only` the rules that only an app made from it can meet. `app-only` leaves the
+  conformance as it is, like `not-applicable`, and nothing but a template may use it. Making an app from the
+  template sets `template` to `false`. From then on the app's everyday build passes but lists what it inherited:
+  each `app-only` entry and each `pending` link to another repository. Its release build fails until each one is
+  met, or recorded as `pending` with an issue in the app's own repository.
+  - *Why:* a template can't have the website or screenshots of an app that doesn't exist yet, and an app must not
+    inherit its template's issues as its own. A build that failed the moment the app was made would fail its first
+    step; the release is where it has to be settled ([PAUTA-03](#pauta-03)).
+  - *Check (code):* in a template, `pauta.json` has `"template": true` and the rename script sets it to `false`; in
+    an app, the release build runs the test with inherited entries treated as failures, and the app's first
+    release has no `app-only` entry.
+  - *Reference:* the [app template](https://github.com/adriandeleon/adl-desktop-app-template) (in progress).
 
 ## The file
 
@@ -100,7 +122,7 @@ a test keeps the copies honest.
     {
       "rule": "MENU-14",
       "level": "MUST",
-      "url": "https://pauta-project.dev/4.1.0/menus/#menu-14",
+      "url": "https://pauta-project.dev/4.2.0/menus/#menu-14",
       "kind": "pending",
       "reason": "Some menu rows have no icon yet.",
       "link": "https://github.com/adriandeleon/<App>/issues/212"
@@ -108,14 +130,14 @@ a test keeps the copies honest.
     {
       "rule": "TABS-06",
       "level": "MUST",
-      "url": "https://pauta-project.dev/4.1.0/tabs-and-panels/#tabs-06",
+      "url": "https://pauta-project.dev/4.2.0/tabs-and-panels/#tabs-06",
       "kind": "not-applicable",
       "reason": "<App> has no tabs: it shows one library in one window."
     },
     {
       "rule": "WIN-06",
       "level": "SHOULD",
-      "url": "https://pauta-project.dev/4.1.0/window-shell/#win-06",
+      "url": "https://pauta-project.dev/4.2.0/window-shell/#win-06",
       "kind": "deviation",
       "reason": "<App> opens straight to your library instead of a Welcome page; its empty state names the ways in.",
       "link": "https://github.com/adriandeleon/<App>/blob/master/docs/decisions/0007-no-welcome-page.md"
@@ -125,13 +147,16 @@ a test keeps the copies honest.
 ```
 
 - **PAUTA-09 · MUST.** The exceptions have one source, `pauta.json` as above: `rule`, `level`, `url`, `kind` and
-  `reason` on every entry, `link` on every deviation and pending entry, one entry per rule.
+  `reason` on every entry, `link` on every deviation and pending entry, one entry per rule, and `"template": true`
+  beside `exceptions` only in a template repository (PAUTA-16).
   - *Check (code):* the file exists at that path, and each entry has the fields its kind needs.
   - *Reference:* no app yet.
 - **PAUTA-10 · MUST.** A test reads `pauta.json` against a copy of the edition's `rules.json` in
   `src/test/resources/pauta-rules.json` and fails when the copy's `edition` is not `pauta.version`, when an entry
   names a rule the edition does not have, when its `level` or `url` differs from the edition's, when a rule appears
-  twice, when a deviation names a MUST, or when a deviation or pending entry has no `link`.
+  twice, when a deviation names a MUST, or when a deviation or pending entry has no `link`. Outside a template, it
+  reports each `app-only` entry and each `pending` link that is not an issue in the app's own repository (the one
+  `AppInfo` names), and fails on them in the release build ([PAUTA-16](#pauta-16)).
   - *Why:* moving to a newer edition changes levels and retires IDs; the test turns each stale entry into a failure.
   - *Check (test):* `PautaConformanceTest`, or the app's equivalent, runs in the build.
   - *Reference:* no app yet.

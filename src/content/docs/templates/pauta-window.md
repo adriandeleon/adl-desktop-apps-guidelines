@@ -26,12 +26,14 @@ not apply, the ones it does differently on purpose, and the ones still pending. 
     rule IDs or conformance names of its own.
   - *Reference:* no app yet.
 - **PWIN-04 · MUST.** Every link opens a fixed address: the edition at `https://pauta-project.dev/<edition>/`, each
-  rule ID at its address in that edition (the entry's `url`), never `latest/`.
-  - *Why:* an app built to 4.1.0 answers to 4.1.0's rules; `latest/` moves on.
-  - *Check (code):* the edition URL is built from `pauta.version`; rule links use each entry's `url`.
+  rule ID at its address in that edition (the entry's `url`), never `latest/`. The edition's link, here and in
+  About, runs the `help.pautaRules` command, so the palette reaches it too.
+  - *Why:* an app built to 4.2.0 answers to 4.2.0's rules; `latest/` moves on.
+  - *Check (code):* `help.pautaRules` is registered and builds the edition URL from `pauta.version`; rule links use
+    each entry's `url`.
   - *Reference:* [ABOUT-06](../about/#about-06).
-- **PWIN-05 · SHOULD.** Pending exceptions come first, then deviations, then not-applicable; within a kind, MUSTs
-  before SHOULDs, then by ID.
+- **PWIN-05 · SHOULD.** Pending exceptions come first, then deviations, then app-only (in a template), then
+  not-applicable; within a kind, MUSTs before SHOULDs, then by ID.
   - *Why:* what the app still owes is what a reader came to find.
   - *Check (test):* a unit test of the sort.
   - *Reference:* no app yet.
@@ -39,12 +41,15 @@ not apply, the ones it does differently on purpose, and the ones still pending. 
   and leaves the window open; its label becomes "Copied".
   - *Check (code):* the button sits in the content, not the button bar, like About's *Copy details*.
   - *Reference:* Editora [`AboutDialog`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/AboutDialog.java) (`about.copyDetails`, `about.copied`).
-- **PWIN-07 · SHOULD.** A *Conformance in the docs* link opens the app's docs page ([PAUTA-13](../../conformance/#pauta-13))
-  for this version.
-  - *Check (code):* the link is built from the app's docs base, like Help → Documentation.
+- **PWIN-07 · SHOULD.** A *Conformance in the docs* link runs the `help.pautaDocs` command, which opens the app's
+  docs page ([PAUTA-13](../../conformance/#pauta-13)) for this version, `/docs/v-<version>/pauta/`, where the site
+  serves versioned docs ([DOCS-03](../../documentation/#docs-03)), and `/docs/pauta/` until it does. The README's
+  badge links the unversioned page, which always shows the latest release.
+  - *Check (code):* `help.pautaDocs` is registered and builds the URL from the app's docs base, like Help →
+    Documentation.
   - *Reference:* Editora [`AppInfo.docsUrl()`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/AppInfo.java).
 - **PWIN-08 · SHOULD.** With no exceptions, the list's place says so in one line, "No exceptions: Mirada meets every
-  MUST and SHOULD of Pauta 4.1.0.", and the copy button still works.
+  MUST and SHOULD of Pauta 4.2.0.", and the copy button still works.
   - *Check (by hand):* with an empty `exceptions` array, open the window.
   - *Reference:* no app yet.
 
@@ -53,7 +58,7 @@ not apply, the ones it does differently on purpose, and the ones still pending. 
 <div class="mock-stage">
 <div class="m-card m-dialog m-pw" role="img" aria-label="Mockup of the Pauta window">
 <div class="titlebar">Pauta Conformance</div>
-<div class="m-about-head"><img src="../../pauta-128.png" alt="" /><div><div class="m-row"><span class="m-about-name">Pauta 4.1.0</span><span class="pin">1</span></div><div class="m-row"><span class="m-pill amber">Partial</span><span class="pin">2</span></div><div class="m-about-tagline">Mirada does not meet every MUST yet: 2 are pending.</div></div></div>
+<div class="m-about-head"><img src="../../pauta-128.png" alt="" /><div><div class="m-row"><span class="m-about-name">Pauta 4.2.0</span><span class="pin">1</span></div><div class="m-row"><span class="m-pill amber">Partial</span><span class="pin">2</span></div><div class="m-about-tagline">Mirada does not meet every MUST yet: 2 are pending.</div></div></div>
 <div class="m-row m-muted"><span>3 pending · 1 deviation · 1 not applicable</span><span class="pin">3</span></div>
 <div class="m-pw-list">
 <div class="m-pw-group">Pending<span class="pin out">4</span></div>
@@ -65,7 +70,7 @@ not apply, the ones it does differently on purpose, and the ones still pending. 
 <div class="m-pw-group">Not applicable</div>
 <div class="m-pw-item"><span class="m-link m-pw-id">TABS-06</span><span class="m-pw-level">MUST</span><span class="m-grow">Mirada has no tabs: it shows one folder in one window.</span></div>
 </div>
-<div style="display:flex;flex-direction:column;gap:2px"><span class="m-row"><span class="m-link">Pauta 4.1.0 rules</span><span class="pin">7</span></span><span class="m-link">Conformance in the docs</span></div>
+<div style="display:flex;flex-direction:column;gap:2px"><span class="m-row"><span class="m-link">Pauta 4.2.0 rules</span><span class="pin">7</span></span><span class="m-link">Conformance in the docs</span></div>
 <div class="m-footer-row"><span class="m-row"><span class="m-btn">Copy as text</span><span class="pin">8</span></span><span class="m-row"><span class="pin">9</span><span class="m-btn primary">Close</span></span></div>
 </div>
 </div>
@@ -101,17 +106,25 @@ The entries above show the layout with Mirada's name; they are not Mirada's reco
 | Key | English |
 |---|---|
 | `command.help.pauta` | Pauta Conformance |
-| `command.help.pauta.desc` | Show which edition of Pauta {0} implements, how fully it conforms, and the rules it does not meet. |
+| `command.help.pauta.desc` | Show which edition of Pauta this app implements, how fully it conforms, and the rules it does not meet. |
+| `command.help.pautaRules` / `.desc` | Pauta Rules / Open the rules of the Pauta edition this app is built to, in your browser. |
+| `command.help.pautaDocs` / `.desc` | Pauta Conformance in the Docs / Open the page of this app's documentation that lists its Pauta exceptions. |
 | `dialog.pauta.title` | Pauta Conformance |
 | `pauta.edition` | Pauta {0} |
 | `pauta.conformance.complete` / `.core` / `.partial` | Complete / Core / Partial |
 | `pauta.conformance.complete.desc` | {0} meets every MUST and SHOULD of this edition. |
-| `pauta.conformance.core.desc` | {0} meets every MUST of this edition; {1} SHOULDs are pending. |
-| `pauta.conformance.partial.desc` | {0} does not meet every MUST yet: {1} are pending. |
-| `pauta.kind.pending` / `.deviation` / `.notApplicable` | Pending / Deviation / Not applicable |
+| `pauta.conformance.core.desc` | {0} meets every MUST of this edition; {1,choice,1#1 SHOULD is\|1<{1} SHOULDs are} pending. |
+| `pauta.conformance.partial.desc` | {0} does not meet every MUST yet: {1,choice,1#1 is\|1<{1} are} pending. |
+| `pauta.kind.pending` / `.deviation` / `.appOnly` / `.notApplicable` | Pending / Deviation / For each app made from it / Not applicable |
+| `pauta.count.pending` | {0,choice,1#1 pending\|1<{0} pending} |
+| `pauta.count.deviation` | {0,choice,1#1 deviation\|1<{0} deviations} |
+| `pauta.count.appOnly` | {0,choice,1#1 for each app\|1<{0} for each app} |
+| `pauta.count.notApplicable` | {0,choice,1#1 not applicable\|1<{0} not applicable} |
+| `pauta.decision` | Decision {0} |
 | `pauta.rules` / `pauta.docs` | Pauta {0} rules / Conformance in the docs |
 | `pauta.none` | No exceptions: {0} meets every MUST and SHOULD of Pauta {1}. |
 | `pauta.copy` / `pauta.copied` | Copy as text / Copied |
 
 The reasons themselves come from `pauta.json`, in English ([PAUTA-08](../../conformance/#pauta-08)); the window's
-own words are in the catalogs like every other string.
+own words are in the catalogs like every other string. Counts use `MessageFormat`'s `choice` so English reads "1
+SHOULD is pending", not "1 SHOULDs are". A command description takes no arguments, so it says "this app".

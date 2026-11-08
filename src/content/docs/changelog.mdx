@@ -1,13 +1,39 @@
 ---
 title: "Changelog"
-description: "Every edition of the guidelines and what each one changed."
+description: "Every edition of the guidelines, how editions are numbered, and what each one changed."
 tableOfContents: false
 ---
 
 import Changelog from "../../components/Changelog.astro";
 
-Each edition of Pauta is a version: a new or stronger rule is a minor version, a new MUST that existing apps fail is a
-major one, wording and facts a patch. The entries come from the repository's `CHANGELOG.md`, in
+Each edition of Pauta is a version, numbered as below. The entries come from the repository's `CHANGELOG.md`, in
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) form.
+
+## How editions are numbered
+
+An edition is numbered *major.minor.patch*. The number says what moving an app to it costs, judged by the rules
+alone: which rules exist, their levels, and what each one asks. Only what the guide says moves it; how the site
+shows it never does.
+
+- **Patch** (4.1.0 → 4.1.1): an app built to the edition before it does nothing. The guide says the same thing more
+  clearly or more correctly, and no rule's ID, level or requirement changes: a rule reworded without changing what
+  passes, a wrong fact about an app fixed (the matrix, *Gaps per app*, a Reference), a Check fixed to test what its
+  rule already asked, a new or replaced screenshot, a page or section that adds no rule.
+- **Minor** (4.1.1 → 4.2.0): an app adds what the new or stronger rules ask, and undoes nothing. The rules change,
+  but everything that conformed still conforms: a new rule at any level, a level raised (SHOULD → MUST, MAY →
+  SHOULD) or lowered, a rule that covers more cases, a rule retired with nothing in its place.
+- **Major** (4.2.0 → 5.0.0): an app changes work it already did. Something that conformed must be undone or redone:
+  a rule reversed, or replaced by one that asks for something else; a requirement changed so the old way now fails
+  (a different file name, value, chord, color or layout); a change to what MUST, SHOULD, MAY or "built to an
+  edition" means.
+- **No edition**: nothing a reader takes as guidance changes, so the number stays and the changelog has no entry. A
+  typo or spelling fix, a broken link fixed or a link added, Markdown and markup, the site's styles, scripts, build
+  and branding, the PDF's layout.
+
+The largest change sets the number: an edition that adds ten rules and reverses one is a major. A new MUST is a
+minor, even when every app fails it today: an app names the edition it is built to (`pauta.version`, the About
+window), so a new MUST asks nothing of it until it moves, and moving adds work without undoing any. Numbers are
+never reused or changed, since every edition keeps its address; 2.0.0 and 3.0.0 were numbered under an earlier rule
+that made any new MUST apps failed a major, and under these rules both would be minors.
 
 <Changelog />

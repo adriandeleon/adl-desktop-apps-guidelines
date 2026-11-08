@@ -3,9 +3,22 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+and editions are numbered as the [Changelog page](https://pauta-project.dev/latest/changelog/) says: a patch asks
+nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 
 ## [Unreleased]
+
+## [4.0.2] - 2026-11-08
+
+### Added
+
+- **How editions are numbered.** The Changelog page says what each part of the version means, judged by what moving
+  an app to the edition costs. A patch asks nothing: wording, fixed facts, screenshots, pages without rules. A minor
+  asks the app to add: a new rule at any level, a level raised or lowered, a rule retired. A major asks it to undo or
+  redo work that conformed: a rule reversed or replaced, a requirement changed so the old way fails. A new MUST is a
+  minor, even when every app fails it, so majors stay rare; 2.0.0 and 3.0.0 would be minors under these rules and
+  keep their numbers. Typos, links, markup and the site's look take no edition at all. Coding agents and LLMs says
+  what each part means when an app moves to a newer edition. No rule changed.
 
 ## [4.0.1] - 2026-11-07
 

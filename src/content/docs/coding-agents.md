@@ -142,6 +142,8 @@ TRAY-01  MUST    n/a      the app has no tray icon
 
 ## Move an app to a newer edition
 
+The version says how much work the move is ([how editions are numbered](../changelog/#how-editions-are-numbered)): a
+newer patch asks nothing of the app, a newer minor asks it to add, a newer major asks it to undo or redo something.
 The [Changelog](../changelog/) says what each edition added and which rules became stronger. To see it rule by
 rule, compare two editions' `rules.json`:
 

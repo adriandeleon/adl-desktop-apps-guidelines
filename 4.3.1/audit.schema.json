@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pauta-project.dev/4.3.1/audit.schema.json",
+  "title": "Pauta audit report",
+  "description": "One app audited against one edition of Pauta: a result for every rule in scope. Written as docs/pauta-audit.json beside docs/pauta-audit.md.",
+  "type": "object",
+  "required": [
+    "app",
+    "commit",
+    "edition",
+    "date",
+    "scope",
+    "results"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri"
+    },
+    "app": {
+      "type": "string",
+      "description": "The app's name."
+    },
+    "commit": {
+      "type": "string",
+      "description": "The commit audited, as a short or full SHA."
+    },
+    "edition": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "The edition audited against."
+    },
+    "appEdition": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "The edition the app names (pauta.version), when it is not `edition`: one with no rules.json, or none at all (null)."
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "scope": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "What was audited: empty for every rule, else the prefixes, page slugs or rule IDs given."
+    },
+    "rules": {
+      "type": "string",
+      "description": "Where the rules came from: the edition's rules.json URL or a local path."
+    },
+    "results": {
+      "type": "array",
+      "description": "One result per rule in scope, in the edition's rule order.",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "level",
+          "status",
+          "evidence"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Z]{2,6}-\\d{2,3}$"
+          },
+          "level": {
+            "enum": [
+              "MUST",
+              "SHOULD",
+              "MAY"
+            ]
+          },
+          "status": {
+            "enum": [
+              "fail",
+              "manual",
+              "pending",
+              "deviation",
+              "not-applicable",
+              "app-only",
+              "limited",
+              "pass"
+            ],
+            "description": "See rules.json's `statuses`."
+          },
+          "evidence": {
+            "type": "string",
+            "description": "Where the verdict comes from, as path/File.java:123 from the repository root, and what is missing for a fail. For an exception, its pauta.json reason; for limited, the feature the app lacks."
+          },
+          "problem": {
+            "type": "string",
+            "description": "What is wrong with the app's pauta.json about this rule: an entry for a rule that passes or is limited, a deviation on a MUST, a deviation or pending entry with no link, or a level or url that differs from the edition's."
+          }
+        }
+      }
+    },
+    "problems": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Findings no rule of the edition holds: a pauta.json entry for a retired or unknown ID, an edition named differently in pom.xml and the README."
+    }
+  }
+}

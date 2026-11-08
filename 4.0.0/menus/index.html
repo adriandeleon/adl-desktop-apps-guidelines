@@ -1,0 +1,446 @@
+<!DOCTYPE html><html lang="en" dir="ltr" data-theme="dark" data-has-toc data-has-sidebar class="astro-g5ptsecz"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Menus | Pauta</title><link rel="canonical" href="https://pauta-project.dev/4.0.0/menus/"/><link rel="sitemap" href="/4.0.0/sitemap-index.xml"/><script src="/4.0.0/lightbox.js" defer></script><script src="/4.0.0/mock-fit.js" defer></script><script src="/4.0.0/checklist.js" defer></script><script src="/4.0.0/versions.js" defer data-root="/" data-version="4.0.0" data-edition="4.0.0"></script><link rel="apple-touch-icon" href="/4.0.0/pauta-128.png"/><link rel="shortcut icon" href="/4.0.0/favicon.svg" type="image/svg+xml"/><meta name="generator" content="Astro v7.4.7"/><meta name="generator" content="Starlight v0.42.9"/><meta property="og:title" content="Menus"/><meta property="og:type" content="article"/><meta property="og:url" content="https://pauta-project.dev/4.0.0/menus/"/><meta property="og:locale" content="en"/><meta property="og:description" content="The menu bar and right-click menus: an icon and the chord on every row, one font, one menu at a time, and a press anywhere else closes it."/><meta property="og:site_name" content="Pauta"/><meta name="description" content="The menu bar and right-click menus: an icon and the chord on every row, one font, one menu at a time, and a press anywhere else closes it."/><meta name="robots" content="noindex"/><meta property="og:image" content="https://pauta-project.dev/4.0.0/og.png"/><meta property="og:image:width" content="1280"/><meta property="og:image:height" content="640"/><meta property="og:image:alt" content="Pauta, the adl desktop apps guidelines, with the six apps' icons"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:image" content="https://pauta-project.dev/4.0.0/og.png"/><script>
+	window.StarlightThemeProvider = (() => {
+		const storedTheme =
+			typeof localStorage !== 'undefined' && localStorage.getItem('starlight-theme');
+		const theme =
+			storedTheme ||
+			(window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+		document.documentElement.dataset.theme = theme === 'light' ? 'light' : 'dark';
+		return {
+			updatePickers(theme = storedTheme || 'auto') {
+				document.querySelectorAll('starlight-theme-select').forEach((picker) => {
+					const select = picker.querySelector('select');
+					if (select) select.value = theme;
+					/** @type {HTMLTemplateElement | null} */
+					const tmpl = document.querySelector(`#theme-icons`);
+					const newIcon = tmpl && tmpl.content.querySelector('.' + theme);
+					if (newIcon) {
+						const oldIcon = picker.querySelector('svg.label-icon');
+						if (oldIcon) {
+							oldIcon.replaceChildren(...newIcon.cloneNode(true).childNodes);
+						}
+					}
+				});
+			},
+		};
+	})();
+</script><template id="theme-icons"><svg aria-hidden="true" class="light astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M5 12a1 1 0 0 0-1-1H3a1 1 0 0 0 0 2h1a1 1 0 0 0 1-1Zm.64 5-.71.71a1 1 0 0 0 0 1.41 1 1 0 0 0 1.41 0l.71-.71A1 1 0 0 0 5.64 17ZM12 5a1 1 0 0 0 1-1V3a1 1 0 0 0-2 0v1a1 1 0 0 0 1 1Zm5.66 2.34a1 1 0 0 0 .7-.29l.71-.71a1 1 0 1 0-1.41-1.41l-.66.71a1 1 0 0 0 0 1.41 1 1 0 0 0 .66.29Zm-12-.29a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.71-.71a1.004 1.004 0 1 0-1.43 1.41l.73.71ZM21 11h-1a1 1 0 0 0 0 2h1a1 1 0 0 0 0-2Zm-2.64 6A1 1 0 0 0 17 18.36l.71.71a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.76-.66ZM12 6.5a5.5 5.5 0 1 0 5.5 5.5A5.51 5.51 0 0 0 12 6.5Zm0 9a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Zm0 3.5a1 1 0 0 0-1 1v1a1 1 0 0 0 2 0v-1a1 1 0 0 0-1-1Z"/></svg><svg aria-hidden="true" class="dark astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.64 13a1 1 0 0 0-1.05-.14 8.049 8.049 0 0 1-3.37.73 8.15 8.15 0 0 1-8.14-8.1 8.59 8.59 0 0 1 .25-2A1 1 0 0 0 8 2.36a10.14 10.14 0 1 0 14 11.69 1 1 0 0 0-.36-1.05Zm-9.5 6.69A8.14 8.14 0 0 1 7.08 5.22v.27a10.15 10.15 0 0 0 10.14 10.14 9.784 9.784 0 0 0 2.1-.22 8.11 8.11 0 0 1-7.18 4.32v-.04Z"/></svg><svg aria-hidden="true" class="auto astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg></template><link rel="stylesheet" href="/4.0.0/_astro/print.C9eyqPGL.css" media="print"><link rel="stylesheet" href="/4.0.0/_astro/common.DcaQdSuv.css"><style>@layer starlight.components{svg:where(.astro-hkc32dio){color:var(--sl-icon-color);font-size:var(--sl-icon-size,1em);width:1em;height:1em;overflow:visible}}
+</style><script type="module" src="/4.0.0/_astro/page.cNngjUgL.js"></script></head><body class="astro-g5ptsecz"><a class="sl-skip-link astro-qb7clj6f" href="#_top">Skip to content</a><div class="page sl-flex astro-yntsjkba"><header class="header astro-yntsjkba"><div class="header astro-by6fddyj"><div class="title-wrapper sl-flex astro-by6fddyj"><a href="/4.0.0/" class="site-title sl-flex astro-6rvad3va"><img class="astro-6rvad3va" alt src="/4.0.0/_astro/pauta-icon.BdPhq1pq.svg" width="512" height="512"><span class="astro-6rvad3va" translate="no">Pauta</span></a><a class="edition-mini md:sl-hidden print:hidden astro-hen6hmfb" href="/4.0.0/changelog/" title="This edition of the guidelines">4.0.0</a><pauta-edition-select data-root="/" data-base="/4.0.0/" class="astro-hwvk6c3s print:hidden sl-hidden md:sl-flex astro-hen6hmfb"><label style="--sl-select-width: 9.5em" class="astro-2z5xp7gb"><span class="sr-only astro-2z5xp7gb">Edition</span><svg aria-hidden="true" class="icon label-icon astro-2z5xp7gb astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.17 2.06A13.1 13.1 0 0 0 19 1.87a12.94 12.94 0 0 0-7 2.05 12.94 12.94 0 0 0-7-2 13.1 13.1 0 0 0-2.17.19 1 1 0 0 0-.83 1v12a1 1 0 0 0 1.17 1 10.9 10.9 0 0 1 8.25 1.91l.12.07h.11a.91.91 0 0 0 .7 0h.11l.12-.07A10.899 10.899 0 0 1 20.83 16 1 1 0 0 0 22 15V3a1 1 0 0 0-.83-.94ZM11 15.35a12.87 12.87 0 0 0-6-1.48H4v-10c.333-.02.667-.02 1 0a10.86 10.86 0 0 1 6 1.8v9.68Zm9-1.44h-1a12.87 12.87 0 0 0-6 1.48V5.67a10.86 10.86 0 0 1 6-1.8c.333-.02.667-.02 1 0v10.04Zm1.17 4.15a13.098 13.098 0 0 0-2.17-.19 12.94 12.94 0 0 0-7 2.05 12.94 12.94 0 0 0-7-2.05c-.727.003-1.453.066-2.17.19A1 1 0 0 0 2 19.21a1 1 0 0 0 1.17.79 10.9 10.9 0 0 1 8.25 1.91 1 1 0 0 0 1.16 0A10.9 10.9 0 0 1 20.83 20a1 1 0 0 0 1.17-.79 1 1 0 0 0-.83-1.15Z"/></svg><select autocomplete="off" class="astro-2z5xp7gb"><option value="latest" class="astro-2z5xp7gb">latest (4.0.0)</option><option value="4.0.0" selected class="astro-2z5xp7gb">4.0.0</option><option value="3.0.0" class="astro-2z5xp7gb">3.0.0</option><option value="2.0.2" class="astro-2z5xp7gb">2.0.2</option><option value="2.0.1" class="astro-2z5xp7gb">2.0.1</option><option value="2.0.0" class="astro-2z5xp7gb">2.0.0</option><option value="1.4.1" class="astro-2z5xp7gb">1.4.1</option><option value="1.4.0" class="astro-2z5xp7gb">1.4.0</option><option value="1.3.2" class="astro-2z5xp7gb">1.3.2</option><option value="1.3.1" class="astro-2z5xp7gb">1.3.1</option><option value="1.3.0" class="astro-2z5xp7gb">1.3.0</option><option value="1.2.0" class="astro-2z5xp7gb">1.2.0</option><option value="1.1.0" class="astro-2z5xp7gb">1.1.0</option><option value="1.0.0" class="astro-2z5xp7gb">1.0.0</option></select><svg aria-hidden="true" class="icon caret astro-2z5xp7gb astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg></label></pauta-edition-select><script type="module">var e=class extends HTMLElement{connectedCallback(){let e=this.querySelector(`select`);if(!e)return;let t=this.dataset.root??`/`,n=this.dataset.base??`/`,r=location.pathname.startsWith(n)?location.pathname.slice(n.length):``;e.addEventListener(`change`,async()=>{let n=`${t}${e.value}/`,i=n+r;try{let e=await fetch(i,{method:`HEAD`});location.href=e.ok?i:n}catch{location.href=n}}),window.addEventListener(`pageshow`,t=>{if(!t.persisted)return;let n=e.querySelector(`option[selected]`)?.index;n!==void 0&&n!==e.selectedIndex&&(e.selectedIndex=n)})}};customElements.define(`pauta-edition-select`,e);</script></div><div class="sl-flex print:hidden astro-by6fddyj"><site-search class="astro-by6fddyj astro-b5kgnn7o" data-translations="{&quot;placeholder&quot;:&quot;Search&quot;}"><button data-open-modal disabled aria-label="Search" aria-keyshortcuts="Control+K" class="astro-b5kgnn7o"><svg aria-hidden="true" class="astro-b5kgnn7o astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.71 20.29 18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a.999.999 0 0 0 1.42 0 1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z"/></svg><span class="sl-hidden md:sl-block astro-b5kgnn7o" aria-hidden="true">Search</span><kbd class="sl-hidden md:sl-flex astro-b5kgnn7o" style="display: none"><kbd class="astro-b5kgnn7o">Ctrl</kbd><kbd class="astro-b5kgnn7o">K</kbd></kbd></button><dialog style="padding: 0" aria-label="Search" class="astro-b5kgnn7o"><div class="dialog-frame sl-flex astro-b5kgnn7o"><button data-close-modal class="sl-flex md:sl-hidden astro-b5kgnn7o">Cancel</button><div class="search-container astro-b5kgnn7o"><div id="starlight__search" class="astro-b5kgnn7o"></div></div></div></dialog></site-search><script>
+	(() => {
+		const openBtn = document.querySelector('button[data-open-modal]');
+		const shortcut = openBtn?.querySelector('kbd');
+		if (!openBtn || !(shortcut instanceof HTMLElement)) return;
+		const platformKey = shortcut.querySelector('kbd');
+		if (platformKey && /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)) {
+			platformKey.textContent = '⌘';
+			openBtn.setAttribute('aria-keyshortcuts', 'Meta+K');
+		}
+		shortcut.style.display = '';
+	})();
+</script><script type="module" src="/4.0.0/_astro/Search.astro_astro_type_script_index_0_lang.CcJpbf2A.js"></script></div><div class="sl-hidden md:sl-flex print:hidden right-group astro-by6fddyj"><div class="sl-flex social-icons astro-by6fddyj"><a href="https://github.com/adriandeleon/adl-desktop-apps-guidelines" rel="me" class="sl-flex astro-n2mnl6yq"><span class="sr-only astro-n2mnl6yq">GitHub</span><svg aria-hidden="true" class="astro-n2mnl6yq astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57L9 21.07c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.09-.73.09-.73 1.2.09 1.83 1.24 1.83 1.24 1.08 1.83 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18a4.65 4.65 0 0 1 1.23 3.22c0 4.61-2.8 5.63-5.48 5.92.42.36.81 1.1.81 2.22l-.01 3.29c0 .31.2.69.82.57A12 12 0 0 0 12 .3Z"/></svg></a></div><starlight-theme-select><label style="--sl-select-width: 6.25em" class="astro-2z5xp7gb"><span class="sr-only astro-2z5xp7gb">Select theme</span><svg aria-hidden="true" class="icon label-icon astro-2z5xp7gb astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg><select autocomplete="off" class="astro-2z5xp7gb"><option value="dark" class="astro-2z5xp7gb">Dark</option><option value="light" class="astro-2z5xp7gb">Light</option><option value="auto" selected class="astro-2z5xp7gb">Auto</option></select><svg aria-hidden="true" class="icon caret astro-2z5xp7gb astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg></label></starlight-theme-select><script>
+	StarlightThemeProvider.updatePickers();
+</script><script type="module">var e=`starlight-theme`,t=e=>e===`auto`||e===`dark`||e===`light`?e:`auto`,n=()=>t(typeof localStorage<`u`&&localStorage.getItem(e));function r(t){typeof localStorage<`u`&&localStorage.setItem(e,t===`light`||t===`dark`?t:``)}var i=()=>matchMedia(`(prefers-color-scheme: light)`).matches?`light`:`dark`;function a(e){StarlightThemeProvider.updatePickers(e),document.documentElement.dataset.theme=e===`auto`?i():e,r(e)}matchMedia(`(prefers-color-scheme: light)`).addEventListener(`change`,()=>{n()===`auto`&&a(`auto`)});var o=class extends HTMLElement{constructor(){super(),a(n()),this.querySelector(`select`)?.addEventListener(`change`,e=>{e.currentTarget instanceof HTMLSelectElement&&a(t(e.currentTarget.value))})}};customElements.define(`starlight-theme-select`,o);</script><script type="module">var e=class extends HTMLElement{constructor(){super();let e=this.querySelector(`select`);e&&(e.addEventListener(`change`,e=>{e.currentTarget instanceof HTMLSelectElement&&(window.location.pathname=e.currentTarget.value)}),window.addEventListener(`pageshow`,t=>{if(!t.persisted)return;let n=e.querySelector(`option[selected]`)?.index;n!==e.selectedIndex&&(e.selectedIndex=n??0)}))}};customElements.define(`starlight-lang-select`,e);</script></div></div></header><nav class="sidebar print:hidden astro-yntsjkba" aria-label="Main"><button popovertarget="starlight__sidebar" class="sl-menu-button sl-flex md:sl-hidden print:hidden astro-r2osgdlg"><svg aria-hidden="true" class="open-menu astro-r2osgdlg astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M3 8h18a1 1 0 1 0 0-2H3a1 1 0 0 0 0 2Zm18 8H3a1 1 0 0 0 0 2h18a1 1 0 0 0 0-2Zm0-5H3a1 1 0 0 0 0 2h18a1 1 0 0 0 0-2Z"/></svg><svg aria-hidden="true" class="close-menu astro-r2osgdlg astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="m13.41 12 6.3-6.29a1.004 1.004 0 1 0-1.42-1.42L12 10.59l-6.29-6.3a1.004 1.004 0 0 0-1.42 1.42l6.3 6.29-6.3 6.29a1 1 0 0 0 0 1.42.998.998 0 0 0 1.42 0l6.29-6.3 6.29 6.3a.999.999 0 0 0 1.42 0 1 1 0 0 0 0-1.42L13.41 12Z"/></svg><span class="sr-only astro-r2osgdlg">Menu</span></button><script type="module">var e=class extends HTMLElement{constructor(){super();let e=matchMedia(`(min-width: 50em)`),t=()=>{this.popover=e.matches?null:`auto`};t(),e.addEventListener(`change`,()=>t()),this.addEventListener(`toggle`,({newState:e})=>this.trapFocus(e===`open`))}trapFocus(e){document.querySelectorAll(`.main-frame, .sl-skip-link`).forEach(t=>{t.toggleAttribute(`inert`,e)})}};customElements.define(`sl-sidebar-pane`,e);</script><sl-sidebar-pane popover id="starlight__sidebar" class="sidebar-pane astro-yntsjkba"><div class="sidebar-content sl-flex astro-yntsjkba"><sl-sidebar-state-persist data-hash="0l3tick" class="astro-ipdry5cl"><script aria-hidden="true">
+		(() => {
+			try {
+				if (!matchMedia('(min-width: 50em)').matches) return;
+				/** @type {HTMLElement | null} */
+				const target = document.querySelector('sl-sidebar-state-persist');
+				const state = JSON.parse(sessionStorage.getItem('sl-sidebar-state') || '0');
+				if (!target || !state || target.dataset.hash !== state.hash) return;
+				window._starlightScrollRestore = state.scroll;
+				customElements.define(
+					'sl-sidebar-restore',
+					class SidebarRestore extends HTMLElement {
+						connectedCallback() {
+							try {
+								const idx = parseInt(this.dataset.index || '');
+								const details = this.closest('details');
+								if (details && typeof state.open[idx] === 'boolean') details.open = state.open[idx];
+							} catch {}
+						}
+					}
+				);
+			} catch {}
+		})();
+	</script><ul class="top-level astro-rmhv4bp6"><li class="astro-rmhv4bp6"><a href="/4.0.0/" class="large astro-rmhv4bp6"><span class="astro-rmhv4bp6">Overview</span></a></li><li class="astro-rmhv4bp6"><details open class="astro-rmhv4bp6"><summary class="astro-rmhv4bp6"><span class="group-label astro-rmhv4bp6"><span class="large astro-rmhv4bp6">Start here</span></span><svg aria-hidden="true" class="caret astro-rmhv4bp6 astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="0"></sl-sidebar-restore><ul class="astro-rmhv4bp6"><li class="astro-rmhv4bp6"><a href="/4.0.0/principles/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Principles</span></a></li><li class="astro-rmhv4bp6"><a href="/4.0.0/checklist/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">New app checklist</span></a></li><li class="astro-rmhv4bp6"><a href="/4.0.0/coding-agents/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Coding agents and LLMs</span></a></li></ul></details></li><li class="astro-rmhv4bp6"><details open class="astro-rmhv4bp6"><summary class="astro-rmhv4bp6"><span class="group-label astro-rmhv4bp6"><span class="large astro-rmhv4bp6">Foundations</span></span><svg aria-hidden="true" class="caret astro-rmhv4bp6 astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="1"></sl-sidebar-restore><ul class="astro-rmhv4bp6"><li class="astro-rmhv4bp6"><a href="/4.0.0/platform/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Platform baseline</span></a></li><li class="astro-rmhv4bp6"><a href="/4.0.0/repository/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Repository documents</span></a></li><li class="astro-rmhv4bp6"><a href="/4.0.0/documentation/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Documentation</span></a></li><li class="astro-rmhv4bp6"><a href="/4.0.0/quality/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Code quality gates</span></a></li><li class="astro-rmhv4bp6"><a href="/4.0.0/performance/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Performance</span></a></li></ul></details></li><li class="astro-rmhv4bp6"><details open class="astro-rmhv4bp6"><summary class="astro-rmhv4bp6"><span class="group-label astro-rmhv4bp6"><span class="large astro-rmhv4bp6">Experience</span></span><svg aria-hidden="true" class="caret astro-rmhv4bp6 astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="2"></sl-sidebar-restore><ul class="astro-rmhv4bp6"><li class="astro-rmhv4bp6"><a href="/4.0.0/keyboard/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Keyboard first</span></a></li><li class="astro-rmhv4bp6"><a href="/4.0.0/window-shell/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Window shell</span></a></li><li class="astro-rmhv4bp6"><a href="/4.0.0/icons-and-color/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Icons and color</span></a></li><li class="astro-rmhv4bp6"><a href="/4.0.0/toolbars-and-tooltips/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Toolbars and tooltips</span></a></li><li class="astro-rmhv4bp6"><a href="/4.0.0/tabs-and-panels/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Tabs and tool panels</span></a></li><li class="astro-rmhv4bp6"><a href="/4.0.0/menus/" aria-current="page" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Menus</span></a></li><li class="astro-rmhv4bp6"><a href="/4.0.0/tray-and-background/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Tray and background</span></a></li><li class="astro-rmhv4bp6"><a href="/4.0.0/settings/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Settings</span></a></li><li class="astro-rmhv4bp6"><a href="/4.0.0/diagnostics/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Diagnostics and support</span></a></li><li class="astro-rmhv4bp6"><a href="/4.0.0/command-line/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Command line and launch</span></a></li><li class="astro-rmhv4bp6"><a href="/4.0.0/i18n/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Internationalization</span></a></li></ul></details></li><li class="astro-rmhv4bp6"><details open class="astro-rmhv4bp6"><summary class="astro-rmhv4bp6"><span class="group-label astro-rmhv4bp6"><span class="large astro-rmhv4bp6">Templates</span></span><svg aria-hidden="true" class="caret astro-rmhv4bp6 astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="3"></sl-sidebar-restore><ul class="astro-rmhv4bp6"><li class="astro-rmhv4bp6"><a href="/4.0.0/templates/command-palette/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Command Palette</span></a></li><li class="astro-rmhv4bp6"><a href="/4.0.0/templates/quick-open/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">QuickOpen picker</span></a></li><li class="astro-rmhv4bp6"><a href="/4.0.0/templates/welcome/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Welcome page</span></a></li><li class="astro-rmhv4bp6"><a href="/4.0.0/templates/about/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">About window</span></a></li><li class="astro-rmhv4bp6"><a href="/4.0.0/templates/confirm-dialog/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Confirm dialog</span></a></li><li class="astro-rmhv4bp6"><a href="/4.0.0/templates/find-bar/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Find bar</span></a></li><li class="astro-rmhv4bp6"><a href="/4.0.0/templates/message-log/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Message Log</span></a></li><li class="astro-rmhv4bp6"><a href="/4.0.0/templates/settings-sync/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Settings Sync</span></a></li></ul></details></li><li class="astro-rmhv4bp6"><details open class="astro-rmhv4bp6"><summary class="astro-rmhv4bp6"><span class="group-label astro-rmhv4bp6"><span class="large astro-rmhv4bp6">Shipping</span></span><svg aria-hidden="true" class="caret astro-rmhv4bp6 astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="4"></sl-sidebar-restore><ul class="astro-rmhv4bp6"><li class="astro-rmhv4bp6"><a href="/4.0.0/release/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Packaging, signing and release</span></a></li></ul></details></li><li class="astro-rmhv4bp6"><details open class="astro-rmhv4bp6"><summary class="astro-rmhv4bp6"><span class="group-label astro-rmhv4bp6"><span class="large astro-rmhv4bp6">The family</span></span><svg aria-hidden="true" class="caret astro-rmhv4bp6 astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="5"></sl-sidebar-restore><ul class="astro-rmhv4bp6"><li class="astro-rmhv4bp6"><a href="/4.0.0/family/matrix/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Feature matrix</span></a></li><li class="astro-rmhv4bp6"><a href="/4.0.0/family/shared-features/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Shared features</span></a></li><li class="astro-rmhv4bp6"><a href="/4.0.0/family/gaps/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Gaps per app</span></a></li></ul></details></li><li class="astro-rmhv4bp6"><a href="/4.0.0/changelog/" class="large astro-rmhv4bp6"><span class="astro-rmhv4bp6">Changelog</span></a></li></ul><script aria-hidden="true">
+		(() => {
+			const scroller = document.getElementById('starlight__sidebar');
+			if (!window._starlightScrollRestore || !scroller) return;
+			scroller.scrollTop = window._starlightScrollRestore;
+			delete window._starlightScrollRestore;
+		})();
+	</script></sl-sidebar-state-persist><div class="md:sl-hidden"><div class="mobile-preferences sl-flex astro-p4azlveh"><div class="social-icons astro-p4azlveh"><a href="https://github.com/adriandeleon/adl-desktop-apps-guidelines" rel="me" class="sl-flex astro-n2mnl6yq"><span class="sr-only astro-n2mnl6yq">GitHub</span><svg aria-hidden="true" class="astro-n2mnl6yq astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57L9 21.07c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.09-.73.09-.73 1.2.09 1.83 1.24 1.83 1.24 1.08 1.83 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18a4.65 4.65 0 0 1 1.23 3.22c0 4.61-2.8 5.63-5.48 5.92.42.36.81 1.1.81 2.22l-.01 3.29c0 .31.2.69.82.57A12 12 0 0 0 12 .3Z"/></svg></a></div><starlight-theme-select><label style="--sl-select-width: 6.25em" class="astro-2z5xp7gb"><span class="sr-only astro-2z5xp7gb">Select theme</span><svg aria-hidden="true" class="icon label-icon astro-2z5xp7gb astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg><select autocomplete="off" class="astro-2z5xp7gb"><option value="dark" class="astro-2z5xp7gb">Dark</option><option value="light" class="astro-2z5xp7gb">Light</option><option value="auto" selected class="astro-2z5xp7gb">Auto</option></select><svg aria-hidden="true" class="icon caret astro-2z5xp7gb astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg></label></starlight-theme-select><script>
+	StarlightThemeProvider.updatePickers();
+</script></div><div class="edition-row astro-oq7puzlo"><span class="astro-oq7puzlo">Edition</span><pauta-edition-select data-root="/" data-base="/4.0.0/" class="astro-hwvk6c3s print:hidden astro-oq7puzlo"><label style="--sl-select-width: 9.5em" class="astro-2z5xp7gb"><span class="sr-only astro-2z5xp7gb">Edition</span><svg aria-hidden="true" class="icon label-icon astro-2z5xp7gb astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.17 2.06A13.1 13.1 0 0 0 19 1.87a12.94 12.94 0 0 0-7 2.05 12.94 12.94 0 0 0-7-2 13.1 13.1 0 0 0-2.17.19 1 1 0 0 0-.83 1v12a1 1 0 0 0 1.17 1 10.9 10.9 0 0 1 8.25 1.91l.12.07h.11a.91.91 0 0 0 .7 0h.11l.12-.07A10.899 10.899 0 0 1 20.83 16 1 1 0 0 0 22 15V3a1 1 0 0 0-.83-.94ZM11 15.35a12.87 12.87 0 0 0-6-1.48H4v-10c.333-.02.667-.02 1 0a10.86 10.86 0 0 1 6 1.8v9.68Zm9-1.44h-1a12.87 12.87 0 0 0-6 1.48V5.67a10.86 10.86 0 0 1 6-1.8c.333-.02.667-.02 1 0v10.04Zm1.17 4.15a13.098 13.098 0 0 0-2.17-.19 12.94 12.94 0 0 0-7 2.05 12.94 12.94 0 0 0-7-2.05c-.727.003-1.453.066-2.17.19A1 1 0 0 0 2 19.21a1 1 0 0 0 1.17.79 10.9 10.9 0 0 1 8.25 1.91 1 1 0 0 0 1.16 0A10.9 10.9 0 0 1 20.83 20a1 1 0 0 0 1.17-.79 1 1 0 0 0-.83-1.15Z"/></svg><select autocomplete="off" class="astro-2z5xp7gb"><option value="latest" class="astro-2z5xp7gb">latest (4.0.0)</option><option value="4.0.0" selected class="astro-2z5xp7gb">4.0.0</option><option value="3.0.0" class="astro-2z5xp7gb">3.0.0</option><option value="2.0.2" class="astro-2z5xp7gb">2.0.2</option><option value="2.0.1" class="astro-2z5xp7gb">2.0.1</option><option value="2.0.0" class="astro-2z5xp7gb">2.0.0</option><option value="1.4.1" class="astro-2z5xp7gb">1.4.1</option><option value="1.4.0" class="astro-2z5xp7gb">1.4.0</option><option value="1.3.2" class="astro-2z5xp7gb">1.3.2</option><option value="1.3.1" class="astro-2z5xp7gb">1.3.1</option><option value="1.3.0" class="astro-2z5xp7gb">1.3.0</option><option value="1.2.0" class="astro-2z5xp7gb">1.2.0</option><option value="1.1.0" class="astro-2z5xp7gb">1.1.0</option><option value="1.0.0" class="astro-2z5xp7gb">1.0.0</option></select><svg aria-hidden="true" class="icon caret astro-2z5xp7gb astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg></label></pauta-edition-select></div></div></div></sl-sidebar-pane></nav><div class="main-frame astro-yntsjkba"><script type="module">var e=document.getElementById(`starlight__sidebar`),t=e?.querySelector(`sl-sidebar-state-persist`),n=`sl-sidebar-state`,r=()=>{let r=[],i=t?.dataset.hash||``;try{let e=sessionStorage.getItem(n),t=JSON.parse(e||`{}`);Array.isArray(t.open)&&t.hash===i&&(r=t.open)}catch{}return{hash:i,open:r,scroll:e?.scrollTop||0}},i=e=>{try{sessionStorage.setItem(n,JSON.stringify(e))}catch{}},a=()=>i(r()),o=(e,t)=>{let n=r();n.open[t]=e,i(n)};t?.addEventListener(`click`,e=>{if(!(e.target instanceof Element))return;let t=e.target.closest(`summary`)?.closest(`details`);if(!t)return;let n=t.querySelector(`sl-sidebar-restore`),r=parseInt(n?.dataset.index||``);isNaN(r)||o(!t.open,r)}),addEventListener(`visibilitychange`,()=>{document.visibilityState===`hidden`&&a()});</script><div class="lg:sl-flex astro-lrzkfocr"><aside class="right-sidebar-container print:hidden astro-lrzkfocr"><div class="right-sidebar astro-lrzkfocr"><div class="lg:sl-hidden astro-qok35upx"><mobile-starlight-toc data-min-h="2" data-max-h="3" class="astro-66cqc7ze"><nav aria-labelledby="starlight__on-this-page--mobile" class="astro-66cqc7ze"><details id="starlight__mobile-toc" class="astro-66cqc7ze"><summary id="starlight__on-this-page--mobile" class="sl-flex astro-66cqc7ze"><span class="toggle sl-flex astro-66cqc7ze">On this page<svg aria-hidden="true" class="caret astro-66cqc7ze astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></span><span class="display-current astro-66cqc7ze"></span></summary><div class="dropdown astro-66cqc7ze"><ul class="isMobile astro-jugkfwgx" style="--depth: 0;"><li style="--depth: 0;" class="astro-jugkfwgx"><a href="#_top" style="--depth: 0;" class="astro-jugkfwgx"><span style="--depth: 0;" class="astro-jugkfwgx">Overview</span></a></li><li style="--depth: 0;" class="astro-jugkfwgx"><a href="#look-and-feel" style="--depth: 0;" class="astro-jugkfwgx"><span style="--depth: 0;" class="astro-jugkfwgx">Look and feel</span></a></li><li style="--depth: 0;" class="astro-jugkfwgx"><a href="#the-menu-bar" style="--depth: 0;" class="astro-jugkfwgx"><span style="--depth: 0;" class="astro-jugkfwgx">The menu bar</span></a></li><li style="--depth: 0;" class="astro-jugkfwgx"><a href="#right-click-menus" style="--depth: 0;" class="astro-jugkfwgx"><span style="--depth: 0;" class="astro-jugkfwgx">Right-click menus</span></a><ul class="isMobile astro-jugkfwgx" style="--depth: 1;"><li style="--depth: 1;" class="astro-jugkfwgx"><a href="#behavior" style="--depth: 1;" class="astro-jugkfwgx"><span style="--depth: 1;" class="astro-jugkfwgx">Behavior</span></a></li><li style="--depth: 1;" class="astro-jugkfwgx"><a href="#spec" style="--depth: 1;" class="astro-jugkfwgx"><span style="--depth: 1;" class="astro-jugkfwgx">Spec</span></a></li></ul></li><li style="--depth: 0;" class="astro-jugkfwgx"><a href="#in-the-apps" style="--depth: 0;" class="astro-jugkfwgx"><span style="--depth: 0;" class="astro-jugkfwgx">In the apps</span></a></li></ul></div></details></nav></mobile-starlight-toc><script type="module" src="/4.0.0/_astro/MobileTableOfContents.astro_astro_type_script_index_0_lang.C3fM4Kra.js"></script></div><div class="right-sidebar-panel sl-hidden lg:sl-block astro-qok35upx"><div class="sl-container astro-qok35upx"><starlight-toc data-min-h="2" data-max-h="3"><nav aria-labelledby="starlight__on-this-page"><h2 id="starlight__on-this-page">On this page</h2><ul class="astro-jugkfwgx" style="--depth: 0;"><li style="--depth: 0;" class="astro-jugkfwgx"><a href="#_top" style="--depth: 0;" class="astro-jugkfwgx"><span style="--depth: 0;" class="astro-jugkfwgx">Overview</span></a></li><li style="--depth: 0;" class="astro-jugkfwgx"><a href="#look-and-feel" style="--depth: 0;" class="astro-jugkfwgx"><span style="--depth: 0;" class="astro-jugkfwgx">Look and feel</span></a></li><li style="--depth: 0;" class="astro-jugkfwgx"><a href="#the-menu-bar" style="--depth: 0;" class="astro-jugkfwgx"><span style="--depth: 0;" class="astro-jugkfwgx">The menu bar</span></a></li><li style="--depth: 0;" class="astro-jugkfwgx"><a href="#right-click-menus" style="--depth: 0;" class="astro-jugkfwgx"><span style="--depth: 0;" class="astro-jugkfwgx">Right-click menus</span></a><ul class="astro-jugkfwgx" style="--depth: 1;"><li style="--depth: 1;" class="astro-jugkfwgx"><a href="#behavior" style="--depth: 1;" class="astro-jugkfwgx"><span style="--depth: 1;" class="astro-jugkfwgx">Behavior</span></a></li><li style="--depth: 1;" class="astro-jugkfwgx"><a href="#spec" style="--depth: 1;" class="astro-jugkfwgx"><span style="--depth: 1;" class="astro-jugkfwgx">Spec</span></a></li></ul></li><li style="--depth: 0;" class="astro-jugkfwgx"><a href="#in-the-apps" style="--depth: 0;" class="astro-jugkfwgx"><span style="--depth: 0;" class="astro-jugkfwgx">In the apps</span></a></li></ul></nav></starlight-toc><script type="module" src="/4.0.0/_astro/TableOfContents.astro_astro_type_script_index_0_lang.BpJaGz7G.js"></script></div></div></div></aside><div class="main-pane astro-lrzkfocr"><main data-pagefind-body class="astro-g5ptsecz" lang="en" dir="ltr"><div class="content-panel astro-a7po4psb"><div class="sl-container astro-a7po4psb"><h1 id="_top" class="astro-bebwqqxs">Menus</h1></div></div><div class="content-panel astro-a7po4psb"><div class="sl-container astro-a7po4psb"><div class="sl-markdown-content"><p>Two surfaces show the same rows: the <strong>menu bar</strong>, a browsable map of every command, and <strong>right-click menus</strong>, what
+can be done with the thing under the pointer. Both are built from the <a href="../keyboard/">command registry</a>, so a row’s
+title, icon, chord and enabled state come from the command and never drift from the palette or the toolbar.
+Reference: Editora’s <code dir="auto">ui/MainMenuBar.java</code> (menu bar), <code dir="auto">ui/ContextMenuDismissal.java</code>, <code dir="auto">ui/LazyContextMenu.java</code>,
+<code dir="auto">ui/RowContextMenu.java</code> and <code dir="auto">ui/TabContextMenu.java</code> (right-click menus), and the <code dir="auto">.menu-item</code> and <code dir="auto">.context-menu</code>
+rules in <code dir="auto">app.css</code>.</p>
+<p><svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-open" viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"></path></symbol>
+<symbol id="i-save" viewBox="0 0 24 24"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"></path></symbol>
+<symbol id="i-saveas" viewBox="0 0 24 24"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8v-2H5V5h10v4h4v2h2V7l-4-4zm-5 10a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm7 2v2h-2v2h2v2h2v-2h2v-2h-2v-2h-2z"></path></symbol>
+<symbol id="i-close" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></symbol>
+<symbol id="i-print" viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"></path></symbol>
+<symbol id="i-recent" viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"></path></symbol>
+<symbol id="i-quit" viewBox="0 0 24 24"><path d="m17 7-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"></path></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"></path></symbol>
+<symbol id="i-closeall" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"></path></symbol>
+<symbol id="i-git" viewBox="0 0 24 24"><path d="M6 2a3 3 0 0 0-1 5.83v8.34A3 3 0 1 0 7 16.17V12.4c.6.37 1.3.6 2 .6h4a3 3 0 0 0 3-3v-.17A3 3 0 1 0 14 9.83V10a1 1 0 0 1-1 1H9a2 2 0 0 1-2-2V7.83A3 3 0 0 0 6 2z"></path></symbol>
+<symbol id="i-terminal" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8h16v10zm-2-1h-6v-2h6v2zM7.5 17l-1.41-1.41L8.67 13l-2.59-2.59L7.5 9l4 4-4 4z"></path></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"></path></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24"><path d="M16 9V4h1c.55 0 1-.45 1-1s-.45-1-1-1H7c-.55 0-1 .45-1 1s.45 1 1 1h1v5c0 1.66-1.34 3-3 3v2h5.97v7l1 1 1-1v-7H19v-2c-1.66 0-3-1.34-3-3z"></path></symbol>
+<symbol id="i-rename" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></symbol>
+</defs></svg></p>
+<div class="sl-heading-wrapper level-h2"><h2 id="look-and-feel">Look and feel</h2><a class="sl-anchor-link" href="#look-and-feel"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Look and feel”</span></a></div>
+<p>Both surfaces draw their rows the same way. Absolute pixels are deliberate: a popup inherits the font of the node it
+was opened from, and <code dir="auto">em</code> would resolve against a file tree’s or an 18 px toolbar’s size (Editora’s toolbar menu once
+rendered a third larger than every other menu in the app).</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Value</th><th>Reference</th></tr></thead><tbody><tr><td>Font</td><td>Inter 14 px, regular, in every row and label</td><td><code dir="auto">.context-menu</code>, <code dir="auto">.context-menu .menu-item .label</code> in <code dir="auto">app.css</code>; <code dir="auto">MainMenuBar.UI_FONT_SIZE</code></td></tr><tr><td>Row</td><td>34 px high: padding 8 × 12, the same in every theme</td><td><code dir="auto">.menu-item { -fx-padding: 8px 12px }</code></td></tr><tr><td>Icon column</td><td>22 px, filled on every row: a command row’s glyph, or a check row’s tick; 8 px to the title</td><td><code dir="auto">MainMenuBar.ICON_COLUMN</code>, <code dir="auto">rowContent</code></td></tr><tr><td>Icon</td><td>The command’s glyph, the same one as on the toolbar and in the palette (Save is the same floppy everywhere), filled <code dir="auto">-color-fg-muted</code></td><td><code dir="auto">Icons</code>, <code dir="auto">MenuBarIcons</code>, <code dir="auto">.toolbar-icon</code></td></tr><tr><td>Title</td><td>Inter 14 px, <code dir="auto">-color-fg-default</code></td><td><code dir="auto">.menu-item-title</code></td></tr><tr><td>Chord</td><td>Right-aligned in its own column, Inter 11 px, in the keyboard color (<code dir="auto">-state-key</code>, brace periwinkle); at least 18 px from the title column; in every menu, right-click menus included</td><td><code dir="auto">.menu-item-chord</code>, <code dir="auto">alignChordColumns</code></td></tr><tr><td>Submenu row</td><td>Laid out like a command row, with an invisible chord as wide as the menu’s widest, so the arrow lands at the right edge</td><td><code dir="auto">nestedMenu</code>, <code dir="auto">.menu-submenu</code></td></tr><tr><td>Card</td><td>Radius 8; shadow <code dir="auto">rgba(27,30,42,0.28)</code>, radius 16, <strong>offset Y 16</strong></td><td><code dir="auto">.context-menu</code></td></tr><tr><td>Danger item</td><td>Text in <code dir="auto">-color-danger-fg</code></td><td><code dir="auto">.menu-item.danger</code></td></tr><tr><td>Disabled item</td><td>The theme’s dimmed label, and the icon dimmed with it</td><td>Termina’s <code dir="auto">.menu-item:disabled .menu-icon</code></td></tr><tr><td>Separators</td><td>Never two in a row and none at either end: when items hide, their orphaned separators hide too</td><td><code dir="auto">LazyContextMenu.collapseSeparators</code>, Torrenta’s <code dir="auto">MenuSeparators</code></td></tr></tbody></table>
+<p>The shadow’s offset is not cosmetic. A menu is a native window sized to its root <em>including the effect</em>, so a shadow
+that reaches above the menu is invisible window over the bar the menu hangs from, and the pointer lands on it instead
+of the next menu button. The offset must be at least the radius; Editora pins it with <code dir="auto">MenuPopupBoundsFxTest</code>.</p>
+<p>The three rules below hold for every menu the app draws itself: the menu bar, right-click menus, the drop-down of a menu
+button or a split button, and the toolbar’s overflow. The menus a platform draws (the macOS system menu bar, a
+tray icon’s menu) show text only; there the chord is appended to the title (<a href="#menu-02">MENU-02</a>) and the
+<a href="../tray-and-background/">tray</a> shows neither.</p>
+<ul>
+<li id="menu-14" class="rule"><a class="rule-id" href="#menu-14">MENU-14</a> <span class="lvl lvl-must">MUST</span> Every row of every menu the app draws carries an icon that depicts it. A command row wears its
+command’s glyph; a row that names a thing rather than an action (a recent file, a branch, a project) wears that
+thing’s icon; a submenu wears its family’s. Only a check or radio row goes without, because its mark fills the
+icon column. Where the icon set has no glyph that depicts a command, the app adds one (a Material 24 dp path, or a
+line glyph in the kit’s style) instead of leaving the row blank or borrowing another command’s.
+<ul>
+<li><em>Why:</em> a menu is scanned before it is read, and the glyph is what the eye finds first; the same glyph on the
+toolbar, in the palette and in the menu (<a href="../icons-and-color/#icon-20">ICON-20</a>) is learned once. A blank
+cell breaks the column, and a borrowed glyph says something else.</li>
+<li><em>Check (test):</em> an FX test opens the menu bar’s menus and the right-click menus of a tab, an editor, a list row
+and the toolbar, and fails on any visible row that is not a check or radio item and has no graphic.</li>
+<li><em>Reference:</em> Editora <code dir="auto">ui/MenuBarIcons.java</code>, <code dir="auto">editor/MenuIcons.java</code>, <code dir="auto">ui/TabContextMenu.java</code>; Termina’s tab
+menu has an icon on every row. Editora doesn’t yet pass: about half its menu-bar rows have no glyph, and
+<code dir="auto">MenuBarIconsTest</code> holds that a command without a fitting glyph gets none, which this rule reverses; many
+right-click and drop-down rows have none either (Run All Requests in a <code dir="auto">.http</code> file, the CSV grid’s menu, the
+Markdown preview’s).</li>
+</ul>
+</li>
+<li id="menu-15" class="rule"><a class="rule-id" href="#menu-15">MENU-15</a> <span class="lvl lvl-must">MUST</span> Every menu row whose command has a chord in the active keymap shows it, in right-click menus
+and drop-downs as in the menu bar: right-aligned in the menu’s chord column, Inter 11 px in <code dir="auto">-state-key</code>. An
+unbound command leaves the cell empty, never a wrong chord, and a keymap switch rewrites every cell.
+<ul>
+<li><em>Why:</em> the menu is where a user learns the keys. A right-click menu that hides them teaches the mouse, while the
+palette and the toolbar’s tooltips already show the same chord.</li>
+<li><em>Check (test):</em> an FX test binds a command, opens a right-click menu that lists it and finds its chord in a
+<code dir="auto">menu-item-chord</code> label; after a keymap switch it finds the new chord.</li>
+<li><em>Reference:</em> Editora <code dir="auto">MainMenuBar.rowContent</code> and <code dir="auto">alignChordColumns</code>, <code dir="auto">.menu-item-chord</code> in <code dir="auto">app.css</code>. Editora’s
+right-click menus show no chords yet: a row there is a plain <code dir="auto">MenuItem</code>, not the menu bar’s row.</li>
+</ul>
+</li>
+<li id="menu-16" class="rule"><a class="rule-id" href="#menu-16">MENU-16</a> <span class="lvl lvl-must">MUST</span> Every menu draws its titles in Inter 14 px regular and its chords in Inter 11 px, whatever
+node it was opened from: the font is pinned in absolute pixels on <code dir="auto">.context-menu</code> and its rows’ labels.
+<ul>
+<li><em>Why:</em> a popup inherits the font of the node it was shown from, and <code dir="auto">em</code> resolves against it: Editora’s toolbar
+menu once rendered at the bar’s 18 px, a third larger than every other menu, and a file tree’s or a monospace
+editor’s font leaks the same way.</li>
+<li><em>Check (test):</em> an FX test opens a menu from the toolbar, an editor and a tree row and reads Inter 14 px from
+each row’s title.</li>
+<li><em>Reference:</em> Editora <code dir="auto">.context-menu</code> and <code dir="auto">.menu-item-chord</code> in <code dir="auto">app.css</code>, <code dir="auto">MainMenuBar.UI_FONT_SIZE</code>,
+<code dir="auto">ToolbarMenuFontFxTest</code>.</li>
+</ul>
+</li>
+</ul>
+<div class="sl-heading-wrapper level-h2"><h2 id="the-menu-bar">The menu bar</h2><a class="sl-anchor-link" href="#the-menu-bar"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “The menu bar”</span></a></div>
+<div class="mock-stage">
+<div class="m-menubar-stage" role="img" aria-label="Mockup of the File menu open under the menu bar">
+<div class="m-menubar"><span class="mb on">File<span class="pin out" style="left:-26px;top:3px">1</span></span><span class="mb">Edit</span><span class="mb">View</span><span class="mb">Find</span><span class="mb">Go</span><span class="mb">Run</span><span class="mb">Git</span><span class="mb">Tools</span><span class="mb">Window</span><span class="mb">Help</span></div>
+<div class="m-card m-menu">
+<div class="mi"><span class="ic"><svg><use href="#i-open"></use></svg></span><span class="t">Open…</span><span class="k">C-x C-f</span><span class="pin out" style="left:-26px">2</span></div>
+<div class="mi"><span class="ic"><svg><use href="#i-save"></use></svg></span><span class="t">Save <span class="pin" style="margin-left:6px">3</span></span><span class="k">C-x C-s</span><span class="pin out" style="right:-26px">4</span></div>
+<div class="mi"><span class="ic"><svg><use href="#i-saveas"></use></svg></span><span class="t">Save As…</span><span class="k">C-x C-w</span></div>
+<div class="mi"><span class="ic"><svg><use href="#i-close"></use></svg></span><span class="t">Close</span><span class="k">C-x k</span></div>
+<div class="mi"><span class="ic"><svg><use href="#i-print"></use></svg></span><span class="t">Print…</span><span class="k"></span><span class="pin out" style="right:-26px">5</span></div>
+<div class="sep"></div>
+<div class="mi sub"><span class="ic"><svg><use href="#i-recent"></use></svg></span><span class="t">Recent Files</span><span class="k ghost">C-x C-w</span><span class="arrow">›</span><span class="pin out" style="right:-26px">6</span></div>
+<div class="sep"></div>
+<div class="mi"><span class="ic"><svg><use href="#i-quit"></use></svg></span><span class="t">Quit</span><span class="k">C-x C-c</span></div>
+<span class="pin out" style="left:-26px;bottom:-4px">7</span>
+</div>
+</div>
+</div>
+<ol class="anatomy">
+<li><span class="pin">1</span><span><strong>Menu button.</strong> Padding 3 × 10 on a bar with 4 px side insets; the bar and the toolbar share one <code>-color-bg-subtle</code> band with no rule under it.</span></li>
+<li><span class="pin">2</span><span><strong>Icon column</strong>, 22 px. Every row has a glyph that depicts its command; where the icon set has none that fits, the app adds one rather than leave the cell blank.</span></li>
+<li><span class="pin">3</span><span><strong>Title</strong>, 14 px Inter, the command's title with the menu's own name dropped ("Save", not "File: Save") unless two rows would then read the same.</span></li>
+<li><span class="pin">4</span><span><strong>Chord column.</strong> Inter 11 px, periwinkle, right-aligned into one column per menu (not app-wide), read from the active keymap. Drawn by the app, not a JavaFX accelerator: Emacs chords are multi-key, which a <code>KeyCombination</code> cannot express, and on macOS an accelerator would bypass the key dispatcher.</span></li>
+<li><span class="pin">5</span><span><strong>Unbound command.</strong> An empty chord cell, never a wrong chord. A live keymap switch rewrites every cell.</span></li>
+<li><span class="pin">6</span><span><strong>Submenu row.</strong> Icon, title and an invisible chord as wide as the menu's widest, so its arrow sits at the right edge instead of halfway across.</span></li>
+<li><span class="pin">7</span><span><strong>Card.</strong> Radius 8; the shadow falls below the menu (offset ≥ radius), so nothing invisible covers the bar.</span></li>
+</ol>
+<ul>
+<li id="menu-01" class="rule"><a class="rule-id" href="#menu-01">MENU-01</a> <span class="lvl lvl-must">MUST</span> Every menu-bar item is a command from the registry, with its title from <code dir="auto">command.&#x3C;id></code>, its
+chord from the active keymap and its enabled state from the command’s gate. The bar assembles and refreshes; it
+holds no behavior of its own.
+<ul>
+<li><em>Check (code):</em> the bar’s model lists command ids only, and every row runs its id through the registry.</li>
+<li><em>Reference:</em> Editora <code dir="auto">ui/MenuBarModel.java</code> over <code dir="auto">command/CommandRegistry.java</code>, <code dir="auto">ui/MainMenuBar.java</code>.</li>
+</ul>
+</li>
+<li id="menu-02" class="rule"><a class="rule-id" href="#menu-02">MENU-02</a> <span class="lvl lvl-must">MUST</span> Menu-bar rows use no <code dir="auto">KeyCombination</code> accelerators. In the in-window bar each row is a
+<code dir="auto">CustomMenuItem</code> laying out icon, title, spacer and chord. On the macOS system menu bar (<code dir="auto">useSystemMenuBar</code>) the
+chord is appended to the title and rows carry no icon.
+<ul>
+<li><em>Why:</em> Emacs chords are multi-key, which a <code dir="auto">KeyCombination</code> cannot express, and on macOS an accelerator would
+bypass the key dispatcher. The native macOS menu draws text only and no graphics, which is also the platform’s
+convention.</li>
+<li><em>Check (code):</em> no <code dir="auto">setAccelerator</code> in the menu-bar classes.</li>
+<li><em>Reference:</em> Editora <code dir="auto">ui/MainMenuBar.java</code> (<code dir="auto">rowContent</code>, <code dir="auto">refresh</code>).</li>
+</ul>
+</li>
+<li id="menu-03" class="rule"><a class="rule-id" href="#menu-03">MENU-03</a> <span class="lvl lvl-should">SHOULD</span> Enablement is re-read every time a menu opens, and titles and chords on a keymap or locale
+change.
+<ul>
+<li><em>Why:</em> a menu built before Git finished detecting a repository must not stay grayed out.</li>
+<li><em>Check (test):</em> an FX test detects a repository after the window is built and finds the menu enabled.</li>
+<li><em>Reference:</em> Editora <code dir="auto">MainMenuBar.refreshEnablement</code>, <code dir="auto">MenuBarEnablementFxTest</code>.</li>
+</ul>
+</li>
+<li id="menu-04" class="rule"><a class="rule-id" href="#menu-04">MENU-04</a> <span class="lvl lvl-should">SHOULD</span> Simple mode shows a shorter menu, rebuilt only when the mode actually changes.
+<ul>
+<li><em>Check (code):</em> the bar rebuilds only when the simple flag differs from the current one.</li>
+<li><em>Reference:</em> Editora <code dir="auto">MainMenuBar.setSimple</code>, <code dir="auto">MenuBarModel.menus(simple)</code>.</li>
+</ul>
+</li>
+</ul>
+<figure class="shot"><img alt="Editora&#39;s View menu open with toggle commands and their chords" loading="lazy" decoding="async" width="1600" height="867" src="/4.0.0/_astro/editora-menu-bar.D4gviCvt_ZNSAhn.webp"><figcaption>Editora's View menu in an earlier build: chords in one periwinkle column, but half the rows have no icon and every title repeats the menu's name.</figcaption></figure>
+<div class="sl-heading-wrapper level-h2"><h2 id="right-click-menus">Right-click menus</h2><a class="sl-anchor-link" href="#right-click-menus"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Right-click menus”</span></a></div>
+<ul>
+<li id="menu-05" class="rule"><a class="rule-id" href="#menu-05">MENU-05</a> <span class="lvl lvl-must">MUST</span> Every list row, tree row, tab, editor and read-only console has a right-click menu with the
+actions for <em>that</em> thing, each one a command.
+<ul>
+<li><em>Check (by hand):</em> right-click each kind of thing; every row’s action is also in the palette.</li>
+<li><em>Reference:</em> Editora <code dir="auto">ui/TabContextMenu.java</code>, <code dir="auto">ui/RowContextMenu.java</code>, <code dir="auto">ui/ConsoleContextMenu.java</code>.</li>
+</ul>
+</li>
+</ul>
+<p>The mockup is an editor tab’s menu, shortened; Editora’s has twenty-five rows.</p>
+<div class="mock-stage">
+<div class="m-ctx-stage" role="img" aria-label="Mockup of a tab&#x27;s right-click menu">
+<div class="m-tabs"><span class="tab on">Main.java<span class="x">×</span></span><span class="tab">pom.xml</span><span class="tab dirty">README.md</span></div>
+<div class="m-card m-menu ctx">
+<span class="pin out" style="left:-10px;top:-10px">1</span>
+<div class="mi off"><span class="ic"><svg><use href="#i-save"></use></svg></span><span class="t">Save</span><span class="k">C-x C-s</span><span class="pin out" style="right:-26px">3</span></div>
+<div class="mi"><span class="ic"><svg><use href="#i-saveas"></use></svg></span><span class="t">Save As…</span><span class="k">C-x C-w</span><span class="pin out" style="left:-26px">2</span></div>
+<div class="mi"><span class="ic"><svg><use href="#i-lock"></use></svg></span><span class="t">Encrypt…</span><span class="pin out" style="right:-26px">6</span></div>
+<div class="sep"></div>
+<div class="mi"><span class="ic"><svg><use href="#i-close"></use></svg></span><span class="t">Close</span><span class="k">C-x k</span></div>
+<div class="mi"><span class="ic"><svg><use href="#i-closeall"></use></svg></span><span class="t">Close Others</span></div>
+<div class="mi"><span class="ic"><svg><use href="#i-closeall"></use></svg></span><span class="t">Close All</span></div>
+<div class="sep"><span class="pin out" style="right:-26px;top:-9px">4</span></div>
+<div class="mi"><span class="ic"><svg><use href="#i-recent"></use></svg></span><span class="t">Local History</span></div>
+<div class="mi sub"><span class="ic"><svg><use href="#i-git"></use></svg></span><span class="t">Git</span><span class="arrow">›</span><span class="pin out" style="right:-26px">5</span></div>
+<div class="sep"></div>
+<div class="mi"><span class="ic"><svg><use href="#i-terminal"></use></svg></span><span class="t">Open Terminal Here</span></div>
+<div class="mi"><span class="ic"><svg><use href="#i-copy"></use></svg></span><span class="t">Copy Path</span></div>
+<div class="mi"><span class="ic"><svg><use href="#i-pin"></use></svg></span><span class="t">Pin Tab</span></div>
+<div class="mi"><span class="ic"><svg><use href="#i-rename"></use></svg></span><span class="t">Rename…</span></div>
+</div>
+</div>
+</div>
+<ol class="anatomy">
+<li><span class="pin">1</span><span><strong>Anchored at the pointer.</strong> The menu's top-left corner is the click. From the keyboard (Menu key or <kbd>Shift+F10</kbd>) it opens under the selected row, a quarter of the way in and never off a narrow one, or just below the caret in an editor; never in the middle of the control.</span></li>
+<li><span class="pin">2</span><span><strong>Every row has an icon</strong>, the command's own, and its chord when it has one, in the same periwinkle column as the menu bar's. The one row without an icon is a <code>CheckMenuItem</code>, whose tick lives in the graphic column.</span></li>
+<li><span class="pin">3</span><span><strong>Grayed, not hidden.</strong> An action that does not apply right now (Save on an unchanged file, Reveal on an unsaved one) stays in place, dimmed. Only a row that cannot apply to this thing at all is hidden (the Git submenu on an untitled buffer).</span></li>
+<li><span class="pin">4</span><span><strong>Separators</strong> group the rows; one that hiding has left alone hides too.</span></li>
+<li><span class="pin">5</span><span><strong>Submenu</strong> for a family of actions (Git: stage, unstage, revert, compare, history), with its own icon.</span></li>
+<li><span class="pin">6</span><span><strong>Labels follow state.</strong> Encrypt… becomes Lock File on an encrypted buffer, Pin Tab becomes Unpin Tab. Decided on every showing, not when the menu was built.</span></li>
+</ol>
+<div class="sl-heading-wrapper level-h3"><h3 id="behavior">Behavior</h3><a class="sl-anchor-link" href="#behavior"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Behavior”</span></a></div>
+<ul>
+<li id="menu-06" class="rule"><a class="rule-id" href="#menu-06">MENU-06</a> <span class="lvl lvl-must">MUST</span> One right-click menu at a time: a right-click while a menu is open replaces it, and the first
+one closes before the second shows.
+<ul>
+<li><em>Why:</em> JavaFX stacks a second menu beside the first when each row owns its own <code dir="auto">ContextMenu</code>, and the stale one
+is then no longer dismissible.</li>
+<li><em>Check (test):</em> an FX test right-clicks another row with a menu open and finds one menu showing.</li>
+<li><em>Reference:</em> Editora <code dir="auto">ui/ContextMenuDismissal.java</code> closes every open right-click menu on the press that opens
+the next (<code dir="auto">ContextMenuDismissalFxTest</code>); Modula’s <code dir="auto">RadioPane</code> hides the previous menu before showing a new one;
+Termina keeps one menu per view and shows it again.</li>
+</ul>
+</li>
+<li id="menu-07" class="rule"><a class="rule-id" href="#menu-07">MENU-07</a> <span class="lvl lvl-must">MUST</span> A press anywhere outside a right-click menu closes it, including inside the control the menu
+was opened on. The press is not consumed: a click in a list still selects the row, and a right-click on another
+row opens that row’s menu straight away. Drop-downs opened by a plain click (menu buttons, choice boxes, the menu
+bar) keep the stock behavior, and a menu that turned auto-hide off is left alone.
+<ul>
+<li><em>Why:</em> JavaFX’s auto-hide deliberately ignores a press on the menu’s <em>owner node</em>, so a stock menu on a tree or
+a text area stays open when the user clicks another row or the text.</li>
+<li><em>Check (test):</em> an FX test clicks inside the owner control and in another window, and the menu closes.</li>
+<li><em>Reference:</em> Editora <code dir="auto">ContextMenuDismissal.install()</code>, called once in <code dir="auto">App</code> at startup for every current and
+future window; <code dir="auto">ContextMenuDismissalFxTest</code>.</li>
+</ul>
+</li>
+<li id="menu-08" class="rule"><a class="rule-id" href="#menu-08">MENU-08</a> <span class="lvl lvl-must">MUST</span> Escape closes a right-click menu and focus goes back where it was. In a terminal the Escape
+does not reach the shell.
+<ul>
+<li><em>Check (by hand):</em> open a menu, press Escape, and type: the keys reach the control that had focus.</li>
+<li><em>Reference:</em> the stock <code dir="auto">ContextMenu</code> hide-on-Escape (Spec below); Termina’s <code dir="auto">onKeyPressed</code> filter hides the menu
+and consumes the key (<code dir="auto">TerminalView</code>).</li>
+</ul>
+</li>
+<li id="menu-09" class="rule"><a class="rule-id" href="#menu-09">MENU-09</a> <span class="lvl lvl-must">MUST</span> The Menu key and <kbd>Shift+F10</kbd> open the selected row’s menu, scrolled into view first,
+so every row action a mouse can reach the keyboard can too.
+<ul>
+<li><em>Why:</em> those keys arrive at the focused control, not at a row’s cell, so a menu installed on cells never saw
+them.</li>
+<li><em>Check (test):</em> an FX test sends a keyboard request to a tree and a list and finds the selected row’s menu,
+anchored to that row.</li>
+<li><em>Reference:</em> Editora <code dir="auto">RowContextMenu.install(tree)</code>, <code dir="auto">RowContextMenuFxTest</code>.</li>
+</ul>
+</li>
+<li id="menu-10" class="rule"><a class="rule-id" href="#menu-10">MENU-10</a> <span class="lvl lvl-should">SHOULD</span> A right-click selects first. In an editor, a right-click outside every selection moves the
+caret to the click (so Paste lands there); inside a selection it keeps carets and selections (so Cut and Copy act
+on what was clicked). From the keyboard the target is the caret. In a list, the menu is the clicked row’s.
+<ul>
+<li><em>Check (by hand):</em> select a word, right-click elsewhere and paste; then right-click inside a selection and copy.</li>
+<li><em>Reference:</em> Editora <code dir="auto">editor/ContextMenuTarget.java</code>.</li>
+</ul>
+</li>
+<li id="menu-11" class="rule"><a class="rule-id" href="#menu-11">MENU-11</a> <span class="lvl lvl-should">SHOULD</span> A menu attached to something that exists once per open file is built when first shown, and
+set up for each showing: an <code dir="auto">onShowing</code> handler sets the labels, enablement and visibility for <em>this</em> showing,
+then collapses the separators.
+<ul>
+<li><em>Why:</em> such a menu is built for every file and opened for almost none.</li>
+<li><em>Check (code):</em> per-file menus are created through <code dir="auto">LazyContextMenu.of(build)</code>.</li>
+<li><em>Reference:</em> Editora <code dir="auto">ui/LazyContextMenu.java</code>, <code dir="auto">LazyContextMenuFxTest</code>. A read-only console’s menu is just
+Select All and Copy, both disabled while it is empty (<code dir="auto">ConsoleContextMenu</code>).</li>
+</ul>
+</li>
+<li id="menu-12" class="rule"><a class="rule-id" href="#menu-12">MENU-12</a> <span class="lvl lvl-should">SHOULD</span> A destructive row carries the <code dir="auto">danger</code> class. The action follows the
+<a href="../window-shell/">window shell</a> rule: it asks first with a button that names it, or is undoable.
+<ul>
+<li><em>Check (code):</em> rows that delete, discard or reset add <code dir="auto">danger</code> to their style classes.</li>
+<li><em>Reference:</em> Editora <code dir="auto">.menu-item.danger</code> in <code dir="auto">app.css</code>, <code dir="auto">ui/BranchPopup.java</code>.</li>
+</ul>
+</li>
+<li id="menu-13" class="rule"><a class="rule-id" href="#menu-13">MENU-13</a> <span class="lvl lvl-may">MAY</span> In a terminal view, a program that grabbed the mouse owns the right-click;
+<kbd>Shift</kbd>+right-click always opens the menu, and the keyboard request is never contested.
+<ul>
+<li><em>Check (test):</em> a pure test of when the menu shows, per mouse mode, Shift and trigger.</li>
+<li><em>Reference:</em> Termina’s <code dir="auto">TerminalView.shouldShowMenu</code>, <code dir="auto">ContextMenuContentionTest</code>.</li>
+</ul>
+</li>
+</ul>
+<div class="sl-heading-wrapper level-h3"><h3 id="spec">Spec</h3><a class="sl-anchor-link" href="#spec"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Spec”</span></a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Property</th><th>Value</th><th>Reference</th></tr></thead><tbody><tr><td>Kind</td><td><code dir="auto">javafx.scene.control.ContextMenu</code>, auto-hide on, hide on Escape on: a popup window, unlike the palette</td><td><code dir="auto">TabContextMenu</code>, <code dir="auto">ConsoleContextMenu</code></td></tr><tr><td>Opens at</td><td>The pointer; from the keyboard, the selected row’s bottom edge at min(width ÷ 4, 48) px in, or under the caret</td><td><code dir="auto">RowContextMenu.anchorX</code>, <code dir="auto">ContextMenuTarget</code></td></tr><tr><td>Font</td><td>Inter 14 px, pinned on <code dir="auto">.context-menu</code>, whatever the owner’s font</td><td><code dir="auto">app.css</code></td></tr><tr><td>Rows</td><td>34 px (padding 8 × 12); icon column 22 px; glyph scaled 0.8 from a 24 dp Material path, or a 16-unit line glyph</td><td><code dir="auto">Icons.ICON_SCALE</code>, <code dir="auto">Icons.line</code></td></tr><tr><td>Card</td><td>Radius 8, shadow radius 16 at offset Y 16</td><td><code dir="auto">.context-menu</code></td></tr><tr><td>Dismissal</td><td>Any press outside the menu, in any window; the next right-click; Escape</td><td><code dir="auto">ContextMenuDismissal</code>, <code dir="auto">ContextMenuDismissalFxTest</code></td></tr><tr><td>Marker</td><td>A showing menu opened by a right-click or the Menu key carries the window property <code dir="auto">editora.rightClickMenu</code></td><td><code dir="auto">ContextMenuDismissal.RIGHT_CLICK_MENU</code></td></tr></tbody></table>
+<div class="sl-heading-wrapper level-h2"><h2 id="in-the-apps">In the apps</h2><a class="sl-anchor-link" href="#in-the-apps"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “In the apps”</span></a></div>
+<div class="shot-row n2"><figure class="shot"><img alt="Termina window with tabs in the title bar and a tab context menu" loading="lazy" decoding="async" width="1280" height="720" src="/4.0.0/_astro/termina-tabs.CJ7Bpnqt_Z1FQizr.webp"><figcaption>Termina's tab menu: an icon on every row, following Editora's convention.</figcaption></figure><figure class="shot"><img alt="Editora&#39;s View menu open with toggle commands and their chords" loading="lazy" decoding="async" width="1600" height="867" src="/4.0.0/_astro/editora-menu-bar.D4gviCvt_ZNSAhn.webp"><figcaption>Editora's in-window menu bar with the chord column, in an earlier build whose rows still lack icons and repeat the menu's name.</figcaption></figure></div></div><footer class="sl-flex astro-ddtxxk7k"><div class="meta sl-flex astro-ddtxxk7k"><a href="https://github.com/adriandeleon/adl-desktop-apps-guidelines/edit/master/src/content/docs/menus.md" class="sl-flex print:hidden astro-qlekgd3o"><svg aria-hidden="true" class="astro-qlekgd3o astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.2em;"><path d="M22 7.24a1 1 0 0 0-.29-.71l-4.24-4.24a1 1 0 0 0-1.1-.22 1 1 0 0 0-.32.22l-2.83 2.83L2.29 16.05a1 1 0 0 0-.29.71V21a1 1 0 0 0 1 1h4.24a1 1 0 0 0 .76-.29l10.87-10.93L21.71 8c.1-.1.17-.2.22-.33a1 1 0 0 0 0-.24v-.14l.07-.05ZM6.83 20H4v-2.83l9.93-9.93 2.83 2.83L6.83 20ZM18.17 8.66l-2.83-2.83 1.42-1.41 2.82 2.82-1.41 1.42Z"/></svg>Edit page</a><p>Last updated: <time datetime="2026-11-08T03:10:18.000Z">Nov 8, 2026</time></p></div><div class="pagination-links print:hidden astro-b5raizh3" dir="ltr"><a href="/4.0.0/tabs-and-panels/" rel="prev" class="astro-b5raizh3"><svg aria-hidden="true" class="astro-b5raizh3 astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.5rem;"><path d="M17 11H9.41l3.3-3.29a1.004 1.004 0 1 0-1.42-1.42l-5 5a1 1 0 0 0-.21.33 1 1 0 0 0 0 .76 1 1 0 0 0 .21.33l5 5a1.002 1.002 0 0 0 1.639-.325 1 1 0 0 0-.219-1.095L9.41 13H17a1 1 0 0 0 0-2Z"/></svg><span class="astro-b5raizh3">Previous<br class="astro-b5raizh3"><span class="link-title astro-b5raizh3">Tabs and tool panels</span></span></a><a href="/4.0.0/tray-and-background/" rel="next" class="astro-b5raizh3"><svg aria-hidden="true" class="astro-b5raizh3 astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.5rem;"><path d="M17.92 11.62a1.001 1.001 0 0 0-.21-.33l-5-5a1.003 1.003 0 1 0-1.42 1.42l3.3 3.29H7a1 1 0 0 0 0 2h7.59l-3.3 3.29a1.002 1.002 0 0 0 .325 1.639 1 1 0 0 0 1.095-.219l5-5a1 1 0 0 0 .21-.33 1 1 0 0 0 0-.76Z"/></svg><span class="astro-b5raizh3">Next<br class="astro-b5raizh3"><span class="link-title astro-b5raizh3">Tray and background</span></span></a></div></footer><p class="edition astro-jo6i4kqk">Pauta <strong class="astro-jo6i4kqk">4.0.0</strong> · <time datetime="2026-11-07" class="astro-jo6i4kqk">7 November 2026</time> · <a href="/4.0.0/changelog/" class="astro-jo6i4kqk">Changelog</a> · <a href="/latest/menus/" rel="alternate" class="astro-jo6i4kqk">This page in the latest edition</a></p></div></div></main></div></div></div></div></body></html>

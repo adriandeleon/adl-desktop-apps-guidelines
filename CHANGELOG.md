@@ -8,6 +8,41 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 
 ## [Unreleased]
 
+## [4.3.1] - 2026-11-08
+
+What coding agents read now carries what a person reads around the rules: which apps a page's rules cover, each page
+in full, and one way to report an audit. A patch: no rule's ID, level or requirement changes.
+
+### Added
+
+- **Applies to.** A page or section whose rules cover only some apps now says so in one line, which the site, the
+  PDF and the agent files all show, and `rules.json` gives every rule its `appliesTo`. Tray and background (an app
+  whose work goes on without its window), Settings Sync (an app with user data worth carrying between computers) and
+  the Welcome page's behavior (an app with a Welcome page) have one. PAUTA-05 names it as one way a rule is limited.
+- **One audit report.** Every edition lists the statuses an audit gives a rule (`pass`, `fail`, `manual`, the four
+  exception kinds, and `limited` for a rule that covers apps with a feature this one lacks) and serves the report's
+  JSON Schema, `audit.schema.json`, beside `rules.schema.json`. The *Coding agents and LLMs* page shows both.
+- **The audit skill is part of Pauta.** Each edition serves `skills/pauta-audit/SKILL.md`, which the app template's
+  copy follows. It now reads `pauta.json`, writes `docs/pauta-audit.json` beside `docs/pauta-audit.md`, and reads an
+  edition offline from the `versions` branch instead of building the site.
+- **Each page as Markdown**, at `<page>.md` beside the page (`keyboard.md`, `templates/about.md`): its prose, rules
+  and spec tables, each mockup as a sentence and its numbered parts as a list. `llms.txt` links them.
+- `rules.json` names its schema and lists every page, with its prefix, Markdown address and `appliesTo`.
+- `llms-full.txt` and `rules.json` are at the site root too, beside `llms.txt`.
+
+### Changed
+
+- **Not applicable and limited are two results.** The Conformance page said an audit's "n/a" lines were exceptions,
+  while PAUTA-05 said a limited rule needs none. A limited rule is now `limited`, with no entry; `not-applicable`
+  is an exception, as `pauta.json` has always had it. PAUTA-04's check reads the report's `fail` results.
+- `llms.txt` puts how to use Pauta before its first heading, as the llms.txt format has it, and says that the 1.x
+  editions have no `rules.json`.
+
+### Fixed
+
+- Links to a rule on the same page (`#pauta-03`) were left relative in `rules.json` and `llms-full.txt`; they are
+  absolute now.
+
 ## [4.3.0] - 2026-11-08
 
 One requirement, one rule, and one place that sets its level. A review of 4.2.0 found about twenty requirements stated

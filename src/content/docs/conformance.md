@@ -9,7 +9,7 @@ About window. The rules it does not meet are not hidden: each one is an **except
 never typed in by hand, so the claim and the evidence can't drift apart.
 
 No app does this yet. The audit in [Coding agents and LLMs](../coding-agents/#audit-an-app) produces the first list:
-its `fail` and `n/a` lines are the exceptions.
+each MUST and SHOULD it reports as `fail` becomes an exception, of the kind that fits. A `limited` result needs none.
 
 ## Complete, Core and Partial
 
@@ -64,14 +64,14 @@ an app, and a fourth for a template repository; each one asks for something diff
   any other: someone checks it in the running app before the conformance is claimed, and one that fails is pending.
   - *Why:* [*Never claim what is not true*](../principles/#for-the-people-using-the-apps). The list is the app's
     claim; it has to be whole and current.
-  - *Check (by hand):* audit the app against its edition ([Coding agents and LLMs](../coding-agents/#audit-an-app));
-    every MUST and SHOULD `fail` and `n/a` line is in `pauta.json`, every `manual` line has been checked by a person,
-    and no entry is for a rule that passes.
+  - *Check (by hand):* audit the app against its edition ([Coding agents and LLMs](../coding-agents/#audit-an-app)):
+    no MUST or SHOULD is `fail`, every `manual` result has been checked by a person, and no result reports an entry
+    for a rule that passes.
   - *Reference:* no app yet.
 - **PAUTA-05 · MUST.** A rule limited to apps with a feature needs no entry in an app without that feature. A rule is
   limited when its own text says so ("An app with user data worth carrying between computers…"), when its page or
-  section opens by saying so (the [Tray and background](../tray-and-background/) page), or when it details a rule
-  that is limited (WELC-03 onward detail the Welcome page of [WELC-01](../templates/welcome/#welc-01)).
+  section opens with an **Applies to** line (the [Tray and background](../tray-and-background/) page; `appliesTo` in
+  `rules.json`), or when it details a rule that is limited (WELC-03 onward detail the Welcome page of [WELC-01](../templates/welcome/#welc-01)).
   `not-applicable` is for a rule that reads as applying to every app.
   - *Check (code):* no `not-applicable` entry names a rule whose text, page, section or parent rule already limits
     it.

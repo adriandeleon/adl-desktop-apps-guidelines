@@ -84,6 +84,8 @@ Editora's [`ui/WelcomeText.java`](https://github.com/adriandeleon/Editora/blob/m
 
 ## Behavior
 
+**Applies to:** an app with a Welcome page ([WELC-01](#welc-01)).
+
 - **WELC-03 · SHOULD.** The page is shown at startup when there is no session to restore (so always with
   `--no-session`), by the `view.welcome` command (Help → Welcome Page), and when the tab strip is empty after a
   project swap. Standalone diff startup suppresses it while its worker reads the files.

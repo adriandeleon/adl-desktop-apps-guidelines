@@ -4,10 +4,12 @@ description: "An app that keeps working behind a tray icon: the icon and its men
 ---
 
 An app whose work goes on without its window (Torrenta's transfers, Modula's radio, nux's monitoring) lives behind a
-tray icon. The rules below are for such an app; for the others (Editora, Termina, Mirada) a tray is MAY, and none
-has one. Reference: Torrenta's [`tray/`](https://github.com/adriandeleon/torrenta/tree/master/src/main/java/com/torrenta/tray) package ([`Trays`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/tray/Trays.java), [`TorrentaTray`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/tray/TorrentaTray.java), [`SniTray`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/tray/SniTray.java), [`AwtTray`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/tray/AwtTray.java), [`TrayIconRenderer`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/tray/TrayIconRenderer.java),
+tray icon. Reference: Torrenta's [`tray/`](https://github.com/adriandeleon/torrenta/tree/master/src/main/java/com/torrenta/tray) package ([`Trays`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/tray/Trays.java), [`TorrentaTray`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/tray/TorrentaTray.java), [`SniTray`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/tray/SniTray.java), [`AwtTray`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/tray/AwtTray.java), [`TrayIconRenderer`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/tray/TrayIconRenderer.java),
 [`SniMenuModel`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/tray/SniMenuModel.java)), [`os/Autostart`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/os/Autostart.java) with [`os/AutostartSpec`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/os/AutostartSpec.java), and [`automation/Notifiers`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/automation/Notifiers.java). Modula's and nux's [`tray/`](https://github.com/adriandeleon/nux/tree/master/src/main/java/com/nux/tray) packages
 are the same code with their own menus; nux's [`TrayController`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/app/TrayController.java) holds the close policy.
+
+**Applies to:** an app whose work goes on without its window, as Torrenta's, Modula's and nux's does. For the others
+(Editora, Termina, Mirada) a tray is MAY, none has one, and no rule on this page applies.
 
 ## The icon and its menu
 

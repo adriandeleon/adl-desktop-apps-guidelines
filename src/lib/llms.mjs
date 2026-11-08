@@ -70,8 +70,9 @@ Editora is the reference implementation.
    \`file:line\`. A failed MUST blocks a release.
 4. A rule applies to every app unless its text names the apps it covers ("An app with user documents…").
 5. Read the app's \`src/main/resources/com/<app>/pauta.json\`, its recorded exceptions. A rule it lists is reported as
-   its kind (not-applicable, deviation or pending), not as a failure. An unmet rule it doesn't list, an entry for a rule
-   that passes, and a deviation or pending entry with no link are findings.
+   its kind (not-applicable, deviation, pending, or in a template app-only), not as a failure; MAYs need no entry. An
+   unmet rule it doesn't list, an entry for a rule that passes, and a deviation or pending entry with no link are
+   findings.
 
 Cite a rule by its ID and edition, for example "KBD-07 (Pauta ${version})". Each rule's address is the page's plus
 \`#\` and the ID in lowercase: \`${base}keyboard/#kbd-07\`.

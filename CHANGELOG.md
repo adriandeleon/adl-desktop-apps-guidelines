@@ -8,6 +8,39 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 
 ## [Unreleased]
 
+## [4.2.0] - 2026-11-08
+
+The first audit of an app against 4.1.0, of the app template, found gaps in the conformance rules. This edition
+closes them. It is a minor: one rule is added and others now cover cases they left open; nothing an app did to meet
+4.1.0 has to be undone.
+
+### Added
+
+- **Templates** (PAUTA-16). A template repository sets `"template": true` in its `pauta.json` and records as
+  `app-only` the rules only an app made from it can meet: its own website, screenshots or repository settings.
+  `app-only` leaves the conformance as it is, and only a template may use it. Making an app from the template sets
+  `template` to `false`: the app's everyday build then lists those entries and any pending link to the template's
+  issues, and its release build fails until each is met or pending in the app's own repository. Without this, a
+  template could never be better than Partial.
+- **Commands for the Pauta links.** `help.pautaRules` opens the edition's rules (About's edition link and the Pauta
+  window's) and `help.pautaDocs` the app's conformance page, so both are in the Command Palette (PWIN-04, PWIN-07).
+
+### Changed
+
+- **Issues.** A pending exception's issue is in the app's own repository and may hold several rules, one per page
+  for example, if it names each rule's ID and edition (PAUTA-07). The test reports a pending link to another
+  repository, and the release build fails on it (PAUTA-10).
+- **What needs an entry.** MAYs never do; a rule checked by hand is checked before the conformance is claimed, and
+  pending if it fails (PAUTA-04). A rule that details a limited rule is limited too, as WELC-03 onward are under
+  WELC-01 (PAUTA-05). PAUTA-03 is for the app made from a template, not the template.
+- **Pauta window copy.** `command.help.pauta.desc` no longer takes an argument, since command descriptions take
+  none. Counts use `MessageFormat` `choice` ("1 SHOULD is pending"), and the table lists the count, app-only and
+  decision strings. The docs link opens `/docs/v-<version>/pauta/` where the site has versioned docs and
+  `/docs/pauta/` until then.
+- **About.** The `Pauta conformance:` line says `(1 exception)` with one and `(no exceptions)` with none (ABOUT-09).
+- **README badge colors:** green `2ea043` for Complete, blue `5b8def` for Core, amber `d29922` for Partial.
+- **Audit procedure** (Coding agents, `llms.txt`): `app-only` is a kind; MAYs need no entry.
+
 ## [4.1.0] - 2026-11-08
 
 ### Added

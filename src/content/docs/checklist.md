@@ -15,8 +15,8 @@ from a later edition.
 
 [Conformance](../conformance/) · [Pauta window](../templates/pauta-window/)
 
-- [ ] `pauta.version` in `pom.xml` names the edition; About shows it and its conformance, *Built to Pauta 4.1.0* and *Pauta conformance: Core*
-- [ ] Every rule the app does not meet is an exception in `pauta.json`: not applicable, a deviation (SHOULDs only) with a decision record, or pending with an issue
+- [ ] `pauta.version` in `pom.xml` names the edition; About shows it and its conformance, *Built to Pauta 4.2.0* and *Pauta conformance: Core*
+- [ ] Every rule the app does not meet is an exception in `pauta.json`: not applicable, a deviation (SHOULDs only) with a decision record, or pending with an issue in the app's own repository
 - [ ] The conformance (Complete, Core or Partial) is computed from the exceptions by one tested helper, never stored
 - [ ] `PautaConformanceTest` checks `pauta.json` and the README against the edition's `rules.json`
 - [ ] A Pauta window, `help.pauta`, in the palette, the Help menu and About's link, listing every exception

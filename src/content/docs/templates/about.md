@@ -36,10 +36,10 @@ Torrenta ([`AboutDialog`](https://github.com/adriandeleon/torrenta/blob/master/s
 <div class="m-about-head"><img src="../../icons/editora.svg" alt="" /><div><div class="m-row"><span class="m-about-name">Editora</span><span class="pin">1</span></div><div class="m-about-version">Version 0.27.0 <span class="pin">2</span></div><div class="m-about-tagline">A keyboard-driven, cross-platform programmer's text editor.</div></div></div>
 <div><div class="m-row"><span class="m-link" style="font-weight:700">Update available: 0.28.0</span><span class="pin">3</span></div><div class="m-subtle" style="font-size:12px">Last checked 5 minutes ago. <span class="m-link">Check now</span></div></div>
 <div class="m-muted">© 2026 Adrián Arturo De León Saldivar <span class="pin">4</span></div>
-<div style="display:flex;flex-direction:column;gap:2px"><span class="m-row"><span class="m-link">MIT License</span><span class="pin">5</span></span><span class="m-link">Homepage</span><span class="m-link">Source code and releases</span><span class="m-link">Built to Pauta 4.1.0</span><span class="m-link">Pauta conformance: Core</span><span class="m-link">Settings: ~/.editora/settings.json</span></div>
+<div style="display:flex;flex-direction:column;gap:2px"><span class="m-row"><span class="m-link">MIT License</span><span class="pin">5</span></span><span class="m-link">Homepage</span><span class="m-link">Source code and releases</span><span class="m-link">Built to Pauta 4.2.0</span><span class="m-link">Pauta conformance: Core</span><span class="m-link">Settings: ~/.editora/settings.json</span></div>
 <div class="m-row" style="align-items:flex-start"><div class="m-env">Editora 0.27.0 (Built 2026-11-05 17:02:11 UTC)
 Commit 1dab6d8fd
-Pauta: 4.1.0
+Pauta: 4.2.0
 Pauta conformance: Core (2 exceptions)
 Java: 25.0.4 (Eclipse Adoptium)
 JavaFX: 27+30
@@ -89,8 +89,9 @@ rules the app answers to. No app does it yet; the app template names its edition
 - **ABOUT-09 · MUST.** About shows the app's conformance, Complete, Core or Partial, as the helper computes it from
   `pauta.json` ([PAUTA-02](../../conformance/#pauta-02)) and never higher: a link, *Pauta conformance: Core*, right
   after the edition's, that opens the [Pauta window](../pauta-window/), and a line `Pauta conformance: Core (2
-  exceptions)` right after the `Pauta:` line. At Partial the edition's link reads *Working toward Pauta 4.1.0*: the
-  app does not meet that edition yet, so it does not say it is built to it.
+  exceptions)` right after the `Pauta:` line; with one it says `(1 exception)`, with none `(no exceptions)`. At
+  Partial the edition's link reads *Working toward Pauta 4.2.0*: the app does not meet that edition yet, so it does
+  not say it is built to it.
   - *Why:* [*Never claim what is not true*](../../principles/#for-the-people-using-the-apps).
   - *Check (code):* About calls the conformance helper and holds no conformance name of its own; the link runs
     `help.pauta`; at Partial the edition's link uses `about.pautaWorkingToward`.

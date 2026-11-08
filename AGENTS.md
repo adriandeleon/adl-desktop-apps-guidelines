@@ -110,8 +110,13 @@ Editora (`../Editora`) is the reference implementation.
   phone menu through `MobileMenuFooter.astro`) and the footer link the same page in another edition; a numbered folder carries `noindex`, so search engines index `latest/`.
   The `versions` branch holds one folder per published edition and nothing else: CI runs `scripts/archive-edition.sh
   --push` after each push to `master`, so the edition just deployed joins it (a rebuild replaces the folder). Never
-  edit that branch by hand; a lost or pre-1.4.0 edition is rebuilt from its tag with `scripts/archive-tag.sh vX.Y.Z`
-  and archived with `scripts/archive-edition.sh build/editions/X.Y.Z`. Pages link with relative paths or
+  edit that branch by hand. GitHub cancels a run waiting in the deploy's concurrency group when a newer one queues,
+  so an edition can be skipped; each run finds those (`scripts/missing-editions.mjs`), rebuilds them from the commit
+  that released them (`scripts/build-edition.sh`), deploys them and has the publish job tag and archive them. A
+  pre-1.4.0 edition is rebuilt from its tag with `scripts/archive-tag.sh vX.Y.Z` and archived with
+  `scripts/archive-edition.sh build/editions/X.Y.Z`. In CI, `npm run build` fails rather than deploy a site that
+  lacks a released edition or the downloads. The workflow's build job holds a read-only token; only the publish job,
+  which installs nothing, can push. Pin every action to a commit SHA with its version in a comment. Pages link with relative paths or
   `import.meta.env.BASE_URL`, which already includes the edition folder; `src/lib/site.mjs` gives the site root and
   the edition a page is served from.
 - **Where the site lives.** `package.json`'s `guidelines.url` is the only place the site's address is written;

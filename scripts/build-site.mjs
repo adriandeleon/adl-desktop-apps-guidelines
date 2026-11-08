@@ -2,7 +2,8 @@
 // The whole site, every edition in its own folder (AGENTS.md, "Editions on the site"):
 //   dist/latest/              this checkout, built with base <root>/latest
 //   dist/<version>/           this checkout again, built with base <root>/<version> (package.json's version)
-//   dist/<earlier version>/   every edition published before, from the `versions` branch (scripts/archive-edition.sh)
+//   dist/<earlier version>/   every edition published before, from the `versions` branch (scripts/archive-edition.sh),
+//                             or from build/editions/ for one a canceled run never archived (scripts/build-edition.sh)
 //   dist/versions.json        every edition and which one is latest; public/versions.js reads it on every page
 //   dist/<page>/index.html    a redirect to latest/<page>/ for every page, so links from before editions had folders work
 //   dist/downloads/, CNAME, 404.html, versions.js   copies of the latest edition's: GitHub Pages reads them at the root
@@ -38,26 +39,52 @@ for (const edition of ["latest", version]) {
   run("npx", ["astro", "build"], { env: { ...process.env, PAUTA_PATH: edition } });
 }
 
-// 2. The earlier editions, archived on the `versions` branch: origin's if reachable, else a local one.
+// 2. The earlier editions, archived on the `versions` branch: origin's if reachable, else a local one. In CI (where
+// GitHub sets CI=true) a deploy without them would take every earlier address off the site, so anything less than
+// every released edition fails the build instead.
 step("earlier editions from the versions branch");
+const ci = Boolean(process.env.CI);
+const fail = (message) => {
+  if (!ci) return console.warn(`Warning: ${message}`);
+  console.error(message);
+  process.exit(1);
+};
 const git = (...args) => spawnSync("git", args, { encoding: "utf8" });
 const shallow = git("rev-parse", "--is-shallow-repository").stdout.trim() === "true";
-git("fetch", "--quiet", ...(shallow ? ["--depth=1"] : []), "origin", "versions:refs/remotes/origin/versions");
+const fetched = git("fetch", "--quiet", ...(shallow ? ["--depth=1"] : []), "origin", "+versions:refs/remotes/origin/versions");
+if (fetched.status !== 0) fail(`could not fetch the versions branch from origin: ${fetched.stderr.trim()}`);
 const ref = ["origin/versions", "versions"].find((r) => git("rev-parse", "--verify", "--quiet", `${r}^{commit}`).status === 0);
 const earlier = [];
 if (!ref) {
-  console.warn("No `versions` branch reachable: the site carries this edition alone.");
+  fail("No `versions` branch reachable: the site would carry this edition alone.");
 } else {
   const archive = "build/versions";
   rmSync(archive, { recursive: true, force: true });
   mkdirSync(archive, { recursive: true });
-  run("sh", ["-c", `git archive ${ref} | tar -x -C ${archive}`]);
+  run("bash", ["-o", "pipefail", "-c", `git archive ${ref} | tar -x -C ${archive}`]);
   for (const v of readdirSync(archive).filter((d) => isVersion(d) && d !== version && statSync(join(archive, d)).isDirectory())) {
     cpSync(join(archive, v), join("dist", v), { recursive: true });
     earlier.push(v);
   }
-  earlier.sort(compareVersions);
-  console.log(earlier.length ? `${ref}: ${earlier.join(", ")}` : `${ref} holds no other edition`);
+  console.log(earlier.length ? `${ref}: ${[...earlier].sort(compareVersions).join(", ")}` : `${ref} holds no other edition`);
+}
+// Editions a canceled run never archived, rebuilt from their commits by scripts/build-edition.sh; the publish job
+// archives them after this deploy.
+if (existsSync("build/editions")) {
+  for (const v of readdirSync("build/editions").filter((d) => isVersion(d) && d !== version && !earlier.includes(d))) {
+    cpSync(join("build/editions", v), join("dist", v), { recursive: true });
+    earlier.push(v);
+    console.log(`build/editions: ${v}, rebuilt from its commit`);
+  }
+}
+earlier.sort(compareVersions);
+const dates = Object.fromEntries(released(parseEditions(readFileSync("CHANGELOG.md", "utf8"))).map((e) => [e.version, e.date]));
+const absent = Object.keys(dates).filter((v) => compareVersions(v, version) > 0 && !earlier.includes(v));
+if (absent.length) {
+  fail(
+    `released but not on the site: ${absent.join(", ")}. scripts/missing-editions.mjs lists them with their commits; ` +
+      `scripts/build-edition.sh <version> <commit> rebuilds each into build/editions/.`,
+  );
 }
 
 // 3. The root: what GitHub Pages reads there, and the editions list.
@@ -66,7 +93,12 @@ const latest = "dist/latest";
 for (const name of ["CNAME", "404.html", "versions.js", "downloads", "llms.txt"]) {
   if (existsSync(join(latest, name))) cpSync(join(latest, name), join("dist", name), { recursive: true });
 }
-const dates = Object.fromEntries(released(parseEditions(readFileSync("CHANGELOG.md", "utf8"))).map((e) => [e.version, e.date]));
+// The downloads come from `npm run print` (scripts/build-print.sh), which the build does not run; without them every
+// page's PDF and Markdown links are dead.
+for (const file of ["adl-desktop-apps-guidelines.pdf", "adl-desktop-apps-guidelines.md"]) {
+  const path = join(latest, "downloads", file);
+  if (!existsSync(path) || statSync(path).size === 0) fail(`${path} is missing or empty: run npm run print before the build`);
+}
 const versions = [...new Set([version, ...earlier])].sort(compareVersions);
 writeFileSync(
   "dist/versions.json",

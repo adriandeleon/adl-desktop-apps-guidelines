@@ -11,56 +11,124 @@ permissions:
 
 concurrency:
   group: pages-${{ github.ref }}
-  # A canceled run on master would leave its edition untagged and unarchived.
+  # A run on master is never canceled while it runs. GitHub still cancels a run that is waiting in this group when a
+  # newer one queues, so three quick merges can skip the middle edition's tag and archive: the next run rebuilds that
+  # edition from its commit and the publish job tags and archives it (scripts/missing-editions.mjs).
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  # Builds and checks everything with a read-only token: npm's install scripts and the build never hold write access.
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-    permissions:
-      contents: write # the versions branch, on a push to master
+    timeout-minutes: 30
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0 # the edition check compares with the base commit and the tags
+          persist-credentials: false
       - name: Check the edition
         # One edition per change, numbered above master's and every tag (scripts/check-edition.mjs).
         if: github.event_name != 'workflow_dispatch'
         run: node scripts/check-edition.mjs "${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || github.event.before }}"
+      - name: Read the version
+        id: version
+        run: echo "version=$(node -p 'require("./package.json").version')" >> "$GITHUB_OUTPUT"
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
       - name: Install pandoc
-        # From pandoc's own GitHub release, not apt: the runner's apt mirror has hung for over six minutes.
+        # From pandoc's own GitHub release, not apt: the runner's apt mirror has hung for over six minutes. The checksum
+        # is the release file's as first downloaded; change both together.
         timeout-minutes: 3
         env:
           PANDOC_VERSION: 3.6.4
+          PANDOC_SHA256: 68e5516a5464b12354146e9e23bc41a4c05f302f4ba5def9bdc49f1e2db0d1e0
         run: |
           curl -fsSL --retry 3 -o "$RUNNER_TEMP/pandoc.deb" \
             "https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/pandoc-${PANDOC_VERSION}-1-amd64.deb"
+          echo "${PANDOC_SHA256}  $RUNNER_TEMP/pandoc.deb" | sha256sum --check --strict
           sudo dpkg -i "$RUNNER_TEMP/pandoc.deb"
           pandoc --version | head -1
       - name: Build the PDF and Markdown downloads
         run: ./scripts/build-print.sh
-      - name: Build the site and upload it
-        # Runs `npm run build`: scripts/build-site.mjs, every edition in its folder (fetches the versions branch).
-        uses: withastro/action@v6
+      - name: Rebuild editions a canceled run never archived
+        # Usually none. Each one is built from the commit that released it, served with this deploy, and archived by
+        # the publish job.
+        # The list stays in build/editions/ so the artifact below always keeps its dist/ and build/ paths.
+        run: |
+          mkdir -p build/editions
+          node scripts/missing-editions.mjs > build/editions/missing.txt
+          while read -r version commit; do
+            ./scripts/build-edition.sh "$version" "$commit"
+          done < build/editions/missing.txt
+      - name: Build the site
+        # scripts/build-site.mjs: every edition in its folder. In CI it fails when an edition or a download is missing.
+        run: npm run build
+      - name: Upload the site for Pages
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: dist
+      - name: Upload the editions to archive
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: editions
+          path: |
+            dist/${{ steps.version.outputs.version }}
+            build/editions
+          if-no-files-found: error
+          retention-days: 1
+
+  # Tags the edition and keeps it on the versions branch. The one job that can write to the repository; it installs
+  # nothing and runs only this repository's scripts.
+  publish:
+    if: github.event_name == 'push'
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
-      - name: Tag the edition and keep it on the versions branch
-        # Only CI tags: v<version> on master's commit, once (scripts/check-edition.mjs --tag).
-        if: github.event_name == 'push'
+      - name: Download the built editions
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: editions
+          path: .
+      - name: Tag the editions and keep them on the versions branch
+        # Only CI tags: v<version> on master's commit, once (scripts/check-edition.mjs --tag), and any edition a
+        # canceled run left untagged, at the commit that released it (scripts/missing-editions.mjs --tag).
         env:
           GIT_AUTHOR_NAME: github-actions[bot]
           GIT_AUTHOR_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
           GIT_COMMITTER_NAME: github-actions[bot]
           GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+          VERSION: ${{ needs.build.outputs.version }}
         run: |
           node scripts/check-edition.mjs --tag "${{ github.event.before }}"
-          ./scripts/archive-edition.sh --push
+          node scripts/missing-editions.mjs --tag
+          shopt -s nullglob
+          ./scripts/archive-edition.sh --push "dist/${VERSION}" build/editions/[0-9]*
 
   deploy:
-    if: github.event_name != 'pull_request'
-    needs: build
+    # After the publish job on a push, so an edition is tagged and archived before it goes live; alone otherwise.
+    if: ${{ !cancelled() && github.event_name != 'pull_request' && needs.build.result == 'success' && needs.publish.result != 'failure' }}
+    needs: [build, publish]
     runs-on: ubuntu-latest
     timeout-minutes: 25
     permissions:
@@ -72,7 +140,7 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
         with:
           # Pages sometimes sits in "updating_pages" for over ten minutes (the action's default wait), and a
           # canceled deployment cannot be re-run: its ID is the commit SHA. Wait longer instead.

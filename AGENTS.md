@@ -47,30 +47,45 @@ Editora (`../Editora`) is the reference implementation.
   build does the same in `scripts/print-markup.py`). Change both if the convention changes.
 - Plain, direct sentences written for the app developer. No marketing copy. American spelling throughout (color,
   behavior, gray, license, customize, canceled), in pages, the changelog, the README and comments alike.
-- **Every content change is an edition.** A change to what a reader takes as guidance (a page under
-  `src/content/docs/`, `pages.json`, the checklist, the matrix, a screenshot) bumps the version in `package.json` in
-  the same commit and is described under its `## [x.y.z] - YYYY-MM-DD` section in `CHANGELOG.md` (Keep a Changelog).
-  `## [Unreleased]` holds nothing when a change lands on `master`. Site work alone (styles, scripts, the build,
-  branding) rides along with the next edition and needs none of its own.
+- **Every guidance change is an edition; a format change is not.** A change to what a reader takes as guidance (a
+  rule, a fact about an app, the checklist, the matrix, a screenshot, a page's prose) bumps the version in
+  `package.json` in the same commit and is described under its `## [x.y.z] - YYYY-MM-DD` section in `CHANGELOG.md`
+  (Keep a Changelog). `## [Unreleased]` holds nothing when a change lands on `master`. A change that only touches
+  how the guide is shown (typos and spelling, links, Markdown and markup, styles, scripts, the build, branding, the
+  PDF's layout) takes no edition and no changelog entry. When it touches a page, `pages.json` or a screenshot, say
+  so with an `Edition: none` trailer on one of its commits, or the edition check fails it.
+- **Version numbers** (the Changelog page, `src/content/docs/changelog.mdx`, says the same for readers). Judge by
+  the rules alone: what moving an app to the new edition costs. The largest change sets the number.
+  - **Patch**: an app does nothing. No rule's ID, level or requirement changes: wording, a fixed fact (matrix, gaps,
+    a Reference), a Check fixed to test what its rule already asked, a screenshot, a page or section with no rule.
+  - **Minor**: an app adds, and undoes nothing. A new rule at any level, including a MUST every app fails; a level
+    raised or lowered; a rule that covers more cases; a rule retired with nothing in its place.
+  - **Major**: an app undoes or redoes work that conformed. A rule reversed or replaced by one that asks for
+    something else, a requirement changed so the old way fails (a file name, value, chord, color or layout), or a
+    change to what the levels or "built to an edition" mean. Rare: when in doubt, it is a minor.
+  The edition check fails a patch or a no-edition change that adds, retires or re-levels a rule; it cannot tell a
+  minor from a major, so that call is yours. Say in the changelog entry why a major is one.
 - Screenshots live in `src/assets/shots/<app>-<what>.png` (max 1600 px wide, palette PNG). In a page, put an
   image alone in a paragraph with a title (`![alt](../../assets/shots/x.png "Caption.")`); several images in one
   paragraph become a gallery row. Captions describe what the image shows, in one sentence.
 - Never commit `dist/`, `build/` or `public/downloads/`.
 - **Editions.** `package.json` holds the version and `guidelines.date`; the footer, the hero, *What's new*, the
   Changelog page, the PDF and the Markdown download read them from there. To publish one: set the version and the date
-  in `package.json`, head its changelog section `## [x.y.z] - YYYY-MM-DD`, commit. A new or stronger rule is a minor
-  version, a new MUST that existing apps fail is a major one, wording and facts a patch.
+  in `package.json`, head its changelog section `## [x.y.z] - YYYY-MM-DD`, commit. **Version numbers** above says
+  which part to raise.
 - **Several sessions at once.** Other sessions may be working in this repository at the same time, so:
   - Work in your own worktree and branch, never in a checkout another session is using.
-  - Choose the version last, just before you push: `git fetch origin`, rebase on `origin/master`, and take the next
-    number after `origin/master`'s version and the newest `v*` tag on origin (`git ls-remote --tags origin`). If
+  - Choose the version last, just before you push: `git fetch origin`, rebase on `origin/master`, and raise the part
+    your change calls for above the higher of `origin/master`'s version and the newest `v*` tag on origin
+    (`git ls-remote --tags origin`). If
     someone else took it meanwhile, renumber; don't stack a second edition on top.
   - One edition per branch. A change that grows keeps its one changelog section and raises its number if it must,
     instead of adding sections.
   - Never create or push a tag. CI tags `v<version>` on `master`'s commit after the merge.
   - Run `node scripts/check-edition.mjs` before you push. CI runs it on every pull request and push to `master`; it
     fails on more than one edition in a change, a number at or below master's or a tag on origin, a content change
-    without an edition, or a changelog that doesn't match `package.json`.
+    with neither an edition nor an `Edition: none` trailer, a patch or no-edition change whose rules gained, lost or
+    changed the level of an ID, or a changelog that doesn't match `package.json`.
 - **Editions on the site.** Every page is served under its edition: `https://pauta-project.dev/1.4.0/principles/` is
   permanent, `https://pauta-project.dev/latest/principles/` is always the newest edition, and the unnumbered address
   redirects to `latest/`. `scripts/build-site.mjs` (`npm run build`) builds this checkout twice, with `PAUTA_PATH`

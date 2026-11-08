@@ -7,11 +7,15 @@
 // It fails when
 //   - CHANGELOG.md's newest section isn't `## [<version>] - <date>` from package.json, or [Unreleased] holds anything;
 //   - the change adds more than one edition (fold them into one);
-//   - a content change (a page, pages.json, a screenshot) keeps the base's version;
+//   - a content change (a page, pages.json, a screenshot) keeps the base's version, unless a commit in the change
+//     carries an `Edition: none` trailer (a format change: typos, links, markup);
+//   - the rules gained, lost or re-leveled an ID, but the change keeps the version or raises only the patch: that is at
+//     least a minor (AGENTS.md, "Version numbers"). Whether a minor should be a major is the author's call;
 //   - a new version isn't above the base's and above every tag on origin, or its tag is already taken.
 // Tags are CI's: nothing else creates or pushes them.
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
+import { pageOrder, parsePage } from "../src/lib/rules.mjs";
 
 const args = process.argv.slice(2);
 const tag = args[0] === "--tag";
@@ -58,10 +62,45 @@ for (const line of git("ls-remote", "--tags", "origin").split("\n")) {
 const tagCommit = (v) => tags.get(v) ?? "";
 const newest = [...tags.keys()].sort(cmp).at(-1);
 
+// Every rule's ID and level at a commit, read as rules.mjs reads them (a page is .md or .mdx).
+const show = (ref, path) => {
+  try {
+    return execFileSync("git", ["show", `${ref}:${path}`], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
+  } catch {
+    return null;
+  }
+};
+const levels = (ref) => {
+  const map = new Map();
+  for (const slug of pageOrder(JSON.parse(show(ref, "pages.json")))) {
+    const text = show(ref, `src/content/docs/${slug}.md`) ?? show(ref, `src/content/docs/${slug}.mdx`) ?? "";
+    for (const r of parsePage(slug, text).rules) map.set(r.id, r.level);
+  }
+  return map;
+};
+const [before, after] = [levels(base), levels("HEAD")];
+const ruleChanges = [];
+for (const [id, level] of after) {
+  if (!before.has(id)) ruleChanges.push(`${id} added (${level})`);
+  else if (before.get(id) !== level) ruleChanges.push(`${id} ${before.get(id)} -> ${level}`);
+}
+for (const id of before.keys()) if (!after.has(id)) ruleChanges.push(`${id} retired`);
+const [major, minor] = parse(version);
+const [baseMajor, baseMinor] = parse(baseVersion);
+if (ruleChanges.length && major === baseMajor && minor === baseMinor) {
+  errors.push(
+    `the rules changed, so this is at least a minor edition (${version === baseVersion ? "it keeps" : "it is only a patch,"} ${version}):\n    ${ruleChanges.join("\n    ")}`,
+  );
+}
+
 if (version === baseVersion) {
   const content = git("diff", "--name-only", base, "HEAD", "--", "src/content/docs", "pages.json", "src/assets/shots");
-  if (content) {
-    errors.push(`these change what readers take as guidance but keep version ${version}; make them an edition:\n    ${content.split("\n").join("\n    ")}`);
+  const formatOnly = /^Edition: none\s*$/im.test(git("log", "--format=%B", `${base}..HEAD`));
+  if (content && !formatOnly) {
+    errors.push(
+      `these change what readers take as guidance but keep version ${version}; make them an edition, or, if they only` +
+        ` change format (typos, links, markup), add an "Edition: none" trailer to a commit:\n    ${content.split("\n").join("\n    ")}`,
+    );
   }
 } else {
   if (cmp(version, baseVersion) <= 0) errors.push(`version ${version} must be above ${base}'s ${baseVersion}`);

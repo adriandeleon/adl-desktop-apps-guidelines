@@ -6,6 +6,8 @@ description: "The family's Sync settings page: keep user data the same on every 
 Keeps the user's data (snippets, templates, shortcuts, profiles, saved views) the same on every computer. No server
 and no account of ours: the store is a private Git repository the user owns.
 
+**Applies to:** an app with user data worth carrying between computers ([SYNC-01](#sync-01)).
+
 ## Rules
 
 - **SYNC-01 · SHOULD.** An app with user data worth carrying between computers offers Settings Sync, on a page of its

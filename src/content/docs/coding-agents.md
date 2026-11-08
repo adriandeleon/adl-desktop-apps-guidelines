@@ -14,17 +14,21 @@ it remembers of some other one.
 |---|---|---|
 | `llms.txt` | The index, in the [llms.txt](https://llmstxt.org) format: what Pauta is, how to start an app, build a feature and audit an app, and every page with its rule count and prefix. | First. It is short. |
 | `llms-full.txt` | Every rule of the edition as Markdown, grouped by page and section, with every link made absolute. No prose, screenshots or mockups. | Building or auditing: the whole rule set in one read. |
-| `rules.json` | Every rule as data, with the levels and the three kinds of check explained. | Scripts, filtering by page or level, comparing editions. |
-| The page itself | The prose, screenshots, mockups and spec tables around the rules. | When the rule alone isn't enough, as on a template page. |
+| `rules.json` | Every rule as data, with the levels, the three kinds of check and the audit statuses explained, every page, and every retired ID. | Scripts, filtering by page or level, comparing editions. |
+| `<page>.md` | One page as Markdown: its prose, rules and spec tables, each mockup as a sentence and its numbered parts as a list. `keyboard.md` beside `keyboard/`, `templates/about.md` beside `templates/about/`. | Building a feature: the page it belongs to, in one small read. |
+| `skills/pauta-audit/SKILL.md` | The audit procedure as an agent skill: how to judge each rule, read `pauta.json` and write the report. | Auditing an app. |
+| `audit.schema.json`, `rules.schema.json` | The [JSON Schema](https://json-schema.org) of an audit report and of `rules.json`. | Writing or checking a report; reading `rules.json` in code. |
+| The page itself | The prose, screenshots, mockups and spec tables around the rules. | When the picture matters. |
 
-Each one lives under its edition: `https://pauta-project.dev/2.0.2/llms.txt`, `.../2.0.2/llms-full.txt` and
-`.../2.0.2/rules.json`. `latest/` always holds the newest edition, and `https://pauta-project.dev/llms.txt`, at
-the site root, is a copy of the latest one, where agents look for it first. Every link inside these files points at
-the numbered edition, so a rule an agent cites keeps its address. The first edition that serves them is 2.0.0;
-earlier editions have their pages only. `versions.json` at the site root lists every published edition.
+Each one lives under its edition: `https://pauta-project.dev/4.3.1/llms.txt`, `.../4.3.1/rules.json`,
+`.../4.3.1/keyboard.md`. `latest/` always holds the newest edition, and the site root holds a copy of the latest
+`llms.txt`, `llms-full.txt` and `rules.json`, where agents look first. Every link inside these files points at the
+numbered edition, so a rule an agent cites keeps its address. `llms.txt`, `llms-full.txt` and `rules.json` are
+served from 2.0.0 on, the page Markdown, the skill and the schemas from 4.3.1; the 1.x editions, from before rules
+had IDs, have their pages only. `versions.json` at the site root lists every published edition.
 
-An agent that also needs the prose can read the [single Markdown file](../downloads/adl-desktop-apps-guidelines.md),
-the whole guide in one file. It is large, and its rules are the same.
+The [single Markdown file](../downloads/adl-desktop-apps-guidelines.md) is the whole guide in one file. It is large,
+and its pages and rules are the same.
 
 ## What a rule looks like
 
@@ -39,7 +43,8 @@ rule is:
   "page": "keyboard",
   "pageTitle": "Keyboard first",
   "section": "Command Palette",
-  "url": "https://pauta-project.dev/2.0.2/keyboard/#kbd-07",
+  "appliesTo": null,
+  "url": "https://pauta-project.dev/4.3.1/keyboard/#kbd-07",
   "text": "The palette is an in-scene overlay in the window's root `StackPane`, not a `javafx.stage.Popup`.",
   "why": "on Windows a Popup does not reliably take OS keyboard focus, and the whole app can stop receiving keystrokes.",
   "check": {
@@ -60,6 +65,11 @@ rule is:
   the build runs, `by hand` in the running app, which source alone can't settle.
 - **`reference`** names the Editora file, or the other app, that does it. The agent copies from there.
 - **`why`** is `null` when the rule has no reason worth stating.
+- **`appliesTo`** is `null` for a rule that covers every app, unless its own text says otherwise. Otherwise it is the
+  **Applies to** line its page or section opens with: "an app whose work goes on without its window" for every
+  `TRAY` rule. `pages` lists every page with its prefix, its Markdown address and its `appliesTo`.
+- **`statuses`** are what an audit reports for a rule ([Audit an app](#audit-an-app)), and `audit` is the address
+  of the report's schema.
 
 ## Point the app's agent at its edition
 
@@ -107,39 +117,56 @@ skipped and why.
 
 ## Audit an app
 
-`llms.txt` and `llms-full.txt` both carry the procedure, so an agent pointed at either one knows it:
+The procedure is the **pauta-audit skill**, which every edition serves at `skills/pauta-audit/SKILL.md`. Copy it
+into the app's `.claude/skills/pauta-audit/` (the [app template](https://github.com/adriandeleon/adl-desktop-app-template)
+ships it) or point the agent at it. `llms.txt` and `llms-full.txt` carry it in short:
 
 1. Find the edition the app implements: `pauta.version` in its `pom.xml`, the About window, or its README. Read
-   that edition's rules. If the app names none, use the newest.
+   that edition's rules. If the app names none, use the newest. A 1.x edition has no `rules.json`: audit against
+   2.0.0 or newer, and report what the app's own edition didn't ask for as upgrade work.
 2. Take each rule in turn. A *code* check: read or search the source as it says. A *test* check: find the named
    test, or the app's equivalent, and confirm the build runs it. A *by hand* check: report it as manual.
-3. Report one line per rule: its ID, its level, pass, fail, not applicable or manual, and the evidence as
-   `file:line`. A failed MUST blocks a release.
-4. A rule applies to every app unless its text names the apps it covers ("An app with user documents…").
-5. Read the app's `pauta.json` ([Conformance](../conformance/)). A rule it lists is reported as its kind
-   (`not-applicable`, `deviation`, `pending`, or in a template `app-only`), not as a failure; MAYs need no entry. An
-   unmet rule it doesn't list, an entry for a rule that passes, and a deviation or pending entry with no link are
-   findings.
+3. A rule applies to every app unless it is limited: its text names the apps it covers ("An app with user
+   documents…"), its page or section opens with an **Applies to** line, or it details a limited rule
+   ([PAUTA-05](../conformance/#pauta-05)). An app outside a limited rule gets `limited`, and needs no exception.
+4. Read the app's `pauta.json` ([Conformance](../conformance/)). An unmet rule it lists gets the entry's kind as its
+   status; MAYs need no entry. An unmet MUST or SHOULD it doesn't list is `fail`. An entry for a rule that passes or
+   is limited, and a deviation or pending entry with no link, are problems.
+5. Report one result per rule: its ID, level, status and evidence as `file:line`. A failed MUST blocks a release.
 
-A prompt as short as this one is enough:
+Every report uses the same statuses, which `rules.json` also lists:
+
+| Status | Means | Needs an exception? |
+|---|---|---|
+| `pass` | Met. | No; an entry for it is stale. |
+| `fail` | Not met, and `pauta.json` doesn't list it. A failed MUST blocks a release. | Yes: this is what the audit is for. |
+| `manual` | Checked by hand: a person checks it in the running app. | Only if it fails then. |
+| `pending`, `deviation`, `not-applicable`, `app-only` | Not met, and `pauta.json` lists it as that kind. | It has one. |
+| `limited` | The rule covers apps with a feature this one lacks. | No; an entry for it is wrong. |
+
+The skill writes the report twice: `docs/pauta-audit.json`, which follows the edition's `audit.schema.json` so two
+audits can be compared by a script, and `docs/pauta-audit.md`, the same results as tables for people. A prompt as
+short as this one is enough:
 
 ```text
-Audit this app against Pauta. Start at https://pauta-project.dev/llms.txt and follow
-its "Auditing an app" steps. Write the report to pauta-audit.md, failed MUSTs first.
+Audit this app against Pauta with the pauta-audit skill
+(https://pauta-project.dev/latest/skills/pauta-audit/SKILL.md). Failed MUSTs first.
 ```
 
-The report reads like this:
+Each result reads like this:
 
 ```text
 KBD-07   MUST    pass     src/main/java/com/example/app/ui/CommandPalette.java:57
 TBAR-01  MUST    fail     src/main/java/com/example/app/ui/MainToolbar.java:88 builds an icon button by hand
 KBD-15   SHOULD  manual   Tab order needs the running app
-TRAY-01  MUST    n/a      the app has no tray icon
+TRAY-01  MUST    limited  no tray: no SystemTray or TrayIcon in src/
+TABS-06  MUST    not-applicable  pauta.json: the app has no tabs
 MENU-14  MUST    pending  pauta.json: issue #212
 ```
 
 - **Split a large audit.** An edition has hundreds of rules. Give each page, or each prefix, its own pass or its own
-  agent, and start with the MUSTs (`jq '.rules[] | select(.level == "MUST")' rules.json`).
+  agent, and start with the MUSTs (`jq '.rules[] | select(.level == "MUST")' rules.json`). Each page's Markdown
+  (`<page>.md`) is a small read for one pass.
 - **Check the evidence.** A verdict without `file:line` is a guess. Open a sample of the passes as well as the
   failures before you act on the report.
 - **Manual means a person.** A *by hand* check needs the running app, often on a particular OS. The agent lists

@@ -39,8 +39,16 @@ Editora (`../Editora`) is the reference implementation.
   `rules.json` publishes the list. `src/lib/rehype-status.mjs` makes the
   item its anchor (`#kbd-07`) and `scripts/print-markup.py` renders it for print; `src/lib/rules.mjs` reads the
   rules for `npm run check` and for what coding agents read, which every edition serves: `rules.json`, `llms.txt`
-  (also at the site root) and `llms-full.txt` (`src/pages/*.js`, `src/lib/llms.mjs`), which the *Coding agents and
-  LLMs* page (`coding-agents.md`) explains with a `rules.json` example. Change all of them if the syntax changes.
+  and `llms-full.txt` (all three also at the site root), each page as Markdown at `<slug>.md` (`src/pages/*.js`,
+  `src/lib/llms.mjs`), the audit report's statuses and JSON Schemas (`src/lib/audit.mjs`) and the audit skill
+  (`skills/pauta-audit/SKILL.md`, served as it is), which the *Coding agents and LLMs* page (`coding-agents.md`)
+  explains. Change all of them if the syntax or the report changes; the template repository's copy of the skill
+  follows this one.
+  **Applies to.** A rule covers every app unless its text names the apps it covers, or it sits under an
+  `**Applies to:** an app with…` paragraph: at the top of a page, before its first heading and rule, for the whole
+  page; right under a `## ` heading, for that section (PAUTA-05). `rules.mjs` carries it to each rule's `appliesTo`;
+  `npm run check` fails on one anywhere else. Write it as a phrase that finishes "Applies to", never a rule of its
+  own.
   On the site, a page with five or more rules opens with an index of them (ID, level, statement) that
   `rehype-status.mjs` builds from the rules themselves; never write one by hand. The PDF has none: its contents
   list does that job.
@@ -104,7 +112,8 @@ Editora (`../Editora`) is the reference implementation.
   permanent, `https://pauta-project.dev/latest/principles/` is always the newest edition, and the unnumbered address
   redirects to `latest/`. `scripts/build-site.mjs` (`npm run build`) builds this checkout twice, with `PAUTA_PATH`
   `latest` and the version (`astro.config.mjs` puts it in `base` and `outDir`), lays the earlier editions beside them
-  from the `versions` branch, copies `CNAME`, `404.html`, `versions.js` and `downloads/` to the root for GitHub Pages,
+  from the `versions` branch, copies `CNAME`, `404.html`, `versions.js`, `downloads/`, `llms.txt`, `llms-full.txt`
+  and `rules.json` to the root for GitHub Pages and coding agents,
   and writes `versions.json`, the list every page reads (`public/versions.js`) to offer editions published after it
   and, on an earlier edition, to point at the latest. The header's switcher (`src/components/EditionSelect.astro`, in the
   phone menu through `MobileMenuFooter.astro`) and the footer link the same page in another edition; a numbered folder carries `noindex`, so search engines index `latest/`.

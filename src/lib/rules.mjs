@@ -8,6 +8,10 @@ import { join } from "node:path";
 const HEAD = /^- \*\*([A-Z]{2,6})-(\d{2,3}) · (MUST|SHOULD|MAY)\.\*\*\s*(.*)$/;
 const LOOSE = /\*\*[A-Z]{2,6}-\d/;
 const SUB = /^ {2}- \*(Why|Check \((code|test|by hand)\)|Reference):\*\s*(.*)$/;
+// "**Applies to:** an app with a tray icon." limits every rule after it: at the top of a page, before its first heading
+// and rule, it holds for the page; right under a "## " heading, for that section. A rule with neither applies to every
+// app unless its own text names the apps it covers (Conformance, PAUTA-05).
+const APPLIES = /^\*\*Applies to:\*\*\s*(.*)$/;
 
 /** Page slugs in reading order, from pages.json. */
 export function pageOrder(pagesJson) {
@@ -33,19 +37,39 @@ export function parsePage(slug, text) {
   const rules = [];
   const problems = [];
   let section = "";
+  let appliesTo = null; // the page's
+  let sectionAppliesTo = null;
+  let opening = true; // nothing but prose since the top of the page or the last "## " heading
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    if (/^## /.test(line)) section = line.slice(3).trim();
+    if (/^## /.test(line)) {
+      section = line.slice(3).trim();
+      sectionAppliesTo = null;
+      opening = true;
+      continue;
+    }
+    if (/^#{3,} /.test(line)) opening = false;
+    const a = line.match(APPLIES);
+    if (a) {
+      const para = [a[1]];
+      while (i + 1 < lines.length && lines[i + 1].trim() !== "") para.push(lines[++i]);
+      const text = join_(para);
+      if (!opening) problems.push(`${slug}:${i + 1 + offset}: an Applies to line after a rule or a ### heading; it belongs at the top of the page or right under a ## heading`);
+      else if (section) sectionAppliesTo = text;
+      else appliesTo = text;
+      continue;
+    }
     if (/^\|.*\bLevel\b.*\|\s*$/.test(line)) problems.push(`${slug}:${i + 1 + offset}: a table with a Level column; rules are list items`);
     const m = line.match(HEAD);
     if (!m) {
       if (LOOSE.test(line)) problems.push(`${slug}:${i + 1 + offset}: malformed rule head: ${line.slice(0, 60)}`);
       continue;
     }
+    opening = false;
     const block = [line];
     while (i + 1 < lines.length && lines[i + 1].startsWith("  ")) block.push(lines[++i]);
     const id = `${m[1]}-${m[2]}`;
-    const rule = { id, prefix: m[1], number: Number(m[2]), level: m[3], section, text: "", why: null, check: null, reference: null, markdown: block.join("\n") };
+    const rule = { id, prefix: m[1], number: Number(m[2]), level: m[3], section, appliesTo: sectionAppliesTo ?? appliesTo, text: "", why: null, check: null, reference: null, markdown: block.join("\n") };
     const statement = [m[4]];
     let current = null; // the sub-item being continued
     for (const l of block.slice(1)) {
@@ -79,7 +103,7 @@ export function parsePage(slug, text) {
     if (seen.has(r.id)) problems.push(`${slug}: ${r.id} is used twice`);
     seen.add(r.id);
   }
-  return { slug, title, description, prefix: prefixes[0] ?? null, rules, problems };
+  return { slug, title, description, appliesTo, prefix: prefixes[0] ?? null, rules, problems, body };
 }
 
 /** Every page in pages.json order, read from src/content/docs under `root`. */
@@ -119,9 +143,19 @@ export function readRetired(root = process.cwd()) {
   }
 }
 
-/** Relative Markdown links ("](../menus/)") made absolute against the page's own address. */
+/** `fn` applied to the Markdown outside code: a fenced block or a span in backticks is an example, kept as written. */
+export function outsideCode(markdown, fn) {
+  return markdown
+    .split(/(^ *```[\s\S]*?^ *```|`[^`\n]*`)/m)
+    .map((part, i) => (i % 2 ? part : fn(part)))
+    .join("");
+}
+
+/** Relative Markdown links ("](../menus/)", "](#pauta-03)") made absolute against the page's own address. */
 export function absoluteLinks(markdown, pageUrl) {
-  return markdown.replace(/\]\((?!https?:|#|mailto:)([^)\s]+)\)/g, (_, href) => `](${new URL(href, pageUrl).href})`);
+  return outsideCode(markdown, (s) =>
+    s.replace(/\]\((?!https?:|mailto:)([^)\s]+)\)/g, (_, href) => `](${new URL(href, pageUrl).href})`),
+  );
 }
 
 /** Where an edition lives: https://pauta-project.dev/2.0.0/ for package.json's url and version. */

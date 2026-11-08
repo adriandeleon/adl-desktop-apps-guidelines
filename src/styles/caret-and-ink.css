@@ -61,7 +61,6 @@
 .lvl-must { background: var(--sl-color-accent-low); color: var(--sl-color-accent-high); }
 .lvl-should { background: var(--brace-low); color: var(--brace); }
 .lvl-may { background: var(--sl-color-gray-6); color: var(--sl-color-gray-3); }
-:root[data-theme="light"] .lvl-must { color: var(--sl-color-accent); }
 
 /* A rule with an ID (KBD-07): the ID links to the rule itself; its Why, Check and Reference lines sit under it,
    smaller and muted, so the rule's own sentence leads. */
@@ -138,7 +137,6 @@
   margin-inline-start: 0.5rem; font-family: var(--sl-font-mono); font-size: 0.68rem; font-weight: 600; letter-spacing: 0.04em;
   padding: 0.05rem 0.45rem; border-radius: 4px; background: var(--sl-color-accent-low); color: var(--sl-color-accent-high);
 }
-:root[data-theme="light"] .family-grid .ref-tag { color: var(--sl-color-accent); }
 .family-grid img, .family-grid .no-shot {
   width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--sl-color-gray-5);
   aspect-ratio: 16 / 10; object-fit: cover; object-position: top left; background: var(--sl-color-gray-6);

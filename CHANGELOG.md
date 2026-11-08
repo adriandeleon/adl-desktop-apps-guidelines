@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.0.0] - 2026-11-07
+
+### Added
+
+- **An icon and the chord on every menu row.** Three new MUSTs on Menus, for every menu the app draws:
+  the menu bar, right-click menus, menu-button and split-button drop-downs and the toolbar's overflow. MENU-14: every
+  row carries an icon that depicts it (a check or radio row's mark stands in for it); where the icon set has no fitting
+  glyph, the app adds one. MENU-15: a row whose command is bound shows its chord in the periwinkle column, in
+  right-click menus and drop-downs as in the menu bar. MENU-16: titles in Inter 14 px and chords in Inter 11 px,
+  whatever the menu was opened from. Menus the platform draws (the macOS system menu bar, a tray menu) stay text
+  only. The checklist lists all three. Apps fail them today, so this is a major edition. Only
+  Mirada has an icon on every row, and only Mirada shows chords in every menu; Editora gives about half its menu-bar
+  rows and many right-click and drop-down rows no icon, and its right-click menus no chords; Termina's menu-bar rows
+  and Modula's and nux's menus have no icons; Torrenta's RSS and priority menus have neither. Only Editora pins the
+  menu font. *Gaps per app* and the feature matrix say which app misses what.
+
+### Changed
+
+- **Menus page.** The right-click mockup shows chords, the icon column is filled on every row, and the screenshot
+  captions say what the earlier build lacks.
+
+### Removed
+
+- **ICON-22** (no invented glyph; a row with no fitting glyph gets none) is retired: MENU-14 asks for the opposite.
+- **TBAR-11** (the toolbar's right-click menu at 14 px) is retired: MENU-16 holds it for every menu, and TBAR-10 links
+  to it.
+
 ## [3.0.0] - 2026-11-07
 
 ### Changed

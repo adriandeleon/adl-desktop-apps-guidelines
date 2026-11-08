@@ -41,7 +41,7 @@ Editora (`../Editora`) is the reference implementation.
   One prefix per page: PLAT platform, REPO repository, DOCS documentation, QUAL quality, PERF performance, KBD
   keyboard, WIN window-shell, ICON icons-and-color, TBAR toolbars-and-tooltips, TABS tabs-and-panels, MENU menus,
   TRAY tray-and-background, SET settings, DIAG diagnostics, CLI command-line, INTL i18n, REL release; templates PAL,
-  QOPEN, WELC, ABOUT, CONF, FIND, MLOG, SYNC. A new rule takes the page's next free number, wherever it sits.
+  QOPEN, WELC, ABOUT, PWIN (pauta-window), CONF, FIND, MLOG, SYNC; PAUTA for the conformance page. A new rule takes the page's next free number, wherever it sits.
   Template pages keep their mockups and spec tables; their requirements are rules under `## Rules`.
 - Feature matrix cells start with `●`, `◐` or `—` (rendered as dots by `src/lib/rehype-status.mjs`; the print
   build does the same in `scripts/print-markup.py`). Change both if the convention changes.

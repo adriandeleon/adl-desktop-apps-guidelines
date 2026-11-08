@@ -8,6 +8,41 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 
 ## [Unreleased]
 
+## [4.1.0] - 2026-11-08
+
+### Added
+
+- **Conformance.** A new page under *Start here* says how an app implements Pauta: it names one edition and states
+  its conformance, **Complete** (every MUST met, every SHOULD met or a recorded deviation), **Core** (every MUST met,
+  some SHOULDs pending) or **Partial** (some MUSTs pending), and records every rule it does not meet as an
+  **exception** in `src/main/resources/com/<app>/pauta.json`. An exception is `not-applicable` (with a reason), a
+  `deviation` (SHOULDs only, with a decision record in `docs/decisions/`) or `pending` (with an issue). The
+  conformance is computed from the exceptions by one tested helper, never stored; a `PautaConformanceTest` holds the
+  file and the README to a copy of the edition's `rules.json`; the app's user docs get a *Pauta conformance* page
+  with the same list; and a new app's first release is Core or Complete. "Built to an edition" keeps its meaning,
+  that the app meets its MUSTs: a Partial app says *Working toward Pauta 4.1.0* instead. The page says "conformance",
+  not "level", so "level" keeps meaning MUST, SHOULD or MAY. Rules PAUTA-01 to PAUTA-15.
+- **Pauta window.** A new template: a read-only panel built like About that shows the edition, the conformance and
+  every exception, grouped pending, deviation, not applicable, with each rule linked in the app's edition. It is the
+  `help.pauta` command, so it is in the Command Palette, in the Help menu as *Pauta Conformance* just above About,
+  and opened from About. Rules PWIN-01 to PWIN-08.
+- **ABOUT-09.** About shows the conformance after the edition: a *Pauta conformance: Core* link that opens the Pauta
+  window, and a `Pauta conformance: Core (2 exceptions)` line after the `Pauta:` line. At Partial the edition's link
+  reads *Working toward Pauta 4.1.0*.
+
+### Changed
+
+- **ABOUT-07** says that an app at Partial names the edition it is working toward. ABOUT-05 and ABOUT-06 are
+  unchanged: the edition's link and the `Pauta:` line stay as they were. WIN-07 names the conformance too.
+- **Help menu.** DOCS-07 puts Pauta Conformance between Report a Problem and About.
+- **README badges.** A Pauta badge after Platforms names the edition and conformance and links to the conformance
+  docs page.
+- **Auditing an app** (Coding agents, `llms.txt`): a fifth step reads `pauta.json`, reports a listed rule by its kind,
+  and treats an unlisted failure, a stale entry or a missing link as a finding. *Move an app to a newer edition*
+  replaces the test copy of `rules.json` and updates `pauta.json`.
+- **Checklist, matrix and gaps.** A Conformance group on the checklist; a matrix row for the Pauta window and
+  `pauta.json`; every app's gaps list them.
+
 ## [4.0.2] - 2026-11-08
 
 ### Added

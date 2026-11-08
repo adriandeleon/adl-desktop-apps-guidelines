@@ -62,10 +62,14 @@ filled in for a placeholder app, `ExampleApp`. `scripts/rename.sh <AppName> <pac
 ![Java](https://img.shields.io/badge/Java-25%2B-orange?logo=openjdk&logoColor=white)
 ![JavaFX](https://img.shields.io/badge/JavaFX-27%2B-1e90ff)
 ![Platforms](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)
+[![Pauta](https://img.shields.io/badge/Pauta-4.1.0%20%C2%B7%20Core-5b8def)](<homepage>/docs/pauta/)
 [![Stars](https://img.shields.io/github/stars/adriandeleon/<App>?style=flat)](…/stargazers)
 ```
 
 ![The top of Editora's README on GitHub: logo, title, the badge row, the one-paragraph pitch, the website links and the hero screenshot](../../assets/shots/editora-github-readme.png "The top of Editora's README: logo, badges in this order, a two-sentence pitch, links to the website, then the hero screenshot.")
+
+The Pauta badge names the edition and the conformance and links to the app's *Pauta conformance* docs page; a test holds
+it to `pauta.version` and the computed conformance ([Conformance](../conformance/#pauta-15)).
 
 The hero screenshot is a `<picture>` with a dark `srcset` under `prefers-color-scheme: dark`, so GitHub
 shows the screenshot that matches the reader's theme. Screenshots are taken at 2× by a headless harness so

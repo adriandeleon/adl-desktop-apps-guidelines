@@ -87,6 +87,7 @@ Surveyed on 2026-11-05 from each repository's default branch (the rows added in 
 | Report a Problem → GitHub issue (+ `--report`) | ● | ● | — | — | — | — |
 | About window with runtime versions | ● | ● | ● | ● | ● | ● |
 | About names the Pauta edition it implements | — | — | — | — | — | — |
+| Pauta window and `pauta.json` exceptions | — | — | — | — | — | — |
 | Welcome page | ● | ● | — | — | — | — |
 | Confirm dialog: named red action button, Escape cancels, or undo instead | ● | ● `RemoveConfirm` + undo | ◐ asks, button not red | — presets remove on one click | ◐ trash is undoable, no question | — nothing to confirm |
 | Doctor / diagnosis | ● | ◐ per torrent | — | ◐ native libs | — | — |

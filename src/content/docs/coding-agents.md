@@ -114,6 +114,9 @@ skipped and why.
 3. Report one line per rule: its ID, its level, pass, fail, not applicable or manual, and the evidence as
    `file:line`. A failed MUST blocks a release.
 4. A rule applies to every app unless its text names the apps it covers ("An app with user documents…").
+5. Read the app's `pauta.json` ([Conformance](../conformance/)). A rule it lists is reported as its kind
+   (`not-applicable`, `deviation` or `pending`), not as a failure. An unmet rule it doesn't list, an entry for a rule
+   that passes, and a deviation or pending entry with no link are findings.
 
 A prompt as short as this one is enough:
 
@@ -129,6 +132,7 @@ KBD-07   MUST    pass     src/main/java/com/example/app/ui/CommandPalette.java:5
 KBD-17   MUST    fail     src/main/java/com/example/app/ui/MainToolbar.java:88 builds an icon button by hand
 KBD-15   SHOULD  manual   Tab order needs the running app
 TRAY-01  MUST    n/a      the app has no tray icon
+MENU-14  MUST    pending  pauta.json: issue #212
 ```
 
 - **Split a large audit.** An edition has hundreds of rules. Give each page, or each prefix, its own pass or its own
@@ -154,8 +158,9 @@ diff <(curl -s https://pauta-project.dev/$old/rules.json | jq -r '.rules[] | "\(
 ```
 
 A line only in the new edition is a new rule or a raised level; one only in the old is a retired rule or a lowered
-level. Give the agent that list and the new edition's `llms-full.txt`, have it meet each new MUST, then change
-`pauta.version`, `AGENTS.md` and the README together.
+level. Give the agent that list and the new edition's `llms-full.txt`, have it meet each new MUST or record it in `pauta.json`,
+replace `src/test/resources/pauta-rules.json` with the new edition's, then change `pauta.version`, `AGENTS.md` and the
+README together ([PAUTA-11](../conformance/#pauta-11)).
 
 ## Working on Pauta itself
 

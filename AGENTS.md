@@ -37,6 +37,9 @@ Editora (`../Editora`) is the reference implementation.
   rules for `npm run check` and for what coding agents read, which every edition serves: `rules.json`, `llms.txt`
   (also at the site root) and `llms-full.txt` (`src/pages/*.js`, `src/lib/llms.mjs`), which the *Coding agents and
   LLMs* page (`coding-agents.md`) explains with a `rules.json` example. Change all of them if the syntax changes.
+  On the site, a page with five or more rules opens with an index of them (ID, level, statement) that
+  `rehype-status.mjs` builds from the rules themselves; never write one by hand. The PDF has none: its contents
+  list does that job.
   A rule that the checklist lists is a MUST unless the checklist says SHOULD; a rule it doesn't list is a SHOULD.
   One prefix per page: PLAT platform, REPO repository, DOCS documentation, QUAL quality, PERF performance, KBD
   keyboard, WIN window-shell, ICON icons-and-color, TBAR toolbars-and-tooltips, TABS tabs-and-panels, MENU menus,

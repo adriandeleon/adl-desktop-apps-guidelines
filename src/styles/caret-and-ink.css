@@ -76,6 +76,39 @@
 .sl-markdown-content li.rule > ul { margin-top: 0.25rem; font-size: var(--sl-text-sm); color: var(--sl-color-gray-3); }
 .sl-markdown-content li.rule > ul > li { margin-top: 0.1rem; }
 
+/* The index a rule page opens with (rehype-status.mjs, ruleIndex): one row per rule, its statement cut to two
+   lines; the ID jumps to the rule. It folds away, and it stays a real table on a phone (three narrow columns). */
+.sl-markdown-content .rule-index {
+  margin-top: 1.5rem; border: 1px solid var(--sl-color-gray-5); border-radius: 0.5rem; padding: 0.25rem 1rem;
+}
+.sl-markdown-content .rule-index summary {
+  cursor: pointer; padding: 0.5rem 0; font-size: var(--sl-text-sm); font-weight: 600; color: var(--sl-color-white);
+}
+.sl-markdown-content .rule-index summary .count {
+  font-family: var(--sl-font-mono); font-weight: 400; color: var(--sl-color-gray-3); margin-inline-start: 0.25rem;
+}
+.sl-markdown-content .rule-index table {
+  display: table; width: 100%; margin: 0 0 0.75rem; font-size: var(--sl-text-sm); border-collapse: collapse;
+}
+.sl-markdown-content .rule-index :is(th, td) {
+  padding: 0.35rem 0.75rem 0.35rem 0; border: 0; border-bottom: 1px solid var(--sl-color-gray-6);
+  vertical-align: top; text-align: start; background: transparent;
+}
+.sl-markdown-content .rule-index thead th {
+  font-size: var(--sl-text-xs); font-weight: 600; color: var(--sl-color-gray-3); border-bottom-color: var(--sl-color-gray-5);
+}
+.sl-markdown-content .rule-index td:nth-child(-n + 2) { white-space: nowrap; width: 1%; }
+.sl-markdown-content .rule-index td:last-child { padding-inline-end: 0; color: var(--sl-color-gray-2); }
+.sl-markdown-content .rule-index tr.sec th {
+  padding-top: 0.9rem; font-size: var(--sl-text-xs); font-weight: 600; letter-spacing: 0.03em; color: var(--sl-color-gray-3);
+}
+.sl-markdown-content .rule-index .clamp {
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden;
+}
+@media (max-width: 50rem) { .sl-markdown-content .rule-index .clamp { -webkit-line-clamp: 3; line-clamp: 3; } }
+.sl-markdown-content .rule-index .clamp code { white-space: normal; }
+.sl-markdown-content .rule-index tbody tr:last-child > * { border-bottom: 0; }
+
 /* Key chords read in the keyboard color. */
 .sl-markdown-content kbd { font-family: var(--sl-font-mono); background: var(--brace-low); color: var(--brace); border: 0; border-radius: 4px; padding: 0.05rem 0.35rem; }
 

@@ -2,6 +2,7 @@
 //   ● / ◐ / — at the start of a feature-matrix cell → a status dot (the rest of the cell stays as its note)
 //   MUST / SHOULD / MAY anywhere in prose or a table cell → a level pill ("**MUST.**" and "(SHOULD)" included)
 //   "**KBD-07 · MUST.**" opening a list item → the rule's anchor and ID link, then its level pill
+//   a page with five or more rules → an index of them before its first section (ruleIndex, site only)
 // It also marks a table whose header names all six apps as a feature matrix (and wraps it so it scrolls on its
 // own on a narrow screen), and a table with a "Level" column as a rule table whose cells carry their column
 // name, so the table can stack into cards on a phone. The print build does the same in scripts/print-markup.py.
@@ -109,7 +110,10 @@ function table(node, parent, iconBase) {
 // becomes a link to it and the level a pill.
 const RULE = /^([A-Z]{2,6}-\d{2,3}) · (MUST|SHOULD|MAY)\.$/;
 function ruleIds(tree) {
+  const found = [];
+  let section = "";
   visit(tree, (li) => {
+    if (li.type === "element" && li.tagName === "h2") section = text(li).trim();
     if (li.type !== "element" || li.tagName !== "li") return;
     const host = li.children.find((c) => c.type === "element")?.tagName === "p" ? li.children.find((c) => c.type === "element") : li;
     const i = host.children.findIndex((c) => !(c.type === "text" && !c.value.trim()));
@@ -117,6 +121,12 @@ function ruleIds(tree) {
     const m = first?.type === "element" && first.tagName === "strong" && text(first).trim().match(RULE);
     if (!m) return;
     const id = m[1].toLowerCase();
+    // The statement: what follows the bold head, up to the sub-items (a tight list keeps them in the same host).
+    const after = host.children.slice(i + 1);
+    const stop = after.findIndex((c) => c.type === "element" && (c.tagName === "ul" || c.tagName === "ol"));
+    const statement = structuredClone(stop < 0 ? after : after.slice(0, stop));
+    if (statement[0]?.type === "text") statement[0] = { ...statement[0], value: statement[0].value.trimStart() };
+    found.push({ id: m[1], level: m[2], section, statement });
     (li.properties ??= {}).id = id;
     addClass(li, "rule");
     host.children.splice(i, 1,
@@ -124,6 +134,44 @@ function ruleIds(tree) {
       { type: "text", value: " " },
       pill(m[2]));
   });
+  return found;
+}
+
+// A page with several rules opens with their index: one row per rule (its ID linking to the rule, its level, its
+// statement cut to two lines), grouped under the page's sections. It is built from the rules themselves, so it
+// can't drift from them, and it sits before the first section, or the first rule if that comes earlier. A rule
+// stays a list item in the Markdown (AGENTS.md, "Rule IDs"); this table only points at it.
+const INDEX_MIN = 5;
+const el = (tagName, properties, children) => ({ type: "element", tagName, properties, children });
+function ruleIndex(tree, rules) {
+  if (rules.length < INDEX_MIN) return;
+  const grouped = new Set(rules.map((r) => r.section)).size > 1;
+  const rows = [];
+  let section = null;
+  for (const r of rules) {
+    if (grouped && r.section !== section && r.section) {
+      rows.push(el("tr", { className: ["sec"] }, [el("th", { colSpan: 3, scope: "colgroup" }, [{ type: "text", value: r.section }])]));
+    }
+    section = r.section;
+    const statement = { type: "root", children: r.statement };
+    rows.push(el("tr", {}, [
+      el("td", {}, [el("a", { className: ["rule-id"], href: `#${r.id.toLowerCase()}` }, [{ type: "text", value: r.id }])]),
+      el("td", {}, [pill(r.level)]),
+      el("td", {}, [el("div", { className: ["clamp"], title: text(statement).replace(/\s+/g, " ").trim() }, r.statement)]),
+    ]));
+  }
+  const head = el("thead", {}, [el("tr", {}, ["ID", "Level", "Rule"].map((h) => el("th", { scope: "col" }, [{ type: "text", value: h }])))]);
+  const index = el("details", { className: ["rule-index"], open: true }, [
+    el("summary", {}, [{ type: "text", value: "Rules on this page " }, el("span", { className: ["count"] }, [{ type: "text", value: String(rules.length) }])]),
+    el("table", {}, [head, el("tbody", {}, rows)]),
+  ]);
+  const holdsRule = (n) => {
+    let hit = false;
+    visit(n, (c) => { if (c.type === "element" && c.tagName === "li" && classes(c).includes("rule")) hit = true; });
+    return hit;
+  };
+  const at = tree.children.findIndex((c) => c.type === "element" && (c.tagName === "h2" || holdsRule(c)));
+  tree.children.splice(at < 0 ? tree.children.length : at, 0, index);
 }
 
 // Level words become pills: a bold "MUST." alone is replaced by the pill, a "(SHOULD)" loses its brackets.
@@ -177,7 +225,7 @@ export default function rehypeStatus(options = {}) {
       }
     });
     for (const [node, parent] of tables) table(node, parent, iconBase);
-    ruleIds(tree);
+    ruleIndex(tree, ruleIds(tree));
     levels(tree);
   };
 }

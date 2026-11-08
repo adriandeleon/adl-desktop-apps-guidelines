@@ -1,0 +1,84 @@
+# Pauta
+
+> Pauta 4.1.0 (2026-11-08): the UI, UX and platform rules for adl's family of JavaFX desktop apps, so the
+> same apps look and work the same on Windows, macOS and Linux. 375 rules, each with a permanent ID, a level
+> (MUST, SHOULD or MAY), a check that says how to verify it in an app, and a reference into the code that does it.
+
+This file describes edition 4.1.0. The newest edition is always at https://pauta-project.dev/latest/llms.txt.
+
+## Using Pauta
+
+**Starting a new app:** create it from the GitHub template repository
+https://github.com/adriandeleon/adl-desktop-app-template (`gh repo create <name> --template
+adriandeleon/adl-desktop-app-template`, or **Use this template** on GitHub), then run `scripts/rename.sh <AppName>
+<package>`. It is built to the edition its README and AGENTS.md name; audit it against this edition and add what is
+missing.
+
+**Building a feature:** read the rules on its page first, then copy from the code each rule's *Reference* names.
+Editora is the reference implementation.
+
+**Auditing an app:**
+
+1. Find the edition the app implements: `pauta.version` in its `pom.xml`, the About window, or its README. Read that
+   edition's rules at `https://pauta-project.dev/<edition>/rules.json`; if the app names none, use this one.
+2. Take each rule in turn. *Check (code)*: read or search the source as the check says. *Check (test)*: find the named
+   test, or the app's equivalent, and confirm the build runs it. *Check (by hand)*: source can't settle it; report it
+   as manual.
+3. Report one line per rule: its ID, its level, pass / fail / not applicable / manual, and the evidence as
+   `file:line`. A failed MUST blocks a release.
+4. A rule applies to every app unless its text names the apps it covers ("An app with user documents…").
+5. Read the app's `src/main/resources/com/<app>/pauta.json`, its recorded exceptions. A rule it lists is reported as
+   its kind (not-applicable, deviation or pending), not as a failure. An unmet rule it doesn't list, an entry for a rule
+   that passes, and a deviation or pending entry with no link are findings.
+
+Cite a rule by its ID and edition, for example "KBD-07 (Pauta 4.1.0)". Each rule's address is the page's plus
+`#` and the ID in lowercase: `https://pauta-project.dev/4.1.0/keyboard/#kbd-07`.
+
+Levels: **MUST**: A release blocker for a new app. **SHOULD**: Expected unless the app has a stated reason. **MAY**: A pattern worth copying when the app grows into it.
+
+## Rules
+
+- [Every rule, as Markdown](https://pauta-project.dev/4.1.0/llms-full.txt): all 375 rules of this edition in one file, grouped by page.
+- [Every rule, as JSON](https://pauta-project.dev/4.1.0/rules.json): id, level, page, section, address, text, why, check and reference.
+
+## Pages
+
+- [Overview](https://pauta-project.dev/4.1.0/): what Pauta is, the six apps, and how to read the rules.
+- [Principles](https://pauta-project.dev/4.1.0/principles/): The thirteen rules every other page follows from: ten for the people using the apps, three for the people building them.
+- [New app checklist](https://pauta-project.dev/4.1.0/checklist/): Everything a new app needs before its first release, grouped by area.
+- [Conformance](https://pauta-project.dev/4.1.0/conformance/): How an app says which edition of Pauta it implements and how fully it conforms, and how it records the rules it does not meet: not applicable, a deliberate deviation, or work still pending. 15 rules, PAUTA-*.
+- [Coding agents and LLMs](https://pauta-project.dev/4.1.0/coding-agents/): What every edition serves to coding agents, how an app's AGENTS.md points its agent at the edition it is built to, and how to have an agent build a feature to the rules or audit an app against them.
+- [Platform baseline](https://pauta-project.dev/4.1.0/platform/): JDK, JavaFX, AtlantaFX, NullAway, Maven Wrapper, tests and coverage: the stack every app shares. 14 rules, PLAT-*.
+- [Repository documents](https://pauta-project.dev/4.1.0/repository/): README, CHANGELOG, LICENSE, NOTICE, AGENTS.md and the rest of the files every repository carries. 10 rules, REPO-*.
+- [Documentation](https://pauta-project.dev/4.1.0/documentation/): User docs on the app's website, developer docs in docs/, and the Help menu that opens them. Every app documents itself, and the docs change in the same PR as the code. 19 rules, DOCS-*.
+- [Code quality gates](https://pauta-project.dev/4.1.0/quality/): NullAway, coverage floors and the guard tests that pay for themselves across the family. 15 rules, QUAL-*.
+- [Performance](https://pauta-project.dev/4.1.0/performance/): Keep the JavaFX application thread free, coalesce work, bound memory, and measure: the rules that keep every app responsive. 22 rules, PERF-*.
+- [Keyboard first](https://pauta-project.dev/4.1.0/keyboard/): Commands, the Command Palette, keymaps, focus and accessibility. 19 rules, KBD-*.
+- [Window shell](https://pauta-project.dev/4.1.0/window-shell/): Status bar, themes, title bar, dialogs, Welcome, About, window state and zoom. 10 rules, WIN-*.
+- [Icons and color](https://pauta-project.dev/4.1.0/icons-and-color/): Inter and JetBrains Mono, the Caret & Ink palette, state colors that mean one thing, themes, and the two icon families. 22 rules, ICON-*.
+- [Toolbars and tooltips](https://pauta-project.dev/4.1.0/toolbars-and-tooltips/): Icon-only buttons that have a name, groups by spacing, one chrome band, the customizable toolbar, and tooltips that share the menus' card. 12 rules, TBAR-*.
+- [Tabs and tool panels](https://pauta-project.dev/4.1.0/tabs-and-panels/): The tab strip and its states, reorder and reopen, and the tool panels that dock around the editor. 23 rules, TABS-*.
+- [Menus](https://pauta-project.dev/4.1.0/menus/): The menu bar and right-click menus: an icon and the chord on every row, one font, one menu at a time, and a press anywhere else closes it. 16 rules, MENU-*.
+- [Tray and background](https://pauta-project.dev/4.1.0/tray-and-background/): An app that keeps working behind a tray icon: the icon and its menu, close to tray, start at login, desktop notifications. 14 rules, TRAY-*.
+- [Settings](https://pauta-project.dev/4.1.0/settings/): The Settings window with search, live apply, versioned config and Git/GitHub sync. 21 rules, SET-*.
+- [Diagnostics and support](https://pauta-project.dev/4.1.0/diagnostics/): Message Log, Debug Log, update notification, Report a Problem, Doctor and crash recovery. 8 rules, DIAG-*.
+- [Command line and launch](https://pauta-project.dev/4.1.0/command-line/): The flags every app accepts and the single-instance hand-off. 10 rules, CLI-*.
+- [Internationalization](https://pauta-project.dev/4.1.0/i18n/): Six languages as the floor, and the rules that keep every catalog in step. 11 rules, INTL-*.
+- [Command Palette](https://pauta-project.dev/4.1.0/templates/command-palette/): The family's command palette: a 620 px in-scene card that finds and runs any command from the keyboard. 9 rules, PAL-*.
+- [QuickOpen picker](https://pauta-project.dev/4.1.0/templates/quick-open/): The family's list picker: the palette card with a title and a prompt, for choosing one thing from a list by typing. 12 rules, QOPEN-*.
+- [Welcome page](https://pauta-project.dev/4.1.0/templates/welcome/): The family's start page: Start actions with their chords, recent items a digit away, Customize and Help, shown when there is nothing to restore. 11 rules, WELC-*.
+- [About window](https://pauta-project.dev/4.1.0/templates/about/): The family's About panel: identity, update status, license, links and copyable environment details. 9 rules, ABOUT-*.
+- [Pauta window](https://pauta-project.dev/4.1.0/templates/pauta-window/): The window that shows which edition of Pauta the app implements, how fully it conforms, and every exception it records, opened from About, the Help menu and the Command Palette. 8 rules, PWIN-*.
+- [Confirm dialog](https://pauta-project.dev/4.1.0/templates/confirm-dialog/): The family's question before a destructive action: it names the thing, the button names the action in red, and Escape cancels. 12 rules, CONF-*.
+- [Find bar](https://pauta-project.dev/4.1.0/templates/find-bar/): The family's find bar: in-scene, incremental, with a count; Enter and Shift+Enter step, Escape gives the keyboard back. 15 rules, FIND-*.
+- [Message Log](https://pauta-project.dev/4.1.0/templates/message-log/): The family's Message Log: the session's status-bar messages, newest first, opened from the status bar. 7 rules, MLOG-*.
+- [Settings Sync](https://pauta-project.dev/4.1.0/templates/settings-sync/): The family's Sync settings page: keep user data the same on every computer through a Git repository the user owns. 2 rules, SYNC-*.
+- [Packaging, signing and release](https://pauta-project.dev/4.1.0/release/): jpackage, JReleaser, the five-target matrix, macOS/Linux/Windows signing and CI. 29 rules, REL-*.
+- [Feature matrix](https://pauta-project.dev/4.1.0/family/matrix/): Which of the six apps has which platform piece, release step and feature.
+- [Shared features](https://pauta-project.dev/4.1.0/family/shared-features/): Features two or more apps already share that belong in the guideline.
+- [Gaps per app](https://pauta-project.dev/4.1.0/family/gaps/): What each app still misses against this guide.
+
+## Optional
+
+- [Changelog](https://pauta-project.dev/4.1.0/changelog/): what each edition changed, and which rules became stronger.
+- [Editions](https://pauta-project.dev/versions.json): every published edition and its address.

@@ -9,44 +9,44 @@ description: "Commands, the Command Palette, keymaps, focus and accessibility."
   `CommandRegistry`.
   - *Check (code):* menu items, toolbar buttons, palette rows and key bindings run a command id through the
     registry; no control's handler does work no command can reach.
-  - *Reference:* Editora `command/Command.java`, `command/CommandRegistry.java`.
+  - *Reference:* Editora [`command/Command.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/Command.java), [`command/CommandRegistry.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/CommandRegistry.java).
 - **KBD-02 · SHOULD.** Command ids are dotted and grouped by area: `file.open`, `view.toggleStatusBar`,
   `help.reportProblem`.
   - *Check (code):* every registered id matches `<area>.<camelCaseName>`.
-  - *Reference:* Editora `ui/MenuBarModel.java`.
+  - *Reference:* Editora [`ui/MenuBarModel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java).
 - **KBD-03 · MUST.** A command's title comes from `command.<id>` and its palette description from
   `command.<id>.desc` in the message catalogs.
   - *Why:* a registered command is then localized and discoverable without extra work.
   - *Check (test):* a catalog parity test fails when a registered command has no `command.<id>` or
     `command.<id>.desc` key.
-  - *Reference:* Editora `i18n/messages.properties`, `MessagesTest`.
+  - *Reference:* Editora [`i18n/messages.properties`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/i18n/messages.properties), [`MessagesTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/i18n/MessagesTest.java).
 - **KBD-04 · SHOULD.** A command that cannot run in the current context is shown grayed, with a tooltip that says
   why, not hidden.
   - *Check (code):* the palette and menus list a disabled command with a reason, rather than filtering it out.
-  - *Reference:* Editora `ui/Chrome.java` (`paletteEnabled`, `disabledReason`).
+  - *Reference:* Editora [`ui/Chrome.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Chrome.java) (`paletteEnabled`, `disabledReason`).
 
 ## Command Palette
 
 - **KBD-05 · MUST.** The Command Palette opens with `M-x` in the Emacs keymap and `Ctrl+Shift+P` (`Cmd+Shift+P` on
   macOS) in the others.
   - *Check (code):* each bundled keymap binds that chord to the palette command.
-  - *Reference:* Editora `keymaps/emacs.json` (`M-x`), `cua.json` and `vscode.json` (`C-S-p`), `cua.mac.json`
+  - *Reference:* Editora [`keymaps/emacs.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/emacs.json) (`M-x`), [`cua.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/cua.json) and [`vscode.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/vscode.json) (`C-S-p`), [`cua.mac.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/cua.mac.json)
     (`Cmd-S-p`), all to `palette.show`.
 - **KBD-06 · SHOULD.** The palette matches fuzzily over title, id and description; a query that names a command's
   title outranks a fuzzy hit. Each row shows the command's binding in the active keymap. See the
   [Command Palette template](../templates/command-palette/).
   - *Check (test):* a ranking test puts the title match first.
-  - *Reference:* Editora `ui/CommandPalette.java`, `search/FuzzyMatch.java`.
+  - *Reference:* Editora [`ui/CommandPalette.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java), [`search/FuzzyMatch.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/search/FuzzyMatch.java).
 - **KBD-07 · MUST.** The palette is an in-scene overlay in the window's root `StackPane`, not a
   `javafx.stage.Popup`.
   - *Why:* on Windows a Popup does not reliably take OS keyboard focus, and the whole app can stop receiving
     keystrokes.
   - *Check (code):* the palette and every picker add their node to the root `StackPane`; none creates a `Popup`.
-  - *Reference:* Editora `ui/CommandPalette.java`.
+  - *Reference:* Editora [`ui/CommandPalette.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java).
 - **KBD-08 · SHOULD.** The same picker serves every other list choice: recent files, themes, keymaps, a setting's
   values.
   - *Check (code):* no second list-picker class or `ChoiceDialog` for those choices.
-  - *Reference:* Editora `ui/QuickOpen.java`.
+  - *Reference:* Editora [`ui/QuickOpen.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java).
 
 ![Editora's command palette filtered to Git commands](../../assets/shots/editora-palette.png "Editora: M-x over the editor; typing git lists every Git command.")
 ![Torrenta's command palette listing Rename, Remove and Force Resume with shortcuts](../../assets/shots/torrenta-palette.png "Torrenta: the same palette, filtered to torrent actions with their shortcuts.")
@@ -57,30 +57,30 @@ description: "Commands, the Command Palette, keymaps, focus and accessibility."
 - **KBD-09 · MUST.** Emacs and CUA keymaps ship as JSON resources, CUA with a `.mac.json` variant where Cmd replaces
   Ctrl.
   - *Check (code):* `emacs.json`, `cua.json` and `cua.mac.json` are in the app's resources.
-  - *Reference:* Editora `src/main/resources/com/editora/keymaps/`.
+  - *Reference:* Editora [`src/main/resources/com/editora/keymaps/`](https://github.com/adriandeleon/Editora/tree/master/src/main/resources/com/editora/keymaps).
 - **KBD-10 · SHOULD.** IntelliJ, VS Code and Sublime keymaps ship the same way, each with its `.mac.json` variant.
   - *Check (code):* `intellij`, `vscode` and `sublime` `.json` and `.mac.json` files are in the resources.
-  - *Reference:* Editora `src/main/resources/com/editora/keymaps/`.
+  - *Reference:* Editora [`src/main/resources/com/editora/keymaps/`](https://github.com/adriandeleon/Editora/tree/master/src/main/resources/com/editora/keymaps).
 - **KBD-11 · MUST.** Keymaps are applied in layers: base keymap → user overrides → plugin keymaps → the user's own
   bindings again. An app without plugins has the first two.
   - *Why:* the user always has the last word, and a plugin can still use a chord the user freed.
   - *Check (code):* one place applies the layers in that order.
-  - *Reference:* Editora `ui/KeymapLayers.java`.
+  - *Reference:* Editora [`ui/KeymapLayers.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/KeymapLayers.java).
 - **KBD-12 · SHOULD.** A keymap editor in Settings lists every command with its chord, is searchable, and warns of
   conflicts.
   - *Check (by hand):* open Settings → Keymap, search, and bind a chord that is taken.
-  - *Reference:* Editora `ui/SettingsKeymapsPage.java`; conflicts from `KeybindingEdits.takenDefaults`.
+  - *Reference:* Editora [`ui/SettingsKeymapsPage.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsKeymapsPage.java); conflicts from [`KeybindingEdits.takenDefaults`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/KeybindingEdits.java).
 - **KBD-13 · SHOULD.** No command's chord is written into translated text. Every label shows the binding from the
   active keymap. Fixed keys of a control (Enter, Tab, Esc, arrows) and keys meant for another program may be
   written.
   - *Check (code):* no message catalog value names a command's chord (`Ctrl+`, `Cmd+`, `C-x`, `M-x`); chords are
     rendered by one formatter.
-  - *Reference:* Editora `command/ChordFormat.java`, the one place a binding is rendered. Editora's
+  - *Reference:* Editora [`command/ChordFormat.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/ChordFormat.java), the one place a binding is rendered. Editora's
     `command.edit.universalArgument` title still carries `C-u`.
 - **KBD-14 · SHOULD.** A multi-key prefix (`C-x …`) shows a which-key style hint listing the possible next keys.
   - *Check (by hand):* press `C-x` in the Emacs keymap and wait.
   - *Reference:* no app lists the next keys yet. Editora echoes only the pending prefix (`C-x -`) in the status bar
-    (`command/KeyDispatcher.java`).
+    ([`command/KeyDispatcher.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/KeyDispatcher.java)).
 
 ![Editora's keymap picker](../../assets/shots/editora-keymaps.png "Keymap: Select… offers Emacs, CUA, Sublime Text, Visual Studio Code and IntelliJ IDEA.")
 ![Editora's palette filtered to kill commands with Emacs chords](../../assets/shots/editora-emacs.png "M-x kill: each command shows its chord from the active keymap.")
@@ -92,21 +92,21 @@ description: "Commands, the Command Palette, keymaps, focus and accessibility."
   buttons are the exception: they stay out of the Tab order (see
   [Toolbars and tooltips](../toolbars-and-tooltips/)).
   - *Check (by hand):* Tab through every window and dialog without the mouse.
-  - *Reference:* Editora; `FocusRingFxTest` holds that every control family draws the focus ring when Tab
+  - *Reference:* Editora; [`FocusRingFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/FocusRingFxTest.java) holds that every control family draws the focus ring when Tab
     reaches it.
 - **KBD-16 · SHOULD.** The keyboard focus ring is one layer of `:focus-visible` rules at the end of `app.css`.
   - *Check (test):* an FX test tabs to each control family and asserts the ring.
-  - *Reference:* Editora `app.css` (*Keyboard focus*, one layer for every control), `FocusRingFxTest`.
+  - *Reference:* Editora [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) (*Keyboard focus*, one layer for every control), [`FocusRingFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/FocusRingFxTest.java).
 - **KBD-17 · MUST.** Icon-only buttons are built by one helper that sets both the tooltip and the accessible text.
   - *Check (code):* no icon-only `Button` is built outside the helper.
-  - *Reference:* Editora `ui/Icons.java` (`Icons.button`). Editora's main toolbar doesn't yet:
-    `WindowToolbar.setupButton` and `ToolbarCoordinator.buildExtraButton` set the tooltip but no accessible text.
+  - *Reference:* Editora [`ui/Icons.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Icons.java) ([`Icons.button`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Icons.java)). Editora's main toolbar doesn't yet:
+    [`WindowToolbar.setupButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowToolbar.java) and [`ToolbarCoordinator.buildExtraButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolbarCoordinator.java) set the tooltip but no accessible text.
 - **KBD-18 · SHOULD.** On/off rows use a keyboard-operable switch with the `TOGGLE_BUTTON` role.
   - *Why:* a bare AtlantaFX `ToggleSwitch` is mouse-only.
   - *Check (code):* no `new ToggleSwitch` outside the switch class.
-  - *Reference:* Editora `ui/SettingSwitch.java`.
+  - *Reference:* Editora [`ui/SettingSwitch.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingSwitch.java).
 - **KBD-20 · SHOULD.** Rows wrap instead of truncating to "…".
   - *Check (by hand):* run the app in German at 1024 px wide; no test catches a cut row.
-  - *Reference:* Editora `messages_de.properties`.
+  - *Reference:* Editora [`messages_de.properties`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/i18n/messages_de.properties).
 
 Readable text and its contrast are one rule, [ICON-09](../icons-and-color/#icon-09) on Icons and color.

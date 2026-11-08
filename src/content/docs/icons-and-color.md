@@ -5,10 +5,10 @@ description: "Inter and JetBrains Mono, the Caret & Ink palette, state colors th
 
 One typeface pair, one palette, one color vocabulary and one way of drawing icons, so a tab, a status segment, a
 tree row and a Settings row say the same thing in the same way in every app. Reference: Editora's
-`styles/ui-font.css` and `ui/Fonts.java` (type), `styles/atlantafx-themes/editora-light.css` and `editora-dark.css`
+[`styles/ui-font.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/ui-font.css) and [`ui/Fonts.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Fonts.java) (type), [`styles/atlantafx-themes/editora-light.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/atlantafx-themes/editora-light.css) and `editora-dark.css`
 (the Caret & Ink palette, which Torrenta and Termina vendor), the `.root` block at the top of
-`styles/app.css` (the state vocabulary), `ui/Themes.java` and `ui/EditorThemes.java` (themes), `ui/Icons.java`,
-`ui/FileIcons.java`, `ui/MenuBarIcons.java` and `editor/MenuIcons.java` (icons), and `StyleContrastTest`, which
+[`styles/app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) (the state vocabulary), [`ui/Themes.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Themes.java) and [`ui/EditorThemes.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/EditorThemes.java) (themes), [`ui/Icons.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Icons.java),
+[`ui/FileIcons.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/FileIcons.java), [`ui/MenuBarIcons.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarIcons.java) and [`editor/MenuIcons.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/editor/MenuIcons.java) (icons), and [`StyleContrastTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java), which
 pins the color rules.
 
 ## Type
@@ -32,15 +32,15 @@ timestamps.
     font-family list, so without the sheet the whole interface renders in the platform's "System" face.
   - *Check (code):* a listener on `Window.getWindows()` adds `ui-font.css` to each window's scene, and to a new
     scene when the window's scene changes; no `.root` rule in `app.css` sets `-fx-font-family`.
-  - *Reference:* Editora `App.installUiFont`, `styles/ui-font.css`. Termina and Torrenta carry the same sheet.
+  - *Reference:* Editora [`App.installUiFont`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java), [`styles/ui-font.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/ui-font.css). Termina and Torrenta carry the same sheet.
 - **ICON-02 · MUST.** The app bundles Inter's four faces and registers them before any CSS is applied; it never
   maps the platform's own UI font.
   - *Why:* an earlier macOS-only sheet used San Francisco, which JavaFX faux-bolds; Inter has a real bold on every
     platform.
   - *Check (code):* `Inter-Regular`, `Inter-Bold`, `Inter-Italic` and `Inter-BoldItalic` `.ttf` are under the app's
     `fonts/inter/` with their `OFL.txt`, and `Font.loadFont` runs on them before the first window is shown.
-  - *Reference:* Editora `src/main/resources/com/editora/fonts/inter/`, `ui/Fonts.java` (`loadForFirstPaint`,
-    called from `App`). Termina and Torrenta bundle the same four faces.
+  - *Reference:* Editora [`src/main/resources/com/editora/fonts/inter/`](https://github.com/adriandeleon/Editora/tree/master/src/main/resources/com/editora/fonts/inter), [`ui/Fonts.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Fonts.java) (`loadForFirstPaint`,
+    called from [`App`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java)). Termina and Torrenta bundle the same four faces.
 
 Modula is the stated exception to ICON-01 and ICON-02: IBM Plex Mono everywhere, because every reading on a radio is
 a number (see *Before adding a setting* in [Settings](../settings/)).
@@ -71,7 +71,7 @@ grounds, and **brace** periwinkle reserved for the keyboard. Amber, red and gree
 - **ICON-04 · SHOULD.** A theme file follows the vendored AtlantaFX community themes: a `.root` block of `-color-*`
   tokens, then component rules that reference only those tokens.
   - *Check (code):* the file's first rule is `.root`, and no rule after it holds a `#` hex.
-  - *Reference:* Editora `styles/atlantafx-themes/editora-light.css`, `editora-dark.css`.
+  - *Reference:* Editora [`styles/atlantafx-themes/editora-light.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/atlantafx-themes/editora-light.css), `editora-dark.css`.
 - **ICON-05 · SHOULD.** A new app ships the Caret & Ink pair as its default theme, with `editora-light.css` and
   `editora-dark.css` copied unchanged into its own `styles/`.
   - *Why:* the palette is the family's, not the editor's.
@@ -84,7 +84,7 @@ grounds, and **brace** periwinkle reserved for the keyboard. Amber, red and gree
   theme's default and subtle surfaces.
   - *Why:* Brace has no AtlantaFX role, so it has to be a literal.
   - *Check (test):* a contrast test resolves the ladder against every bundled theme's grounds.
-  - *Reference:* Editora `app.css` (`.root`), `StyleContrastTest.theKeyboardPeriwinkleReadsOnEveryBundledAppTheme`.
+  - *Reference:* Editora [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) (`.root`), [`StyleContrastTest.theKeyboardPeriwinkleReadsOnEveryBundledAppTheme`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java).
 
 ## State colors
 
@@ -109,71 +109,71 @@ pill, a row tint and a hover state come from the same place. `.state-pill` is th
   theme's roles (or a `ladder()` of its ground), and component rules use the token.
   - *Check (code):* the `-state-*` tokens are declared only in the `.root` block at the top of `app.css`, each
     chaining to a `-color-*` role or a `ladder()`.
-  - *Reference:* Editora `styles/app.css` (`.root`).
+  - *Reference:* Editora [`styles/app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) (`.root`).
 - **ICON-08 · MUST.** No fixed hex in a component rule.
   - *Why:* a hex suits one theme; the roles track every theme for free.
   - *Check (code):* outside the `.root` token block, `app.css` holds no `#` hex. A test fails a severity or debug
     color that is not a state token.
-  - *Reference:* Editora `StyleContrastTest.severityAndDebugColoursComeFromTheStateTokens`. Editora doesn't yet
+  - *Reference:* Editora [`StyleContrastTest.severityAndDebugColoursComeFromTheStateTokens`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java). Editora doesn't yet
     pass the whole check: `.breakpoint-marker`, `.exec-arrow`, `.view-mode-bar`, `.recent-remove`,
     `.personal-note-tooltip-content`, the fold-gutter markers and the default editor and Markdown preview palettes
-    in `app.css` still carry fixed hexes.
+    in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) still carry fixed hexes.
 - **ICON-09 · SHOULD.** Readable text uses `-color-fg-muted` or stronger, which is 4.5:1 on the default, subtle and
   overlay grounds in both flagship themes: a line of UI text is `-color-fg-default` and secondary text
   `-color-fg-muted`. `-color-fg-subtle` (about 3:1) is for disabled or decorative text only.
   - *Check (test):* a contrast test computes muted ink on each ground, and fails a readable selector set in
     `-color-fg-subtle`.
-  - *Reference:* Editora `StyleContrastTest.textThatMustBeReadUsesTheMutedRoleNotSubtle`.
+  - *Reference:* Editora [`StyleContrastTest.textThatMustBeReadUsesTheMutedRoleNotSubtle`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java).
 - **ICON-10 · MUST.** Tinted text (`-color-<role>-fg`) reaches 4.5:1 on its own subtle fill and on both grounds.
   - *Check (test):* a contrast test computes each role's `-fg` on its `-subtle`, on `-color-bg-subtle` and on
     `-color-bg-default`, in both flagship themes.
-  - *Reference:* Editora `StyleContrastTest.lightTintedTextReachesAaOnItsOwnGroundAndOnTheSubtleSurface`,
+  - *Reference:* Editora [`StyleContrastTest.lightTintedTextReachesAaOnItsOwnGroundAndOnTheSubtleSurface`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java),
     `darkTintedTextStaysAa`.
 - **ICON-11 · MUST.** Ink on an emphasis fill is `-color-fg-emphasis`, never white.
   - *Why:* white on the dark accent is 1.68:1.
   - *Check (test):* a contrast test computes `-color-fg-emphasis` on each role's `-emphasis`, and the rules that
     paint on an emphasis fill use it.
-  - *Reference:* Editora `StyleContrastTest.inkOnAnEmphasisFillIsTheThemesOnEmphasisColour`.
+  - *Reference:* Editora [`StyleContrastTest.inkOnAnEmphasisFillIsTheThemesOnEmphasisColour`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java).
 - **ICON-12 · MUST.** One focus ring, `-focus-ring: -color-accent-emphasis`, drawn by the `:focus-visible` block at
   the end of `app.css`, at 3:1 or better on every surface (see [Keyboard first](../keyboard/)).
   - *Check (test):* a test reads `-focus-ring` from `.root` and computes it on the default, subtle, inset and
     overlay grounds.
-  - *Reference:* Editora `app.css` (*Keyboard focus*),
-    `StyleContrastTest.theFocusRingIsAtLeastThreeToOneOnEverySurface`.
+  - *Reference:* Editora [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) (*Keyboard focus*),
+    [`StyleContrastTest.theFocusRingIsAtLeastThreeToOneOnEverySurface`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java).
 - **ICON-13 · SHOULD.** A brand hue the theme has no role for (periwinkle, olive, violet) is a `ladder()` of
   `-color-bg-default`, never a fixed pair.
   - *Why:* the old fixed light hexes read at 3.2:1 on Editora Dark.
   - *Check (test):* a contrast test resolves each ladder on every bundled theme's ground.
-  - *Reference:* Editora `app.css` (`-state-olive`, `-state-violet`, `-state-key`),
-    `StyleContrastTest.theGitOliveAndVioletFollowTheAppThemesGround`.
+  - *Reference:* Editora [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) (`-state-olive`, `-state-violet`, `-state-key`),
+    [`StyleContrastTest.theGitOliveAndVioletFollowTheAppThemesGround`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java).
 - **ICON-14 · SHOULD.** A pure test reads the stylesheets and does the WCAG arithmetic.
   - *Why:* a contrast regression is invisible in a code diff.
   - *Check (code):* a test class reads the app's `.css` resources and computes contrast ratios without starting the
     toolkit.
-  - *Reference:* Editora `StyleContrastTest`. Mirada's `AccentTest` checks that the accent reads as text on both
-    grounds; Termina's `ThemeTest` keeps every chromatic color of its terminal schemes legible.
+  - *Reference:* Editora [`StyleContrastTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java). Mirada's [`AccentTest`](https://github.com/adriandeleon/Mirada/blob/main/src/test/java/com/mirada/ui/AccentTest.java) checks that the accent reads as text on both
+    grounds; Termina's [`ThemeTest`](https://github.com/adriandeleon/Termina/blob/master/src/test/java/com/termina/ui/ThemeTest.java) keeps every chromatic color of its terminal schemes legible.
 
 ## Themes
 
 - **ICON-15 · MUST.** The app has light and dark themes and switches between them at run time, without a restart
   (see [Window shell](../window-shell/)).
   - *Check (code):* picking a theme calls `Application.setUserAgentStylesheet` in the running app.
-  - *Reference:* Editora `ui/Themes.java` (`applyAppTheme`).
+  - *Reference:* Editora [`ui/Themes.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Themes.java) (`applyAppTheme`).
 - **ICON-16 · MUST.** A "follow the system" choice applies the light or dark theme to match the system's color
   scheme, and changes with it.
   - *Check (code):* the theme setting has a system value, and a listener on
     `Platform.getPreferences().colorSchemeProperty()` re-applies the theme.
-  - *Reference:* Mirada `settings/Settings.java` (`ThemeChoice.SYSTEM`), `ui/Theme.java`; nux `config/Advanced.java`
-    (`THEME_SYSTEM`), `ui/Theme.java`. Editora, Torrenta, Termina and Modula don't yet: their pickers list named
+  - *Reference:* Mirada [`settings/Settings.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/settings/Settings.java) (`ThemeChoice.SYSTEM`), [`ui/Theme.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Theme.java); nux [`config/Advanced.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/config/Advanced.java)
+    (`THEME_SYSTEM`), [`ui/Theme.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/Theme.java). Editora, Torrenta, Termina and Modula don't yet: their pickers list named
     themes only.
 - **ICON-17 · MUST.** A theme name the app does not know falls back to the first-run default theme.
   - *Check (code):* the lookup from a saved name to a theme ends in the default, not an exception.
-  - *Reference:* Editora `Themes.themeFor`, falling back to `Themes.DEFAULT` (Editora Light).
+  - *Reference:* Editora [`Themes.themeFor`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Themes.java), falling back to [`Themes.DEFAULT`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Themes.java) (Editora Light).
 - **ICON-18 · SHOULD.** Semantic colors never decorate: a theme may change the teal, the ground and the ink, but
   amber still means "not durable yet", red "broken" and green "verified".
   - *Check (code):* every rule that uses `-state-amber`, `-state-red` or `-state-green` marks one of the meanings in
     the State colors table.
-  - *Reference:* Editora `app.css`.
+  - *Reference:* Editora [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css).
 
 Editora lists 28 app themes: the Caret & Ink pair, AtlantaFX's Primer, Nord, Cupertino and Dracula, and 19
 community themes (Army, Autumn, Blacky, Blue, Browny, Fall, Navy, News, Spring, Summer, Winter, Yacht, several with
@@ -212,30 +212,30 @@ are not interchangeable.
   - *Why:* a line glyph is colored by its stroke, and any `X .toolbar-icon` fill rule (there are dozens) would paint
     its outline solid. A glyph that moves family moves its CSS with it.
   - *Check (test):* a test builds every line glyph and fails when one also carries `toolbar-icon`.
-  - *Reference:* Editora `ui/Icons.java` (`line`, `of`),
-    `MenuIconFamilyFxTest.aLineGlyphIsNeverAlsoTaggedAsAFilledOne`.
+  - *Reference:* Editora [`ui/Icons.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Icons.java) (`line`, `of`),
+    [`MenuIconFamilyFxTest.aLineGlyphIsNeverAlsoTaggedAsAFilledOne`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/MenuIconFamilyFxTest.java).
 - **ICON-20 · MUST.** The same action wears the same glyph wherever it is reached: Save is one floppy on the
   toolbar, in the File menu and in a tab's menu.
   - *Check (test):* a test compares the path data and style class of each action's glyph across the icon classes.
-  - *Reference:* Editora `ui/MenuBarIcons.java` reuses `Icons`; `editor/MenuIcons.java` (the editor package may not
+  - *Reference:* Editora [`ui/MenuBarIcons.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarIcons.java) reuses [`Icons`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Icons.java); [`editor/MenuIcons.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/editor/MenuIcons.java) (the editor package may not
     depend on `ui`) copies each twin's family and path data verbatim, held by
-    `MenuIconFamilyFxTest.everySharedActionUsesTheSameGlyphInBothIconSets`.
+    [`MenuIconFamilyFxTest.everySharedActionUsesTheSameGlyphInBothIconSets`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/MenuIconFamilyFxTest.java).
 - **ICON-21 · MUST.** An icon-only control has a name: it is built through `Icons.button` or `Icons.toolbarButton`,
   which set the tooltip and the accessible text together (see [Keyboard first](../keyboard/)).
   - *Check (code):* no icon-only `Button` is given a graphic outside those helpers without `Icons.name`.
-  - *Reference:* Editora `ui/Icons.java`. Editora doesn't yet pass the check on its main toolbar:
-    `WindowToolbar.setupButton` and `ToolbarCoordinator.buildExtraButton` set only the tooltip (see
+  - *Reference:* Editora [`ui/Icons.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Icons.java). Editora doesn't yet pass the check on its main toolbar:
+    [`WindowToolbar.setupButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowToolbar.java) and [`ToolbarCoordinator.buildExtraButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolbarCoordinator.java) set only the tooltip (see
     [Toolbars and tooltips](../toolbars-and-tooltips/)).
 - **ICON-23 · SHOULD.** A file's icon comes from a pure function from file name to icon key, unit-tested without the
   toolkit, and any type it does not know gets the generic document glyph, so a new type never regresses the look.
   - *Check (test):* a unit test resolves names to keys, an unknown one to the generic key.
-  - *Reference:* Editora `ui/FileIcons.java`: `iconKeyFor(name)` resolves the key, `forFileName` turns it into a
+  - *Reference:* Editora [`ui/FileIcons.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/FileIcons.java): `iconKeyFor(name)` resolves the key, `forFileName` turns it into a
     node; brand logos from Simple Icons, category glyphs (image, archive, PDF, table, lock, JSON, settings) from
-    Material. `FileIconsTest.unknownAndNullFallBackToGeneric`.
+    Material. [`FileIconsTest.unknownAndNullFallBackToGeneric`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/FileIconsTest.java).
 - **ICON-24 · MUST.** Every glyph set and font the app ships is credited in `NOTICE` with its license.
   - *Check (code):* each icon source named in the icon classes and each family under `fonts/` has an entry in
     `NOTICE`.
-  - *Reference:* Editora `NOTICE`: Material Design Icons (Apache-2.0), Simple Icons (CC0; the logos stay their
+  - *Reference:* Editora [`NOTICE`](https://github.com/adriandeleon/Editora/blob/master/NOTICE): Material Design Icons (Apache-2.0), Simple Icons (CC0; the logos stay their
     owners' trademarks), Inter and the monospace faces (OFL), and the glyph sets inside the bundled Symbols Nerd
     Font, Octicons and Seti UI (MIT) among them.
 
@@ -243,9 +243,9 @@ are not interchangeable.
 
 | App | Icons | Size |
 |---|---|---|
-| Editora | Both families, `ui/Icons`, `FileIcons`, `MenuBarIcons`, `editor/MenuIcons` | 19.2 px on the toolbar and in menus |
-| Torrenta | Both families, copied from Editora as `Icons.Glyph`, which knows its box and resizes with `at(px)`; the toolbar is all line glyphs (stroke 1.5, `-torrenta-icon`) | 17 px toolbar, 16 px menu and tab (`MENU_SIZE`), 13 px sidebar |
-| Termina | Material filled, `ui/MenuIcons`, colored by `.menu-icon` (`-color-fg-muted`; `-color-fg-default` focused; subtle and half opacity disabled) | 24 × 0.7 = 16.8 px, menus only |
+| Editora | Both families, [`ui/Icons`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Icons.java), [`FileIcons`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/FileIcons.java), [`MenuBarIcons`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarIcons.java), [`editor/MenuIcons`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/editor/MenuIcons.java) | 19.2 px on the toolbar and in menus |
+| Torrenta | Both families, copied from Editora as [`Icons.Glyph`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/Icons.java), which knows its box and resizes with `at(px)`; the toolbar is all line glyphs (stroke 1.5, `-torrenta-icon`) | 17 px toolbar, 16 px menu and tab (`MENU_SIZE`), 13 px sidebar |
+| Termina | Material filled, [`ui/MenuIcons`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MenuIcons.java), colored by `.menu-icon` (`-color-fg-muted`; `-color-fg-default` focused; subtle and half opacity disabled) | 24 × 0.7 = 16.8 px, menus only |
 | Mirada | Hand-drawn stroked paths on a 24-unit grid, two-unit strokes, round caps, in GNOME's symbolic style, so nothing carries a license; `.icon` strokes `-color-fg-default` | 16 px, centered in a 16 px box |
-| Modula | `Glyphs`: the transport symbols (tune, seek, star) as shapes, because the characters are missing from most faces and render differently on every platform | 11 px |
-| nux | No in-window icons; the tray icon is rendered as a bitmap by severity (`TrayIconRenderer`) | Tray only |
+| Modula | [`Glyphs`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/Glyphs.java): the transport symbols (tune, seek, star) as shapes, because the characters are missing from most faces and render differently on every platform | 11 px |
+| nux | No in-window icons; the tray icon is rendered as a bitmap by severity ([`TrayIconRenderer`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/tray/TrayIconRenderer.java)) | Tray only |

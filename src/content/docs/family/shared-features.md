@@ -11,7 +11,7 @@ guideline:
 2. **Shared `update/` package** (`UpdateCheck` pure parser, `UpdateService`, `ReleaseInfo`). *(5 apps)*
 3. **Pure palette core shared**: `FuzzyMatch`, `MatchText`, `KeyChord`, `PaletteKeys` and the caret-key helper
    (`TextInputKeymap` in Editora, `TextInputKeys` in the copies). Emacs-style caret keys work inside the palette's
-   query field. *(Editora → Termina → Mirada; Torrenta takes `MatchText` only)*
+   query field. *(Editora → Termina → Mirada; Torrenta takes [`MatchText`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MatchText.java) only)*
 4. **Shortcuts reference window**: a searchable list of every key, opened from Help. *(Termina, Mirada)*
 5. **Extended title bar** with JavaFX 27 `HeaderBar` and `StageStyle.EXTENDED`, falling back to a
    decorated window; the macOS system menu bar via `useSystemMenuBar`. *(Editora, Termina, Mirada,
@@ -40,4 +40,4 @@ guideline:
 17. **Simple mode / density**: fewer menus and a compact layout for new users. *(Editora, Torrenta)*
 18. **Zoom levels** stored per window kind, `Ctrl/Cmd +/-/0`. *(Editora, Termina)*
 19. **Undo for destructive list actions** (remove a torrent, close a tab) and **reopen closed tab**.
-    *(Torrenta `UndoStack`, Termina and Editora `ClosedTabs`)*
+    *(Torrenta [`UndoStack`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/UndoStack.java), Termina and Editora `ClosedTabs`)*

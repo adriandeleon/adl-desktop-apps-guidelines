@@ -6,7 +6,7 @@ description: "The family's command palette: a 620 px in-scene card that finds an
 One palette per window lists every registered command, so a command that exists is a command people can find. The
 pure parts (`FuzzyMatch`, `MatchText`, the key helper, `PickerKeys` in Editora and `PaletteKeys` in the copies, and the
 caret-key helper, `TextInputKeymap` in Editora and `TextInputKeys` in the copies) are shared with Termina and Mirada.
-Torrenta shares `MatchText` and ranks with its own `CommandMatcher`.
+Torrenta shares [`MatchText`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MatchText.java) and ranks with its own [`CommandMatcher`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/CommandMatcher.java).
 
 ## Rules
 
@@ -14,19 +14,19 @@ Torrenta shares `MatchText` and ranks with its own `CommandMatcher`.
   keymap and `Ctrl+Shift+P` (`Cmd+Shift+P` on macOS) in the others.
   - *Check (code):* the window builds one `CommandPalette`, and each bundled keymap binds that chord to
     `palette.show`.
-  - *Reference:* Editora `ui/CommandPalette.java`, built once in `MainController`; `keymaps/emacs.json` (`M-x`),
-    `cua.json` and `vscode.json` (`C-S-p`), `cua.mac.json` (`Cmd-S-p`).
+  - *Reference:* Editora [`ui/CommandPalette.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java), built once in [`MainController`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java); [`keymaps/emacs.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/emacs.json) (`M-x`),
+    [`cua.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/cua.json) and [`vscode.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/vscode.json) (`C-S-p`), [`cua.mac.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/cua.mac.json) (`Cmd-S-p`).
 - **PAL-02 · MUST.** The palette lists every registered command, with its title from `command.<id>` and its
   description from `command.<id>.desc`.
   - *Check (code):* the palette's rows come from the whole registry, filtered only by the query; a command that
     cannot run stays listed, grayed. A catalog parity test fails on a command title with no `.desc`.
-  - *Reference:* Editora `CommandPalette.filter` (`registry.all()`), `MessagesTest`; the Spec table below.
+  - *Reference:* Editora [`CommandPalette.filter`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java) (`registry.all()`), [`MessagesTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/i18n/MessagesTest.java); the Spec table below.
 - **PAL-03 · MUST.** The palette is an in-scene overlay in the window's root `StackPane`, over a faint scrim, not a
   `javafx.stage.Popup`.
   - *Why:* on Windows a popup does not reliably take keyboard focus.
   - *Check (code):* the palette shows its card through the overlay host installed in the root `StackPane`; no
     `Popup` is created for it.
-  - *Reference:* Editora `ui/OverlayHost.java` (`install`), `CommandPalette.show`.
+  - *Reference:* Editora [`ui/OverlayHost.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java) (`install`), [`CommandPalette.show`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java).
 
 ## Anatomy
 
@@ -77,27 +77,27 @@ Torrenta shares `MatchText` and ranks with its own `CommandMatcher`.
 - **PAL-04 · SHOULD.** The palette opens from the `palette.show` command, by its chord or a menu item, with an empty
   query that lists every command.
   - *Check (code):* `show` clears the field and filters on the empty query before the card appears.
-  - *Reference:* Editora `CommandPalette.show`.
+  - *Reference:* Editora [`CommandPalette.show`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java).
 - **PAL-05 · SHOULD.** Typing filters the list, and the first *enabled* match is selected.
   - *Check (test):* a test with a disabled command at the top finds the cursor on the first enabled row.
-  - *Reference:* Editora `CommandPalette.selectFirstEnabled`, `CommandPaletteDisabledFxTest`.
+  - *Reference:* Editora [`CommandPalette.selectFirstEnabled`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java), [`CommandPaletteDisabledFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/CommandPaletteDisabledFxTest.java).
 - **PAL-06 · SHOULD.** ↑ ↓, `C-n` `C-p` and Page Up/Down move the selection; Enter, or a click on an enabled row, runs
   the command. The palette closes first, then the command runs.
   - *Check (code):* the run path hides the card before it calls the registry, and does nothing on a disabled row.
-  - *Reference:* Editora `CommandPalette.runSelected`, `PickerKeys`.
+  - *Reference:* Editora [`CommandPalette.runSelected`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java), [`PickerKeys`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java).
 - **PAL-07 · SHOULD.** Esc, `C-g` or a click on the scrim cancels, and focus returns to where it was.
   - *Check (code):* the cancel key and a press on the backdrop both hide the overlay, and hiding focuses the node that
     had focus before it opened.
-  - *Reference:* Editora `PickerKeys` (`CANCEL`), `OverlayHost` (`previousFocus`).
+  - *Reference:* Editora [`PickerKeys`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java) (`CANCEL`), [`OverlayHost`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java) (`previousFocus`).
 - **PAL-08 · SHOULD.** `C-h`, or the first of `C-h`, `F1`, `Shift+F1` the active keymap leaves free, opens the selected
   command's page on the website, for the running version.
   - *Check (code):* the docs chord is the first free one of the three, and the URL is built from the app's versioned
     docs address.
-  - *Reference:* Editora `CommandPalette` (`PickerKeys.freeChord`, `docsUrl`), `AppInfo.docsUrl`.
+  - *Reference:* Editora [`CommandPalette`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java) ([`PickerKeys.freeChord`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java), `docsUrl`), [`AppInfo.docsUrl`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/AppInfo.java).
 - **PAL-09 · SHOULD.** A live keymap switch re-renders the key chips, the opener chip and the key legend.
   - *Check (code):* applying a new keymap calls the palette's rebind method, which rebuilds the opener, the legend and
     the rows.
-  - *Reference:* Editora `CommandPalette.refreshBindings`, called from `SettingsReapply`.
+  - *Reference:* Editora [`CommandPalette.refreshBindings`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java), called from [`SettingsReapply`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsReapply.java).
 
 ## Copy
 

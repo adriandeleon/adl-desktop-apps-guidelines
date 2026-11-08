@@ -6,9 +6,9 @@ description: "The menu bar and right-click menus: an icon and the chord on every
 Two surfaces show the same rows: the **menu bar**, a browsable map of every command, and **right-click menus**, what
 can be done with the thing under the pointer. Both are built from the [command registry](../keyboard/), so a row's
 title, icon, chord and enabled state come from the command and never drift from the palette or the toolbar.
-Reference: Editora's `ui/MainMenuBar.java` (menu bar), `ui/ContextMenuDismissal.java`, `ui/LazyContextMenu.java`,
-`ui/RowContextMenu.java` and `ui/TabContextMenu.java` (right-click menus), and the `.menu-item` and `.context-menu`
-rules in `app.css`.
+Reference: Editora's [`ui/MainMenuBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java) (menu bar), [`ui/ContextMenuDismissal.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ContextMenuDismissal.java), [`ui/LazyContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/LazyContextMenu.java),
+[`ui/RowContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/RowContextMenu.java) and [`ui/TabContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabContextMenu.java) (right-click menus), and the `.menu-item` and `.context-menu`
+rules in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css).
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <symbol id="i-open" viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></symbol>
@@ -45,11 +45,11 @@ rendered a third larger than every other menu in the app).
 | Card | Radius 8; shadow `rgba(27,30,42,0.28)`, radius 16, **offset Y 16** | `.context-menu` |
 | Danger item | Text in `-color-danger-fg` | `.menu-item.danger` |
 | Disabled item | The theme's dimmed label, and the icon dimmed with it | Termina's `.menu-item:disabled .menu-icon` |
-| Separators | Never two in a row and none at either end: when items hide, their orphaned separators hide too | `LazyContextMenu.collapseSeparators`, Torrenta's `MenuSeparators` |
+| Separators | Never two in a row and none at either end: when items hide, their orphaned separators hide too | `LazyContextMenu.collapseSeparators`, Torrenta's [`MenuSeparators`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MenuSeparators.java) |
 
 The shadow's offset is not cosmetic. A menu is a native window sized to its root *including the effect*, so a shadow
 that reaches above the menu is invisible window over the bar the menu hangs from, and the pointer lands on it instead
-of the next menu button. The offset must be at least the radius; Editora pins it with `MenuPopupBoundsFxTest`.
+of the next menu button. The offset must be at least the radius; Editora pins it with [`MenuPopupBoundsFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/MenuPopupBoundsFxTest.java).
 
 The three rules below hold for every menu the app draws itself: the menu bar, right-click menus, the drop-down of a menu
 button or a split button, and the toolbar's overflow. The menus a platform draws (the macOS system menu bar, a
@@ -66,9 +66,9 @@ tray icon's menu) show text only; there the chord is appended to the title ([MEN
     cell breaks the column, and a borrowed glyph says something else.
   - *Check (test):* an FX test opens the menu bar's menus and the right-click menus of a tab, an editor, a list row
     and the toolbar, and fails on any visible row that is not a check or radio item and has no graphic.
-  - *Reference:* Editora `ui/MenuBarIcons.java`, `editor/MenuIcons.java`, `ui/TabContextMenu.java`; Termina's tab
+  - *Reference:* Editora [`ui/MenuBarIcons.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarIcons.java), [`editor/MenuIcons.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/editor/MenuIcons.java), [`ui/TabContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabContextMenu.java); Termina's tab
     menu has an icon on every row. Editora doesn't yet pass: about half its menu-bar rows have no glyph, and
-    `MenuBarIconsTest` holds that a command without a fitting glyph gets none, which this rule reverses; many
+    [`MenuBarIconsTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/MenuBarIconsTest.java) holds that a command without a fitting glyph gets none, which this rule reverses; many
     right-click and drop-down rows have none either (Run All Requests in a `.http` file, the CSV grid's menu, the
     Markdown preview's).
 - **MENU-15 · MUST.** Every menu row whose command has a chord in the active keymap shows it, in right-click menus
@@ -78,7 +78,7 @@ tray icon's menu) show text only; there the chord is appended to the title ([MEN
     palette and the toolbar's tooltips already show the same chord.
   - *Check (test):* an FX test binds a command, opens a right-click menu that lists it and finds its chord in a
     `menu-item-chord` label; after a keymap switch it finds the new chord.
-  - *Reference:* Editora `MainMenuBar.rowContent` and `alignChordColumns`, `.menu-item-chord` in `app.css`. Editora's
+  - *Reference:* Editora [`MainMenuBar.rowContent`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java) and `alignChordColumns`, `.menu-item-chord` in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css). Editora's
     right-click menus show no chords yet: a row there is a plain `MenuItem`, not the menu bar's row.
 - **MENU-16 · MUST.** Every menu draws its titles in Inter 14 px regular and its chords in Inter 11 px, whatever
   node it was opened from: the font is pinned in absolute pixels on `.context-menu` and its rows' labels.
@@ -87,8 +87,8 @@ tray icon's menu) show text only; there the chord is appended to the title ([MEN
     editor's font leaks the same way.
   - *Check (test):* an FX test opens a menu from the toolbar, an editor and a tree row and reads Inter 14 px from
     each row's title.
-  - *Reference:* Editora `.context-menu` and `.menu-item-chord` in `app.css`, `MainMenuBar.UI_FONT_SIZE`,
-    `ToolbarMenuFontFxTest`.
+  - *Reference:* Editora `.context-menu` and `.menu-item-chord` in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css), [`MainMenuBar.UI_FONT_SIZE`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java),
+    [`ToolbarMenuFontFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ToolbarMenuFontFxTest.java).
 
 ## The menu bar
 
@@ -124,7 +124,7 @@ tray icon's menu) show text only; there the chord is appended to the title ([MEN
   chord from the active keymap and its enabled state from the command's gate. The bar assembles and refreshes; it
   holds no behavior of its own.
   - *Check (code):* the bar's model lists command ids only, and every row runs its id through the registry.
-  - *Reference:* Editora `ui/MenuBarModel.java` over `command/CommandRegistry.java`, `ui/MainMenuBar.java`.
+  - *Reference:* Editora [`ui/MenuBarModel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java) over [`command/CommandRegistry.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/CommandRegistry.java), [`ui/MainMenuBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java).
 - **MENU-02 · MUST.** Menu-bar rows use no `KeyCombination` accelerators. In the in-window bar each row is a
   `CustomMenuItem` laying out icon, title, spacer and chord. On the macOS system menu bar (`useSystemMenuBar`) the
   chord is appended to the title and rows carry no icon.
@@ -132,15 +132,15 @@ tray icon's menu) show text only; there the chord is appended to the title ([MEN
     bypass the key dispatcher. The native macOS menu draws text only and no graphics, which is also the platform's
     convention.
   - *Check (code):* no `setAccelerator` in the menu-bar classes.
-  - *Reference:* Editora `ui/MainMenuBar.java` (`rowContent`, `refresh`).
+  - *Reference:* Editora [`ui/MainMenuBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java) (`rowContent`, `refresh`).
 - **MENU-03 · SHOULD.** Enablement is re-read every time a menu opens, and titles and chords on a keymap or locale
   change.
   - *Why:* a menu built before Git finished detecting a repository must not stay grayed out.
   - *Check (test):* an FX test detects a repository after the window is built and finds the menu enabled.
-  - *Reference:* Editora `MainMenuBar.refreshEnablement`, `MenuBarEnablementFxTest`.
+  - *Reference:* Editora [`MainMenuBar.refreshEnablement`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java), [`MenuBarEnablementFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/MenuBarEnablementFxTest.java).
 - **MENU-04 · SHOULD.** Simple mode shows a shorter menu, rebuilt only when the mode actually changes.
   - *Check (code):* the bar rebuilds only when the simple flag differs from the current one.
-  - *Reference:* Editora `MainMenuBar.setSimple`, `MenuBarModel.menus(simple)`.
+  - *Reference:* Editora [`MainMenuBar.setSimple`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java), [`MenuBarModel.menus(simple)`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java).
 
 ![Editora's View menu open with toggle commands and their chords](../../assets/shots/editora-menu-bar.png "Editora's View menu in an earlier build: chords in one periwinkle column, but half the rows have no icon and every title repeats the menu's name.")
 
@@ -149,7 +149,7 @@ tray icon's menu) show text only; there the chord is appended to the title ([MEN
 - **MENU-05 · MUST.** Every list row, tree row, tab, editor and read-only console has a right-click menu with the
   actions for *that* thing, each one a command.
   - *Check (by hand):* right-click each kind of thing; every row's action is also in the palette.
-  - *Reference:* Editora `ui/TabContextMenu.java`, `ui/RowContextMenu.java`, `ui/ConsoleContextMenu.java`.
+  - *Reference:* Editora [`ui/TabContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabContextMenu.java), [`ui/RowContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/RowContextMenu.java), [`ui/ConsoleContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ConsoleContextMenu.java).
 
 The mockup is an editor tab's menu, shortened; Editora's has twenty-five rows.
 
@@ -193,8 +193,8 @@ The mockup is an editor tab's menu, shortened; Editora's has twenty-five rows.
   - *Why:* JavaFX stacks a second menu beside the first when each row owns its own `ContextMenu`, and the stale one
     is then no longer dismissible.
   - *Check (test):* an FX test right-clicks another row with a menu open and finds one menu showing.
-  - *Reference:* Editora `ui/ContextMenuDismissal.java` closes every open right-click menu on the press that opens
-    the next (`ContextMenuDismissalFxTest`); Modula's `RadioPane` hides the previous menu before showing a new one;
+  - *Reference:* Editora [`ui/ContextMenuDismissal.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ContextMenuDismissal.java) closes every open right-click menu on the press that opens
+    the next ([`ContextMenuDismissalFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ContextMenuDismissalFxTest.java)); Modula's [`RadioPane`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/RadioPane.java) hides the previous menu before showing a new one;
     Termina keeps one menu per view and shows it again.
 - **MENU-07 · MUST.** A press anywhere outside a right-click menu closes it, including inside the control the menu
   was opened on. The press is not consumed: a click in a list still selects the row, and a right-click on another
@@ -203,40 +203,40 @@ The mockup is an editor tab's menu, shortened; Editora's has twenty-five rows.
   - *Why:* JavaFX's auto-hide deliberately ignores a press on the menu's *owner node*, so a stock menu on a tree or
     a text area stays open when the user clicks another row or the text.
   - *Check (test):* an FX test clicks inside the owner control and in another window, and the menu closes.
-  - *Reference:* Editora `ContextMenuDismissal.install()`, called once in `App` at startup for every current and
-    future window; `ContextMenuDismissalFxTest`.
+  - *Reference:* Editora [`ContextMenuDismissal.install()`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ContextMenuDismissal.java), called once in [`App`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java) at startup for every current and
+    future window; [`ContextMenuDismissalFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ContextMenuDismissalFxTest.java).
 - **MENU-08 · MUST.** Escape closes a right-click menu and focus goes back where it was. In a terminal the Escape
   does not reach the shell.
   - *Check (by hand):* open a menu, press Escape, and type: the keys reach the control that had focus.
   - *Reference:* the stock `ContextMenu` hide-on-Escape (Spec below); Termina's `onKeyPressed` filter hides the menu
-    and consumes the key (`TerminalView`).
+    and consumes the key ([`TerminalView`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalView.java)).
 - **MENU-09 · MUST.** The Menu key and <kbd>Shift+F10</kbd> open the selected row's menu, scrolled into view first,
   so every row action a mouse can reach the keyboard can too.
   - *Why:* those keys arrive at the focused control, not at a row's cell, so a menu installed on cells never saw
     them.
   - *Check (test):* an FX test sends a keyboard request to a tree and a list and finds the selected row's menu,
     anchored to that row.
-  - *Reference:* Editora `RowContextMenu.install(tree)`, `RowContextMenuFxTest`.
+  - *Reference:* Editora [`RowContextMenu.install(tree)`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/RowContextMenu.java), [`RowContextMenuFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/RowContextMenuFxTest.java).
 - **MENU-10 · SHOULD.** A right-click selects first. In an editor, a right-click outside every selection moves the
   caret to the click (so Paste lands there); inside a selection it keeps carets and selections (so Cut and Copy act
   on what was clicked). From the keyboard the target is the caret. In a list, the menu is the clicked row's.
   - *Check (by hand):* select a word, right-click elsewhere and paste; then right-click inside a selection and copy.
-  - *Reference:* Editora `editor/ContextMenuTarget.java`.
+  - *Reference:* Editora [`editor/ContextMenuTarget.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/editor/ContextMenuTarget.java).
 - **MENU-11 · SHOULD.** A menu attached to something that exists once per open file is built when first shown, and
   set up for each showing: an `onShowing` handler sets the labels, enablement and visibility for *this* showing,
   then collapses the separators.
   - *Why:* such a menu is built for every file and opened for almost none.
   - *Check (code):* per-file menus are created through `LazyContextMenu.of(build)`.
-  - *Reference:* Editora `ui/LazyContextMenu.java`, `LazyContextMenuFxTest`. A read-only console's menu is just
-    Select All and Copy, both disabled while it is empty (`ConsoleContextMenu`).
+  - *Reference:* Editora [`ui/LazyContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/LazyContextMenu.java), [`LazyContextMenuFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/LazyContextMenuFxTest.java). A read-only console's menu is just
+    Select All and Copy, both disabled while it is empty ([`ConsoleContextMenu`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ConsoleContextMenu.java)).
 - **MENU-12 · SHOULD.** A destructive row carries the `danger` class. The action follows the
   [window shell](../window-shell/) rule: it asks first with a button that names it, or is undoable.
   - *Check (code):* rows that delete, discard or reset add `danger` to their style classes.
-  - *Reference:* Editora `.menu-item.danger` in `app.css`, `ui/BranchPopup.java`.
+  - *Reference:* Editora `.menu-item.danger` in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css), [`ui/BranchPopup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/BranchPopup.java).
 - **MENU-13 · MAY.** In a terminal view, a program that grabbed the mouse owns the right-click;
   <kbd>Shift</kbd>+right-click always opens the menu, and the keyboard request is never contested.
   - *Check (test):* a pure test of when the menu shows, per mouse mode, Shift and trigger.
-  - *Reference:* Termina's `TerminalView.shouldShowMenu`, `ContextMenuContentionTest`.
+  - *Reference:* Termina's [`TerminalView.shouldShowMenu`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalView.java), [`ContextMenuContentionTest`](https://github.com/adriandeleon/Termina/blob/master/src/test/java/com/termina/ui/ContextMenuContentionTest.java).
 
 ### Spec
 

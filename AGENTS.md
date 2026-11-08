@@ -23,6 +23,11 @@ Editora (`../Editora`) is the reference implementation.
 - A rule states a level (MUST / SHOULD / MAY) and names the Editora class or file it comes from. Verify claims
   against the apps' code on their default branch, not from memory; when Editora and the guide disagree, the code
   wins and the guide is fixed in the same change.
+- A file or class the guide names in an app, the template or editora-website links to it on GitHub, on the repo's
+  default branch: ``[`ui/TabHeaders.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabHeaders.java)``,
+  `tree/` for a folder. Keep the name as written and link the class's file for `Class.member`. Leave a name unlinked
+  when it doesn't name one file in one repo: a file every app has, a glob, a class several apps share, or something
+  an app lacks (*Gaps per app*). Never link inside a code block.
 - **Rule IDs**: every rule is a list item, never a table row, that opens with `**KBD-07 · MUST.**`, one testable
   statement, then sub-items `*Why:*` (only when there is a reason worth stating), `*Check (code|test|by
   hand):*` (how an agent or a person verifies it in an app: what to grep or read, which test holds it, or what to do

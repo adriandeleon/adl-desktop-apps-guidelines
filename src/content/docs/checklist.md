@@ -11,6 +11,17 @@ small runnable app with its tests, CI and release workflows and every repository
 README names. Click **Use this template**, run `scripts/rename.sh <AppName> <package>`, then add any rule on this list
 from a later edition.
 
+## Conformance
+
+[Conformance](../conformance/) · [Pauta window](../templates/pauta-window/)
+
+- [ ] `pauta.version` in `pom.xml` names the edition; About shows it and its conformance, *Built to Pauta 4.1.0* and *Pauta conformance: Core*
+- [ ] Every rule the app does not meet is an exception in `pauta.json`: not applicable, a deviation (SHOULDs only) with a decision record, or pending with an issue
+- [ ] The conformance (Complete, Core or Partial) is computed from the exceptions by one tested helper, never stored
+- [ ] `PautaConformanceTest` checks `pauta.json` and the README against the edition's `rules.json`
+- [ ] A Pauta window, `help.pauta`, in the palette, the Help menu and About's link, listing every exception
+- [ ] A *Pauta conformance* page in the user docs with the same list, generated from `pauta.json` (generated: SHOULD)
+
 ## Platform
 
 [Platform baseline](../platform/)
@@ -122,7 +133,7 @@ from a later edition.
 
 - [ ] Status-bar echo and Message Log
 - [ ] Debug Log with a session file, and an uncaught exception handler
-- [ ] Daily update check with an off switch; About shows versions, the Pauta edition and update status
+- [ ] Daily update check with an off switch; About shows versions, the Pauta edition and conformance, and update status
 - [ ] Report a Problem (redacted, prefilled GitHub issue) and `--report`
 
 ## Command line and languages

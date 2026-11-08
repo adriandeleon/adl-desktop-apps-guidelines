@@ -6,6 +6,7 @@
       "items": [
         "principles",
         "checklist",
+        "conformance",
         "coding-agents"
       ]
     },
@@ -42,6 +43,7 @@
         "templates/quick-open",
         "templates/welcome",
         "templates/about",
+        "templates/pauta-window",
         "templates/confirm-dialog",
         "templates/find-bar",
         "templates/message-log",

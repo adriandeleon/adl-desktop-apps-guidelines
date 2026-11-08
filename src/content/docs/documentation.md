@@ -73,7 +73,7 @@ The documentation is one command away, so nobody has to know the website's addre
   - *Reference:* Editora [`WindowCommandRegistrar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowCommandRegistrar.java) (`help.documentation` → [`MainController.openDocumentation()`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java)),
     [`MenuBarModel`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java) (`menubar.help`), [`WelcomePane`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WelcomePane.java) (`welcome.documentation`).
 - **DOCS-07 · SHOULD.** The Help menu runs in this order: Command Palette · Documentation · Check for Updates ·
-  Message Log · Debug Log · Report a Problem · About. Simple mode keeps Command Palette, Documentation and About. An
+  Message Log · Debug Log · Report a Problem · Pauta Conformance · About. Simple mode keeps Command Palette, Documentation and About. An
   app without a feature drops its row; nothing moves.
   - *Check (code):* both `menubar.help` menu specs list those command ids in that order.
   - *Reference:* Editora [`MenuBarModel`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java), both `MenuSpec("menubar.help", …)`.

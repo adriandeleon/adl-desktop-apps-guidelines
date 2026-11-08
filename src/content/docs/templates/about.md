@@ -36,10 +36,11 @@ Torrenta ([`AboutDialog`](https://github.com/adriandeleon/torrenta/blob/master/s
 <div class="m-about-head"><img src="../../icons/editora.svg" alt="" /><div><div class="m-row"><span class="m-about-name">Editora</span><span class="pin">1</span></div><div class="m-about-version">Version 0.27.0 <span class="pin">2</span></div><div class="m-about-tagline">A keyboard-driven, cross-platform programmer's text editor.</div></div></div>
 <div><div class="m-row"><span class="m-link" style="font-weight:700">Update available: 0.28.0</span><span class="pin">3</span></div><div class="m-subtle" style="font-size:12px">Last checked 5 minutes ago. <span class="m-link">Check now</span></div></div>
 <div class="m-muted">© 2026 Adrián Arturo De León Saldivar <span class="pin">4</span></div>
-<div style="display:flex;flex-direction:column;gap:2px"><span class="m-row"><span class="m-link">MIT License</span><span class="pin">5</span></span><span class="m-link">Homepage</span><span class="m-link">Source code and releases</span><span class="m-link">Built to Pauta 2.0.0</span><span class="m-link">Settings: ~/.editora/settings.json</span></div>
+<div style="display:flex;flex-direction:column;gap:2px"><span class="m-row"><span class="m-link">MIT License</span><span class="pin">5</span></span><span class="m-link">Homepage</span><span class="m-link">Source code and releases</span><span class="m-link">Built to Pauta 4.1.0</span><span class="m-link">Pauta conformance: Core</span><span class="m-link">Settings: ~/.editora/settings.json</span></div>
 <div class="m-row" style="align-items:flex-start"><div class="m-env">Editora 0.27.0 (Built 2026-11-05 17:02:11 UTC)
 Commit 1dab6d8fd
-Pauta: 2.0.0
+Pauta: 4.1.0
+Pauta conformance: Core (2 exceptions)
 Java: 25.0.4 (Eclipse Adoptium)
 JavaFX: 27+30
 OS: Linux 6.12.115+deb13.1-amd64 (amd64)
@@ -53,15 +54,16 @@ Config: ~/.editora</div><span class="pin">6</span></div>
 <li><span class="pin">2</span><span><strong>Version and tagline.</strong> Version 14 px muted; a snapshot build appends its Git branch, "0.28.0-SNAPSHOT (feat/map)". The tagline is the README's one-line pitch, 13 px muted.</span></li>
 <li><span class="pin">3</span><span><strong>Update status.</strong> What the last update check found (see the states below), when it ran, and <em>Check now</em>. Nothing is claimed before a check has answered.</span></li>
 <li><span class="pin">4</span><span><strong>Copyright</strong>, muted.</span></li>
-<li><span class="pin">5</span><span><strong>Links.</strong> License, homepage, source code and releases, the Pauta edition the app is built to (see below), and the settings file, which opens in the app (or in the file manager for apps with no editor).</span></li>
-<li><span class="pin">6</span><span><strong>Environment.</strong> Monospace 11.5 px, muted: version and build time, commit, Pauta edition, Java and JavaFX versions with vendor, OS with architecture, config folder. Home folders shown as <code>~</code>.</span></li>
+<li><span class="pin">5</span><span><strong>Links.</strong> License, homepage, source code and releases, the Pauta edition the app is built to and its conformance, which opens the <a href="../pauta-window/">Pauta window</a> (see below), and the settings file, which opens in the app (or in the file manager for apps with no editor).</span></li>
+<li><span class="pin">6</span><span><strong>Environment.</strong> Monospace 11.5 px, muted: version and build time, commit, Pauta edition and conformance, Java and JavaFX versions with vendor, OS with architecture, config folder. Home folders shown as <code>~</code>.</span></li>
 <li><span class="pin">7</span><span><strong>Copy details</strong> copies the environment block and stays open; its label becomes "Copied". It sits in the content, not the button bar, so pressing it does not close the panel.</span></li>
 <li><span class="pin">8</span><span><strong>Close</strong>, the one button, and the default: Enter and Esc both close.</span></li>
 </ol>
 
-## Pauta edition
+## Pauta edition and conformance
 
-About names the edition of these guidelines the app implements, so a user, a bug report and a reviewer all know which
+About names the edition of these guidelines the app implements and how fully it conforms
+([Conformance](../../conformance/)), so a user, a bug report and a reviewer all know which
 rules the app answers to. No app does it yet; the app template names its edition in its README and [`AGENTS.md`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/AGENTS.md) only.
 
 - **ABOUT-05 · MUST.** The edition appears in two places: a link, *Built to Pauta 2.0.0*, among the others, and a
@@ -74,7 +76,8 @@ rules the app answers to. No app does it yet; the app template names its edition
   - *Check (code):* the URL is built from the edition number and never contains `latest`.
   - *Reference:* no app yet.
 - **ABOUT-07 · MUST.** The number is the edition the app meets, not the newest. Moving to a newer edition means
-  reading its changelog for new or stronger MUSTs, meeting them, then changing the number.
+  reading its changelog for new or stronger MUSTs, meeting them, then changing the number. An app at Partial names
+  the edition it is working toward instead, and says so (ABOUT-09).
   - *Check (by hand):* audit the app against the MUSTs of the edition it names.
   - *Reference:* no app yet.
 - **ABOUT-08 · MUST.** The edition has one source: a `pauta.version` property in `pom.xml`, filtered into
@@ -82,6 +85,15 @@ rules the app answers to. No app does it yet; the app template names its edition
   to" line name the same edition and change with it.
   - *Check (code):* `pom.xml` defines `pauta.version`, `build-info.properties` carries it, `AppInfo` reads it, and
     the README names the same number.
+  - *Reference:* no app yet.
+- **ABOUT-09 · MUST.** About shows the app's conformance, Complete, Core or Partial, as the helper computes it from
+  `pauta.json` ([PAUTA-02](../../conformance/#pauta-02)) and never higher: a link, *Pauta conformance: Core*, right
+  after the edition's, that opens the [Pauta window](../pauta-window/), and a line `Pauta conformance: Core (2
+  exceptions)` right after the `Pauta:` line. At Partial the edition's link reads *Working toward Pauta 4.1.0*: the
+  app does not meet that edition yet, so it does not say it is built to it.
+  - *Why:* [*Never claim what is not true*](../../principles/#for-the-people-using-the-apps).
+  - *Check (code):* About calls the conformance helper and holds no conformance name of its own; the link runs
+    `help.pauta`; at Partial the edition's link uses `about.pautaWorkingToward`.
   - *Reference:* no app yet.
 
 ## Update status states
@@ -111,6 +123,7 @@ date": with no answer, the panel says it has not checked.
 | Environment | JetBrains Mono 11.5 px, muted | `.about-env` |
 | Source of the version | Maven-filtered `build-info.properties`, read by `AppInfo`: the same text as `--version` and a problem report | `AppInfo` |
 | Pauta edition | `pauta.version` in `pom.xml`, filtered into `build-info.properties`; the link opens `https://pauta-project.dev/<edition>/` | no app yet |
+| Pauta conformance | Computed from `pauta.json` by the conformance helper; the link opens the Pauta window | [Conformance](../../conformance/) |
 
 ## Copy
 
@@ -124,7 +137,8 @@ date": with no answer, the panel says it has not checked.
 | `about.notChecked` | Not checked for updates yet. |
 | `about.checkNow` / `about.checking` | Check now / Checking… |
 | `about.homepage` / `about.releases` | Homepage / Source code and releases |
-| `about.pauta` | Built to Pauta {0} |
+| `about.pauta` / `about.pautaWorkingToward` | Built to Pauta {0} / Working toward Pauta {0} |
+| `about.pautaConformance` | Pauta conformance: {0} |
 | `about.copyDetails` / `about.copied` | Copy details / Copied |
 
 ## In the apps

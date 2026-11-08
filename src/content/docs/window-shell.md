@@ -42,11 +42,11 @@ description: "Status bar, themes, title bar, dialogs, Welcome, About, window sta
   items, a Customize block (keymap and theme) and Help links. See the [Welcome template](../templates/welcome/).
   - *Check (by hand):* start the app with no session to restore.
   - *Reference:* Editora [`ui/WelcomePane.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WelcomePane.java).
-- **WIN-07 · MUST.** About shows the version, the build, the Pauta edition the app implements, the runtime (Java and
-  JavaFX versions), the license, links, and the result of the last update check. See the
+- **WIN-07 · MUST.** About shows the version, the build, the Pauta edition the app implements and its
+  conformance, the runtime (Java and JavaFX versions), the license, links, and the result of the last update check. See the
   [About template](../templates/about/).
-  - *Check (code):* the About window reads the version, build and edition from `AppInfo` and shows the update
-    checker's last answer.
+  - *Check (code):* the About window reads the version, build and edition from `AppInfo`, the conformance from
+    the conformance helper ([Conformance](../conformance/)), and shows the update checker's last answer.
   - *Reference:* Editora [`ui/AboutDialog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/AboutDialog.java). No app names its Pauta edition yet.
 - **WIN-08 · SHOULD.** Window size, position, maximized state and open items are restored on the next launch;
   `--no-session` skips the restore.

@@ -395,3 +395,13 @@ ol.anatomy > li > .pin { margin-top: 0.1rem; }
 .m-fb-float .m-fb-count { min-width: 64px; }
 .m-fb-float .m-fb-icon { width: 24px; height: 22px; font-size: 13px; }
 .m-fb-lens { color: var(--m-muted); font-size: 15px; }
+
+/* Pauta window: About's panel with a grouped list of exceptions. */
+.m-pw { width: 560px; }
+.m-pw .m-about-head img { border-radius: 0; }
+.m-pw-list { display: flex; flex-direction: column; gap: 2px; padding: 6px 0; border-block: 1px solid var(--m-border); }
+.m-pw-group { position: relative; padding: 6px 4px 2px; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--m-subtle); }
+.m-pw-group .pin.out { left: -26px; top: 4px; }
+.m-pw-item { display: flex; align-items: baseline; gap: 10px; padding: 3px 4px; font-size: 12.5px; }
+.m-pw-id { flex: none; width: 64px; font: 600 12px var(--m-mono); }
+.m-pw-level { flex: none; width: 48px; font-size: 11px; color: var(--m-muted); }

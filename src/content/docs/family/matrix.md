@@ -70,8 +70,9 @@ Surveyed on 2026-11-05 from each repository's default branch (the rows added in 
 | Find bar: in-scene, incremental, count, Esc returns focus | ● find and replace | ◐ filter box | ● floating card | — | — picker | — |
 | Keymap presets | ● 9 | — | — | — | — | — |
 | Keybinding editor / shortcuts reference | ● | ● | ● | — | ◐ | — |
-| Menu rows carry the command's icon | ● | ● | ● | — | ● | — tray only |
-| Chord shown beside each menu row | ● own column | ◐ native accelerator | — | ● | ● | — |
+| An icon on every menu row | ◐ about half the menu bar | ◐ not the RSS menus | ◐ right-click menus only | — | ● | — |
+| Chord beside each menu row, right-click menus included | ◐ menu bar only | ◐ menu bar and torrent menu | ◐ menu bar only | ● right-click menu | ● every menu | — |
+| Menu font pinned (Inter 14 px on `.context-menu`) | ● | — | ◐ root font only | ◐ size only | — | — |
 | Right-click menu: one at a time, any outside press closes it | ● every window | ◐ stock auto-hide | ◐ terminal view | ◐ radio pane | ◐ stock auto-hide | — |
 | Icon-only buttons carry an accessible name | ● `Icons.name` | ● | — tooltip only | — tooltip only | ◐ badges only | ● by hand |
 | Toolbar tooltips show the command's chord | ● | ● | — no toolbar | — | ● | — |

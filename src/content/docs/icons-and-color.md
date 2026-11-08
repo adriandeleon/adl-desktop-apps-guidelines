@@ -226,12 +226,6 @@ are not interchangeable.
   - *Reference:* Editora `ui/Icons.java`. Editora doesn't yet pass the check on its main toolbar:
     `WindowToolbar.setupButton` and `ToolbarCoordinator.buildExtraButton` set only the tooltip (see
     [Toolbars and tooltips](../toolbars-and-tooltips/)).
-- **ICON-22 · SHOULD.** No invented glyph. A row gets an icon only where an existing glyph genuinely depicts it, and
-  the icon column stays reserved so a menu with a mix stays aligned (see [Menus](../menus/)).
-  - *Why:* a picture that does not mean the thing beside it has to be read and then discounted.
-  - *Check (test):* a test holds that a command with no fitting glyph maps to none.
-  - *Reference:* Editora `ui/MenuBarIcons.java`,
-    `MenuBarIconsTest.aCommandWithNoFittingGlyphGetsNoneRatherThanAnInventedOne`.
 - **ICON-23 · SHOULD.** A file's icon comes from a pure function from file name to icon key, unit-tested without the
   toolkit, and any type it does not know gets the generic document glyph, so a new type never regresses the look.
   - *Check (test):* a unit test resolves names to keys, an unknown one to the generic key.

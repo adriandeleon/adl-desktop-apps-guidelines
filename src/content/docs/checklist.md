@@ -89,6 +89,8 @@ from a later edition.
 [Menus](../menus/)
 
 - [ ] Menu rows are commands: icon, title and chord from the registry and the active keymap, no `KeyCombination` accelerators
+- [ ] Every row of every menu, right-click menus and drop-downs included, has an icon that depicts it and its chord when bound, in the 11 px periwinkle column
+- [ ] Menus draw in Inter 14 px whatever they were opened from (`.context-menu` pins the font in pixels)
 - [ ] Right-click menus close on a press anywhere outside them and never stack (`ContextMenuDismissal` installed at startup)
 - [ ] Right-click menus open from the Menu key and Shift+F10 at the selected row (`RowContextMenu`)
 

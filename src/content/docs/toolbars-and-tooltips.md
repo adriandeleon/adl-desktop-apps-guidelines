@@ -130,12 +130,8 @@ title and chord come from the registry and the active keymap. Reference: Editora
   - *Check (test):* an FX test right-clicks the bar twice and finds one menu, then presses on the bar and elsewhere
     in the window and finds it closed.
   - *Reference:* Editora `ToolbarCoordinator`, `ContextMenuDismissal`, `ToolbarContextMenuDismissFxTest`. See
-    [Menus](../menus/).
-- **TBAR-11 · SHOULD.** The bar's right-click menu is the size of every other menu (14 px), not the bar's 18 px.
-  - *Why:* a popup inherits the font of the node it was shown from; the `.context-menu` rule that pins menus to
-    14 px is what keeps this one in line.
-  - *Check (test):* an FX test opens the menu from the bar and reads its font size.
-  - *Reference:* Editora `app.css` (`.context-menu`), `ToolbarMenuFontFxTest`.
+    [Menus](../menus/), whose rules on icons, chords and the 14 px font ([MENU-16](../menus/#menu-16)) hold for this
+    menu too.
 - **TBAR-12 · SHOULD.** Tool window stripes are toolbars: a stripe button is built like a toolbar button, with the
   chord in its tooltip, accessible text bound to the window's title, and a right-click menu with *Open in Split* and
   *Hide*.

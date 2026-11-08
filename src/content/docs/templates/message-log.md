@@ -6,13 +6,9 @@ description: "The family's Message Log: the session's status-bar messages, newes
 The status bar's echo line shows one message and replaces it with the next; the Message Log keeps them, so nothing
 the app said is lost because it scrolled past.
 
-## Rules
-
-- **MLOG-01 · MUST.** Every app with a status bar keeps a Message Log: the session's status-bar messages, newest
-  first, opened from the status bar.
-  - *Check (code):* every status-bar message is also added to one log model, and a view lists that model.
-  - *Reference:* Editora [`ui/MessageLog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLog.java) (the model, no JavaFX) and [`ui/MessageLogPopup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java) (the view);
-    Torrenta carries the same pair.
+Every app keeps one, session-only and bounded, newest first, with Esc to close and Clear to empty it:
+[DIAG-01](../../diagnostics/#diag-01). A click on the status bar's echo area opens it:
+[WIN-01](../../window-shell/#win-01). This page is what the log looks like and how it behaves beyond that.
 
 ## Anatomy
 
@@ -60,12 +56,12 @@ the app said is lost because it scrolled past.
 
 ## Behavior
 
-- **MLOG-02 · SHOULD.** A click on the echo line or on the unread-error count opens the log, as does the
-  `view.messageLog` command.
-  - *Check (code):* both status-bar nodes run `view.messageLog` on a click.
+- **MLOG-02 · SHOULD.** A click on the unread-error count opens the log too, and so does the `view.messageLog`
+  command.
+  - *Check (code):* the unread-error count runs `view.messageLog` on a click, and the command is registered.
   - *Reference:* Editora [`StatusBar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusBar.java) (`echo`, `unreadErrors`), [`StatusBar.showMessageLog`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusBar.java).
-- **MLOG-03 · SHOULD.** Esc, `C-g` or a click outside closes the log.
-  - *Check (code):* the card's key handler hides it on Escape and `C-g`; the overlay's backdrop hides it on a press.
+- **MLOG-03 · SHOULD.** `C-g` or a click outside closes the log too, as Esc does.
+  - *Check (code):* the card's key handler hides it on `C-g`; the overlay's backdrop hides it on a press.
   - *Reference:* Editora [`MessageLogPopup`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java), [`OverlayHost`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java).
 - **MLOG-04 · SHOULD.** `Ctrl+C` (`Cmd+C` on macOS) copies the selected entries.
   - *Check (code):* the card's key handler copies the selection on the shortcut-down C.

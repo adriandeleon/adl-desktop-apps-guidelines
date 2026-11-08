@@ -14,9 +14,9 @@ and no account of ours: the store is a private Git repository the user owns.
   - *Reference:* Editora [`ui/SettingsSync.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsSync.java) (the service) and [`ui/SettingsSyncPage.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsSyncPage.java), built by
     [`SettingsWindow`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsWindow.java) (`Category.SYNC`).
 - **SYNC-02 · SHOULD.** The store is a Git repository the user owns, reached through their own Git credentials (a
-  credential helper or an SSH key), with no server or account of ours. A URL with a password or token in it is refused.
-  - *Check (code):* the sync package runs `git` against the user's URL, and the page refuses a URL with credentials
-    in it.
+  credential helper or an SSH key), with no server or account of ours. Refusing a URL with a password or token in it
+  is [SET-15](../../settings/#set-15).
+  - *Check (code):* the sync package runs `git` against the user's URL, with no server or account of the app's own.
   - *Reference:* Editora [`sync/`](https://github.com/adriandeleon/Editora/tree/master/src/main/java/com/editora/sync) package ([`SyncEngine`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/sync/SyncEngine.java), [`SyncMerge`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/sync/SyncMerge.java), [`SyncAccount`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/sync/SyncAccount.java)), [`SyncEngine.hasCredentials`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/sync/SyncEngine.java);
     Termina carries the same package, Torrenta its own [`sync/`](https://github.com/adriandeleon/torrenta/tree/master/src/main/java/com/torrenta/sync) with [`SyncEngine`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/sync/SyncEngine.java) and [`SyncAccount`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/sync/SyncAccount.java); the Spec table
     below.

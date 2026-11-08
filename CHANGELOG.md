@@ -8,6 +8,49 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 
 ## [Unreleased]
 
+## [4.3.0] - 2026-11-08
+
+One requirement, one rule, and one place that sets its level. A review of 4.2.0 found about twenty requirements stated
+under two or three IDs, sometimes at different levels, and a checklist that gave other levels than the pages. This
+edition retires the copies and makes the page the only source of a level. It is a minor: no rule's level changes on
+its page and nothing an app did has to be undone. An app built to 4.2.0 moves each `pauta.json` entry for a retired
+ID to the rule that holds it now, which `rules.json` names.
+
+### Changed
+
+- **A rule's level is the one on its page.** The checklist used to set it too ("a rule the checklist lists is a
+  MUST"), and the two disagreed: TABS-13 and ICON-11 were MUSTs on their pages and SHOULDs on the checklist, PERF-04
+  the other way round, and Inter was a SHOULD on one checklist line and a MUST on another. `rules.json`, the Pauta
+  window and the conformance already used the page's level; now the checklist agrees with it.
+- **The New app checklist names its rules.** Every line ends with links to the rules it sums up, every MUST of the
+  edition is on a line, and a line marked SHOULD holds only SHOULDs. New lines cover the MUSTs it left out (About's
+  Pauta edition, the Pauta window's links, the find bar's filter for list apps, the toolbar's right-click menu,
+  pinning, right-click menus everywhere, notifications, the Debug Log window, `NOTICE` credits for icons and fonts).
+  Lines that claimed what no rule says are gone or fixed: a drift test for every repeated fact, themes that follow the
+  system by default, start at login "with no setting beside it", and the template "built to" its edition (it is
+  made toward it). Ticks kept in the browser reset for the lines that changed.
+- **Rules that repeated part of another** now link to it instead: PLAT-13 (`java.util.logging` only; DIAG-02
+  captures it), PLAT-14 (Jackson; SET-09 versions the files), DOCS-05 (the GitHub release is REL-04), WIN-08
+  (`--no-session` is CLI-04), SET-07 (the flags are CLI-02), DIAG-06 (`--report` is CLI-05), DIAG-01 (a click on the
+  echo area is WIN-01), MLOG-02 and MLOG-03 (what they add beyond DIAG-01), PAL-01 (its chords are KBD-05) and
+  SYNC-02 (refusing a URL with a password is SET-15). The Settings Sync rules SET-18 to SET-21 are for an app that
+  offers sync.
+
+### Removed
+
+- **Sixteen duplicate rules are retired**, each for the rule that holds its requirement: PLAT-07 (ICON-01, ICON-02),
+  QUAL-01 (PLAT-09), QUAL-12 (INTL-08, DOCS-09), QUAL-14 (ICON-14), DOCS-19 (REPO-01), KBD-08 (QOPEN-01), KBD-17 and
+  ICON-21 (TBAR-01), KBD-20 (INTL-04), WIN-02 (ICON-15, ICON-16, ICON-18), WIN-05 (CONF-01 to CONF-04), WIN-06
+  (WELC-01), WIN-07 (ABOUT-02, ABOUT-09), SET-17 (SYNC-01, SYNC-02), PAL-03 (KBD-07) and MLOG-01 (DIAG-01). Where
+  the copy was a MUST and its owner a SHOULD, the owner's level stands: what the state colors mean (ICON-18) and the
+  release notes on the GitHub release (REL-04) are SHOULDs. The edition has 360 rules: 171 MUST, 180 SHOULD, 9 MAY.
+
+### Added
+
+- **Retired IDs are on record.** `rules.json` ends with `retired`: every ID no longer in use, the edition that
+  removed it and the rule that holds its requirement now. *Coding agents and LLMs* says how to use it when an app
+  moves to a newer edition.
+
 ## [4.2.0] - 2026-11-08
 
 The first audit of an app against 4.1.0, of the app template, found gaps in the conformance rules. This edition

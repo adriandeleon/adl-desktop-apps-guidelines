@@ -10,23 +10,19 @@ Torrenta shares [`MatchText`](https://github.com/adriandeleon/torrenta/blob/mast
 
 ## Rules
 
-- **PAL-01 · MUST.** Every app has one Command Palette per window, opened by `palette.show`: `M-x` in the Emacs
-  keymap and `Ctrl+Shift+P` (`Cmd+Shift+P` on macOS) in the others.
-  - *Check (code):* the window builds one `CommandPalette`, and each bundled keymap binds that chord to
-    `palette.show`.
-  - *Reference:* Editora [`ui/CommandPalette.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java), built once in [`MainController`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java); [`keymaps/emacs.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/emacs.json) (`M-x`),
-    [`cua.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/cua.json) and [`vscode.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/vscode.json) (`C-S-p`), [`cua.mac.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/cua.mac.json) (`Cmd-S-p`).
+- **PAL-01 · MUST.** Every app has one Command Palette per window, opened by the `palette.show` command. Its chords,
+  `M-x` in the Emacs keymap and `Ctrl+Shift+P` (`Cmd+Shift+P` on macOS) in the others, are
+  [KBD-05](../../keyboard/#kbd-05).
+  - *Check (code):* the window builds one `CommandPalette`, and `palette.show` opens it.
+  - *Reference:* Editora [`ui/CommandPalette.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java), built once in [`MainController`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java).
 - **PAL-02 · MUST.** The palette lists every registered command, with its title from `command.<id>` and its
   description from `command.<id>.desc`.
   - *Check (code):* the palette's rows come from the whole registry, filtered only by the query; a command that
     cannot run stays listed, grayed. A catalog parity test fails on a command title with no `.desc`.
   - *Reference:* Editora [`CommandPalette.filter`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java) (`registry.all()`), [`MessagesTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/i18n/MessagesTest.java); the Spec table below.
-- **PAL-03 · MUST.** The palette is an in-scene overlay in the window's root `StackPane`, over a faint scrim, not a
-  `javafx.stage.Popup`.
-  - *Why:* on Windows a popup does not reliably take keyboard focus.
-  - *Check (code):* the palette shows its card through the overlay host installed in the root `StackPane`; no
-    `Popup` is created for it.
-  - *Reference:* Editora [`ui/OverlayHost.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java) (`install`), [`CommandPalette.show`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java).
+
+The palette is an in-scene overlay in the window's root `StackPane`, over a faint scrim, never a
+`javafx.stage.Popup`: [KBD-07](../../keyboard/#kbd-07).
 
 ## Anatomy
 

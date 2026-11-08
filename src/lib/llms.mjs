@@ -14,14 +14,15 @@ const LEVELS = {
 function load(root = process.cwd()) {
   const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
   const base = editionUrl(pkg);
-  const { pages } = readRules(root);
+  const { pages, retired } = readRules(root);
   for (const p of pages) p.url = `${base}${p.slug}/`;
-  return { pkg, base, pages, rules: pages.flatMap((p) => p.rules.map((r) => ({ page: p, rule: r }))) };
+  return { pkg, base, pages, retired, rules: pages.flatMap((p) => p.rules.map((r) => ({ page: p, rule: r }))) };
 }
 
 export function rulesJson(root) {
-  const { pkg, base, rules } = load(root);
+  const { pkg, base, rules, retired } = load(root);
   const abs = (s, page) => (s == null ? null : absoluteLinks(s, page.url));
+  const urlOf = new Map(rules.map(({ page, rule }) => [rule.id, `${page.url}#${rule.id.toLowerCase()}`]));
   return {
     name: "Pauta",
     edition: pkg.version,
@@ -45,6 +46,8 @@ export function rulesJson(root) {
       check: { kind: rule.check.kind, text: abs(rule.check.text, page) },
       reference: abs(rule.reference, page),
     })),
+    // IDs no longer in use. They are never reused, so an app's pauta.json entry for one is stale.
+    retired: retired.map((r) => ({ id: r.id, edition: r.edition, see: r.see, seeUrl: r.see ? (urlOf.get(r.see) ?? null) : null })),
   };
 }
 

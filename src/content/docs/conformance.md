@@ -135,9 +135,9 @@ a test keeps the copies honest.
       "reason": "<App> has no tabs: it shows one library in one window."
     },
     {
-      "rule": "WIN-06",
+      "rule": "WELC-01",
       "level": "SHOULD",
-      "url": "https://pauta-project.dev/4.2.0/window-shell/#win-06",
+      "url": "https://pauta-project.dev/4.2.0/templates/welcome/#welc-01",
       "kind": "deviation",
       "reason": "<App> opens straight to your library instead of a Welcome page; its empty state names the ways in.",
       "link": "https://github.com/adriandeleon/<App>/blob/master/docs/decisions/0007-no-welcome-page.md"

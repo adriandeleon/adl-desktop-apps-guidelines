@@ -10,7 +10,8 @@ Editora (`../Editora`) is the reference implementation.
 - `npm run build` — the whole site into `dist/`: this edition at `latest/` and `<version>/`, every earlier edition
   from the `versions` branch, the root redirects (see **Editions on the site**)
 - `npm run preview` — serves `dist/` as deployed, at http://localhost:4321/
-- `npm run check` — fails on a malformed rule (`scripts/check-rules.mjs`); `npm run build` runs it first
+- `npm run check` — fails on a malformed rule, a retired ID in use, a broken link to a rule, or a checklist line
+  whose level isn't its rules' (`scripts/check-rules.mjs`); `npm run build` runs it first
 - `node scripts/check-edition.mjs` — fails when this branch's edition clashes with `origin/master` or a tag (see
   **Several sessions at once**)
 
@@ -32,7 +33,10 @@ Editora (`../Editora`) is the reference implementation.
   statement, then sub-items `*Why:*` (only when there is a reason worth stating), `*Check (code|test|by
   hand):*` (how an agent or a person verifies it in an app: what to grep or read, which test holds it, or what to do
   in the running app) and `*Reference:*` (the Editora file, or the app that does it, or "no app yet"). IDs are
-  permanent: never renumber or reuse one; a removed rule's ID stays retired. `src/lib/rehype-status.mjs` makes the
+  permanent: never renumber or reuse one. A removed rule's ID stays retired: list it in `retired-rules.json` with the
+  edition that removed it and the rule that holds its requirement now (`see`), link to that rule where the old one
+  stood, and name the ID in the changelog. `npm run check` fails on a retired ID in use or named on a page, and
+  `rules.json` publishes the list. `src/lib/rehype-status.mjs` makes the
   item its anchor (`#kbd-07`) and `scripts/print-markup.py` renders it for print; `src/lib/rules.mjs` reads the
   rules for `npm run check` and for what coding agents read, which every edition serves: `rules.json`, `llms.txt`
   (also at the site root) and `llms-full.txt` (`src/pages/*.js`, `src/lib/llms.mjs`), which the *Coding agents and
@@ -40,7 +44,14 @@ Editora (`../Editora`) is the reference implementation.
   On the site, a page with five or more rules opens with an index of them (ID, level, statement) that
   `rehype-status.mjs` builds from the rules themselves; never write one by hand. The PDF has none: its contents
   list does that job.
-  A rule that the checklist lists is a MUST unless the checklist says SHOULD; a rule it doesn't list is a SHOULD.
+  **A rule's level is the one on its own page**, and nothing else sets it. The New app checklist sums the rules up:
+  each line ends with links to the rules it covers (`[KBD-07](../keyboard/#kbd-07)`), every MUST is on a line, and a
+  line marked `(SHOULD)` names only SHOULDs while any other line names only MUSTs. `npm run check` fails when a
+  line and its rules disagree, when a MUST is on no line, or when a link to a rule points at a rule that doesn't
+  exist or at the wrong page.
+  **One requirement, one rule.** Before adding a rule, search the pages for the same requirement; when another page
+  states it, link to that rule instead (an overview page points at the template that details it). Two IDs for one
+  requirement make an app record two exceptions, and they drift apart in level.
   One prefix per page: PLAT platform, REPO repository, DOCS documentation, QUAL quality, PERF performance, KBD
   keyboard, WIN window-shell, ICON icons-and-color, TBAR toolbars-and-tooltips, TABS tabs-and-panels, MENU menus,
   TRAY tray-and-background, SET settings, DIAG diagnostics, CLI command-line, INTL i18n, REL release; templates PAL,

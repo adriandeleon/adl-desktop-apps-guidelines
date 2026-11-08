@@ -220,12 +220,6 @@ are not interchangeable.
   - *Reference:* Editora [`ui/MenuBarIcons.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarIcons.java) reuses [`Icons`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Icons.java); [`editor/MenuIcons.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/editor/MenuIcons.java) (the editor package may not
     depend on `ui`) copies each twin's family and path data verbatim, held by
     [`MenuIconFamilyFxTest.everySharedActionUsesTheSameGlyphInBothIconSets`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/MenuIconFamilyFxTest.java).
-- **ICON-21 · MUST.** An icon-only control has a name: it is built through `Icons.button` or `Icons.toolbarButton`,
-  which set the tooltip and the accessible text together (see [Keyboard first](../keyboard/)).
-  - *Check (code):* no icon-only `Button` is given a graphic outside those helpers without `Icons.name`.
-  - *Reference:* Editora [`ui/Icons.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Icons.java). Editora doesn't yet pass the check on its main toolbar:
-    [`WindowToolbar.setupButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowToolbar.java) and [`ToolbarCoordinator.buildExtraButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolbarCoordinator.java) set only the tooltip (see
-    [Toolbars and tooltips](../toolbars-and-tooltips/)).
 - **ICON-23 · SHOULD.** A file's icon comes from a pure function from file name to icon key, unit-tested without the
   toolkit, and any type it does not know gets the generic document glyph, so a new type never regresses the look.
   - *Check (test):* a unit test resolves names to keys, an unknown one to the generic key.
@@ -238,6 +232,9 @@ are not interchangeable.
   - *Reference:* Editora [`NOTICE`](https://github.com/adriandeleon/Editora/blob/master/NOTICE): Material Design Icons (Apache-2.0), Simple Icons (CC0; the logos stay their
     owners' trademarks), Inter and the monospace faces (OFL), and the glyph sets inside the bundled Symbols Nerd
     Font, Octicons and Seti UI (MIT) among them.
+
+An icon-only control gets its tooltip and its accessible name from one helper (`Icons.button`,
+`Icons.toolbarButton`, `Icons.name`): [TBAR-01](../toolbars-and-tooltips/#tbar-01).
 
 ### In the apps
 

@@ -3,11 +3,9 @@ title: "Code quality gates"
 description: "NullAway, coverage floors and the guard tests that pay for themselves across the family."
 ---
 
-- **QUAL-01 · MUST.** NullAway is an error, not a warning. A new package starts with its own `package-info.java`
-  carrying `@NullMarked`.
-  - *Check (code):* the compiler arguments say `-Xep:NullAway:ERROR`; every source package has a `package-info.java`
-    with `@NullMarked`.
-  - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml), [`docs/conventions.md`](https://github.com/adriandeleon/Editora/blob/master/docs/conventions.md) (*Null annotations*).
+NullAway runs as an error on every package, each `@NullMarked` in its own `package-info.java`:
+[PLAT-09](../platform/#plat-09). What follows is how to live with it.
+
 - **QUAL-02 · SHOULD.** A NullAway report is fixed, not suppressed: put `@Nullable` on what may be null.
   - *Check (code):* `grep -rn '@SuppressWarnings("NullAway")' src/main` finds nothing.
   - *Reference:* Editora; one suppression is left, in [`recovery/RecoveryCodec.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/recovery/RecoveryCodec.java).
@@ -58,17 +56,14 @@ Guard tests that pay for themselves across the family:
 - **QUAL-11 · SHOULD.** A command sweep runs every registered command in a real headless window.
   - *Check (test):* one FX test iterates the registry and runs each command.
   - *Reference:* Editora [`CommandSweepFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/CommandSweepFxTest.java).
-- **QUAL-12 · MUST.** A message parity test holds that every locale has every key and every `command.<id>` has a
-  `.desc`.
-  - *Check (test):* the test fails on a key missing from a locale or a command title without `.desc`.
-  - *Reference:* Editora [`MessagesTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/i18n/MessagesTest.java).
 - **QUAL-13 · SHOULD.** A settings round trip shows that every switch, number and choice survives a restart.
   - *Check (test):* one FX test sets every control, reloads the settings and reads each back.
   - *Reference:* Editora [`SettingsRoundTripFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/SettingsRoundTripFxTest.java).
-- **QUAL-14 · SHOULD.** A contrast test holds that text tokens keep their ratios in every theme.
-  - *Check (test):* a pure test reads the stylesheets and does the WCAG arithmetic.
-  - *Reference:* Editora [`StyleContrastTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java).
 - **QUAL-15 · SHOULD.** A release supply-chain test keeps the signing and attestation steps where they are.
   - *Check (test):* a test reads the workflows and fails when a signing, notarization or attestation step moves or
     goes.
   - *Reference:* Editora [`ReleaseSupplyChainTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/packaging/ReleaseSupplyChainTest.java).
+
+Two more guard tests are rules on the pages they guard: the message parity test is
+[INTL-08](../i18n/#intl-08) (every key in every catalog) and [DOCS-09](../documentation/#docs-09) (every command has a
+description), and the contrast test is [ICON-14](../icons-and-color/#icon-14).

@@ -4,7 +4,8 @@ description: "Message Log, Debug Log, update notification, Report a Problem, Doc
 ---
 
 - **DIAG-01 · MUST.** The **Message Log** is a session-only, bounded history of every echo-area message with
-  `HH:mm:ss` times, newest first. Clicking the status message opens it; Esc closes it; Clear empties it.
+  `HH:mm:ss` times, newest first. Esc closes it; Clear empties it. A click on the echo area opens it
+  ([WIN-01](../window-shell/#win-01)); the [Message Log template](../templates/message-log/) has the rest.
   - *Check (test):* a test records messages newest first, evicts the oldest past the cap, and clears.
   - *Reference:* Editora [`ui/MessageLog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLog.java) ([`MessageLogTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/MessageLogTest.java)), [`ui/MessageLogPopup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java).
 - **DIAG-02 · MUST.** The **Debug Log** captures all `java.util.logging` records and uncaught exceptions in memory
@@ -34,8 +35,8 @@ description: "Message Log, Debug Log, update notification, Report a Problem, Doc
 - **DIAG-06 · MUST.** Help → **Report a Problem** builds a report (version, OS, runtime, settings summary, recent
   Debug Log), **redacts** it (home paths, user names, e-mail addresses, credentials, tokens), shows it editable,
   copies it to the clipboard and opens a prefilled GitHub issue from `bug_report.yml`. Over about 7,500 characters
-  the link falls back to "paste from the clipboard". `<app> --report` does the same from the command line for when
-  the app cannot start. Nothing is uploaded.
+  the link falls back to "paste from the clipboard". Nothing is uploaded. The same report from the command line, for
+  when the app cannot start, is [CLI-05](../command-line/#cli-05).
   - *Check (test):* redaction tests cover home paths, user names, e-mail addresses, credentials in URLs and
     tokens; a report test puts a short report in the link and leaves the paste hint for a long one.
   - *Reference:* Editora [`report/ProblemReport.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/report/ProblemReport.java), [`report/Redactor.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/report/Redactor.java), [`report/ReportCommand.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/report/ReportCommand.java),

@@ -218,6 +218,17 @@ function htmlBlock(block) {
     const items = [...block.matchAll(/<li><span class="pin[^"]*">(\d+)<\/span>(.*?)<\/li>/g)];
     return items.map(([, n, html]) => `${n}. ${inline(html)}`).join("\n");
   }
+  // A mockup that is a table to a screen reader (role="table", rows of cells) is a Markdown table here too.
+  const table = block.match(/role="table"[^>]*aria-label="([^"]*)"/);
+  if (table) {
+    const rows = [...block.matchAll(/<div[^>]*role="row"[^>]*>(.*?)<\/div>/g)].map(([, row]) =>
+      [...row.matchAll(/<span[^>]*role="(?:columnheader|rowheader|cell)"[^>]*>(.*?)<\/span>/g)].map(([, c]) => inline(c).replace(/\|/g, "\\|")),
+    );
+    if (rows.length > 1) {
+      const line = (cells) => `| ${cells.join(" | ")} |`;
+      return [`*${decode(table[1]).replace(/\.$/, "")}:*`, "", line(rows[0]), line(rows[0].map(() => "---")), ...rows.slice(1).map(line)].join("\n");
+    }
+  }
   const labels = [...block.matchAll(/role="img"[^>]*aria-label="([^"]*)"|aria-label="([^"]*)"[^>]*role="img"/g)].map((m) =>
     decode(m[1] ?? m[2]),
   );

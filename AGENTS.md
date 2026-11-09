@@ -84,8 +84,8 @@ Editora (`../Editora`) is the reference implementation.
   edition will have (Added, Changed, Fixed). A rule it retires goes in `retired-rules.json` with the edition
   `"Unreleased"`. A change that only touches how the guide is shown (typos and spelling, links, Markdown and markup,
   styles, scripts, the build, branding, the PDF's layout) takes no changelog entry. When it touches a page,
-  `pages.json` or a screenshot, say so with an `Edition: none` trailer on one of its commits, or the edition check
-  fails it.
+  `pages.json` or a screenshot, say so with an `Edition: none` trailer on each commit that touches them (a trailer
+  waives only its own commit's files), or the edition check fails it.
   **A release** is its own pull request, made when the user asks for one: it sets the version and the date in
   `package.json`, renames `## [Unreleased]` to `## [x.y.z] - YYYY-MM-DD` above a new empty `## [Unreleased]`, adds
   the edition's one-paragraph summary under its heading, replaces `"Unreleased"` in `retired-rules.json` with the
@@ -129,7 +129,7 @@ Editora (`../Editora`) is the reference implementation.
     `pins.json`.
   - Never create or push a tag. CI tags `v<version>` on `master`'s commit after a release merges.
   - Run `node scripts/check-edition.mjs` before you push. CI runs it on every pull request and push to `master`; it
-    fails on a content change that adds nothing under `[Unreleased]` and has no `Edition: none` trailer, a numbered
+    fails on a content change that adds nothing under `[Unreleased]` and whose commits carry no `Edition: none` trailer, a numbered
     section added without raising the version, a release that leaves anything under `[Unreleased]`, a release
     numbered at or below master's or a tag on origin, a patch release whose rules gained, lost or re-leveled an ID
     since the edition before it, a retired ID not listed with `"Unreleased"` (or, in a release, its number), or a

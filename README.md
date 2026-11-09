@@ -77,7 +77,10 @@ Guidance collects under *Unreleased* in `CHANGELOG.md` and is published in batch
 `master` is checked and built; it is deployed to GitHub Pages only when nothing waits under *Unreleased*, and while
 something does, CI still publishes the current edition from its release commit if that edition isn't live yet
 (`scripts/release-state.mjs`). The site carries every edition: the current one at `/latest/` and `/<version>/`, the
-earlier ones from the `versions` branch, where CI archives each edition it deploys, and CI tags each `v<version>`. On
+earlier ones from the `versions` branch, where CI archives each edition it deploys, and CI tags each `v<version>`.
+While nothing waits under *Unreleased*, a push that changes only how the site looks (styles, scripts, a typo fixed
+with an `Edition: none` trailer) deploys the current edition again and re-archives its folder: the current edition's
+pages can change in form, never in their rules, and an older edition's folder never changes. On
 every pull request `scripts/check-edition.mjs` checks the changelog and, for a release, its number.
 
 ## License

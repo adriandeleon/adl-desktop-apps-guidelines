@@ -7,8 +7,8 @@
 // Guidance collects on master under CHANGELOG.md's "## [Unreleased]" and is published in batches (AGENTS.md,
 // "Editions"). A change is one of two kinds:
 //   - an unreleased change keeps package.json's version. If it touches what readers take as guidance (a page,
-//     pages.json, a screenshot), it adds to [Unreleased], unless a commit carries an `Edition: none` trailer (a format
-//     change: typos, links, markup). A rule it retires is listed in retired-rules.json with the edition "Unreleased".
+//     pages.json, a screenshot), it adds to [Unreleased], unless the commits that change those files carry an
+//     `Edition: none` trailer (a format change: typos, links, markup); a trailer waives only its own commit's files. A rule it retires is listed in retired-rules.json with the edition "Unreleased".
 //   - a release raises the version, moves everything under [Unreleased] into "## [<version>] - <date>" and leaves
 //     [Unreleased] empty. Its number is judged against the edition before it (that edition's tag), so it covers the
 //     whole batch: rules gained, lost or re-leveled make at least a minor (AGENTS.md, "Version numbers"), and every ID
@@ -129,13 +129,21 @@ if (release) {
 }
 
 if (!release) {
-  const content = git("diff", "--name-only", base, "HEAD", "--", "src/content/docs", "pages.json", "src/assets/shots", "skills");
-  const formatOnly = /^Edition: none\s*$/im.test(git("log", "--format=%B", `${base}..HEAD`));
-  if (content && !formatOnly && pending === basePending) {
+  const paths = ["src/content/docs", "pages.json", "src/assets/shots", "skills"];
+  const changed = new Set(git("diff", "--name-only", base, "HEAD", "--", ...paths).split("\n").filter(Boolean));
+  // An "Edition: none" trailer waives only the files its own commits change: a file another commit changes too still
+  // needs a changelog entry, so one format-only commit can't carry a whole branch past this check.
+  const unwaived = new Set();
+  for (const c of git("rev-list", "--no-merges", `${base}..HEAD`).split("\n").filter(Boolean)) {
+    if (/^Edition: none\s*$/im.test(git("log", "-1", "--format=%B", c))) continue;
+    for (const f of git("diff-tree", "--no-commit-id", "--name-only", "-r", c, "--", ...paths).split("\n")) if (changed.has(f)) unwaived.add(f);
+  }
+  const content = [...unwaived].join("\n");
+  if (content && pending === basePending) {
     errors.push(
       `these change what readers take as guidance, but ## [Unreleased] in CHANGELOG.md says nothing new; describe the` +
-        ` change there, or, if it only changes format (typos, links, markup), add an "Edition: none" trailer to a` +
-        ` commit:\n    ${content.split("\n").join("\n    ")}`,
+        ` change there, or, if it only changes format (typos, links, markup), add an "Edition: none" trailer to` +
+        ` each commit that changes these:\n    ${content.split("\n").join("\n    ")}`,
     );
   }
 } else {

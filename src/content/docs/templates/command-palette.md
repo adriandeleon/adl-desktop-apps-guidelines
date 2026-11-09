@@ -22,6 +22,17 @@ Torrenta shares [`MatchText`](https://github.com/adriandeleon/torrenta/blob/mast
     cannot run stays listed, grayed.
   - *Reference:* Editora [`CommandPalette.filter`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java) (`registry.all()`), [`MessagesTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/i18n/MessagesTest.java); the Spec table below.
 
+- **PAL-10 · SHOULD.** The palette is 620 px wide, its rows 36 px high with 8 visible before the list scrolls, at
+  the default zoom ([WIN-09](../../window-shell/#win-09)), and its field's prompt is the catalog's `palette.prompt`
+  ("Run command…").
+  - *Why:* the palette is the one window every app shares; a different width or prompt is the first thing a person
+    moving between apps notices.
+  - *Check (code):* the palette's width, row height and visible rows come from constants of these values, and its
+    prompt from `tr("palette.prompt")`.
+  - *Reference:* Editora [`ui/CommandPalette.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java) (`ROW_HEIGHT`, `VISIBLE_ROWS`), Torrenta,
+    Termina and the app template's [`ui/Picker.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Picker.java). Modula's is 420 px with a typed-in
+    "Type a command…", nux's 540 px with that prompt, and Mirada types its prompt in rather than reading the catalog.
+
 The palette is an in-scene overlay in the window's root `StackPane`, over a faint scrim, never a
 `javafx.stage.Popup`: [KBD-07](../../keyboard/#kbd-07).
 
@@ -61,8 +72,8 @@ The palette is an in-scene overlay in the window's root `StackPane`, over a fain
 | Property | Value | Reference |
 |---|---|---|
 | Kind | In-scene overlay in the window's root `StackPane`, over a faint scrim. **Not** a `javafx.stage.Popup`: on Windows a popup does not reliably take keyboard focus. | `OverlayHost` |
-| Width | 620 px | `content.setPrefWidth(620)` |
-| Rows | 36 px high, 8 visible before the list scrolls | `ROW_HEIGHT`, `VISIBLE_ROWS` |
+| Width | 620 px ([PAL-10](#pal-10)) | `content.setPrefWidth(620)` |
+| Rows | 36 px high, 8 visible before the list scrolls ([PAL-10](#pal-10)) | `ROW_HEIGHT`, `VISIBLE_ROWS` |
 | Card | `-color-bg-overlay`, 1 px `-color-border-default`, radius 12, padding 6, one wide drop shadow | `.command-palette` in `app.css` |
 | Row text | 12.5 px; padding 7 × 16 | `.command-palette .list-cell` |
 | Scrim | `rgba(0,0,0,0.18)`; a click on it closes the palette | `.overlay-backdrop` |

@@ -36,6 +36,10 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 - **DIAG-09 · MUST** and **DIAG-10 · MUST** take two parts of DIAG-05: a newer version is announced in the status
   bar, and Check for Updates runs the check by hand with an off switch in Settings. DIAG-05 keeps when the check
   runs and that it never installs by itself. Nothing an app must do changes.
+- **PAL-10 · SHOULD** and **MLOG-08 · SHOULD** turn the spec values that keep the apps alike into rules. The palette
+  is 620 px wide with 36 px rows, 8 visible, and the catalog's "Run command…" prompt. The Message Log is an in-scene
+  card above the echo area, 773 × 336, holding 200 messages. Modula, nux and Mirada differ on the palette, and
+  Torrenta and Termina on the log.
 
 ### Changed
 

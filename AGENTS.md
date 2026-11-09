@@ -69,7 +69,9 @@ Editora (`../Editora`) is the reference implementation.
   keyboard, ACC accessibility, WIN window-shell, ICON icons-and-color, TBAR toolbars-and-tooltips, TABS tabs-and-panels, MENU menus,
   TRAY tray-and-background, SET settings, DIAG diagnostics, CLI command-line, INTL i18n, REL release; templates PAL,
   QOPEN, WELC, ABOUT, PWIN (pauta-window), CONF, FIND, MLOG, SYNC; PAUTA for the conformance page. A new rule takes the page's next free number, wherever it sits.
-  Template pages keep their mockups and spec tables; their requirements are rules under `## Rules`.
+  Template pages keep their mockups and spec tables. Their requirements are rules, under `## Rules` or in the
+  section they concern (`## Behavior`, `## States`, `## Spec`), and a spec value the apps must share (a size, a
+  count, a prompt) is a rule too: a spec table and a mockup describe, they don't require.
 - Feature matrix cells start with `●`, `◐` or `—` (rendered as dots by `src/lib/rehype-status.mjs`; the print
   build does the same in `scripts/print-markup.py`). Change both if the convention changes.
 - Plain, direct sentences written for the app developer. No marketing copy. American spelling throughout (color,

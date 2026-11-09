@@ -5,7 +5,8 @@ description: "The thirteen rules every other page follows from: ten for the peop
 
 ![Editora's keymap picker listing Emacs, CUA, Sublime Text, Visual Studio Code and IntelliJ IDEA over a Java file](../../assets/shots/editora-keymaps.png "Editora's keymap picker: five keymaps bind keys to the same commands.")
 
-These come from what the six apps already do. The first is the reason the family and this guide exist: one
+Most of these come from what the six apps already do; where an app still falls short, the principle is the
+target its rules point to. The first is the reason the family and this guide exist: one
 app that is the same on Windows, macOS and Linux. The other twelve are how the apps get there and stay there.
 Editora is the reference; each principle names where else it is written down.
 
@@ -22,8 +23,7 @@ Editora is the reference; each principle names where else it is written down.
    palette and key bindings all run commands by id. Nothing is wired straight to logic.
 4. **Speed comes first.** Start-up and the app's core action (typing in Editora, stepping to the next image in
    Mirada, a keystroke reaching the shell in Termina) are the product. When a feature pulls against them, the
-   feature loses or waits until it can be made cheap. *(Mirada's "Priorities"; "fast first" in Termina and
-   Mirada.)*
+   feature loses or waits until it can be made cheap. *(Mirada's "Priorities" and its "fast first".)*
 5. **The UI never waits.** The JavaFX application thread only touches the scene graph. Disk, network,
    processes, parsing and searching run on other threads and hand their result back; a keystroke, a scroll or a
    window opening never waits for them. See [Performance](../performance/).

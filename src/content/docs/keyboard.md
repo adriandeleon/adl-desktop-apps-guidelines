@@ -77,7 +77,8 @@ Every other list choice (recent files, themes, keymaps, a setting's values) uses
 - **KBD-12 · SHOULD.** A keymap editor in Settings lists every command with its chord, is searchable, and warns of
   conflicts.
   - *Check (by hand):* open Settings → Keymap, search, and bind a chord that is taken.
-  - *Reference:* Editora [`ui/SettingsKeymapsPage.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsKeymapsPage.java); conflicts from [`KeybindingEdits.takenDefaults`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/KeybindingEdits.java).
+  - *Reference:* Editora [`ui/SettingsKeymapsPage.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsKeymapsPage.java); conflicts from [`KeybindingEdits.conflicts`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/KeybindingEdits.java), and the
+    defaults a chord would take from [`EditorSettingsCoordinator.takenDefaults`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/EditorSettingsCoordinator.java).
 - **KBD-13 · SHOULD.** No command's chord is written into translated text. Every other label that shows a chord (a
   hint, the palette, the status bar) shows the binding from the active keymap; tooltips are
   [TBAR-03](../toolbars-and-tooltips/#tbar-03) and menu rows [MENU-15](../menus/#menu-15). Fixed keys of a control

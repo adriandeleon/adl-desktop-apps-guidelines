@@ -98,10 +98,12 @@ configured, waiting for the token. Mirada's first winget submission
 - **REL-15 · MUST.** The macOS `.dmg` is signed with the Developer ID Application certificate (team 8JKSF797L8),
   with the hardened runtime and per-app entitlements, notarized with `notarytool`, stapled and checked with
   `spctl`; then the notarized app is launched once.
-  - *Check (code):* `release.yml` imports `MACOS_CERT_P12` and `MACOS_CERT_PASSWORD`, notarizes with
-    `APPLE_API_KEY_P8`, `APPLE_API_KEY_ID` and `APPLE_API_ISSUER`, staples, runs `spctl` and launches the app.
+  - *Check (code):* `release.yml`, or a script it runs, imports `MACOS_CERT_P12` and `MACOS_CERT_PASSWORD`,
+    notarizes with `APPLE_API_KEY_P8`, `APPLE_API_KEY_ID` and `APPLE_API_ISSUER`, staples, runs `spctl` and
+    launches the app.
   - *Reference:* Editora's "Import signing certificate (macOS)" and "Notarize DMG (macOS)" steps in
-    [`release.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/release.yml), [`packaging/macos/Editora.entitlements`](https://github.com/adriandeleon/Editora/blob/master/packaging/macos/Editora.entitlements). Done in all six apps.
+    [`release.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/release.yml), [`packaging/macos/Editora.entitlements`](https://github.com/adriandeleon/Editora/blob/master/packaging/macos/Editora.entitlements). Done in all six apps;
+    Mirada's steps are in [`scripts/sign-mac.sh`](https://github.com/adriandeleon/Mirada/blob/main/scripts/sign-mac.sh) and [`scripts/notarize-mac.sh`](https://github.com/adriandeleon/Mirada/blob/main/scripts/notarize-mac.sh).
 - **REL-16 · MUST.** Linux downloads are signed with the one shared OpenPGP release key ("Adrian De Leon (release
   signing)") in a separate `sign-linux` job: `rpmsign` for the `.rpm`, a debsigs origin signature for the `.deb`,
   and an armored `.asc` beside every file. The public key is committed as `packaging/linux/signing-key.asc` and

@@ -4,7 +4,8 @@ description: "Which of the six apps has which platform piece, release step and f
 tableOfContents: false
 ---
 
-Surveyed on 2026-11-05 from each repository's default branch (the rows added in editions 1.2.0, 1.3.0, 1.4.0 and 2.0.0 on 2026-11-06). ● has it, ◐ partly or differently,
+Surveyed on 2026-11-05 from each repository's default branch (the rows added in editions 1.2.0, 1.3.0, 1.4.0 and 2.0.0 on
+2026-11-06; Termina's and Mirada's columns read again on 2026-11-09, at `6de43a1` and `a3a84ec`). ● has it, ◐ partly or differently,
 — not found.
 
 **What the apps are.**
@@ -25,23 +26,23 @@ Surveyed on 2026-11-05 from each repository's default branch (the rows added in 
 |---|:-:|:-:|:-:|:-:|:-:|:-:|
 | JDK 25+ and JavaFX 27+, JPMS module, `mvnw` | ● | ● | ● | ● | ● | ● |
 | AtlantaFX 3 | ● | ● | ◐ vendored CSS | ● Primer | ● Cupertino | ● Primer |
-| Inter UI font (SHOULD) | ● | ● | ● | — Plex Mono | — | — |
+| Inter UI font | ● | ● | ● | — Plex Mono | ● | — |
 | NullAway + every package `@NullMarked` | ● | ● | ● | ● | ● | — |
 | Spotless (Palantir) | ● | ● | ● | ● | ● | — |
-| JaCoCo gate | ● 0.90 L/M | ◐ 0.90 L only | ◐ 0.90 L/M, 0.73 B | — | — | — |
+| JaCoCo gate | ● 0.90 L/M | ◐ 0.90 L only | ◐ 0.90 L/M, 0.73 B | — | ● 0.90 L/M, 0.79 B | — |
 | Headless FX tests | ● | ● | ● | — | ● | ● |
-| Six or more message catalogs | ● | ● | ● | — | — | ● |
-| README badges + screenshot | ● | ● | ● | ● | ◐ no shot | ● |
+| Six or more message catalogs | ● | ● | ● | — | ● | ● |
+| README badges + screenshot | ● | ● | ● | ● | ● | ● |
 | Keep a Changelog format | ● | ◐ | ◐ | ● | ◐ | ● |
 | MIT `LICENSE` + `NOTICE` | ● | ● | ● | ● | ● | ● |
 | `AGENTS.md` canonical, `CLAUDE.md` a pointer | ● | ◐ `CLAUDE.md` only | ● | ◐ `CLAUDE.md` only | ● | ◐ copy |
-| `CONTRIBUTING.md` | ● | — | — | — | — | — |
+| `CONTRIBUTING.md` | ● | — | ● | — | ● | — |
 | `docs/` and `branding/` | ● | ● | ● | ● | ● | ● |
-| `docs/README.md` indexing the guides | ● | — | — | — | — | — |
+| `docs/README.md` indexing the guides | ● | — | ● | — | ● | — |
 | User docs on the website (`/docs/`) | ● 43 pages, versioned | ● 19 pages | ● 16 pages | — README only | ● 11 pages | — README only |
-| Help → Documentation command | ● | — | — | — | — | — |
-| `bug_report.yml` issue form | ● | ● | — | — | — | — |
-| Dependabot | ● | ● | — | ● | — | ● |
+| Help → Documentation command | ● | — | ● | — | ● | — |
+| `bug_report.yml` issue form | ● | ● | ● | — | ● | — |
+| Dependabot | ● | ● | ● | ● | ● | ● |
 
 
 ## Release and signing
@@ -49,12 +50,12 @@ Surveyed on 2026-11-05 from each repository's default branch (the rows added in 
 
 | | Editora | Torrenta | Termina | Modula | Mirada | nux |
 |---|:-:|:-:|:-:|:-:|:-:|:-:|
-| JReleaser | ● | ● | ● | — | — | — |
+| JReleaser | ● | ● | ● | — | ● | — |
 | Five-target matrix (Linux x64/arm64, macOS arm64/x64, Windows x64) | ● | ◐ | ● | ◐ no Linux arm64 | ● | ● |
 | macOS signed + notarized `.dmg` | ● | ● | ● | ● | ● | ● |
-| Linux OpenPGP `.asc` signatures | ● | ● | ● | ● | ◐ rpm + checksums | — |
+| Linux OpenPGP `.asc` signatures | ● | ● | ● | ● | ● | — |
 | Windows `.msi` Authenticode | — | — | — | — | — | — |
-| Build provenance attestations | ● | — | ● | — | — | — |
+| Build provenance attestations | ● | — | ● | — | ● | — |
 | Homebrew cask / winget manifests | — | ● | ● | — | ◐ winget | — |
 | `.desktop` file + AppStream metainfo | ● | ● | ● | ● | ◐ no metainfo | ◐ no metainfo |
 | AOT start-up training | ● | — | ● | — | ● | — |
@@ -72,28 +73,28 @@ Surveyed on 2026-11-05 from each repository's default branch (the rows added in 
 | Keybinding editor / shortcuts reference | ● | ● | ● | — | ◐ | — |
 | An icon on every menu row | ◐ about half the menu bar | ◐ not the RSS menus | ◐ right-click menus only | — | ● | — |
 | Chord beside each menu row, right-click menus included | ◐ menu bar only | ◐ menu bar and torrent menu | ◐ menu bar only | ● right-click menu | ● every menu | — |
-| Menu font pinned (Inter 14 px on `.context-menu`) | ● | — | ◐ root font only | ◐ size only | — | — |
+| Menu font pinned (Inter 14 px on `.context-menu`) | ● | — | ◐ root font only | ◐ size only | ● | — |
 | Right-click menu: one at a time, any outside press closes it | ● every window | ◐ stock auto-hide | ◐ terminal view | ◐ radio pane | ◐ stock auto-hide | — |
 | Icon-only buttons carry an accessible name | ● `Icons.name` | ● | — tooltip only | — tooltip only | ◐ badges only | ● by hand |
 | Toolbar tooltips show the command's chord | ● | ● | — no toolbar | — | ● | — |
-| Tab strip: unsaved and pinned states, drag to reorder, reopen closed | ● | — | ◐ reorder and reopen, no pin | — | — | — |
+| Tab strip: unsaved and pinned states, drag to reorder, reopen closed | ● | — | ● pin, reorder, reopen | — | — | — |
 | Panels toggled by commands, placement remembered | ● stripes, dock, float | ● sidebar and detail pane | ◐ panes in a tab | — | ◐ info panel and strip | — |
 | Settings window | ● | ● | ● | ● | ● | ● |
-| Settings search | ● | ● | ● | — | — | — |
+| Settings search | ● | ● | ● | — | ● | — |
 | Settings sync (Git / GitHub via `gh`) | ● | ● | ● | — | — | — |
-| Message Log (status-bar history) | ● | ● | — | — | — | — |
-| Debug Log + uncaught exception handler | ● | ● | ● | — | — | — |
-| Update notification (GitHub releases) | ● | ● | ● | ● | — | ● |
-| Report a Problem → GitHub issue (+ `--report`) | ● | ● | — | — | — | — |
+| Message Log (status-bar history) | ● | ● | ◐ separate window, 500 entries | — | ● | — |
+| Debug Log + uncaught exception handler | ● | ● | ● | — | ● | — |
+| Update notification (GitHub releases) | ● | ● | ● | ● | ● | ● |
+| Report a Problem → GitHub issue (+ `--report`) | ● | ● | ● | — | ● | — |
 | About window with runtime versions | ● | ● | ● | ● | ● | ● |
-| About names the Pauta edition it implements | — | — | ● link and environment line | — | — | — |
+| About names the Pauta edition it implements | — | — | ● link and environment line | — | ● link and environment line | — |
 | Pauta window and `pauta.json` exceptions | — | — | — | — | — | — |
 | Welcome page | ● | ● | — | — | — | — |
-| Confirm dialog: named red action button, Escape cancels, or undo instead | ● | ● `RemoveConfirm` + undo | ● `Confirm`: named red button, Cancel default | — presets remove on one click | ◐ trash is undoable, no question | — nothing to confirm |
+| Confirm dialog: named red action button, Escape cancels, or undo instead | ● | ● `RemoveConfirm` + undo | ● `Confirm`: named red button, Cancel default | — presets remove on one click | ● `Confirm`: named red button, Escape cancels; trash undoable | ◐ risky commands: named Run, Cancel default, not red |
 | Doctor / diagnosis | ● | ◐ per torrent | — | ◐ native libs | — | — |
-| Single instance (hand off to running app) | ● | ● | — | — | — | ● |
-| `--config-dir` and other CLI flags | ● | ● | ● | — | — | ◐ |
-| Light / dark / follow system, live switch | ◐ live, no system choice | ◐ live, no system choice | ◐ live, no system choice | ◐ live day/night, no system choice | ● | ● |
+| Single instance (hand off to running app) | ● | ● | ● | — | ● | ● |
+| `--config-dir` and other CLI flags | ● | ● | ● | — | ◐ no `--config-dir` | ◐ |
+| Light / dark / follow system, live switch | ◐ live, no system choice | ◐ live, no system choice | ● | ◐ live day/night, no system choice | ● | ● |
 | Caret & Ink theme pair (Editora Light / Dark) | ● authored | ● vendored | ● vendored | — | — Cupertino | — Primer |
 | Icons as themed SVG paths, one style class per family | ● two families | ● two families | ● filled, menus | ◐ transport glyphs | ● hand-drawn stroked | — tray bitmap |
 | State colors from theme roles, contrast-tested | ● `StyleContrastTest` | ◐ roles, no test | ◐ roles; terminal schemes tested | — fixed hexes | ◐ accent tested | ◐ roles, no test |

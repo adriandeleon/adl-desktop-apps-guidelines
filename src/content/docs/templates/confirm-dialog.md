@@ -133,5 +133,7 @@ and Cancel is the way out. An action that can be taken back needs no question (s
 Editora asks for unsaved changes, Quit with busy terminals, pinned tabs, Git discards and branch deletions, and Local
 History purges, all through `Alert` with named buttons. Torrenta's [`RemoveConfirm`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/RemoveConfirm.java) serves the torrent list, feeds,
 rules, watched folders, search providers, engine profiles, categories, tags and saved views with one shape. Termina asks
-before closing a tab with a running program and before a multi-line paste. Mirada and Modula ask nothing: Mirada's
-trash is undoable, and Modula's preset chips remove on one click, which this template says they should not.
+before closing a tab with a running program and before a multi-line paste. Mirada's [`Confirm`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Confirm.java) asks before
+removing a bookmark or discarding an edit, with a named red button; its trash is undoable. nux asks before a risky UPS
+command with a named Run button and Cancel as the default, though not in red. Modula asks nothing: its preset chips
+remove on one click, which this template says they should not.

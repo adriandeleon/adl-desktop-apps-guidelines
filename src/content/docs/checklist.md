@@ -36,6 +36,14 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 - [ ] Maven Wrapper committed (`mvnw`, `mvnw.cmd`, `.mvn/wrapper/`) · [PLAT-08](../platform/#plat-08)
 - [ ] AtlantaFX 3 controls, and app stylesheets that take their colors from its `-color-*` tokens · [PLAT-05](../platform/#plat-05), [PLAT-06](../platform/#plat-06)
 
+## Same on every OS
+
+[Same on every OS](../same-on-every-os/)
+
+- [ ] Every command, setting and window on Windows, macOS and Linux, with the same defaults; one the OS can't serve is disabled and says why · [OS-01](../same-on-every-os/#os-01)
+- [ ] One `Os` class reads `os.name`, and no other class does · [OS-02](../same-on-every-os/#os-02)
+- [ ] A test runs as each OS and finds the same commands, menu rows and settings pages (SHOULD) · [OS-03](../same-on-every-os/#os-03)
+
 ## Code quality
 
 [Code quality gates](../quality/)
@@ -64,7 +72,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 
 - [ ] One `CommandRegistry`: every action is a command with an id, its title and description from the message catalogs · [KBD-01](../keyboard/#kbd-01), [KBD-03](../keyboard/#kbd-03)
 - [ ] One Command Palette per window, `M-x` or `Ctrl+Shift+P`, an in-scene overlay (not a `Popup`) that lists every command · [KBD-05](../keyboard/#kbd-05), [KBD-07](../keyboard/#kbd-07), [PAL-01](../templates/command-palette/#pal-01), [PAL-02](../templates/command-palette/#pal-02)
-- [ ] Emacs and CUA keymaps at least, with user overrides on top · [KBD-09](../keyboard/#kbd-09), [KBD-11](../keyboard/#kbd-11)
+- [ ] Emacs and CUA keymaps at least, each `.mac.json` variant binding the same commands, with user overrides on top · [KBD-09](../keyboard/#kbd-09), [KBD-21](../keyboard/#kbd-21), [KBD-11](../keyboard/#kbd-11)
 - [ ] A find bar in the scene wherever there is text to search: searches as you type with a count, Enter and Shift+Enter step, Escape closes it; a list app filters instead · [FIND-01](../templates/find-bar/#find-01), [FIND-02](../templates/find-bar/#find-02), [FIND-03](../templates/find-bar/#find-03), [FIND-06](../templates/find-bar/#find-06), [FIND-07](../templates/find-bar/#find-07)
 - [ ] One QuickOpen-style picker for every list choice (themes, keymaps, recent items, a setting's values), in the overlay host (SHOULD) · [QOPEN-01](../templates/quick-open/#qopen-01), [QOPEN-02](../templates/quick-open/#qopen-02)
 
@@ -74,6 +82,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 
 - [ ] A status bar whose echo area shows the last action's feedback, errors in red and warnings in amber, and opens the Message Log on a click · [WIN-01](../window-shell/#win-01)
 - [ ] Every destructive action asks first: the question names the thing, the button names the action in the `danger` style, Escape cancels; or the action can be taken back instead · [CONF-01](../templates/confirm-dialog/#conf-01), [CONF-02](../templates/confirm-dialog/#conf-02), [CONF-03](../templates/confirm-dialog/#conf-03), [CONF-04](../templates/confirm-dialog/#conf-04)
+- [ ] Dialog buttons in one order on every OS, Cancel to the left of the action · [WIN-11](../window-shell/#win-11)
 - [ ] About from Help, `help.about` and the macOS application menu: version and build, runtime, license, links and the last update check · [ABOUT-01](../templates/about/#about-01), [ABOUT-02](../templates/about/#about-02)
 - [ ] A Welcome page when there is nothing to restore, or an empty state that names the ways in with their chords (SHOULD) · [WELC-01](../templates/welcome/#welc-01), [WELC-02](../templates/welcome/#welc-02)
 

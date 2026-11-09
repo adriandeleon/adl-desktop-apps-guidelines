@@ -20,6 +20,15 @@ description: "Status bar, themes, title bar, dialogs, Welcome, About, window sta
   - *Why:* a dialog is its own scene and inherits neither.
   - *Check (code):* every `Alert` and `Dialog` the app builds passes through the helper.
   - *Reference:* Editora [`ui/Dialogs.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Dialogs.java) ([`Dialogs.styled`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Dialogs.java)).
+- **WIN-11 · MUST.** A dialog's buttons are in the same order on every OS, with Cancel to the left of the action, as the
+  [Confirm dialog](../templates/confirm-dialog/) draws them: the dialog's `ButtonBar` gets one fixed order, never
+  JavaFX's default for the OS. See [Same on every OS](../same-on-every-os/).
+  - *Why:* JavaFX orders a `ButtonBar` by the OS it runs on (`BUTTON_ORDER_WINDOWS`, `_MAC_OS`, `_LINUX`), so the
+    same confirmation puts its action on the left on Windows and on the right on macOS and Linux.
+  - *Check (code):* the dialog helper ([WIN-04](#win-04)), or each dialog, calls `setButtonOrder` on the dialog
+    pane's `ButtonBar` with one constant.
+  - *Reference:* no app yet. Editora's Git confirmations give their buttons the `OK_DONE` and `CANCEL_CLOSE` roles
+    and leave the order to JavaFX.
 - **WIN-08 · SHOULD.** Window size, position, maximized state and open items are restored on the next launch.
   `--no-session` skipping the restore is [CLI-04](../command-line/#cli-04).
   - *Check (test):* a round-trip test of the saved workspace state.

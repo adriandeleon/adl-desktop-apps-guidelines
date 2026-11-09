@@ -1,6 +1,11 @@
 <title>Pauta</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* The site's own fonts, from the npm packages it builds with, so printing reaches no network. */
+@font-face { font-family: "Inter"; font-style: normal; font-weight: 100 900; src: url("$fonts$/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2") format("woff2"); }
+@font-face { font-family: "Inter"; font-style: italic; font-weight: 100 900; src: url("$fonts$/@fontsource-variable/inter/files/inter-latin-wght-italic.woff2") format("woff2"); }
+@font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 400; src: url("$fonts$/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 600; src: url("$fonts$/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-600-normal.woff2") format("woff2"); }
+</style>
 <style>
 /* Layout: a reference manual. Sticky contents rail on the left, one reading column, wide tables scroll in place.
    Palette: Editora's "Caret & Ink" tokens (caret teal accent, ink navy, porcelain/abyss grounds, brace periwinkle for keys). */

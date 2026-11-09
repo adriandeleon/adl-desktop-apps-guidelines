@@ -92,8 +92,10 @@ function table(node, parent, iconBase) {
   const matrix = header.includes("Torrenta") && header.includes("nux");
   if (matrix) {
     addClass(node, "matrix");
-    // Starlight scrolls a table by making it a block; a matrix stays a real table inside its own scroller.
-    const wrapper = { type: "element", tagName: "div", properties: { className: ["matrix-scroll"] }, children: [node] };
+    // Starlight scrolls a table by making it a block; a matrix stays a real table inside its own scroller, which the
+    // keyboard can reach and scroll with the arrows (a named region, in the Tab order).
+    const properties = { className: ["matrix-scroll"], role: "region", ariaLabel: "The apps compared, side by side", tabIndex: 0 };
+    const wrapper = { type: "element", tagName: "div", properties, children: [node] };
     parent.children[parent.children.indexOf(node)] = wrapper;
   }
   const rules = header.includes("Level");

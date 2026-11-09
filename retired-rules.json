@@ -1,5 +1,5 @@
 {
-  "comment": "Rule IDs no longer in use. An ID is never reused (AGENTS.md, \"Rule IDs\"): npm run check fails when one comes back, and scripts/check-edition.mjs fails a change that retires an ID without listing it here. `edition` is the first edition without the rule; `see` is the rule that now holds its requirement, or null.",
+  "comment": "Rule IDs no longer in use. An ID is never reused (AGENTS.md, \"Rule IDs\"): npm run check fails when one comes back, and scripts/check-edition.mjs fails a change that retires an ID without listing it here. `edition` is the first edition without the rule (\"Unreleased\" until the release that publishes it numbers it); `see` is the rule that now holds its requirement, or null.",
   "retired": [
     { "id": "ICON-03", "edition": "3.0.0", "see": "ICON-09" },
     { "id": "KBD-19", "edition": "3.0.0", "see": "ICON-09" },

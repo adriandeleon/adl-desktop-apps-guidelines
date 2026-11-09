@@ -8,6 +8,12 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 
 ## [Unreleased]
 
+### Changed
+
+- **Editions come out in batches.** Changes to the guidance now collect under *Unreleased* and are published together
+  as one edition when a batch is ready, instead of each change being an edition of its own. The Changelog page says
+  so, and the largest change in the batch sets the number.
+
 ## [4.5.0] - 2026-11-08
 
 Accessibility gets a page and rules of its own, and the facts the 4.2.0 review found stale or wrong are corrected

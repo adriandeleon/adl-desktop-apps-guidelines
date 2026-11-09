@@ -118,9 +118,7 @@ rules in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/mai
   them), and the stripe button is the same command with a glyph.
   - *Check (code):* every tool window registers a `tool.<id>` command, and its stripe button runs it.
   - *Reference:* Editora [`ui/ToolWindowManager.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolWindowManager.java), [`keymaps/emacs.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/emacs.json).
-- **TABS-14 · MUST.** A panel's content is built on first use.
-  - *Check (test):* an FX test holds that no closed tool window builds its panel before the first paint.
-  - *Reference:* Editora [`LazyToolWindowsFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/LazyToolWindowsFxTest.java).
+- A panel's content is built on first use: [PERF-14](../performance/#perf-14).
 - **TABS-15 · SHOULD.** Panel state is restored: which windows are open, on which side, in what order, hidden or shown,
   floating, and every divider position go to `workspace-state.json` and come back on the next launch.
   - *Check (code):* the workspace state holds each of those, and the manager reads them back at startup.

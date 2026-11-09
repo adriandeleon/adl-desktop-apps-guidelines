@@ -78,9 +78,10 @@ Every other list choice (recent files, themes, keymaps, a setting's values) uses
   conflicts.
   - *Check (by hand):* open Settings → Keymap, search, and bind a chord that is taken.
   - *Reference:* Editora [`ui/SettingsKeymapsPage.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsKeymapsPage.java); conflicts from [`KeybindingEdits.takenDefaults`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/KeybindingEdits.java).
-- **KBD-13 · SHOULD.** No command's chord is written into translated text. Every label shows the binding from the
-  active keymap. Fixed keys of a control (Enter, Tab, Esc, arrows) and keys meant for another program may be
-  written.
+- **KBD-13 · SHOULD.** No command's chord is written into translated text. Every other label that shows a chord (a
+  hint, the palette, the status bar) shows the binding from the active keymap; tooltips are
+  [TBAR-03](../toolbars-and-tooltips/#tbar-03) and menu rows [MENU-15](../menus/#menu-15). Fixed keys of a control
+  (Enter, Tab, Esc, arrows) and keys meant for another program may be written.
   - *Check (code):* no message catalog value names a command's chord (`Ctrl+`, `Cmd+`, `C-x`, `M-x`); chords are
     rendered by one formatter.
   - *Reference:* Editora [`command/ChordFormat.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/ChordFormat.java), the one place a binding is rendered. Editora's

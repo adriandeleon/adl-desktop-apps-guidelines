@@ -22,17 +22,12 @@ description: "JDK, JavaFX, AtlantaFX, NullAway, Maven Wrapper, tests and coverag
   - *Check (code):* `src/main/java/module-info.java` declares `module com.<app>`; each `opens` line serves FXML,
     Jackson or another reflective reader.
   - *Reference:* Editora [`src/main/java/module-info.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/module-info.java).
-- **PLAT-05 · MUST.** Controls use **AtlantaFX 3.x** (`atlantafx-base`), with light and dark themes.
-  - *Check (code):* `pom.xml` depends on `atlantafx-base` 3.x; the theme list offers at least one light and one
-    dark theme.
+- **PLAT-05 · MUST.** Controls use **AtlantaFX 3.x** (`atlantafx-base`). The light and dark themes it carries are
+  [ICON-15](../icons-and-color/#icon-15).
+  - *Check (code):* `pom.xml` depends on `atlantafx-base` 3.x.
   - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml), [`ui/Themes.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Themes.java).
-- **PLAT-06 · MUST.** App stylesheets take their colors from AtlantaFX `-color-*` tokens, or from state tokens
-  built on them; no component rule carries a fixed hex. See [Icons and color](../icons-and-color/).
-  - *Check (code):* `grep -nE '#[0-9a-fA-F]{3,8}\b' app.css` finds hexes only where a token is defined (a
-    `ladder()` of the ground, a scoped `-color-*` block), not in a component's `-fx-*-color` or `-fx-fill`.
-  - *Reference:* Editora [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css); [`StyleContrastTest.severityAndDebugColoursComeFromTheStateTokens`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java) holds the
-    severity and debug colors. Editora's [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) still has fixed hexes in a few component rules (the breakpoint
-    markers, the execution arrow, the editor area's defaults).
+- Colors come from AtlantaFX's `-color-*` tokens and the state tokens built on them, never a fixed hex in a
+  component rule: [ICON-08](../icons-and-color/#icon-08).
 - **PLAT-08 · MUST.** The build is **Maven** with the **Maven Wrapper** committed (`mvnw`, `mvnw.cmd`,
   `.mvn/wrapper/`), so `./mvnw` works on a clean machine.
   - *Check (code):* `mvnw`, `mvnw.cmd` and `.mvn/wrapper/maven-wrapper.properties` are in the repository.
@@ -55,8 +50,8 @@ description: "JDK, JavaFX, AtlantaFX, NullAway, Maven Wrapper, tests and coverag
   - *Check (code):* surefire's `systemPropertyVariables` set `glass.platform` to `Headless`; no Monocle dependency,
     and no xvfb in a step that runs tests (a release leg may use it to train the AOT cache, [REL-10](../release/#rel-10)).
   - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml) (surefire), [`docs/testing.md`](https://github.com/adriandeleon/Editora/blob/master/docs/testing.md), [`FxTestSupport`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/FxTestSupport.java).
-- **PLAT-12 · MUST.** A **JaCoCo** `check` runs at `mvn verify`: **≥ 0.90 lines, ≥ 0.90 methods**, ≥ 0.79
-  branches, plus per-package floors.
+- **PLAT-12 · MUST.** A **JaCoCo** `check` runs at `mvn verify` with build-wide floors of **≥ 0.90 lines and
+  ≥ 0.90 methods**. The branch floor and each package's own floor are [QUAL-03](../quality/#qual-03).
   - *Check (code):* the `jacoco-check` execution is bound to `verify` with `BUNDLE` limits of 0.90 `LINE` and
     0.90 `METHOD`.
   - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml) `jacoco-check`.

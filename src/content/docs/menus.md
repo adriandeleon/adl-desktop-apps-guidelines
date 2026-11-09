@@ -122,8 +122,8 @@ tray icon's menu) show text only; there the chord is appended to the title ([MEN
 <li><span class="pin">7</span><span><strong>Card.</strong> Radius 8; the shadow falls below the menu (offset ≥ radius), so nothing invisible covers the bar.</span></li>
 </ol>
 
-- **MENU-01 · MUST.** Every menu-bar item is a command from the registry, with its title from `command.<id>`, its
-  chord from the active keymap and its enabled state from the command's gate. The bar assembles and refreshes; it
+- **MENU-01 · MUST.** Every menu-bar item is a command from the registry, with its title
+  ([KBD-03](../keyboard/#kbd-03)), its chord from the active keymap and its enabled state from the command's gate. The bar assembles and refreshes; it
   holds no behavior of its own.
   - *Check (code):* the bar's model lists command ids only, and every row runs its id through the registry.
   - *Reference:* Editora [`ui/MenuBarModel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java) over [`command/CommandRegistry.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/CommandRegistry.java), [`ui/MainMenuBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java).

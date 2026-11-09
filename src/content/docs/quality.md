@@ -10,9 +10,11 @@ NullAway runs as an error on every package, each `@NullMarked` in its own `packa
   - *Check (code):* `grep -rn '@SuppressWarnings("NullAway")' src/main` finds nothing.
   - *Reference:* Editora; one suppression is left, in [`recovery/RecoveryCodec.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/recovery/RecoveryCodec.java).
 - **QUAL-03 · SHOULD.** Coverage floors are a regression net, not a target. Beyond the build-wide floor of 0.90
-  lines and methods, each package of 300+ lines gets its own floor about three points below its measured level;
-  when a package's coverage rises, its floor is ratcheted up.
-  - *Check (code):* the `jacoco-check` rules in `pom.xml` carry a `PACKAGE` line floor for each large package.
+  lines and methods ([PLAT-12](../platform/#plat-12)), the build holds a branch floor (Editora's is 0.79), and
+  each package of 300+ lines gets its own floor about three points below its measured level; when a package's
+  coverage rises, its floor is ratcheted up.
+  - *Check (code):* the `jacoco-check` rules in `pom.xml` carry a `BUNDLE` `BRANCH` limit and a `PACKAGE` line floor
+    for each large package.
   - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml) `jacoco-check`.
 - **QUAL-04 · SHOULD.** When a guide quotes the coverage floors, a test fails when the quoted table and the pom
   disagree.

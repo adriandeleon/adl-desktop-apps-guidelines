@@ -35,7 +35,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 - [ ] JDK 25 or newer (`release` 25 is the floor) and JavaFX 27 or newer, with a jlinked runtime in every installer · [PLAT-01](../platform/#plat-01), [PLAT-02](../platform/#plat-02), [PLAT-03](../platform/#plat-03)
 - [ ] One JPMS module, `com.<app>` · [PLAT-04](../platform/#plat-04)
 - [ ] Maven Wrapper committed (`mvnw`, `mvnw.cmd`, `.mvn/wrapper/`) · [PLAT-08](../platform/#plat-08)
-- [ ] AtlantaFX 3 controls, and app stylesheets that take their colors from its `-color-*` tokens · [PLAT-05](../platform/#plat-05), [PLAT-06](../platform/#plat-06)
+- [ ] AtlantaFX 3 controls, and app stylesheets that take their colors from its `-color-*` tokens · [PLAT-05](../platform/#plat-05), [ICON-08](../icons-and-color/#icon-08)
 
 ## Same on every OS
 
@@ -124,7 +124,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 - [ ] Every tab operation is a command · [TABS-01](../tabs-and-panels/#tabs-01)
 - [ ] One tab header carries the title and the states: `•` and amber italic for unsaved, a pin and bold for pinned, muted italic for read-only (`TabHeaders`) · [TABS-02](../tabs-and-panels/#tabs-02), [TABS-03](../tabs-and-panels/#tabs-03)
 - [ ] Bulk close skips pinned tabs, pinning moves a tab to the end of the pinned group, and Reopen Closed Tab brings the last one back (`ClosedTabs`) · [TABS-04](../tabs-and-panels/#tabs-04), [TABS-05](../tabs-and-panels/#tabs-05), [TABS-06](../tabs-and-panels/#tabs-06)
-- [ ] A command toggles each panel, and a panel's content is built on first use (`ToolWindowManager`) · [TABS-13](../tabs-and-panels/#tabs-13), [TABS-14](../tabs-and-panels/#tabs-14)
+- [ ] A command toggles each panel, and a panel's content is built on first use (`ToolWindowManager`) · [TABS-13](../tabs-and-panels/#tabs-13), [PERF-14](../performance/#perf-14)
 - [ ] Panel side, order and divider positions restored on the next launch (SHOULD) · [TABS-15](../tabs-and-panels/#tabs-15)
 
 ## Menus
@@ -166,7 +166,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 
 - [ ] Message Log of the session's echo-area messages · [DIAG-01](../diagnostics/#diag-01)
 - [ ] Debug Log with a session file in its own window, and an uncaught exception handler installed at the start of `main` · [DIAG-02](../diagnostics/#diag-02), [DIAG-03](../diagnostics/#diag-03), [DIAG-04](../diagnostics/#diag-04)
-- [ ] Daily update check with an off switch · [DIAG-05](../diagnostics/#diag-05)
+- [ ] Daily update check after the first frame, a status-bar notice of a newer version, Check for Updates and an off switch · [DIAG-05](../diagnostics/#diag-05), [DIAG-09](../diagnostics/#diag-09), [DIAG-10](../diagnostics/#diag-10)
 - [ ] Report a Problem: a redacted, prefilled GitHub issue · [DIAG-06](../diagnostics/#diag-06)
 
 ## Command line and languages

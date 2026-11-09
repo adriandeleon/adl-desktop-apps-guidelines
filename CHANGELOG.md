@@ -33,6 +33,9 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
   attribution, the dock badge, the command line, middle-click paste, and the installers' gaps (unsigned MSIs,
   winget on x64 only, Homebrew on Apple Silicon only). It also names the differences in the apps that no row allows,
   each with the rule it breaks.
+- **DIAG-09 · MUST** and **DIAG-10 · MUST** take two parts of DIAG-05: a newer version is announced in the status
+  bar, and Check for Updates runs the check by hand with an off switch in Settings. DIAG-05 keeps when the check
+  runs and that it never installs by itself. Nothing an app must do changes.
 
 ### Changed
 
@@ -51,6 +54,16 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
   screen reader can press it, not only find it.
 - An OS difference that no row of *Same on every OS* allows is recorded as `pending`, not as a deviation: OS-01 is a
   MUST.
+- **One rule per requirement.** Two IDs that stated the same requirement are retired, each pointing at the rule that
+  holds it: **PLAT-06** (colors from tokens, never a fixed hex) into **ICON-08**, and **TABS-14** (a panel built on
+  first use) into **PERF-14**. Rules that restated another's requirement now link to it instead: PLAT-05 (themes,
+  ICON-15), DOCS-12 (the code wins, DOCS-17), DOCS-14 (what `AGENTS.md` holds, REPO-05), SET-15 (report redaction,
+  DIAG-06), ICON-13 (Brace, ICON-06), PAL-02 and MENU-01 (titles, KBD-03), ABOUT-02 (the edition, ABOUT-05),
+  INTL-11 (`--help` and `--version`, CLI-01) and KBD-13 (tooltips and menus, TBAR-03 and MENU-15).
+- **No MUST holds a SHOULD's requirement.** DOCS-05 leaves the website's What's new to DOCS-04, DOCS-06 leaves the
+  Help menu's order to DOCS-07, REL-21 leaves the tag check, the asset check and the snapshot bump to REL-05,
+  REL-07 and REL-06, PLAT-12 leaves the branch and package floors to QUAL-03, and DOCS-18 leaves the capture hook to
+  QUAL-09. DOCS-05 and DOCS-06 ask for the Welcome page's part only of an app that has one.
 
 ### Fixed
 

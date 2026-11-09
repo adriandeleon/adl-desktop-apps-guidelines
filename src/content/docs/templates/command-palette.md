@@ -16,10 +16,10 @@ Torrenta shares [`MatchText`](https://github.com/adriandeleon/torrenta/blob/mast
   [KBD-05](../../keyboard/#kbd-05).
   - *Check (code):* the window builds one `CommandPalette`, and `palette.show` opens it.
   - *Reference:* Editora [`ui/CommandPalette.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java), built once in [`MainController`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java).
-- **PAL-02 · MUST.** The palette lists every registered command, with its title from `command.<id>` and its
-  description from `command.<id>.desc`.
+- **PAL-02 · MUST.** The palette lists every registered command, with its title and description
+  ([KBD-03](../../keyboard/#kbd-03)).
   - *Check (code):* the palette's rows come from the whole registry, filtered only by the query; a command that
-    cannot run stays listed, grayed. A catalog parity test fails on a command title with no `.desc`.
+    cannot run stays listed, grayed.
   - *Reference:* Editora [`CommandPalette.filter`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java) (`registry.all()`), [`MessagesTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/i18n/MessagesTest.java); the Spec table below.
 
 The palette is an in-scene overlay in the window's root `StackPane`, over a faint scrim, never a

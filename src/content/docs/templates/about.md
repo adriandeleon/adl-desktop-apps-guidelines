@@ -13,10 +13,10 @@ Torrenta ([`AboutDialog`](https://github.com/adriandeleon/torrenta/blob/master/s
   - *Check (code):* `help.about` is registered and listed in the Help menu, and the macOS application menu's About
     item runs it.
   - *Reference:* Editora [`ui/AboutDialog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/AboutDialog.java), [`ui/MenuBarModel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java) (`help.about` in the Help menu).
-- **ABOUT-02 · MUST.** About shows the version and build, the Pauta edition (see below), the runtime, the license,
-  links, and the result of the last update check.
-  - *Check (code):* the window reads the version, build and edition from `AppInfo`, the same text as `--version`,
-    and shows the update checker's last answer.
+- **ABOUT-02 · MUST.** About shows the version and build, the runtime, the license, links, and the result of the last
+  update check. The Pauta edition is [ABOUT-05](#about-05).
+  - *Check (code):* the window reads the version and build from `AppInfo`, the same text as `--version`, and shows
+    the update checker's last answer.
   - *Reference:* Editora [`ui/AboutDialog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/AboutDialog.java), [`AppInfo`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/AppInfo.java); the Spec table below.
 - **ABOUT-03 · SHOULD.** *Copy details* copies the environment block and leaves the window open; its label becomes
   "Copied".

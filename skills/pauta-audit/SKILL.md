@@ -68,7 +68,7 @@ stronger.
 
 `rules.json` holds the edition's `levels`, `checks` and `statuses` (what each one means), `pages[]` and `rules[]`,
 each rule with `id`, `level` (MUST, SHOULD, MAY), `page`, `section`, `appliesTo`, `url`, `text`, `why`,
-`check.kind` (`code`, `test` or `by hand`), `check.text` and `reference`; and `retired[]`, the IDs no longer in use.
+`check.kind` (`code`, `test` or `by hand`), `check.text`, `check.command` (on some code checks) and `reference`; and `retired[]`, the IDs no longer in use.
 The rules in scope:
 
 ```bash
@@ -99,7 +99,9 @@ Read the whole rule (`text`, `why`, `check`, `appliesTo`) before judging it. The
    lacks ("no tray: no `SystemTray` or `TrayIcon` in `src/`"). A limited rule needs no exception; a `pauta.json`
    entry for one is a problem (PAUTA-05).
 2. **Met?** Check it as its kind says:
-   - **`code`.** Read or search the source as `check.text` says (it names files, classes, properties or style
+   - **`code`.** When the rule has a `check.command`, run it with `sh -c` from the repository root: exit 0 is met,
+     and what it prints on failure is the evidence (add the `file:line` it names). Otherwise read or search the
+     source as `check.text` says (it names files, classes, properties or style
      classes as Editora spells them; find this app's equivalent). It is met only if everything the check names is
      there. Evidence is the `file:line` that satisfies it; for an unmet rule, the closest place it should be and what
      is missing.

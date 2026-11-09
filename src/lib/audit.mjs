@@ -136,7 +136,15 @@ export function rulesSchema(base) {
             check: {
               type: "object",
               required: ["kind", "text"],
-              properties: { kind: { enum: ["code", "test", "by hand"] }, text: { type: "string" } },
+              properties: {
+                kind: { enum: ["code", "test", "by hand"] },
+                text: { type: "string" },
+                command: {
+                  ...text,
+                  description:
+                    "For some code checks: one POSIX shell command, run from the app's repository root, that exits 0 when the check passes and prints what it found when it fails. Read the rule too: the command settles the check, not every word of the rule.",
+                },
+              },
             },
             reference: { type: "string" },
           },

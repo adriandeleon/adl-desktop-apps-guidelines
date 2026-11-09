@@ -32,7 +32,10 @@ Editora (`../Editora`) is the reference implementation.
 - **Rule IDs**: every rule is a list item, never a table row, that opens with `**KBD-07 · MUST.**`, one testable
   statement, then sub-items `*Why:*` (only when there is a reason worth stating), `*Check (code|test|by
   hand):*` (how an agent or a person verifies it in an app: what to grep or read, which test holds it, or what to do
-  in the running app) and `*Reference:*` (the Editora file, or the app that does it, or "no app yet"). IDs are
+  in the running app), `*Command:*` (only under a `Check (code)`, and only when a shell command settles the whole
+  check: one code span holding a POSIX `sh -c` command, run from the app's repository root, that exits 0 when the
+  check passes and prints what it found when it fails; test it against Editora and the template, under `dash`, before
+  adding it) and `*Reference:*` (the Editora file, or the app that does it, or "no app yet"). IDs are
   permanent: never renumber or reuse one. A removed rule's ID stays retired: list it in `retired-rules.json` with the
   edition that removed it and the rule that holds its requirement now (`see`), link to that rule where the old one
   stood, and name the ID in the changelog. `npm run check` fails on a retired ID in use or named on a page, and
@@ -79,8 +82,11 @@ Editora (`../Editora`) is the reference implementation.
   fails it.
   **A release** is its own pull request, made when the user asks for one: it sets the version and the date in
   `package.json`, renames `## [Unreleased]` to `## [x.y.z] - YYYY-MM-DD` above a new empty `## [Unreleased]`, adds
-  the edition's one-paragraph summary under its heading, and replaces `"Unreleased"` in `retired-rules.json` with the
-  number. **Version numbers** below says which part to raise, for the whole batch.
+  the edition's one-paragraph summary under its heading, replaces `"Unreleased"` in `retired-rules.json` with the
+  number, and runs `node scripts/pin-references.mjs`, which records in `pins.json` the commit at the head of every
+  repository the pages link into. What the edition serves (pages, agent files, downloads) links those commits
+  instead of `blob/master`, and this repository's own links its tag (`src/lib/pins.mjs`), so an edition's References
+  keep showing the code they were checked against. Pages keep writing `blob/master`. **Version numbers** below says which part to raise, for the whole batch.
   While `[Unreleased]` holds anything, CI checks and builds `master` but deploys, tags and archives nothing: the
   checkout is not yet the edition its number names. The site, `latest/` and the agent files change only when an
   edition is released, and a site-only fix waits for the next release too (a patch can carry one when the batch
@@ -110,15 +116,17 @@ Editora (`../Editora`) is the reference implementation.
     change has added lines there too, keep both.
   - A release chooses its version last, just before you push: `git fetch origin`, rebase on `origin/master`, and
     raise the part the batch calls for above the higher of `origin/master`'s version and the newest `v*` tag on
-    origin (`git ls-remote --tags origin`). If someone else released meanwhile, renumber. A release changes nothing
-    but the version, the date, the changelog's headings and summary, and `retired-rules.json`.
+    origin (`git ls-remote --tags origin`). If someone else released meanwhile, renumber (and pin again). A release
+    changes nothing but the version, the date, the changelog's headings and summary, `retired-rules.json` and
+    `pins.json`.
   - Never create or push a tag. CI tags `v<version>` on `master`'s commit after a release merges.
   - Run `node scripts/check-edition.mjs` before you push. CI runs it on every pull request and push to `master`; it
     fails on a content change that adds nothing under `[Unreleased]` and has no `Edition: none` trailer, a numbered
     section added without raising the version, a release that leaves anything under `[Unreleased]`, a release
     numbered at or below master's or a tag on origin, a patch release whose rules gained, lost or re-leveled an ID
     since the edition before it, a retired ID not listed with `"Unreleased"` (or, in a release, its number), or a
-    changelog whose newest numbered section doesn't match `package.json`.
+    changelog whose newest numbered section doesn't match `package.json`, or a release whose `pins.json` pins another
+    edition.
   - A merge right after a release can make GitHub cancel the release's run while it waits, and the runs after it
     deploy nothing while `[Unreleased]` holds the next batch. If the released edition isn't live, re-run the release
     commit's workflow run.

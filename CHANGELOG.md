@@ -10,6 +10,13 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 
 ### Added
 
+- **Commands for code checks.** Twelve rules whose check a shell command can settle carry one, as a *Command* line
+  under the Check and as `check.command` in `rules.json`: OS-02, PAUTA-01, PLAT-01, PLAT-03, PLAT-08, PLAT-09,
+  PLAT-10, PLAT-13, REPO-03, KBD-09, KBD-10 and REL-22. Run from an app's root, each exits 0 when the check passes and
+  prints what it found when it fails; each was tried on the six apps and the template. The audit skill and
+  `llms.txt` run it before reading the code.
+- **Pinned References.** From the next edition, what an edition serves links each app's code at the commit it was at
+  when the edition was released, not `master`, so a Reference keeps showing the code the rule was checked against.
 - **PAUTA-17 · MUST.** An app's `AGENTS.md` has a `## Pauta` section that names the edition `pauta.version` names and
   links that edition's `llms.txt` and `llms-full.txt`, never `latest/`, so its coding agent reads the rules the app
   is built to. The Coding agents page has the block to copy, and the checklist the line.

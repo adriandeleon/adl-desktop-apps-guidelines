@@ -5,6 +5,24 @@ from pathlib import Path
 
 order_file, docs_dir, today, version, site = sys.argv[1], Path(sys.argv[2]), sys.argv[3], sys.argv[4], sys.argv[5]
 RAW = "https://raw.githubusercontent.com/adriandeleon/adl-desktop-apps-guidelines/master/src/assets/shots/"
+# The edition's pins (src/lib/pins.mjs says why): links into the apps' code at the commits recorded at its release,
+# this repository's at its tag. None when pins.json is for another edition.
+_pins_file = Path(order_file).parent / "pins.json"
+PINS = json.loads(_pins_file.read_text(encoding="utf-8")) if _pins_file.exists() else None
+if PINS and PINS.get("edition") != version:
+    PINS = None
+
+
+def pin(text):
+    if not PINS:
+        return text
+    def ref(m):
+        repo, kind = m.group(1), m.group(2)
+        sha = "v" + PINS["edition"] if repo == "adl-desktop-apps-guidelines" else PINS["repos"].get(repo)
+        return f"github.com/adriandeleon/{repo}/{kind}/{sha}/" if sha else m.group(0)
+    text = re.sub(r"github\.com/adriandeleon/([A-Za-z0-9_.-]+)/(blob|tree)/(master|main)/", ref, text)
+    return text.replace("raw.githubusercontent.com/adriandeleon/adl-desktop-apps-guidelines/master/",
+                        f"raw.githubusercontent.com/adriandeleon/adl-desktop-apps-guidelines/v{PINS['edition']}/")
 groups = json.loads(Path(order_file).read_text(encoding="utf-8"))["groups"]
 EDITION = site.rstrip("/") + "/" + version + "/"
 CODE = re.compile(r"(^ *```.*?^ *```|`[^`\n]*`)", re.M | re.S)
@@ -41,4 +59,4 @@ for group in groups:
         # Screenshots point at the repository's raw files, so the single Markdown file works anywhere.
         body = re.sub(r"\]\((?:\.\./)+assets/shots/", "](" + RAW, body)
         body = absolute(body, EDITION + slug + "/")
-        print(f"## {title}\n\n{body.strip()}\n")
+        print(pin(f"## {title}\n\n{body.strip()}\n"))

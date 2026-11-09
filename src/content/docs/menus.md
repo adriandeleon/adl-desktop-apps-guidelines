@@ -80,13 +80,15 @@ tray icon's menu) show text only; there the chord is appended to the title ([MEN
     `menu-item-chord` label; after a keymap switch it finds the new chord.
   - *Reference:* Editora [`MainMenuBar.rowContent`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java) and `alignChordColumns`, `.menu-item-chord` in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css). Editora's
     right-click menus show no chords yet: a row there is a plain `MenuItem`, not the menu bar's row.
-- **MENU-16 · MUST.** Every menu draws its titles in Inter 14 px regular and its chords in Inter 11 px, whatever
-  node it was opened from: the font is pinned in absolute pixels on `.context-menu` and its rows' labels.
+- **MENU-16 · MUST.** Every menu draws its titles in Inter 14 px regular and its chords in Inter 11 px at the
+  default zoom, scaled by the UI zoom ([WIN-09](../window-shell/#win-09)), whatever node it was opened from: the
+  size is pinned on `.context-menu` and its rows' labels from one value the zoom sets, never inherited from the
+  node.
   - *Why:* a popup inherits the font of the node it was shown from, and `em` resolves against it: Editora's toolbar
     menu once rendered at the bar's 18 px, a third larger than every other menu, and a file tree's or a monospace
     editor's font leaks the same way.
   - *Check (test):* an FX test opens a menu from the toolbar, an editor and a tree row and reads Inter 14 px from
-    each row's title.
+    each row's title, and 14 px times the zoom after the UI zoom changes. Editora pins 14 px and has no UI zoom yet.
   - *Reference:* Editora `.context-menu` and `.menu-item-chord` in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css), [`MainMenuBar.UI_FONT_SIZE`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java),
     [`ToolbarMenuFontFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ToolbarMenuFontFxTest.java).
 

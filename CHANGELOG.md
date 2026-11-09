@@ -36,6 +36,12 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 
 ### Changed
 
+- **WIN-03 is a MUST, and the title-bar menu is on by default**: on Windows and Linux the menu bar sits in the title
+  bar (`HeaderBar`) unless the user turns it off; on macOS it stays in the system menu bar. Editora, Torrenta and
+  Termina start it off today; the template and Mirada start it on.
+- **MENU-16 follows the UI zoom**: menus are 14 px and 11 px at the default zoom and scale with it, instead of being
+  pinned in absolute pixels. A menu at the default zoom is unchanged. WIN-09 says the UI zoom scales the whole
+  chrome.
 - **Editions come out in batches.** Changes to the guidance now collect under *Unreleased* and are published together
   as one edition when a batch is ready, instead of each change being an edition of its own. The Changelog page says
   so, and the largest change in the batch sets the number.

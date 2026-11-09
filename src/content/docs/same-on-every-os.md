@@ -20,7 +20,7 @@ bug: an app records it in `pauta.json` as `pending`, with an issue, until it is 
 | Primary modifier | `Ctrl` | `Cmd`, from each keymap's `.mac.json` variant | `Ctrl` | [KBD-09](../keyboard/#kbd-09), [KBD-10](../keyboard/#kbd-10), [KBD-21](../keyboard/#kbd-21) |
 | How a chord is written | `Ctrl+Shift+P` | `⇧⌘P`, in Apple's modifier order | `Ctrl+Shift+P` | |
 | Quit | File → Quit, the tray's Quit | The same, plus the app menu's and the Dock's Quit, caught as the app's own | File → Quit, the tray's Quit | [TRAY-04](../tray-and-background/#tray-04) |
-| Menu bar | In the title bar | The system menu bar, in a decorated window | In the title bar | [WIN-03](../window-shell/#win-03) |
+| Menu bar | In the title bar, by default | The system menu bar, in a decorated window | In the title bar, by default | [WIN-03](../window-shell/#win-03) |
 | Open and save dialogs | The OS's own (`FileChooser`) | The OS's own | The OS's own | |
 | Opening a file or link, showing it in the file manager | Explorer | Finder (`open`) | `xdg-open` | |
 | Tray icon | AWT `SystemTray` | AWT `SystemTray` | StatusNotifierItem | [TRAY-01](../tray-and-background/#tray-01) |

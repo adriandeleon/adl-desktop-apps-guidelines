@@ -90,6 +90,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 
 [Window shell](../window-shell/) · [Welcome page](../templates/welcome/) · [Confirm dialog](../templates/confirm-dialog/) · [About window](../templates/about/)
 
+- [ ] On Windows and Linux, the menu bar in the title bar (`HeaderBar`) by default, with a setting to fall back to a decorated window; on macOS, the system menu bar · [WIN-03](../window-shell/#win-03)
 - [ ] A status bar whose echo area shows the last action's feedback, errors in red and warnings in amber, and opens the Message Log on a click · [WIN-01](../window-shell/#win-01)
 - [ ] Every destructive action asks first: the question names the thing, the button names the action in the `danger` style, Escape cancels; or the action can be taken back instead · [CONF-01](../templates/confirm-dialog/#conf-01), [CONF-02](../templates/confirm-dialog/#conf-02), [CONF-03](../templates/confirm-dialog/#conf-03), [CONF-04](../templates/confirm-dialog/#conf-04)
 - [ ] Dialog buttons in one order on every OS, Cancel to the left of the action · [WIN-11](../window-shell/#win-11)

@@ -20,12 +20,37 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 - **PAUTA-17 · MUST.** An app's `AGENTS.md` has a `## Pauta` section that names the edition `pauta.version` names and
   links that edition's `llms.txt` and `llms-full.txt`, never `latest/`, so its coding agent reads the rules the app
   is built to. The Coding agents page has the block to copy, and the checklist the line.
+- **ACC-08 · SHOULD.** In an overlay list that keeps focus in its field (the Command Palette, QuickOpen), the row the
+  arrows select is announced to a screen reader, with whether it can run.
+- **ACC-09 · SHOULD.** In Windows' high-contrast mode the app switches to a high-contrast theme. JavaFX's own
+  high-contrast stylesheet applies only over Modena, which AtlantaFX replaces.
+- **MENU-17 · SHOULD.** The in-window menu bar is reachable from the keyboard in every keymap: JavaFX's `F10`, or a
+  command where a keymap gives `F10` to something else (Editora's CUA, VS Code and Sublime keymaps give it to Step
+  Over).
+- **CLI-11 · MUST.** On Windows, `--help`, `--version` and `--report` print in the console: the installer carries a
+  console launcher, or `main` attaches to the parent's console. Today they print nothing there in every app.
+- *Same on every OS* lists more of the places the OSes differ: how a chord is written, Quit on macOS, notification
+  attribution, the dock badge, the command line, middle-click paste, and the installers' gaps (unsigned MSIs,
+  winget on x64 only, Homebrew on Apple Silicon only). It also names the differences in the apps that no row allows,
+  each with the rule it breaks.
 
 ### Changed
 
+- **WIN-03 is a MUST, and the title-bar menu is on by default**: on Windows and Linux the menu bar sits in the title
+  bar (`HeaderBar`) unless the user turns it off; on macOS it stays in the system menu bar. Editora, Torrenta and
+  Termina start it off today; the template and Mirada start it on.
+- **MENU-16 follows the UI zoom**: menus are 14 px and 11 px at the default zoom and scale with it, instead of being
+  pinned in absolute pixels. A menu at the default zoom is unchanged. WIN-09 says the UI zoom scales the whole
+  chrome.
 - **Editions come out in batches.** Changes to the guidance now collect under *Unreleased* and are published together
   as one edition when a batch is ready, instead of each change being an edition of its own. The Changelog page says
   so, and the largest change in the batch sets the number.
+- **KBD-16 is a MUST**: every control shows the focus ring when the keyboard focuses it, so drawing the ring is as
+  required as its color (ICON-12).
+- **ACC-02** asks a control the app builds to handle its role's actions (`FIRE`, `TOGGLE`, `EXPAND`) too, so a
+  screen reader can press it, not only find it.
+- An OS difference that no row of *Same on every OS* allows is recorded as `pending`, not as a deviation: OS-01 is a
+  MUST.
 
 ### Fixed
 
@@ -39,7 +64,11 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
   three of them; OS-02's needs exactly one class reading `os.name`; REPO-03's reads a Windows checkout's line endings.
   The skill, `llms.txt`, the schema and the Coding agents page now say the same thing about a result: exit 0 passes the
   check, and the agent still reads the rest of the rule.
-
+- **TRAY-04**'s Check says how macOS's Quit arrives (as a close request on every window, unless the app catches it),
+  and its Reference says Torrenta doesn't catch it yet.
+- **ACC-01**'s Check covers list cells and menu rows, and says how JavaFX names a `CustomMenuItem` row.
+- **ACC-04** names Editora's Project Map flash and checks `AnimationTimer` too.
+- MENU-09 and MENU-13 write their keys in backticks, not `<kbd>` tags, which reached the agent files as raw HTML.
 
 ## [4.5.0] - 2026-11-08
 

@@ -104,8 +104,11 @@ Every other list choice (recent files, themes, keymaps, a setting's values) uses
   - *Check (by hand):* Tab through every window and dialog without the mouse.
   - *Reference:* Editora; [`FocusRingFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/FocusRingFxTest.java) holds that every control family draws the focus ring when Tab
     reaches it.
-- **KBD-16 · SHOULD.** The keyboard focus ring is one layer of `:focus-visible` rules in `app.css`, after every rule
-  that sets a border or background on the same controls, since rules of equal specificity are decided by order.
+- **KBD-16 · MUST.** Every control shows the focus ring when the keyboard focuses it. The ring is one layer of
+  `:focus-visible` rules in `app.css`, after every rule that sets a border or background on the same controls,
+  since rules of equal specificity are decided by order. Its color and contrast are [ICON-12](../icons-and-color/#icon-12).
+  - *Why:* a keyboard user who can't see where focus is can't use the window; the ring's color is a MUST, and so is
+    drawing it.
   - *Check (test):* an FX test tabs to each control family and asserts the ring.
   - *Reference:* Editora [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) (*Keyboard focus*, one layer for every control), [`FocusRingFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/FocusRingFxTest.java).
 - **KBD-18 · SHOULD.** On/off rows use a keyboard-operable switch with the `TOGGLE_BUTTON` role.

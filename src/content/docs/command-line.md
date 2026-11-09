@@ -22,6 +22,14 @@ description: "The flags every app accepts and the single-instance hand-off."
   GUI.
   - *Check (test):* a test runs the report command and finds the redacted report written.
   - *Reference:* Editora [`report/ReportCommand.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/report/ReportCommand.java) ([`ReportCommandTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/report/ReportCommandTest.java)).
+- **CLI-11 · MUST.** On Windows, `--help`, `--version` and `--report` print in the console they were typed in. A GUI
+  launcher has no console, so the installer also carries a console launcher (jpackage's `win-console`, named
+  `<app>-cli`) that runs the same entry point, or `main` attaches to the parent's console before it prints.
+  - *Why:* without it, the three flags print nothing from cmd or PowerShell, and the command line differs on one OS.
+  - *Check (code):* the Windows jpackage configuration adds a launcher with `win-console=true`, or `main` calls
+    `AttachConsole` before printing.
+  - *Reference:* no app yet for the GUI. Torrenta's headless launcher is a console program
+    ([`src/jpackage/torrenta-nox-windows.properties`](https://github.com/adriandeleon/torrenta/blob/master/src/jpackage/torrenta-nox-windows.properties), `win-console=true`).
 - **CLI-06 · SHOULD.** `[files…]` opens these items.
   - *Check (by hand):* launch with two files and find both open.
   - *Reference:* Editora [`App.fileTargets`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java).

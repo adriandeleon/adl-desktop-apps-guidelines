@@ -11,11 +11,17 @@ description: "Status bar, themes, title bar, dialogs, Welcome, About, window sta
     the Message Log command.
   - *Reference:* Editora [`ui/StatusBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusBar.java) (`status-echo-error`, `status-echo-warn`; a click runs
     `view.messageLog`) and the [Message Log template](../templates/message-log/).
-- **WIN-03 · SHOULD.** The title bar uses JavaFX 27's `HeaderBar` with `StageStyle.EXTENDED` to carry the menu or
-  tabs, with a decorated-window fallback, and `useSystemMenuBar` on macOS.
-  - *Check (code):* the main stage is created `StageStyle.EXTENDED` with a `HeaderBar`, a setting falls back to a
-    decorated window, and the menu bar sets `useSystemMenuBar` on macOS.
-  - *Reference:* Editora [`ui/ExtendedWindow.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ExtendedWindow.java), [`ui/MainMenuBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java).
+- **WIN-03 · MUST.** On Windows and Linux the menu bar sits in the title bar by default: JavaFX 27's `HeaderBar` with
+  `StageStyle.EXTENDED` carries the menu or tabs, and a setting that starts on lets the user fall back to a
+  decorated window. On macOS the menus are in the system menu bar (`useSystemMenuBar`), in a decorated window.
+  - *Why:* the family looks the same on every OS only if every app starts with the same title bar; an app that
+    ships it off looks like another family.
+  - *Check (code):* the main stage is created `StageStyle.EXTENDED` with a `HeaderBar`; the setting that falls back
+    to a decorated window defaults to on (in the title bar) on Windows and Linux; the menu bar sets
+    `useSystemMenuBar` on macOS.
+  - *Reference:* the app template ([`config/Settings.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/Settings.java), `titleBarMenus = true`) and Mirada,
+    whose title bar is always a `HeaderBar`. Editora ([`ui/ExtendedWindow.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ExtendedWindow.java), [`ui/MainMenuBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java)), Torrenta
+    and Termina have the setting but start it off.
 - **WIN-04 · SHOULD.** Native dialogs go through one helper that attaches the app stylesheet and the UI font.
   - *Why:* a dialog is its own scene and inherits neither.
   - *Check (code):* every `Alert` and `Dialog` the app builds passes through the helper.
@@ -35,9 +41,11 @@ description: "Status bar, themes, title bar, dialogs, Welcome, About, window sta
   - *Reference:* Editora [`config/WorkspaceState.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/WorkspaceState.java) (`windowX` … `windowMaximized`),
     [`ui/WindowSessionCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowSessionCoordinator.java), [`App.noSessionFlag`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java); tests [`WorkspaceStateV29Test`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/config/WorkspaceStateV29Test.java), [`AppArgsTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/AppArgsTest.java),
     [`NoSessionStartupFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/NoSessionStartupFxTest.java).
-- **WIN-09 · SHOULD.** UI and content zoom from the keyboard (`Ctrl/Cmd +`, `-`, `0`), kept across launches.
-  - *Check (code):* zoom in, out and reset are commands bound in every keymap, and the zoom level is a saved
-    setting.
+- **WIN-09 · SHOULD.** UI and content zoom from the keyboard (`Ctrl/Cmd +`, `-`, `0`), kept across launches. The
+  UI zoom scales the whole chrome, the menus ([MENU-16](../menus/#menu-16)), toolbar, tabs and status bar included,
+  so a person who needs larger text gets it everywhere.
+  - *Check (code):* zoom in, out and reset are commands bound in every keymap, the zoom level is a saved setting,
+    and the chrome's fixed sizes are multiplied by the UI zoom rather than written as absolute pixels.
   - *Reference:* Editora zooms content only: `view.textZoomIn`, `view.textZoomOut` and `view.textZoomReset`, kept in
     [`Settings.fontZoom`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/Settings.java).
 - **WIN-10 · MAY.** Modes: Zen (no chrome), Simple (fewer menus for new users), Expert.

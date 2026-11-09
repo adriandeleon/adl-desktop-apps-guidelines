@@ -17,7 +17,7 @@ Torrenta ([`AboutDialog`](https://github.com/adriandeleon/torrenta/blob/master/s
   update check. The Pauta edition is [ABOUT-05](#about-05).
   - *Check (code):* the window reads the version and build from `AppInfo`, the same text as `--version`, and shows
     the update checker's last answer.
-  - *Reference:* Editora [`ui/AboutDialog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/AboutDialog.java), [`AppInfo`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/AppInfo.java); the Spec table below.
+  - *Reference:* Editora [`ui/AboutDialog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/AboutDialog.java), [`AppInfo`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/AppInfo.java); the page's [Spec](#spec).
 - **ABOUT-03 · SHOULD.** *Copy details* copies the environment block and leaves the window open; its label becomes
   "Copied".
   - *Check (code):* the button sits in the content, not the dialog's button bar, so pressing it can't close the

@@ -16,6 +16,7 @@ it remembers of some other one.
 | `llms-full.txt` | Every rule of the edition as Markdown, grouped by page and section, with every link made absolute. No prose, screenshots or mockups. | Building or auditing: the whole rule set in one read. |
 | `rules.json` | Every rule as data, with the levels, the three kinds of check and the audit statuses explained, every page, and every retired ID. | Scripts, filtering by page or level, comparing editions. |
 | `<page>.md` | One page as Markdown: its prose, rules and spec tables, each mockup as a sentence and its numbered parts as a list. `keyboard.md` beside `keyboard/`, `templates/about.md` beside `templates/about/`. | Building a feature: the page it belongs to, in one small read. |
+| `changelog.md` | The Changelog page as Markdown: how editions are numbered and what each one changed. | Moving an app to a newer edition. |
 | `skills/pauta-audit/SKILL.md` | The audit procedure as an agent skill: how to judge each rule, read `pauta.json` and write the report. | Auditing an app. |
 | `audit.schema.json`, `rules.schema.json` | The [JSON Schema](https://json-schema.org) of an audit report and of `rules.json`. | Writing or checking a report; reading `rules.json` in code. |
 | The page itself | The prose, screenshots, mockups and spec tables around the rules. | When the picture matters. |
@@ -24,7 +25,8 @@ Each one lives under its edition: `https://pauta-project.dev/4.3.1/llms.txt`, `.
 `.../4.3.1/keyboard.md`. `latest/` always holds the newest edition, and the site root holds a copy of the latest
 `llms.txt`, `llms-full.txt` and `rules.json`, where agents look first. Every link inside these files points at the
 numbered edition, so a rule an agent cites keeps its address. `llms.txt`, `llms-full.txt` and `rules.json` are
-served from 2.0.0 on, the page Markdown, the skill and the schemas from 4.3.1; the 1.x editions, from before rules
+served from 2.0.0 on, the page Markdown, the skill and the schemas from 4.3.1, and `changelog.md` from the edition
+after 4.5.0; the 1.x editions, from before rules
 had IDs, have their pages only. `versions.json` at the site root lists every published edition.
 
 The [single Markdown file](../downloads/adl-desktop-apps-guidelines.md) is the whole guide in one file. It is large,
@@ -74,6 +76,9 @@ rule is:
   edition released after 4.5.0, its links point at the commit each app was at when the edition came out, so they show
   the code as it was then; `blob/master` in a page's source becomes that commit in what the edition serves. Editions
   up to 4.5.0 link the apps' default branches.
+- **Names in a rule.** A command id, catalog key, file, property or style class that `text` names is required: every
+  app spells it that way (`help.about`, `palette.show`, `pauta.json`), so keymaps, docs and agents find it under one
+  name. A name that only `check` or `reference` gives is how Editora spells it, and the app's equivalent meets it.
 - **`why`** is `null` when the rule has no reason worth stating.
 - **`appliesTo`** is `null` for a rule that covers every app, unless its own text says otherwise. Otherwise it is the
   **Applies to** line its page or section opens with: "an app whose work goes on without its window" for the
@@ -103,6 +108,8 @@ This app is built to Pauta <edition>. Its rules: https://pauta-project.dev/<edit
 ```
 
 Use the same number everywhere the app names its edition: `pom.xml`, `AGENTS.md`, the README and the About window.
+An app whose conformance is Partial writes "is working toward Pauta <edition>" instead of "is built to", as its
+README and About do ([Conformance](../conformance/#complete-core-and-partial)).
 
 ## Build a feature to the rules
 
@@ -128,10 +135,13 @@ skipped and why.
 
 The procedure is the **pauta-audit skill**, which every edition serves at `skills/pauta-audit/SKILL.md`. Copy it
 into the app's `.claude/skills/pauta-audit/` (the [app template](https://github.com/adriandeleon/adl-desktop-app-template)
-ships it) or point the agent at it. `llms.txt` and `llms-full.txt` carry it in short:
+ships it) or point the agent at it. The skill decides how to audit and how to write the report; an edition supplies
+only its rules, so an older edition's shorter or different procedure gives way to it. `llms.txt` and
+`llms-full.txt` carry it in short:
 
 1. Find the edition the app implements: `pauta.version` in its `pom.xml`, the About window, or its README. Read
-   that edition's rules. If the app names none, use the newest. A 1.x edition has no `rules.json`: audit against
+   that edition's rules. If the app names none, ask which edition to audit against and offer the newest; with no
+   one to ask, use the newest and say so in the report. A 1.x edition has no `rules.json`: audit against
    2.0.0 or newer, and report what the app's own edition didn't ask for as upgrade work.
 2. Take each rule in turn. A *code* check: run its `check.command` when it has one, else read or search the source as
    it says. A *test* check: find the named test, or the app's equivalent, and confirm the build runs it. A *by hand*
@@ -159,8 +169,8 @@ audits can be compared by a script, and `docs/pauta-audit.md`, the same results 
 short as this one is enough:
 
 ```text
-Audit this app against Pauta with the pauta-audit skill
-(https://pauta-project.dev/latest/skills/pauta-audit/SKILL.md). Failed MUSTs first.
+Audit this app against Pauta <edition> with the pauta-audit skill
+(https://pauta-project.dev/<edition>/skills/pauta-audit/SKILL.md). Failed MUSTs first.
 ```
 
 Each result reads like this:

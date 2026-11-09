@@ -32,7 +32,9 @@ Editora (`../Editora`) is the reference implementation.
 - **Rule IDs**: every rule is a list item, never a table row, that opens with `**KBD-07 · MUST.**`, one testable
   statement, then sub-items `*Why:*` (only when there is a reason worth stating), `*Check (code|test|by
   hand):*` (how an agent or a person verifies it in an app: what to grep or read, which test holds it, or what to do
-  in the running app), `*Command:*` (only under a `Check (code)`, and only when a shell command settles the whole
+  in the running app; a name it gives is Editora's spelling, which an app's equivalent meets, while a name in the
+  statement is required in every app, so name an id, key or file there only when every app must spell it so),
+  `*Command:*` (only under a `Check (code)`, and only when a shell command settles the whole
   check: one code span holding a POSIX `sh -c` command, run from the app's repository root, that exits 0 when the
   check passes and prints what it found when it fails. It opens with the guard `src/lib/rules.mjs` names (`GUARD`), so
   it fails outside an app's root, and it only reads: `npm run check` fails on a redirect into a file or a program that

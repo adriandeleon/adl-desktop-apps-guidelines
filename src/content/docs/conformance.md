@@ -29,7 +29,9 @@ Partial is how an app that already ships says it is on its way: it took up an ed
 moved to a newer one with new MUSTs. A new app is not released at Partial.
 
 - **PAUTA-01 · MUST.** Every app implements Pauta: it names one edition (the `pauta.version` of
-  [ABOUT-08](../templates/about/#about-08)) and states its conformance, Complete, Core or Partial, as defined above.
+  [ABOUT-08](../templates/about/#about-08)) and states its conformance as [Complete, Core or Partial](#complete-core-and-partial): Complete meets every MUST and
+  every SHOULD (met, not applicable or a recorded deviation), Core every MUST with SHOULDs still pending, Partial not
+  yet every MUST.
   - *Why:* an app that is in the family answers to these rules; saying which ones, and how far, is the first of them.
   - *Check (code):* `pom.xml` defines `pauta.version` and `src/main/resources/com/<app>/pauta.json` exists.
   - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; { grep -q '<pauta.version>' pom.xml || { echo 'no pauta.version in pom.xml'; false; }; } && { find src/main/resources -path '*/com/*' -name pauta.json | grep . || { echo 'no pauta.json'; false; }; }`
@@ -148,7 +150,7 @@ a test keeps the copies honest.
 }
 ```
 
-- **PAUTA-09 · MUST.** The exceptions have one source, `pauta.json` as above: `rule`, `level`, `url`, `kind` and
+- **PAUTA-09 · MUST.** The exceptions have one source, `pauta.json` laid out as [The file](#the-file) shows: `rule`, `level`, `url`, `kind` and
   `reason` on every entry, `link` on every deviation and pending entry, one entry per rule, and `"template": true`
   beside `exceptions` only in a template repository (PAUTA-16).
   - *Check (code):* the file exists at that path, and each entry has the fields its kind needs.

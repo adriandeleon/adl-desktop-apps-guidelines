@@ -5,6 +5,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { STATUSES } from "./audit.mjs";
+import { parseEditions } from "./editions.mjs";
 import { absoluteLinks, editionUrl, outsideCode, readRules } from "./rules.mjs";
 
 const LEVELS = {
@@ -90,17 +91,21 @@ missing.
 **Building a feature:** read its page first (\`<page>.md\`, below, has the prose, the rules and the spec tables), then
 copy from the code each rule's *Reference* names. Editora is the reference implementation.
 
-**Auditing an app:** the full procedure is the pauta-audit skill, ${base}${SKILL}. In short:
+**Auditing an app:** the full procedure is the pauta-audit skill, ${base}${SKILL}. It decides how to audit and how
+to write the report; an edition supplies only its rules. In short:
 
 1. Find the edition the app implements: \`pauta.version\` in its \`pom.xml\`, the About window, or its README. Read that
-   edition's rules at \`${edition}rules.json\`; if the app names none, use this one. Editions before 2.0.0 serve no
+   edition's rules at \`${edition}rules.json\`. If the app names none, ask which edition to audit against and offer
+   the newest; with no one to ask, use the newest and say so in the report. Editions before 2.0.0 serve no
    rules.json: audit against 2.0.0 or newer, and report a failed rule that the app's own edition didn't have as
    upgrade work.
 2. Take each rule in turn. *Check (code)*: when it has a *Command* (\`check.command\`), run it with \`sh -c\` from the
    app's repository root. Exit 0: the check passes; still read the rest of the rule and cite the file:line that meets
    it. Any other exit: the check fails, and what it printed is the evidence. Otherwise read or search the source as the
    check says. *Check (test)*: find the named test, or the app's equivalent, and confirm the build runs it.
-   *Check (by hand)*: source can't settle it; report it as manual.
+   *Check (by hand)*: source can't settle it; report it as manual. A name the rule's statement gives (a command id,
+   a key, a file) is required as written; one only its Check gives is Editora's spelling, and the app's equivalent
+   meets it.
 3. A rule applies to every app unless it is limited: its text names the apps it covers ("An app with user
    documents…"), its page or section opens with an **Applies to** line (\`appliesTo\` in rules.json), or it details a
    rule that is limited. A limited rule the app is outside of is \`limited\` and needs no exception.
@@ -144,7 +149,7 @@ ${howTo(base, v)}
 ## Rules
 
 - [Every rule, as Markdown](${base}llms-full.txt): all ${rules.length} rules of this edition in one file, grouped by page.
-- [Every rule, as JSON](${base}rules.json): id, level, page, section, appliesTo, address, text, why, check and reference, with every page and every retired ID.
+- [Every rule, as JSON](${base}rules.json): id, level, page, pageTitle, section, appliesTo, url, text, why, check and reference, with every page and every retired ID.
 - [Audit skill](${base}${SKILL}): how to audit an app against an edition, step by step, and write the report.
 - [Audit report schema](${base}audit.schema.json): the JSON Schema of an audit's report.
 
@@ -155,7 +160,7 @@ ${listed.join("\n")}
 ## Optional
 
 - [Overview](${base}): what Pauta is, the six apps, and how to read the rules.
-- [Changelog](${base}changelog/): what each edition changed, and which rules became stronger.
+- [Changelog](${base}changelog.md): what each edition changed, and which rules became stronger.
 - [The whole guide, as Markdown](${base}downloads/adl-desktop-apps-guidelines.md): every page in one file. Large.
 - [rules.json schema](${base}rules.schema.json): the JSON Schema of rules.json.
 - [Editions](${origin.origin}${origin.pathname.replace(/\/?$/, "/")}versions.json): every published edition and its address.
@@ -218,6 +223,32 @@ function htmlBlock(block) {
   );
   if (labels.length) return labels.map((l) => `*${l.replace(/\.$/, "")}. Drawn on the page; the numbers below mark its parts.*`).join("\n\n");
   return `*${inline(block)}*`;
+}
+
+/** The Changelog page as Markdown: its prose, then every edition from CHANGELOG.md, as the page renders them. */
+export function changelogMarkdown(root = process.cwd()) {
+  const { pkg, base } = load(root);
+  const url = `${base}changelog/`;
+  const page = readFileSync(join(root, "src/content/docs/changelog.mdx"), "utf8");
+  const fm = page.match(/^---\n([\s\S]*?)\n---\n/);
+  const get = (key) => fm?.[1].match(new RegExp(`^${key}:\\s*"?(.*?)"?\\s*$`, "m"))?.[1] ?? "";
+  const prose = page
+    .slice(fm ? fm[0].length : 0)
+    .split("\n")
+    .filter((l) => !/^import\s/.test(l) && !/^<Changelog\s*\/>/.test(l))
+    .join("\n");
+  const editions = parseEditions(readFileSync(join(root, "CHANGELOG.md"), "utf8"))
+    .map((e) => `## [${e.version}]${e.date ? ` - ${e.date}` : ""}\n\n${e.body}`)
+    .join("\n\n");
+  const body = absoluteLinks(`${prose.trim()}\n\n${editions}`, url).replace(/\n{3,}/g, "\n\n");
+  return `# ${get("title")}
+
+> ${get("description")}
+
+Pauta ${pkg.version} (${pkg.guidelines.date}). The page: ${url}.
+
+${body}
+`;
 }
 
 export function pageMarkdown(slug, root) {

@@ -57,6 +57,7 @@ export function auditSchema(base) {
             status: { enum: Object.keys(STATUSES), description: "See rules.json's `statuses`." },
             evidence: {
               type: "string",
+              minLength: 1,
               description:
                 "Where the verdict comes from, as path/File.java:123 from the repository root, and what is missing for a fail. For an exception, its pauta.json reason; for limited, the feature the app lacks.",
             },

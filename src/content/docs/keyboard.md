@@ -57,14 +57,18 @@ Every other list choice (recent files, themes, keymaps, a setting's values) uses
 - **KBD-09 · MUST.** Except in a terminal, Emacs and CUA keymaps ship as JSON resources, CUA with a `.mac.json`
   variant where Cmd replaces Ctrl. A terminal's keys belong to the program it runs (`C-a`, `M-x` reach the shell), so
   it ships one keymap of its own instead, `keymap.json` and `keymap.mac.json`, binding its commands to chords
-  programs don't use.
-  - *Why:* an Emacs keymap in a terminal would take the shell's own keys away from it.
+  programs don't use: off macOS, never a plain `Ctrl` or `Alt` with a letter (`Ctrl+Shift+T`, not `Ctrl+T`).
+  - *Why:* an Emacs keymap in a terminal would take the shell's own keys away from it: `Ctrl+W` deletes a word,
+    `Ctrl+C` interrupts, `Alt+F` and `Alt+B` move by word.
   - *Check (code):* `emacs.json`, `cua.json` and `cua.mac.json` are in the app's resources; in a terminal,
-    `keymap.json` and `keymap.mac.json` are. The command passes either set; judge which one the app should have.
+    `keymap.json` and `keymap.mac.json` are, and a test fails a default binding off macOS that is a plain `Ctrl` or
+    `Alt` with a letter. The command passes either set of files; judge which one the app should have.
   - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; has() { for f in "$@"; do find src/main/resources -name "$f" | grep -q . || return 1; done; }; has emacs.json cua.json cua.mac.json || has keymap.json keymap.mac.json || { echo 'missing emacs.json, cua.json and cua.mac.json (or, in a terminal, keymap.json and keymap.mac.json)'; false; }`
   - *Reference:* Editora [`src/main/resources/com/editora/keymaps/`](https://github.com/adriandeleon/Editora/tree/master/src/main/resources/com/editora/keymaps);
-    Termina's [`keymaps/`](https://github.com/adriandeleon/Termina/tree/master/src/main/resources/com/termina/keymaps).
-- **KBD-10 · SHOULD.** IntelliJ, VS Code and Sublime keymaps ship the same way, each with its `.mac.json` variant.
+    Termina's [`keymaps/`](https://github.com/adriandeleon/Termina/tree/master/src/main/resources/com/termina/keymaps), held by [`KeymapTest`](https://github.com/adriandeleon/Termina/blob/master/src/test/java/com/termina/ui/KeymapTest.java)
+    (`offMacOsAnApplicationChordNeverTakesPlainCtrlAndALetter`).
+- **KBD-10 · SHOULD.** Except in a terminal ([KBD-09](#kbd-09)), IntelliJ, VS Code and Sublime keymaps ship the same
+  way, each with its `.mac.json` variant.
   - *Check (code):* `intellij`, `vscode` and `sublime` `.json` and `.mac.json` files are in the resources.
   - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; ! for k in intellij vscode sublime; do for f in "$k.json" "$k.mac.json"; do find src/main/resources -name "$f" | grep -q . || echo "missing $f"; done; done | grep .`
   - *Reference:* Editora [`src/main/resources/com/editora/keymaps/`](https://github.com/adriandeleon/Editora/tree/master/src/main/resources/com/editora/keymaps).

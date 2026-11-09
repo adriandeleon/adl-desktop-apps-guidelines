@@ -46,11 +46,13 @@ description: "JDK, JavaFX, AtlantaFX, NullAway, Maven Wrapper, tests and coverag
     step, or the plugin's `check` goal bound to a phase a workflow runs (`./mvnw verify`).
   - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; { grep -q palantirJavaFormat pom.xml || { echo 'pom.xml configures no palantirJavaFormat'; false; }; } && { grep -rq 'spotless:check' .github/workflows || { sed -n '/spotless-maven-plugin/,/<\/plugin>/p' pom.xml | grep -q '<goal>check</goal>' && grep -rqE 'mvnw.* (verify|install|deploy)' .github/workflows; } || { echo 'CI runs neither spotless:check nor a phase the check goal is bound to'; false; }; }`
   - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml) (spotless plugin), [`.github/workflows/ci.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/ci.yml) (*Format*).
-- **PLAT-11 · MUST.** Tests run on **JUnit** (Jupiter, 5 or newer) and **TestFX** over JavaFX's built-in
-  **Headless** glass platform (`-Dglass.platform=Headless`), so FX tests need no display, no xvfb and no Monocle.
+- **PLAT-11 · MUST.** Tests run on **JUnit** (Jupiter, 5 or newer) over JavaFX's built-in **Headless** glass platform
+  (`-Dglass.platform=Headless`), so FX tests need no display, no xvfb and no Monocle. **TestFX** MAY drive them; an
+  app that doesn't use it starts the toolkit with `Platform.startup` and runs its steps on the FX thread.
   - *Check (code):* surefire's `systemPropertyVariables` set `glass.platform` to `Headless`; no Monocle dependency,
     and no xvfb in a step that runs tests (a release leg may use it to train the AOT cache, [REL-10](../release/#rel-10)).
-  - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml) (surefire), [`docs/testing.md`](https://github.com/adriandeleon/Editora/blob/master/docs/testing.md), [`FxTestSupport`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/FxTestSupport.java).
+  - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml) (surefire), [`docs/testing.md`](https://github.com/adriandeleon/Editora/blob/master/docs/testing.md), [`FxTestSupport`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/FxTestSupport.java), with TestFX;
+    Termina [`pom.xml`](https://github.com/adriandeleon/Termina/blob/master/pom.xml) (surefire) and [`DialogAnswers`](https://github.com/adriandeleon/Termina/blob/master/src/test/java/com/termina/ui/DialogAnswers.java), without it.
 - **PLAT-12 · MUST.** A **JaCoCo** `check` runs at `mvn verify` with build-wide floors of **≥ 0.90 lines and
   ≥ 0.90 methods**. The branch floor and each package's own floor are [QUAL-03](../quality/#qual-03).
   - *Check (code):* the `jacoco-check` execution is bound to `verify` with `BUNDLE` limits of 0.90 `LINE` and

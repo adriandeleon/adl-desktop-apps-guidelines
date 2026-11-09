@@ -40,6 +40,8 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
   is 620 px wide with 36 px rows, 8 visible, and the catalog's "Run command…" prompt. The Message Log is an in-scene
   card above the echo area, 773 × 336, holding 200 messages. Modula, nux and Mirada differ on the palette, and
   Torrenta and Termina on the log.
+- **ABOUT-10 · SHOULD.** In About, "Update available" is bold amber (`-state-amber`), a color no link or label there
+  uses, so the one line that asks for action stands out; it was the accent every link wears.
 
 ### Changed
 

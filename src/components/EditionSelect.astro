@@ -38,7 +38,9 @@ const options = [
       const base = this.dataset.base ?? "/";
       // The page's path inside its edition: the same path in another edition, when that edition has the page.
       const rest = location.pathname.startsWith(base) ? location.pathname.slice(base.length) : "";
-      select.addEventListener("change", async () => {
+      const marked = () => select.querySelector<HTMLOptionElement>("option[selected]")?.index;
+      const go = async () => {
+        if (select.selectedIndex === marked()) return;
         const home = `${root}${select.value}/`;
         const page = home + rest;
         try {
@@ -47,11 +49,35 @@ const options = [
         } catch {
           location.href = home;
         }
+      };
+      // On a closed select, an arrow key or a letter changes the value at once (Chrome and Firefox on Windows and
+      // Linux), and moving on at that change would let a keyboard user reach only the next edition. Such a change
+      // fires during its keydown, so it is held until Enter; leaving the select without Enter puts this page's
+      // edition back. A choice made in the open list (a click, or Enter there) fires later and moves on at once.
+      let keying = false;
+      let held = false;
+      select.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" && held) {
+          held = false;
+          go();
+          return;
+        }
+        keying = true;
+        setTimeout(() => (keying = false));
+      });
+      select.addEventListener("change", () => {
+        if (keying) held = true;
+        else go();
+      });
+      select.addEventListener("blur", () => {
+        const m = marked();
+        if (held && m !== undefined) select.selectedIndex = m;
+        held = false;
       });
       window.addEventListener("pageshow", (event) => {
         if (!event.persisted) return; // restored from the back/forward cache: show this page's edition again
-        const marked = select.querySelector<HTMLOptionElement>("option[selected]")?.index;
-        if (marked !== undefined && marked !== select.selectedIndex) select.selectedIndex = marked;
+        const m = marked();
+        if (m !== undefined && m !== select.selectedIndex) select.selectedIndex = m;
       });
     }
   }

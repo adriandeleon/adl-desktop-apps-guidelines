@@ -8,6 +8,7 @@
 //   dist/<page>/index.html    a redirect to latest/<page>/ for every page, so links from before editions had folders work
 //   dist/downloads/, CNAME, 404.html, versions.js   copies of the latest edition's: GitHub Pages reads them at the root
 //   dist/llms.txt, llms-full.txt, rules.json   the latest edition's, where coding agents look for them (src/lib/llms.mjs)
+//   dist/robots.txt   written here: everything allowed, latest/'s sitemap
 import { spawnSync } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
@@ -99,6 +100,9 @@ for (const file of ["adl-desktop-apps-guidelines.pdf", "adl-desktop-apps-guideli
   const path = join(latest, "downloads", file);
   if (!existsSync(path) || statSync(path).size === 0) fail(`${path} is missing or empty: run npm run print before the build`);
 }
+// Crawlers may read everything: a numbered edition's pages carry noindex, which a crawler only sees if it may fetch
+// them. The sitemap is latest/'s, the edition search engines index.
+writeFileSync("dist/robots.txt", `User-agent: *\nAllow: /\n\nSitemap: ${url.origin}${root}latest/sitemap-index.xml\n`);
 const versions = [...new Set([version, ...earlier])].sort(compareVersions);
 writeFileSync(
   "dist/versions.json",

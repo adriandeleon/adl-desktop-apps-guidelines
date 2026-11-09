@@ -73,11 +73,14 @@ function statusDot(td) {
   for (const [glyph, cls, label] of STATUS) {
     if (!value.startsWith(glyph)) continue;
     const note = value.slice(glyph.length).trim();
+    // The dot is drawn in CSS, so its meaning is hidden text that a screen reader reads before the note. (An
+    // aria-label on a plain span is ignored, and on one with text it would hide the note.)
+    const said = { type: "element", tagName: "span", properties: { className: ["sr-only"] }, children: [{ type: "text", value: note ? `${label}: ` : label }] };
     td.children.splice(0, 1, {
       type: "element",
       tagName: "span",
-      properties: { className: ["s", cls], title: label, ariaLabel: note ? `${label}: ${note}` : label },
-      children: note ? [{ type: "text", value: note }] : [],
+      properties: { className: ["s", cls], title: label },
+      children: note ? [said, { type: "text", value: note }] : [said],
     });
     return;
   }

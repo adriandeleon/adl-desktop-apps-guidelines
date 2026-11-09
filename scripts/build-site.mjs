@@ -3,6 +3,7 @@
 //   dist/latest/              this checkout, built with base <root>/latest
 //   dist/<version>/           this checkout again, built with base <root>/<version> (package.json's version)
 //   dist/<earlier version>/   every edition published before, from the `versions` branch (scripts/archive-edition.sh),
+//                             without its PDF unless it is one of the two newest (the link goes to GitHub instead)
 //                             or from build/editions/ for one a canceled run never archived (scripts/build-edition.sh)
 //   dist/versions.json        every edition and which one is latest; public/versions.js reads it on every page
 //   dist/<page>/index.html    a redirect to latest/<page>/ for every page, so links from before editions had folders work
@@ -123,6 +124,8 @@ writeFileSync(
     2,
   ) + "\n",
 );
+// The PDF of the two newest editions only (scripts/trim-pdfs.mjs, which CI runs again with master's copy).
+run("node", ["scripts/trim-pdfs.mjs", "dist"]);
 
 // 4. A redirect for every page at its old, unnumbered address. The script keeps the fragment; the meta tag is the fallback.
 step("redirects from the unnumbered addresses");

@@ -144,7 +144,9 @@ Editora (`../Editora`) is the reference implementation.
   permanent, `https://pauta-project.dev/latest/principles/` is always the newest edition, and the unnumbered address
   redirects to `latest/`. `scripts/build-site.mjs` (`npm run build`) builds this checkout twice, with `PAUTA_PATH`
   `latest` and the version (`astro.config.mjs` puts it in `base` and `outDir`), lays the earlier editions beside them
-  from the `versions` branch, copies `CNAME`, `404.html`, `versions.js`, `downloads/`, `llms.txt`, `llms-full.txt`
+  from the `versions` branch (with its PDF only for the two newest editions: an older one's overview links its PDF
+  on the `versions` branch on GitHub, since the PDFs were most of the site and Pages slowed past its deploy
+  timeout), copies `CNAME`, `404.html`, `versions.js`, `downloads/`, `llms.txt`, `llms-full.txt`
   and `rules.json` to the root for GitHub Pages and coding agents, writes `robots.txt` there (everything allowed,
   `latest/`'s sitemap),
   and writes `versions.json`, the list every page reads (`public/versions.js`) to offer editions published after it

@@ -106,6 +106,14 @@ jobs:
       - name: Build the site
         # scripts/build-site.mjs: every edition in its folder. In CI it fails when an edition or a download is missing.
         run: npm run build
+      - name: Keep the PDFs of the two newest editions
+        # master's copy of scripts/trim-pdfs.mjs, whichever commit this run builds: an edition published again from
+        # its own release commit, whose build predates the script, gets the same trimmed site.
+        env:
+          RUN_SHA: ${{ github.sha }}
+        run: |
+          git show "$RUN_SHA:scripts/trim-pdfs.mjs" > "$RUNNER_TEMP/trim-pdfs.mjs"
+          node "$RUNNER_TEMP/trim-pdfs.mjs" dist
       - name: Upload the site for Pages
         if: steps.state.outputs.publish != ''
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0

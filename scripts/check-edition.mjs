@@ -12,7 +12,8 @@
 //   - a release raises the version, moves everything under [Unreleased] into "## [<version>] - <date>" and leaves
 //     [Unreleased] empty. Its number is judged against the edition before it (that edition's tag), so it covers the
 //     whole batch: rules gained, lost or re-leveled make at least a minor (AGENTS.md, "Version numbers"), and every ID
-//     retired since is listed with this version. The number must be above the base's and every tag on origin.
+//     retired since is listed with this version. The number must be above the base's and every tag on origin, and
+//     pins.json must pin it (scripts/pin-references.mjs).
 // Either way CHANGELOG.md's newest numbered section is package.json's version and date, and a change adds at most one.
 // Tags are CI's: nothing else creates or pushes them.
 import { execFileSync } from "node:child_process";
@@ -127,6 +128,11 @@ if (!release) {
     errors.push(`version ${version} must be above the newest tag on origin, v${newest}; another change took that number, so fetch, rebase and renumber`);
   }
   if (added.length === 1 && added[0] !== version) errors.push(`the edition added is ${added[0]}, but package.json says ${version}`);
+  let pinned = null;
+  try {
+    pinned = JSON.parse(readFileSync("pins.json", "utf8")).edition;
+  } catch {}
+  if (pinned !== version) errors.push(`pins.json pins ${pinned ?? "nothing"}; a release pins its References: run node scripts/pin-references.mjs`);
 }
 
 if (errors.length) {

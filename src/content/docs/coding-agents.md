@@ -33,7 +33,8 @@ and its pages and rules are the same.
 ## What a rule looks like
 
 Every rule is one testable statement with a permanent ID. In `llms-full.txt` it is the same list item as on its
-page: the ID and level in bold, the statement, then *Why*, *Check* and *Reference* lines. In `rules.json` the same
+page: the ID and level in bold, the statement, then *Why*, *Check*, sometimes *Command*, and *Reference* lines. In
+`rules.json` the same
 rule is:
 
 ```json
@@ -49,7 +50,8 @@ rule is:
   "why": "on Windows a Popup does not reliably take OS keyboard focus, and the whole app can stop receiving keystrokes.",
   "check": {
     "kind": "code",
-    "text": "the palette and every picker add their node to the root `StackPane`; none creates a `Popup`."
+    "text": "the palette and every picker add their node to the root `StackPane`; none creates a `Popup`.",
+    "command": null
   },
   "reference": "Editora `ui/CommandPalette.java`."
 }
@@ -63,7 +65,12 @@ rule is:
   MAY (worth copying when the app grows into it).
 - **`check.kind`** says how the rule is verified: `code` by reading or searching the source, `test` by a named test
   the build runs, `by hand` in the running app, which source alone can't settle.
-- **`reference`** names the Editora file, or the other app, that does it. The agent copies from there.
+- **`check.command`**, on some `code` checks, is one POSIX shell command that settles the check: run it with `sh -c`
+  from the app's repository root. It exits 0 when the check passes, and prints what it found when it fails, which is
+  the evidence. OS-02's counts the classes that read `os.name`. It is `null` where reading the code takes judgment.
+- **`reference`** names the Editora file, or the other app, that does it. The agent copies from there. In a released
+  edition, its links point at the commit each app was at when the edition came out, so they show the code the rule
+  was checked against; `blob/master` in a page's source becomes that commit in what the edition serves.
 - **`why`** is `null` when the rule has no reason worth stating.
 - **`appliesTo`** is `null` for a rule that covers every app, unless its own text says otherwise. Otherwise it is the
   **Applies to** line its page or section opens with: "an app whose work goes on without its window" for every
@@ -123,8 +130,9 @@ ships it) or point the agent at it. `llms.txt` and `llms-full.txt` carry it in s
 1. Find the edition the app implements: `pauta.version` in its `pom.xml`, the About window, or its README. Read
    that edition's rules. If the app names none, use the newest. A 1.x edition has no `rules.json`: audit against
    2.0.0 or newer, and report what the app's own edition didn't ask for as upgrade work.
-2. Take each rule in turn. A *code* check: read or search the source as it says. A *test* check: find the named
-   test, or the app's equivalent, and confirm the build runs it. A *by hand* check: report it as manual.
+2. Take each rule in turn. A *code* check: run its `check.command` when it has one, else read or search the source as
+   it says. A *test* check: find the named test, or the app's equivalent, and confirm the build runs it. A *by hand*
+   check: report it as manual.
 3. A rule applies to every app unless it is limited: its text names the apps it covers ("An app with user
    documents…"), its page or section opens with an **Applies to** line, or it details a limited rule
    ([PAUTA-05](../conformance/#pauta-05)). An app outside a limited rule gets `limited`, and needs no exception.

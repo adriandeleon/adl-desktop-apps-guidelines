@@ -7,6 +7,7 @@ description: "JDK, JavaFX, AtlantaFX, NullAway, Maven Wrapper, tests and coverag
   ceiling: build and bundle a current JDK.
   - *Check (code):* `pom.xml` sets `maven.compiler.release` to 25 and the enforcer's `requireJavaVersion` to the
     open-ended range `[25,)`.
+  - *Command:* `grep -q '<maven.compiler.release>25</maven.compiler.release>' pom.xml && grep -q '<version>\[25,)</version>' pom.xml || { grep -nE 'maven.compiler.release|<version>\[25' pom.xml; false; }`
   - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml).
 - **PLAT-02 · MUST.** The installers carry a jlinked runtime; users never install Java.
   - *Check (code):* the `dist` profile's jpackage step builds a jlinked app image (`jLinkOptions`) and wraps the
@@ -14,6 +15,7 @@ description: "JDK, JavaFX, AtlantaFX, NullAway, Maven Wrapper, tests and coverag
   - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml) (`dist` profile).
 - **PLAT-03 · MUST.** The app builds on **JavaFX 27 or newer**.
   - *Check (code):* `pom.xml` sets `javafx.version` to 27 or later.
+  - *Command:* `v=$(sed -n 's:.*<javafx.version>\([0-9]*\).*:\1:p' pom.xml | head -n 1); echo "javafx.version ${v:-none}"; [ "${v:-0}" -ge 27 ]`
   - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml).
 - **PLAT-04 · MUST.** The app is one named JPMS module, `com.<app>`, whose `module-info.java` opens only what
   reflection, FXML and Jackson need.
@@ -34,15 +36,18 @@ description: "JDK, JavaFX, AtlantaFX, NullAway, Maven Wrapper, tests and coverag
 - **PLAT-08 · MUST.** The build is **Maven** with the **Maven Wrapper** committed (`mvnw`, `mvnw.cmd`,
   `.mvn/wrapper/`), so `./mvnw` works on a clean machine.
   - *Check (code):* `mvnw`, `mvnw.cmd` and `.mvn/wrapper/maven-wrapper.properties` are in the repository.
+  - *Command:* `! for f in mvnw mvnw.cmd .mvn/wrapper/maven-wrapper.properties; do test -f "$f" || echo "missing $f"; done | grep .`
   - *Reference:* Editora [`mvnw`](https://github.com/adriandeleon/Editora/blob/master/mvnw), [`.mvn/wrapper/`](https://github.com/adriandeleon/Editora/tree/master/.mvn/wrapper).
 - **PLAT-09 · MUST.** Nullness is declared with **JSpecify** and checked by **NullAway** on **Error Prone** at
   compile time. Every package is `@NullMarked` in its own `package-info.java`.
   - *Check (code):* the compiler arguments include `-Xep:NullAway:ERROR`; every source package has a
     `package-info.java` with `@NullMarked`.
+  - *Command:* `{ grep -q 'NullAway:ERROR' pom.xml || { echo 'no -Xep:NullAway:ERROR in pom.xml'; false; }; } && ! find src/main/java -name '*.java' ! -name package-info.java ! -name module-info.java -exec dirname {} \; | sort -u | while read -r d; do grep -qs '@NullMarked' "$d/package-info.java" || echo "not @NullMarked: $d"; done | grep .`
   - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml), [`docs/conventions.md#null-annotations-jspecify-checked-by-nullaway`](https://github.com/adriandeleon/Editora/blob/master/docs/conventions.md#null-annotations-jspecify-checked-by-nullaway).
 - **PLAT-10 · MUST.** Code is formatted by **Spotless** with Palantir Java Format, and CI fails an unformatted
   change.
   - *Check (code):* the spotless plugin configures `palantirJavaFormat`, and a CI job runs `spotless:check`.
+  - *Command:* `{ grep -q palantirJavaFormat pom.xml || { echo 'pom.xml configures no palantirJavaFormat'; false; }; } && { grep -rq 'spotless:check' .github/workflows || { echo 'no workflow runs spotless:check'; false; }; }`
   - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml) (spotless plugin), [`.github/workflows/ci.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/ci.yml) (*Format*).
 - **PLAT-11 · MUST.** Tests run on **JUnit** (Jupiter, 5 or newer) and **TestFX** over JavaFX's built-in
   **Headless** glass platform (`-Dglass.platform=Headless`), so FX tests need no display, no xvfb and no Monocle.
@@ -57,6 +62,7 @@ description: "JDK, JavaFX, AtlantaFX, NullAway, Maven Wrapper, tests and coverag
 - **PLAT-13 · SHOULD.** The app logs through `java.util.logging` and no other logging API. The Debug Log captures
   it: [DIAG-02](../diagnostics/#diag-02).
   - *Check (code):* the app's own code imports no logging API other than `java.util.logging`.
+  - *Command:* `! grep -rnE '^import (static )?(org\.slf4j|org\.apache\.logging|org\.apache\.commons\.logging|ch\.qos\.logback|org\.jboss\.logging|org\.tinylog)\.' src/main/java`
   - *Reference:* Editora [`ui/DebugLog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/DebugLog.java).
 - **PLAT-14 · SHOULD.** Config files are JSON, read and written by Jackson as plain classes (POJOs). Their schema
   versions and migrations are [SET-09](../settings/#set-09).

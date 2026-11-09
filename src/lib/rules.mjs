@@ -1,5 +1,6 @@
 // The guide's rules, read from the page Markdown (AGENTS.md, "Rule IDs"). A rule is a list item that opens with
-// "**KBD-07 · MUST.**", then sub-items "*Why:*", "*Check (code|test|by hand):*" and "*Reference:*". Shared by the
+// "**KBD-07 · MUST.**", then sub-items "*Why:*", "*Check (code|test|by hand):*", "*Command:*" (optional, a code check
+// only: one shell command in backticks that exits 0 when the check passes) and "*Reference:*". Shared by the
 // rules.json, llms.txt and llms-full.txt endpoints (src/pages/) and scripts/check-rules.mjs, which fails the build
 // on a malformed rule.
 import { readFileSync } from "node:fs";
@@ -7,7 +8,9 @@ import { join } from "node:path";
 
 const HEAD = /^- \*\*([A-Z]{2,6})-(\d{2,3}) · (MUST|SHOULD|MAY)\.\*\*\s*(.*)$/;
 const LOOSE = /\*\*[A-Z]{2,6}-\d/;
-const SUB = /^ {2}- \*(Why|Check \((code|test|by hand)\)|Reference):\*\s*(.*)$/;
+const SUB = /^ {2}- \*(Why|Check \((code|test|by hand)\)|Command|Reference):\*\s*(.*)$/;
+// A Command is one code span, in single or double backticks (double when the command itself has a backtick).
+const COMMAND = /^(`{1,2}) ?(.+?) ?\1$/;
 // "**Applies to:** an app with a tray icon." limits every rule after it: at the top of a page, before its first heading
 // and rule, it holds for the page; right under a "## " heading, for that section. A rule with neither applies to every
 // app unless its own text names the apps it covers (Conformance, PAUTA-05).
@@ -69,7 +72,7 @@ export function parsePage(slug, text) {
     const block = [line];
     while (i + 1 < lines.length && lines[i + 1].startsWith("  ")) block.push(lines[++i]);
     const id = `${m[1]}-${m[2]}`;
-    const rule = { id, prefix: m[1], number: Number(m[2]), level: m[3], section, appliesTo: sectionAppliesTo ?? appliesTo, text: "", why: null, check: null, reference: null, markdown: block.join("\n") };
+    const rule = { id, prefix: m[1], number: Number(m[2]), level: m[3], section, appliesTo: sectionAppliesTo ?? appliesTo, text: "", why: null, check: null, command: null, reference: null, markdown: block.join("\n") };
     const statement = [m[4]];
     let current = null; // the sub-item being continued
     for (const l of block.slice(1)) {
@@ -78,6 +81,7 @@ export function parsePage(slug, text) {
         current = { label: s[1], kind: s[2], lines: [s[3]] };
         if (s[1] === "Why") rule.why !== null ? problems.push(`${slug}: ${id} has two Why lines`) : (rule.why = current);
         else if (s[1] === "Reference") rule.reference !== null ? problems.push(`${slug}: ${id} has two Reference lines`) : (rule.reference = current);
+        else if (s[1] === "Command") rule.command !== null ? problems.push(`${slug}: ${id} has two Command lines`) : (rule.command = current);
         else rule.check !== null ? problems.push(`${slug}: ${id} has two Check lines`) : (rule.check = current);
       } else if (/^ {2}- /.test(l)) {
         problems.push(`${slug}: ${id} has a sub-item that is not Why, Check or Reference: ${l.trim().slice(0, 50)}`);
@@ -92,6 +96,12 @@ export function parsePage(slug, text) {
     else problems.push(`${slug}: ${id} has no Reference line`);
     if (rule.check) rule.check = { kind: rule.check.kind, text: join_(rule.check.lines) };
     else problems.push(`${slug}: ${id} has no Check line`);
+    if (rule.command) {
+      const c = join_(rule.command.lines).match(COMMAND);
+      if (!c) problems.push(`${slug}: ${id}'s Command is not one code span: ${join_(rule.command.lines).slice(0, 50)}`);
+      else if (rule.check?.kind !== "code") problems.push(`${slug}: ${id} has a Command, but only a Check (code) takes one`);
+      rule.command = c ? c[2] : null;
+    }
     rules.push(rule);
   }
   const prefixes = [...new Set(rules.map((r) => r.prefix))];

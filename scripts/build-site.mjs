@@ -9,10 +9,12 @@
 //   dist/downloads/, CNAME, 404.html, versions.js   copies of the latest edition's: GitHub Pages reads them at the root
 //   dist/llms.txt, llms-full.txt, rules.json   the latest edition's, where coding agents look for them (src/lib/llms.mjs)
 //   dist/robots.txt   written here: everything allowed, latest/'s sitemap
+// In latest/ and <version>/, links into the apps' code point at the commits pins.json recorded for this edition.
 import { spawnSync } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { compareVersions, isVersion, parseEditions, released } from "../src/lib/editions.mjs";
+import { pin, pinsFor } from "../src/lib/pins.mjs";
 
 process.chdir(new URL("..", import.meta.url).pathname);
 const pkg = JSON.parse(readFileSync("package.json", "utf8"));
@@ -44,6 +46,27 @@ rmSync("dist", { recursive: true, force: true });
 for (const edition of ["latest", version]) {
   step(`astro build → dist/${edition}/`);
   run("npx", ["astro", "build"], { env: { ...process.env, PAUTA_PATH: edition } });
+}
+
+// 1b. The References this edition links, pinned to the commits pins.json recorded at its release (src/lib/pins.mjs).
+const pins = pinsFor(version);
+step(pins ? `references pinned to pins.json (${version})` : "references left on their branches: pins.json is for another edition");
+if (pins) {
+  const walk = (dir) =>
+    readdirSync(dir).flatMap((name) => {
+      const path = join(dir, name);
+      return statSync(path).isDirectory() ? walk(path) : /\.(html|md|txt|json)$/.test(name) ? [path] : [];
+    });
+  let changed = 0;
+  for (const file of ["latest", version].flatMap((e) => walk(join("dist", e)))) {
+    const text = readFileSync(file, "utf8");
+    const pinned = pin(text, pins);
+    if (pinned !== text) {
+      writeFileSync(file, pinned);
+      changed++;
+    }
+  }
+  console.log(`${changed} files`);
 }
 
 // 2. The earlier editions, archived on the `versions` branch: origin's if reachable, else a local one. In CI (where

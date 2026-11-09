@@ -61,6 +61,7 @@ Everything else, and in particular:
     class, every difference can be found with one search, and a test can run the app as any OS
     ([OS-03](#os-03)).
   - *Check (code):* `grep -rln '"os.name"' src/main/java` lists one file.
+  - *Command:* `n=$(grep -rl '"os.name"' src/main/java | wc -l); [ "$n" -le 1 ] || { echo "$n files read os.name:"; grep -rl '"os.name"' src/main/java; false; }`
   - *Reference:* no app yet. Every app reads `os.name` in several classes, Editora in about fifty; Editora's
     [`process/DesktopActions.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/process/DesktopActions.java) has the `Os` enum to start from.
 - **OS-03 · SHOULD.** Tests can run as any OS: the `Os` class takes an override, and one test asserts that the

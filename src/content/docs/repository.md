@@ -19,6 +19,7 @@ filled in for a placeholder app, `ExampleApp`. `scripts/rename.sh <AppName> <pac
   - *Reference:* Editora [`CHANGELOG.md`](https://github.com/adriandeleon/Editora/blob/master/CHANGELOG.md).
 - **REPO-03 · MUST.** `LICENSE` is MIT, "Copyright (c) 2026 Adrián Arturo De León Saldivar".
   - *Check (code):* `LICENSE` opens with `MIT License` and that copyright line.
+  - *Command:* `head -n 1 LICENSE | grep -qx 'MIT License' && grep -qx 'Copyright (c) 2026 Adrián Arturo De León Saldivar' LICENSE || { head -n 3 LICENSE; false; }`
   - *Reference:* Editora [`LICENSE`](https://github.com/adriandeleon/Editora/blob/master/LICENSE).
 - **REPO-04 · MUST.** `NOTICE` gives the app name, the copyright, "licensed under the MIT License", then every
   bundled third-party component with its license (Inter is OFL, AtlantaFX is MIT, OpenJFX is GPLv2+CPE…). It

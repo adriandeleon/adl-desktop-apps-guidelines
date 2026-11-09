@@ -8,6 +8,12 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 
 ## [Unreleased]
 
+### Added
+
+- **PAUTA-17 · MUST.** An app's `AGENTS.md` has a `## Pauta` section that names the edition `pauta.version` names and
+  links that edition's `llms.txt` and `llms-full.txt`, never `latest/`, so its coding agent reads the rules the app
+  is built to. The Coding agents page has the block to copy, and the checklist the line.
+
 ### Changed
 
 - **Editions come out in batches.** Changes to the guidance now collect under *Unreleased* and are published together

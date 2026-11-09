@@ -77,9 +77,8 @@ An app is built to one edition, the one `pauta.version` in its `pom.xml` names (
 [About window](../templates/about/)). Its agent should read that edition, not `latest/`: a newer edition may hold
 MUSTs the app doesn't meet yet, and an agent that reads them will "fix" what nobody asked it to.
 
-Say so in the app's `AGENTS.md` ([Repository documents](../repository/)), next to the line that names the edition.
-The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`AGENTS.md`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/AGENTS.md) already names its edition in its first lines;
-add the addresses:
+Say so in a `## Pauta` section of the app's `AGENTS.md` ([PAUTA-17](../conformance/#pauta-17)). The
+[app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`AGENTS.md`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/AGENTS.md) has one; an app made before it adds this:
 
 ```markdown
 ## Pauta

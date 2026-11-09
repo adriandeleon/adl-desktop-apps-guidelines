@@ -27,6 +27,12 @@ Torrenta ([`AboutDialog`](https://github.com/adriandeleon/torrenta/blob/master/s
   check switched off, it says it has not checked, never "up to date".
   - *Check (code):* the status falls back to the not-checked text when the checker has no result.
   - *Reference:* Editora [`AboutDialog`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/AboutDialog.java) (`about.notChecked`); the states below.
+- **ABOUT-10 · SHOULD.** An available update stands out: "Update available" is bold in `-state-amber`, a color no
+  link or label in About uses, while the links stay `-state-accent`, "up to date" is `-state-green`, a failed check
+  `-state-red` and the last-checked line muted.
+  - *Why:* in the accent every link wears, the one line that asks for action reads as one more link.
+  - *Check (code):* the update-available style (`.about-update`) uses `-state-amber`, and no other About style does.
+  - *Reference:* no app yet. Editora's `.about-update` in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) is `-state-accent`, the links' color.
 
 ## Anatomy
 
@@ -34,7 +40,7 @@ Torrenta ([`AboutDialog`](https://github.com/adriandeleon/torrenta/blob/master/s
 <div class="m-card m-dialog" role="img" aria-label="Mockup of the About window">
 <div class="titlebar">About Editora</div>
 <div class="m-about-head"><img src="../../icons/editora.svg" alt="" /><div><div class="m-row"><span class="m-about-name">Editora</span><span class="pin">1</span></div><div class="m-about-version">Version 0.27.0 <span class="pin">2</span></div><div class="m-about-tagline">A keyboard-driven, cross-platform programmer's text editor.</div></div></div>
-<div><div class="m-row"><span class="m-link" style="font-weight:700">Update available: 0.28.0</span><span class="pin">3</span></div><div class="m-subtle" style="font-size:12px">Last checked 5 minutes ago. <span class="m-link">Check now</span></div></div>
+<div><div class="m-row"><span class="m-link" style="font-weight:700;color:var(--m-amber)">Update available: 0.28.0</span><span class="pin">3</span></div><div class="m-subtle" style="font-size:12px">Last checked 5 minutes ago. <span class="m-link">Check now</span></div></div>
 <div class="m-muted">© 2026 Adrián Arturo De León Saldivar <span class="pin">4</span></div>
 <div style="display:flex;flex-direction:column;gap:2px"><span class="m-row"><span class="m-link">MIT License</span><span class="pin">5</span></span><span class="m-link">Homepage</span><span class="m-link">Source code and releases</span><span class="m-link">Built to Pauta 4.2.0</span><span class="m-link">Pauta conformance: Core</span><span class="m-link">Settings: ~/.editora/settings.json</span></div>
 <div class="m-row" style="align-items:flex-start"><div class="m-env">Editora 0.27.0 (Built 2026-11-05 17:02:11 UTC)
@@ -102,7 +108,7 @@ conformance.
 
 <div class="mock-stage">
 <div class="m-states">
-<div class="m-state"><div class="cap">Newer release</div><span class="m-link" style="font-weight:700">Update available: 0.28.0</span><div class="m-subtle">Last checked 5 minutes ago. <span class="m-link">Check now</span></div></div>
+<div class="m-state"><div class="cap">Newer release</div><span class="m-link" style="font-weight:700;color:var(--m-amber)">Update available: 0.28.0</span><div class="m-subtle">Last checked 5 minutes ago. <span class="m-link">Check now</span></div></div>
 <div class="m-state"><div class="cap">Current</div><span style="color:var(--m-green)">You are up to date.</span><div class="m-subtle">Last checked 2 hours ago. <span class="m-link">Check now</span></div></div>
 <div class="m-state"><div class="cap">Never checked</div><span class="m-subtle">Not checked for updates yet.</span> <span class="m-link">Check now</span></div>
 <div class="m-state"><div class="cap">Checking</div><span class="m-subtle">Last checked 2 hours ago.</span> <span class="m-subtle">Checking…</span></div>
@@ -121,7 +127,7 @@ date": with no answer, the panel says it has not checked.
 | Layout | One column, 14 px between blocks; content padding 6 8 2 8 | `.about-content` |
 | Icon | The app icon PNG at 72 px | `icon-128.png` |
 | Name / version / tagline | 26 px bold / 14 px muted / 13 px muted | `.about-name`, `.about-version`, `.about-tagline` |
-| Update colors | Available: accent, bold. Up to date: green. Failed: red. Last checked: muted | `.about-update*` |
+| Update colors | Available: amber, bold ([ABOUT-10](#about-10)). Up to date: green. Failed: red. Last checked: muted | `.about-update*` |
 | Environment | JetBrains Mono 11.5 px, muted | `.about-env` |
 | Source of the version | Maven-filtered `build-info.properties`, read by `AppInfo`: the same text as `--version` and a problem report | `AppInfo` |
 | Pauta edition | `pauta.version` in `pom.xml`, filtered into `build-info.properties`; the link opens `https://pauta-project.dev/<edition>/` | the app template's and Termina's `AppInfo.pautaUrl` |

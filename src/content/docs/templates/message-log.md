@@ -54,6 +54,17 @@ Every app keeps one, session-only and bounded, newest first, with Esc to close a
 | Lifetime | This session only, in memory. Not written to disk: the Debug Log is the persistent record | `MessageLog` |
 | Blank messages | Not recorded (a blank message only clears the echo line) | `MessageLog.add` |
 
+- **MLOG-08 · SHOULD.** The Message Log is a card in the window's in-scene overlay host, anchored just above the status
+  bar's echo area, never a separate window: 773 px wide, its list 336 px high, at the default zoom, holding the
+  newest 200 messages of the session (the cap [DIAG-01](../../diagnostics/#diag-01) asks for).
+  - *Why:* the log answers "what just happened?" next to the line that said it; a separate window, or another size
+    and cap, makes the same log look and behave differently from app to app.
+  - *Check (code):* the log adds its node to the overlay host (no `Stage`), with width 773, list height 336 and a
+    cap of 200.
+  - *Reference:* Editora [`ui/MessageLogPopup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java) (`WIDTH`, `LIST_HEIGHT`) and
+    [`ui/MessageLog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLog.java) (`MAX_ENTRIES`); the app template's [`ui/MessageLogView.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MessageLogView.java).
+    Torrenta's card is 640 × 300, and Termina's log is a separate window that keeps 500 messages.
+
 ## Behavior
 
 - **MLOG-02 · SHOULD.** A click on the unread-error count opens the log too, and so does the `view.messageLog`

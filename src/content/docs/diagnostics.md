@@ -24,14 +24,23 @@ description: "Message Log, Debug Log, update notification, Report a Problem, Doc
     shows no dialog.
   - *Reference:* Editora [`DebugLog.install()`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/DebugLog.java). Editora, Torrenta and Termina log the exception but do not yet post
     an echo message.
-- **DIAG-05 · MUST.** The **update notification** reads GitHub `/releases/latest` once per app session (not per
-  window), at most once a day, a few seconds after the first frame. A newer version shows a status-bar notice and a
-  line in About; "Check for Updates" runs it by hand; Settings has an off switch. It never downloads or installs
-  by itself.
+- **DIAG-05 · MUST.** The **update check** reads GitHub `/releases/latest` once per app session (not per window), at
+  most once a day, a few seconds after the first frame ([PERF-15](../performance/#perf-15)). It never downloads or
+  installs anything by itself.
   - *Check (test):* a test waits for the first paint and the delay, then checks once a session and not when off or
     not due.
   - *Reference:* Editora [`update/UpdateCheck.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/update/UpdateCheck.java), [`ui/UpdateCheckScheduler.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/UpdateCheckScheduler.java) ([`UpdateCheckSchedulerTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/UpdateCheckSchedulerTest.java)),
     [`ui/UpdateCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/UpdateCoordinator.java).
+- **DIAG-09 · MUST.** When the check finds a newer version, the status bar says so, naming the version and linking
+  its release. About's line for the last check is [ABOUT-02](../templates/about/#about-02).
+  - *Check (code):* the update coordinator posts a status-bar message with the newer version and its release link.
+  - *Reference:* Editora [`ui/UpdateCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/UpdateCoordinator.java).
+- **DIAG-10 · MUST.** **Check for Updates** runs the check by hand, as a command in the palette and the Help menu, and
+  Settings has an off switch for the automatic check.
+  - *Check (code):* the command (`help.checkForUpdates` in Editora) is registered, and the scheduler skips the
+    automatic check while the setting is off.
+  - *Reference:* Editora [`ui/MenuBarModel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java) (`help.checkForUpdates`),
+    [`ui/SettingsWindow.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsWindow.java) (`settings.checkForUpdates`), [`ui/UpdateCheckScheduler.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/UpdateCheckScheduler.java).
 - **DIAG-06 · MUST.** Help → **Report a Problem** builds a report (version, OS, runtime, settings summary, recent
   Debug Log), **redacts** it (home paths, user names, e-mail addresses, credentials, tokens), shows it editable,
   copies it to the clipboard and opens a prefilled GitHub issue from `bug_report.yml`. Over about 7,500 characters

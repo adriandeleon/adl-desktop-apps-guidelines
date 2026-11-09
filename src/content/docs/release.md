@@ -143,9 +143,9 @@ The certificate renews before 2027-11-30; the Apple membership before 2027-10-31
     shards), [`scripts/ci/ReportFlakes.java`](https://github.com/adriandeleon/Editora/blob/master/scripts/ci/ReportFlakes.java), and the "Check that the Full tests
     passed on this commit" step in [`release.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/release.yml).
 - **REL-21 · MUST.** `release.yml` runs on a version tag (`v*`, or better the version-shaped
-  `v[0-9]+.[0-9]+.[0-9]+*`, which a tag like `vendor-import` doesn't match) that matches the pom version, with
-  `workflow_dispatch` as a dry run. It runs the five-target matrix, the signing jobs, attestations, the release-asset check, JReleaser, then
-  the bump to the next snapshot. A dry run builds and signs and publishes nothing.
+  `v[0-9]+.[0-9]+.[0-9]+*`, which a tag like `vendor-import` doesn't match), with `workflow_dispatch` as a dry run
+  that builds and signs and publishes nothing. The tag matching the pom is [REL-05](#rel-05), the release-asset check
+  [REL-07](#rel-07), and the bump to the next snapshot [REL-06](#rel-06).
   - *Check (code):* `release.yml` triggers on the tag pattern and `workflow_dispatch`, and a dispatch runs
     JReleaser with `--dry-run`.
   - *Reference:* Editora [`release.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/release.yml).

@@ -102,12 +102,11 @@ keymap, a theme, a language), not when the developer could not decide.
   password.
   - *Check (code):* the credential is a field of a runtime object, absent from every config class.
   - *Reference:* nux's UPS login ([`app/CommandRunner.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/app/CommandRunner.java)).
-- **SET-15 · MUST.** A secret in the wrong place is refused. A repository URL with a password or token in it is
-  refused, with the fix ([Settings Sync](../templates/settings-sync/)); a problem report redacts tokens, credentials,
-  e-mail addresses, user names and home paths before anyone sees it ([Diagnostics](../diagnostics/)).
+- **SET-15 · MUST.** A repository URL with a password or token in it is refused, with the fix
+  ([Settings Sync](../templates/settings-sync/)). A problem report's redaction is [DIAG-06](../diagnostics/#diag-06).
   - *Check (by hand):* paste `https://user:token@host/repo.git` as the sync repository.
   - *Reference:* Editora [`ui/SettingsSyncPage.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsSyncPage.java) (`settings.sync.repo.credentials`), [`sync/SyncEngine.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/sync/SyncEngine.java)
-    (`hasCredentials`, checked again at sync time), [`report/Redactor.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/report/Redactor.java).
+    (`hasCredentials`, checked again at sync time).
 - **SET-16 · MUST.** An option that weakens security has no UI: it exists only as a key in the config file, so
   nobody turns it on by clicking.
   - *Check (code):* no Settings row or command writes such a key.

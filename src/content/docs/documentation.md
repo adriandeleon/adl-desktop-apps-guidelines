@@ -54,11 +54,11 @@ repository's [`docs/README.md`](https://github.com/adriandeleon/Editora/blob/mas
     [`MainController`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java) holding most), [`GenRoadmap.java`](https://github.com/adriandeleon/editora-website/blob/master/scripts/GenRoadmap.java), [`GenFeatures.java`](https://github.com/adriandeleon/editora-website/blob/master/scripts/GenFeatures.java); [`scripts/check-doc-commands.mjs`](https://github.com/adriandeleon/editora-website/blob/master/scripts/check-doc-commands.mjs)
     (`npm run check:docs`).
 - **DOCS-05 · MUST.** Release notes are written for users. Each `CHANGELOG.md` entry opens with a bold one-line
-  summary ([Repository documents](../repository/)); the Welcome page's *What's New* opens this build's release,
-  and the website's What's new is generated from the same file. The GitHub release carrying the section is
+  summary ([Repository documents](../repository/)), and in an app with a Welcome page its *What's New* opens this
+  build's release. The website's What's new is [DOCS-04](#docs-04); the GitHub release carrying the section is
   [REL-04](../release/#rel-04).
-  - *Check (code):* the Welcome page's *What's New* opens `AppInfo.releaseNotesUrl()`; the website's What's new
-    is generated from `CHANGELOG.md`.
+  - *Check (code):* `CHANGELOG.md`'s entries open with a bold summary; a Welcome page's *What's New* opens
+    `AppInfo.releaseNotesUrl()`.
   - *Reference:* Editora [`AppInfo.releaseNotesUrl()`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/AppInfo.java), [`WelcomePane`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WelcomePane.java) (`welcome.whatsNew`); editora-website
     [`GenRoadmap.java`](https://github.com/adriandeleon/editora-website/blob/master/scripts/GenRoadmap.java).
 
@@ -68,9 +68,10 @@ The documentation is one command away, so nobody has to know the website's addre
 
 - **DOCS-06 · MUST.** **Help → Documentation** opens the user docs in the browser. It is a command
   (`help.documentation`), so it is in the palette, bindable and in the menu through the registry like every other
-  row; it is the first row of the Help menu after the Command Palette, and the Welcome page's Help row repeats it.
-  - *Check (code):* `help.documentation` is registered, follows `palette.show` in the Help `MenuSpec`, and the
-    Welcome page's Help row runs it through the registry.
+  row, and an app with a Welcome page repeats it in the Help row. Its place in the Help menu is
+  [DOCS-07](#docs-07).
+  - *Check (code):* `help.documentation` is registered and in the Help `MenuSpec`, and a Welcome page's Help row
+    runs it through the registry.
   - *Reference:* Editora [`WindowCommandRegistrar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowCommandRegistrar.java) (`help.documentation` → [`MainController.openDocumentation()`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java)),
     [`MenuBarModel`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java) (`menubar.help`), [`WelcomePane`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WelcomePane.java) (`welcome.documentation`).
 - **DOCS-07 · SHOULD.** The Help menu runs in this order: Command Palette · Documentation · Check for Updates ·
@@ -110,18 +111,18 @@ The documentation is one command away, so nobody has to know the website's addre
 ## Developer documentation
 
 - **DOCS-12 · MUST.** `docs/` has an index. `docs/README.md` says who the folder is for (contributors; user docs
-  live on the website), states that the code wins when the two disagree, and lists every guide with one line. The
+  live on the website) and lists every guide with one line; that the code wins is [DOCS-17](#docs-17). The
   set is the one [Repository documents](../repository/) names: `architecture.md`, `conventions.md`, `testing.md`,
   `gotchas.md`, `release.md`, `building-and-packaging.md` and `decisions/`.
-  - *Check (code):* `docs/README.md` exists, says those two things, and links each guide in `docs/`.
+  - *Check (code):* `docs/README.md` exists, says who it is for, and links each guide in `docs/`.
   - *Reference:* Editora's [`docs/README.md`](https://github.com/adriandeleon/Editora/blob/master/docs/README.md); the template's [`docs/`](https://github.com/adriandeleon/adl-desktop-app-template/tree/master/docs).
 - **DOCS-13 · SHOULD.** Every choice a newcomer would question has a decision record: a fork, a rejected
   dependency, a storage format, an escape hatch. It is one numbered Markdown file, `docs/decisions/NNNN-slug.md`,
   with the context, the decision and what it costs.
   - *Check (code):* `docs/decisions/` holds `NNNN-slug.md` files, each with context, decision and consequences.
   - *Reference:* Editora's [`docs/decisions/`](https://github.com/adriandeleon/Editora/tree/master/docs/decisions) (18 records, from [`0001-richtextfx-fork.md`](https://github.com/adriandeleon/Editora/blob/master/docs/decisions/0001-richtextfx-fork.md)).
-- **DOCS-14 · MUST.** Three files have three jobs. `AGENTS.md` is the operational guide, kept short (commands,
-  worktree-per-task, the change checklist). `CONTRIBUTING.md` is the short version for a person, pointing into
+- **DOCS-14 · MUST.** Three files have three jobs. `AGENTS.md` is the operational guide, kept short (what it holds
+  is [REPO-05](../repository/#repo-05)). `CONTRIBUTING.md` is the short version for a person, pointing into
   `docs/`. `docs/` holds the durable explanations. Exhaustive history goes to `docs/reference/`, not into any of
   the three.
   - *Check (code):* `AGENTS.md` and `CONTRIBUTING.md` link into `docs/`; long catalogs sit under
@@ -147,7 +148,8 @@ The documentation is one command away, so nobody has to know the website's addre
 - **DOCS-18 · SHOULD.** Screenshots are retaken, not described. The capture hook renders the real window at 2×
   after any UI change, for the README (its hero in light and dark), the website and bug reports.
   - *Why:* a stale screenshot claims what is not true.
-  - *Check (code):* the app has a capture hook or a headless harness that writes the real window to a PNG.
+  - *Check (by hand):* the README's hero and the website's screenshots show the current UI; they are rendered with
+    the capture hook [QUAL-09](../quality/#qual-09) asks for, not drawn or described.
   - *Reference:* `DevCapture` ([Shared features](../family/shared-features/)); Editora's headless harness.
 
 The README's own shape, about 200 lines that leave the detail to the website's docs, is

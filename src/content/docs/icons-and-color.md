@@ -110,10 +110,12 @@ pill, a row tint and a hover state come from the same place. `.state-pill` is th
   - *Check (code):* the `-state-*` tokens are declared only in the `.root` block at the top of `app.css`, each
     chaining to a `-color-*` role or a `ladder()`.
   - *Reference:* Editora [`styles/app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) (`.root`).
-- **ICON-08 · MUST.** No fixed hex in a component rule.
+- **ICON-08 · MUST.** App stylesheets take their colors from AtlantaFX `-color-*` tokens, or from state tokens built
+  on them; no component rule carries a fixed hex.
   - *Why:* a hex suits one theme; the roles track every theme for free.
-  - *Check (code):* outside the `.root` token block, `app.css` holds no `#` hex. A test fails a severity or debug
-    color that is not a state token.
+  - *Check (code):* `grep -nE '#[0-9a-fA-F]{3,8}\b' app.css` finds hexes only where a token is defined (the `.root`
+    token block, a `ladder()` of the ground, a scoped `-color-*` block), not in a component's `-fx-*-color` or
+    `-fx-fill`. A test fails a severity or debug color that is not a state token.
   - *Reference:* Editora [`StyleContrastTest.severityAndDebugColoursComeFromTheStateTokens`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java). Editora doesn't yet
     pass the whole check: `.breakpoint-marker`, `.exec-arrow`, `.view-mode-bar`, `.recent-remove`,
     `.personal-note-tooltip-content`, the fold-gutter markers and the default editor and Markdown preview palettes
@@ -142,8 +144,8 @@ pill, a row tint and a hover state come from the same place. `.state-pill` is th
     overlay grounds.
   - *Reference:* Editora [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) (*Keyboard focus*),
     [`StyleContrastTest.theFocusRingIsAtLeastThreeToOneOnEverySurface`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java).
-- **ICON-13 · SHOULD.** A brand hue the theme has no role for (periwinkle, olive, violet) is a `ladder()` of
-  `-color-bg-default`, never a fixed pair.
+- **ICON-13 · SHOULD.** A brand hue the theme has no role for (olive, violet) is a `ladder()` of
+  `-color-bg-default`, never a fixed pair. Brace, the periwinkle, is [ICON-06](#icon-06).
   - *Why:* the old fixed light hexes read at 3.2:1 on Editora Dark.
   - *Check (test):* a contrast test resolves each ladder on every bundled theme's ground.
   - *Reference:* Editora [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) (`-state-olive`, `-state-violet`, `-state-key`),

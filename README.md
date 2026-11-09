@@ -80,7 +80,8 @@ something does, CI still publishes the current edition from its release commit i
 earlier ones from the `versions` branch, where CI archives each edition it deploys, and CI tags each `v<version>`.
 While nothing waits under *Unreleased*, a push that changes only how the site looks (styles, scripts, a typo fixed
 with an `Edition: none` trailer) deploys the current edition again and re-archives its folder: the current edition's
-pages can change in form, never in their rules, and an older edition's folder never changes. On
+pages can change in form, never in their rules, and an older edition's folder never changes on the `versions` branch. The site serves the PDF of the two newest
+editions only; an older edition's overview links its PDF on that branch on GitHub. On
 every pull request `scripts/check-edition.mjs` checks the changelog and, for a release, its number.
 
 ## License

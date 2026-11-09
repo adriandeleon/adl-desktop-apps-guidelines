@@ -148,7 +148,8 @@ if (!release) {
   }
 } else {
   if (cmp(version, baseVersion) <= 0) errors.push(`version ${version} must be above ${base}'s ${baseVersion}`);
-  if (newest && cmp(version, newest) <= 0 && !(tag && tagCommit(version) === git("rev-parse", "HEAD"))) {
+  // A tag at this very commit is this release, checked again (a re-run, or a deploy published again).
+  if (newest && cmp(version, newest) <= 0 && tagCommit(version) !== git("rev-parse", "HEAD")) {
     errors.push(`version ${version} must be above the newest tag on origin, v${newest}; another change took that number, so fetch, rebase and renumber`);
   }
   if (added.length === 1 && added[0] !== version) errors.push(`the edition added is ${added[0]}, but package.json says ${version}`);

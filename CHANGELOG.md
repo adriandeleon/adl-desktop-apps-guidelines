@@ -99,6 +99,13 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 - **ACC-01**'s Check covers list cells and menu rows, and says how JavaFX names a `CustomMenuItem` row.
 - **ACC-04** names Editora's Project Map flash and checks `AnimationTimer` too.
 - MENU-09 and MENU-13 write their keys in backticks, not `<kbd>` tags, which reached the agent files as raw HTML.
+- **The family pages** catch up with Termina and Mirada, read again on 2026-11-09: both now have `CONTRIBUTING.md`,
+  `docs/README.md`, Help → Documentation, the issue form, Dependabot, Report a Problem and a single instance, and
+  Mirada has most of the rest. *Gaps per app* lists only MUSTs under that heading, with Windows signing and Settings
+  Sync among the SHOULDs below it, and adds open MUSTs it left out: Inter, a status bar and attestations where they
+  are missing, and Torrenta's coverage floor. The matrix's Inter row is no longer labeled a SHOULD (ICON-01 and
+  ICON-02 are MUSTs), and the confirm-dialog page records Mirada's and nux's dialogs. The pages are still kept by
+  hand until the apps ship `pauta.json`.
 - **References and Checks that didn't match the code:** KBD-12 named a method that doesn't exist; TABS-18's Check
   wanted a binding Editora's float command doesn't have, so it now asks for a command; TRAY-09 cited nux, which
   still writes the message into an AppleScript string on macOS; REL-15's Check now accepts a script `release.yml`

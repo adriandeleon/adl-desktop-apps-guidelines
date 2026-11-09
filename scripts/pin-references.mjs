@@ -5,7 +5,8 @@
 //
 //   node scripts/pin-references.mjs        after setting the release's version; needs network access to GitHub
 import { execFileSync } from "node:child_process";
-import { readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { linkedRepos, OWNER } from "../src/lib/pins.mjs";
 
@@ -18,6 +19,9 @@ const files = (dir) =>
     return statSync(path).isDirectory() ? files(path) : /\.(md|mdx|mjs|astro)$/.test(name) ? [path] : [];
   });
 const text = ["src", "skills"].flatMap(files).map((f) => readFileSync(f, "utf8")).join("\n");
+// Never wait on a password prompt or a hung connection: a renamed or private repository fails instead.
+const env = { ...process.env, GIT_TERMINAL_PROMPT: "0" };
+const gitIn = (args, opts = {}) => execFileSync("git", args, { encoding: "utf8", env, timeout: 120_000, ...opts }).trim();
 
 const repos = {};
 const problems = [];
@@ -26,12 +30,29 @@ for (const [repo, branches] of [...linkedRepos(text)].sort(([a], [b]) => a.local
     problems.push(`${repo} is linked on ${branches.join(" and ")}; use its default branch everywhere`);
     continue;
   }
-  const out = execFileSync("git", ["ls-remote", `https://github.com/${OWNER}/${repo}.git`, `refs/heads/${branches[0]}`], {
-    encoding: "utf8",
-  }).trim();
+  const out = gitIn(["ls-remote", `https://github.com/${OWNER}/${repo}.git`, `refs/heads/${branches[0]}`]);
   const sha = out.split(/\s+/)[0];
   if (!/^[0-9a-f]{40}$/.test(sha)) problems.push(`${repo}: no branch ${branches[0]} on GitHub`);
   else repos[repo] = sha;
+}
+// Every linked path must exist at its pinned commit, or the edition would carry a link that 404s forever. Each
+// repository's tree is fetched without file contents (a partial, shallow fetch) and listed.
+const linked = new Map();
+for (const m of text.matchAll(/github\.com\/adriandeleon\/([A-Za-z0-9_.-]+)\/(?:blob|tree)\/(?:master|main)\/([^)\s"'`#<>]+)/g)) {
+  if (!repos[m[1]]) continue;
+  linked.set(m[1], (linked.get(m[1]) ?? new Set()).add(decodeURIComponent(m[2]).replace(/\/$/, "")));
+}
+const scratch = mkdtempSync(join(tmpdir(), "pauta-pins-"));
+try {
+  for (const [repo, paths] of linked) {
+    const dir = join(scratch, repo);
+    gitIn(["init", "--quiet", "--bare", dir]);
+    gitIn(["-C", dir, "fetch", "--quiet", "--depth=1", "--filter=blob:none", `https://github.com/${OWNER}/${repo}.git`, repos[repo]]);
+    const tree = new Set(gitIn(["-C", dir, "ls-tree", "-r", "-t", "--name-only", repos[repo]], { maxBuffer: 64 << 20 }).split("\n"));
+    for (const path of paths) if (!tree.has(path)) problems.push(`${repo}: ${path} is linked but not at ${repos[repo].slice(0, 12)}`);
+  }
+} finally {
+  rmSync(scratch, { recursive: true, force: true });
 }
 if (problems.length) {
   console.error(`Not pinned:\n- ${problems.join("\n- ")}`);

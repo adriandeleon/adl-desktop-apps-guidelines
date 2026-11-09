@@ -73,10 +73,12 @@ renders as a status dot, the rest of the cell being its note; elsewhere a `—` 
 A rule is a list item that opens with its ID and level, `**KBD-07 · MUST.**`, followed by *Why*, *Check* and
 *Reference* lines; [AGENTS.md](AGENTS.md) has the details and each page's prefix.
 
-Every push to `master` builds the downloads and the site and deploys them to GitHub Pages. The site carries every
-edition: the one just built at `/latest/` and `/<version>/`, the earlier ones from the `versions` branch, where CI
-archives each edition it deploys. CI also tags each new edition `v<version>`, and on every pull request
-`scripts/check-edition.mjs` fails a change that adds more than one edition or reuses a number.
+Guidance collects under *Unreleased* in `CHANGELOG.md` and is published in batches, as editions. Every push to
+`master` is checked and built; it is deployed to GitHub Pages only when nothing waits under *Unreleased*, and while
+something does, CI still publishes the current edition from its release commit if that edition isn't live yet
+(`scripts/release-state.mjs`). The site carries every edition: the current one at `/latest/` and `/<version>/`, the
+earlier ones from the `versions` branch, where CI archives each edition it deploys, and CI tags each `v<version>`. On
+every pull request `scripts/check-edition.mjs` checks the changelog and, for a release, its number.
 
 ## License
 

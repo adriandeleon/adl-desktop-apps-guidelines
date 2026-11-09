@@ -13,6 +13,7 @@
 // that released it. "Released" is CHANGELOG.md's word: a section headed by a version and a date.
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
+import { releaseCommits } from "../src/lib/releases.mjs";
 import { compareVersions, parseEditions, released } from "../src/lib/editions.mjs";
 
 process.chdir(new URL("..", import.meta.url).pathname);
@@ -22,22 +23,6 @@ const current = JSON.parse(readFileSync("package.json", "utf8")).version;
 const older = released(parseEditions(readFileSync("CHANGELOG.md", "utf8")))
   .map((e) => e.version)
   .filter((v) => compareVersions(v, current) > 0); // compareVersions sorts newest first: > 0 is older
-
-/** The first commit on HEAD's first-parent history whose package.json has each version. */
-function releaseCommits() {
-  const first = new Map();
-  for (const c of git("log", "--first-parent", "--reverse", "--format=%H", "HEAD", "--", "package.json").split("\n")) {
-    if (!c) continue;
-    let v;
-    try {
-      v = JSON.parse(git("show", `${c}:package.json`)).version;
-    } catch {
-      continue;
-    }
-    if (!first.has(v)) first.set(v, c);
-  }
-  return first;
-}
 
 let wanted;
 if (tag) {

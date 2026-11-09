@@ -47,8 +47,9 @@ reaches every menu command through the Command Palette, which lists them all ([K
     no accessible text and no label pointing at it.
   - *Reference:* Editora names its controls area by area
     ([`NamedControlsFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/NamedControlsFxTest.java)), and
-    [`ui/MainMenuBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java) sets each `CustomMenuItem`'s text beside the row it draws. No app has
-    the test that sweeps every window yet.
+    and sets each row's text on the macOS system menu bar. Its in-window rows, a `CustomMenuItem` that draws an icon,
+    a title and a chord ([`ui/MainMenuBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java)), carry no text yet, so a screen reader on Windows
+    reads nothing for them. No app has the test that sweeps every window yet.
 - **ACC-02 · SHOULD.** A control the app builds from panes or draws itself says what it is: `setAccessibleRole` with
   the role it acts as (`BUTTON`, `TOGGLE_BUTTON`, `LIST_VIEW`, `TREE_ITEM`), its state answered from
   `queryAccessibleAttribute` (selected, expanded, checked), and `notifyAccessibleAttributeChanged` when the state

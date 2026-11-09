@@ -34,8 +34,10 @@ Editora (`../Editora`) is the reference implementation.
   hand):*` (how an agent or a person verifies it in an app: what to grep or read, which test holds it, or what to do
   in the running app), `*Command:*` (only under a `Check (code)`, and only when a shell command settles the whole
   check: one code span holding a POSIX `sh -c` command, run from the app's repository root, that exits 0 when the
-  check passes and prints what it found when it fails; test it against Editora and the template, under `dash`, before
-  adding it) and `*Reference:*` (the Editora file, or the app that does it, or "no app yet"). IDs are
+  check passes and prints what it found when it fails. It opens with the guard `src/lib/rules.mjs` names (`GUARD`), so
+  it fails outside an app's root, and it only reads: `npm run check` fails on a redirect into a file or a program that
+  writes or reaches the network. Test it under `dash` against Editora, the template and an empty folder before adding
+  it) and `*Reference:*` (the Editora file, or the app that does it, or "no app yet"). IDs are
   permanent: never renumber or reuse one. A removed rule's ID stays retired: list it in `retired-rules.json` with the
   edition that removed it and the rule that holds its requirement now (`see`), link to that rule where the old one
   stood, and name the ID in the changelog. `npm run check` fails on a retired ID in use or named on a page, and
@@ -64,7 +66,7 @@ Editora (`../Editora`) is the reference implementation.
   states it, link to that rule instead (an overview page points at the template that details it). Two IDs for one
   requirement make an app record two exceptions, and they drift apart in level.
   One prefix per page: OS same-on-every-os, PLAT platform, REPO repository, DOCS documentation, QUAL quality, PERF performance, KBD
-  keyboard, ACC accessibility, ACC accessibility, WIN window-shell, ICON icons-and-color, TBAR toolbars-and-tooltips, TABS tabs-and-panels, MENU menus,
+  keyboard, ACC accessibility, WIN window-shell, ICON icons-and-color, TBAR toolbars-and-tooltips, TABS tabs-and-panels, MENU menus,
   TRAY tray-and-background, SET settings, DIAG diagnostics, CLI command-line, INTL i18n, REL release; templates PAL,
   QOPEN, WELC, ABOUT, PWIN (pauta-window), CONF, FIND, MLOG, SYNC; PAUTA for the conformance page. A new rule takes the page's next free number, wherever it sits.
   Template pages keep their mockups and spec tables; their requirements are rules under `## Rules`.
@@ -86,11 +88,13 @@ Editora (`../Editora`) is the reference implementation.
   number, and runs `node scripts/pin-references.mjs`, which records in `pins.json` the commit at the head of every
   repository the pages link into. What the edition serves (pages, agent files, downloads) links those commits
   instead of `blob/master`, and this repository's own links its tag (`src/lib/pins.mjs`), so an edition's References
-  keep showing the code they were checked against. Pages keep writing `blob/master`. **Version numbers** below says which part to raise, for the whole batch.
-  While `[Unreleased]` holds anything, CI checks and builds `master` but deploys, tags and archives nothing: the
-  checkout is not yet the edition its number names. The site, `latest/` and the agent files change only when an
-  edition is released, and a site-only fix waits for the next release too (a patch can carry one when the batch
-  allows it).
+  keep showing the code as it was at the release; the script fails when a linked path
+  isn't there. Pages keep writing `blob/master`. **Version numbers** below says which part to raise, for the whole batch.
+  While `[Unreleased]` holds anything, CI checks and builds `master` but deploys, tags and archives only the current
+  edition, from its release commit, and only if it isn't live yet: the checkout is not the edition its number names.
+  The site, `latest/` and the agent files change only when an edition is released, and a site-only fix waits for the
+  next release too (a patch can carry one when the batch allows it). A release changes only `package.json`,
+  `CHANGELOG.md`, `retired-rules.json` and `pins.json`; the edition check fails it otherwise.
 - **Version numbers** (the Changelog page, `src/content/docs/changelog.mdx`, says the same for readers). Judge by
   the rules alone: what moving an app to the new edition costs. The largest change sets the number.
   - **Patch**: an app does nothing. No rule's ID, level or requirement changes: wording, a fixed fact (matrix, gaps,
@@ -125,11 +129,11 @@ Editora (`../Editora`) is the reference implementation.
     section added without raising the version, a release that leaves anything under `[Unreleased]`, a release
     numbered at or below master's or a tag on origin, a patch release whose rules gained, lost or re-leveled an ID
     since the edition before it, a retired ID not listed with `"Unreleased"` (or, in a release, its number), or a
-    changelog whose newest numbered section doesn't match `package.json`, or a release whose `pins.json` pins another
-    edition.
-  - A merge right after a release can make GitHub cancel the release's run while it waits, and the runs after it
-    deploy nothing while `[Unreleased]` holds the next batch. If the released edition isn't live, re-run the release
-    commit's workflow run.
+    changelog whose newest numbered section doesn't match `package.json`, a release whose `pins.json` pins another
+    edition, a release that changes anything but its four files, or a release whose previous edition has neither a tag
+    nor a release commit.
+  - A merge right after a release can make GitHub cancel the release's run while it waits. The next run on `master`
+    publishes that edition from its release commit anyway (`scripts/release-state.mjs`), so nothing needs re-running.
 - **Editions on the site.** Every page is served under its edition: `https://pauta-project.dev/1.4.0/principles/` is
   permanent, `https://pauta-project.dev/latest/principles/` is always the newest edition, and the unnumbered address
   redirects to `latest/`. `scripts/build-site.mjs` (`npm run build`) builds this checkout twice, with `PAUTA_PATH`
@@ -141,10 +145,15 @@ Editora (`../Editora`) is the reference implementation.
   and, on an earlier edition, to point at the latest. The header's switcher (`src/components/EditionSelect.astro`, in the
   phone menu through `MobileMenuFooter.astro`) and the footer link the same page in another edition; a numbered folder carries `noindex`, so search engines index `latest/`.
   The `versions` branch holds one folder per published edition and nothing else: CI runs `scripts/archive-edition.sh
-  --push` after each push to `master`, so the edition just deployed joins it (a rebuild replaces the folder). Never
-  edit that branch by hand. GitHub cancels a run waiting in the deploy's concurrency group when a newer one queues,
-  so an edition can be skipped; each run finds those (`scripts/missing-editions.mjs`), rebuilds them from the commit
-  that released them (`scripts/build-edition.sh`), deploys them and has the publish job tag and archive them. A
+  --push` in every run that deploys, so the edition just deployed joins it (a rebuild replaces the folder, so the
+  current edition takes site-only fixes until the next one is released). Never edit that branch by hand. What a run
+  deploys is `scripts/release-state.mjs`'s call: HEAD when `[Unreleased]` is empty; while it isn't, the current
+  edition from its release commit if that edition isn't tagged and live yet (its own run was canceled or failed), else
+  nothing. GitHub cancels a run waiting in the deploy's concurrency group when a newer one queues, so an older edition
+  can be skipped too; each deploying run finds those (`scripts/missing-editions.mjs`), rebuilds them from the commit
+  that released them (`scripts/build-edition.sh`, pinned by `scripts/pin-dist.mjs`), deploys them and has the publish
+  job tag and archive them. The deploy waits for the publish job to succeed, and the publish job reads the build's
+  artifact from outside its checkout. A
   pre-1.4.0 edition is rebuilt from its tag with `scripts/archive-tag.sh vX.Y.Z` and archived with
   `scripts/archive-edition.sh build/editions/X.Y.Z`. In CI, `npm run build` fails rather than deploy a site that
   lacks a released edition or the downloads. The workflow's build job holds a read-only token; only the publish job,

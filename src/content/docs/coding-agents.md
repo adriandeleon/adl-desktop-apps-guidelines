@@ -65,12 +65,15 @@ rule is:
   MAY (worth copying when the app grows into it).
 - **`check.kind`** says how the rule is verified: `code` by reading or searching the source, `test` by a named test
   the build runs, `by hand` in the running app, which source alone can't settle.
-- **`check.command`**, on some `code` checks, is one POSIX shell command that settles the check: run it with `sh -c`
-  from the app's repository root. It exits 0 when the check passes, and prints what it found when it fails, which is
-  the evidence. OS-02's counts the classes that read `os.name`. It is `null` where reading the code takes judgment.
-- **`reference`** names the Editora file, or the other app, that does it. The agent copies from there. In a released
-  edition, its links point at the commit each app was at when the edition came out, so they show the code the rule
-  was checked against; `blob/master` in a page's source becomes that commit in what the edition serves.
+- **`check.command`**, on some `code` checks, is one POSIX shell command (Linux, macOS, Git Bash or WSL): run it with
+  `sh -c` from the app's repository root. Exit 0: the check passes; still read the rest of the rule and cite the
+  file:line that meets it. Any other exit: the check fails, and what it printed is the evidence (OS-02's lists the
+  classes that read `os.name`). Every command only reads, and opens with a guard that fails it outside an app's root.
+  It is `null` where reading the code takes judgment.
+- **`reference`** names the Editora file, or the other app, that does it. The agent copies from there. From the first
+  edition released after 4.5.0, its links point at the commit each app was at when the edition came out, so they show
+  the code as it was then; `blob/master` in a page's source becomes that commit in what the edition serves. Editions
+  up to 4.5.0 link the apps' default branches.
 - **`why`** is `null` when the rule has no reason worth stating.
 - **`appliesTo`** is `null` for a rule that covers every app, unless its own text says otherwise. Otherwise it is the
   **Applies to** line its page or section opens with: "an app whose work goes on without its window" for every

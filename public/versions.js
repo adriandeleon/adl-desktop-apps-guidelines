@@ -16,6 +16,8 @@
   const refreshSwitcher = (data) => {
     for (const select of document.querySelectorAll("pauta-edition-select select")) {
       const chosen = select.value;
+      // The page's own edition keeps its `selected` attribute, which the switcher reads to put it back.
+      const own = select.querySelector("option[selected]")?.value ?? chosen;
       const latest = select.querySelector('option[value="latest"]');
       if (latest) latest.textContent = `latest (${data.latest})`;
       for (const option of [...select.options]) if (option.value !== "latest") option.remove();
@@ -23,6 +25,7 @@
         const option = document.createElement("option");
         option.value = v.version;
         option.textContent = v.version;
+        option.defaultSelected = v.version === own;
         select.append(option);
       }
       select.value = chosen;

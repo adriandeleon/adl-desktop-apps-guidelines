@@ -12,8 +12,9 @@ permissions:
 concurrency:
   group: pages-${{ github.ref }}
   # A run on master is never canceled while it runs. GitHub still cancels a run that is waiting in this group when a
-  # newer one queues, so three quick merges can skip the middle edition's tag and archive: the next run rebuilds that
-  # edition from its commit and the publish job tags and archives it (scripts/missing-editions.mjs).
+  # newer one queues, so a quick merge can skip a release's run. The next run publishes it anyway: the current edition
+  # from its release commit when the batch after it is pending (scripts/release-state.mjs), and any older one from its
+  # commit (scripts/missing-editions.mjs).
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
@@ -23,30 +24,51 @@ jobs:
     timeout-minutes: 30
     outputs:
       version: ${{ steps.version.outputs.version }}
-      pending: ${{ steps.version.outputs.pending }}
+      publish: ${{ steps.state.outputs.publish }}
+      base: ${{ steps.state.outputs.base }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0 # the edition check compares with the base commit and the tags
           persist-credentials: false
-      - name: Check the edition
-        # Guidance under [Unreleased], or a release numbered above master's and every tag (scripts/check-edition.mjs).
-        if: github.event_name != 'workflow_dispatch'
-        run: node scripts/check-edition.mjs "${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || github.event.before }}"
-      - name: Read the version
-        # `pending` is true while CHANGELOG.md's [Unreleased] holds changes: the checkout is not an edition yet, so the
-        # site, the tags and the versions branch wait for the release that publishes it (AGENTS.md, "Editions").
-        id: version
-        run: |
-          echo "version=$(node -p 'require("./package.json").version')" >> "$GITHUB_OUTPUT"
-          echo "pending=$(node --input-type=module -e 'import { readFileSync } from "node:fs"; import { parseEditions } from "./src/lib/editions.mjs"; console.log(parseEditions(readFileSync("CHANGELOG.md", "utf8")).some((e) => e.version === "Unreleased"))')" >> "$GITHUB_OUTPUT"
-          grep pending= "$GITHUB_OUTPUT"
       - name: Set up Node
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
           cache: npm
+      - name: Decide what to publish
+        # HEAD when [Unreleased] is empty. While it holds the next batch, the current edition from its release commit if
+        # that edition isn't tagged and live yet, else nothing (scripts/release-state.mjs). A pull request publishes
+        # nothing.
+        id: state
+        if: github.event_name != 'pull_request'
+        env:
+          BEFORE: ${{ github.event.before }}
+        run: |
+          node scripts/release-state.mjs > "$RUNNER_TEMP/state"
+          cat "$RUNNER_TEMP/state"
+          grep -Eq '^pending=(true|false)$' "$RUNNER_TEMP/state" || { echo "release-state printed no pending=true|false" >&2; exit 1; }
+          cat "$RUNNER_TEMP/state" >> "$GITHUB_OUTPUT"
+          publish=$(sed -n 's/^publish=//p' "$RUNNER_TEMP/state")
+          if [ -n "$publish" ] && [ "$publish" != "$(git rev-parse HEAD)" ]; then git checkout --quiet --detach "$publish"; fi
+      - name: Check the edition
+        # Guidance under [Unreleased], or a release numbered above master's and every tag (scripts/check-edition.mjs),
+        # for what this run builds.
+        env:
+          EVENT: ${{ github.event_name }}
+          PR_BASE: ${{ github.base_ref }}
+          PUBLISH_BASE: ${{ steps.state.outputs.base }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          if [ "$EVENT" = pull_request ]; then base="origin/$PR_BASE"
+          elif [ -n "$PUBLISH_BASE" ]; then base="$PUBLISH_BASE"
+          elif [ -n "$BEFORE" ] && [ -n "${BEFORE//0/}" ]; then base="$BEFORE"
+          else base="HEAD^1"; fi
+          node scripts/check-edition.mjs "$base"
+      - name: Read the version
+        id: version
+        run: echo "version=$(node -p 'require("./package.json").version')" >> "$GITHUB_OUTPUT"
       - name: Install dependencies
         run: npm ci
       - name: Install pandoc
@@ -78,12 +100,12 @@ jobs:
         # scripts/build-site.mjs: every edition in its folder. In CI it fails when an edition or a download is missing.
         run: npm run build
       - name: Upload the site for Pages
-        if: github.event_name != 'pull_request' && steps.version.outputs.pending == 'false'
+        if: steps.state.outputs.publish != ''
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: dist
       - name: Upload the editions to archive
-        if: github.event_name == 'push' && steps.version.outputs.pending == 'false'
+        if: steps.state.outputs.publish != ''
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: editions
@@ -94,9 +116,9 @@ jobs:
           retention-days: 1
 
   # Tags the edition and keeps it on the versions branch. The one job that can write to the repository; it installs
-  # nothing and runs only this repository's scripts.
+  # nothing and runs only this repository's scripts, at the commit the build job published.
   publish:
-    if: github.event_name == 'push' && needs.build.outputs.pending == 'false'
+    if: needs.build.outputs.publish != ''
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -107,15 +129,27 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+      - name: Check out the published commit
+        env:
+          PUBLISH: ${{ needs.build.outputs.publish }}
+        run: git checkout --quiet --detach "$PUBLISH"
       - name: Set up Node
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
       - name: Download the built editions
+        # Outside the checkout, so nothing the build job uploaded can replace a script this job runs.
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: editions
-          path: .
+          path: ${{ runner.temp }}/editions
+      - name: Check what was downloaded
+        # Only edition folders, named by their versions: dist/<version>/ and build/editions/<version>/.
+        env:
+          EDITIONS: ${{ runner.temp }}/editions
+        run: |
+          stray=$(cd "$EDITIONS" && find . -mindepth 1 -maxdepth 3 -type d | grep -vxE '\./(dist|build|build/editions)|\./(dist|build/editions)/[0-9]+\.[0-9]+\.[0-9]+|\./(dist|build/editions)/[0-9]+\.[0-9]+\.[0-9]+/[^/]+' || true)
+          [ -z "$stray" ] || { echo "unexpected paths in the editions artifact:" >&2; echo "$stray" >&2; exit 1; }
       - name: Tag the editions and keep them on the versions branch
         # Only CI tags: v<version> on master's commit, once (scripts/check-edition.mjs --tag), and any edition a
         # canceled run left untagged, at the commit that released it (scripts/missing-editions.mjs --tag).
@@ -125,15 +159,17 @@ jobs:
           GIT_COMMITTER_NAME: github-actions[bot]
           GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
           VERSION: ${{ needs.build.outputs.version }}
+          BASE: ${{ needs.build.outputs.base }}
+          EDITIONS: ${{ runner.temp }}/editions
         run: |
-          node scripts/check-edition.mjs --tag "${{ github.event.before }}"
+          node scripts/check-edition.mjs --tag "$BASE"
           node scripts/missing-editions.mjs --tag
           shopt -s nullglob
-          ./scripts/archive-edition.sh --push "dist/${VERSION}" build/editions/[0-9]*
+          ./scripts/archive-edition.sh --push "$EDITIONS/dist/${VERSION}" "$EDITIONS"/build/editions/[0-9]*
 
   deploy:
-    # After the publish job on a push, so an edition is tagged and archived before it goes live; alone otherwise.
-    if: ${{ !cancelled() && github.event_name != 'pull_request' && needs.build.result == 'success' && needs.build.outputs.pending == 'false' && needs.publish.result != 'failure' }}
+    # Only after the publish job succeeded, so an edition is tagged and archived before it goes live.
+    if: ${{ !cancelled() && needs.build.result == 'success' && needs.build.outputs.publish != '' && needs.publish.result == 'success' }}
     needs: [build, publish]
     runs-on: ubuntu-latest
     timeout-minutes: 25

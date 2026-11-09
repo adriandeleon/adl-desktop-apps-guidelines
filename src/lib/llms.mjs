@@ -96,9 +96,10 @@ copy from the code each rule's *Reference* names. Editora is the reference imple
    edition's rules at \`${edition}rules.json\`; if the app names none, use this one. Editions before 2.0.0 serve no
    rules.json: audit against 2.0.0 or newer, and report a failed rule that the app's own edition didn't have as
    upgrade work.
-2. Take each rule in turn. *Check (code)*: run its *Command* (\`check.command\`) with \`sh -c\` from the app's root when
-   it has one (exit 0 means the check passes; its output is the evidence), else read or search the source as the check
-   says. *Check (test)*: find the named test, or the app's equivalent, and confirm the build runs it.
+2. Take each rule in turn. *Check (code)*: when it has a *Command* (\`check.command\`), run it with \`sh -c\` from the
+   app's repository root. Exit 0: the check passes; still read the rest of the rule and cite the file:line that meets
+   it. Any other exit: the check fails, and what it printed is the evidence. Otherwise read or search the source as the
+   check says. *Check (test)*: find the named test, or the app's equivalent, and confirm the build runs it.
    *Check (by hand)*: source can't settle it; report it as manual.
 3. A rule applies to every app unless it is limited: its text names the apps it covers ("An app with user
    documents…"), its page or section opens with an **Applies to** line (\`appliesTo\` in rules.json), or it details a

@@ -73,7 +73,8 @@ The rules in scope:
 
 ```bash
 jq -r --arg p "KBD" '.rules[]
-  | select((.id | ascii_upcase | startswith(($p | ascii_upcase) + "-")) or .page == $p or (.page | split("/") | last) == $p)
+  | select((.id | ascii_upcase | startswith(($p | ascii_upcase) + "-")) or .page == $p or (.page | split("/") | last) == $p
+           or (.pageTitle | ascii_downcase) == ($p | ascii_downcase))
   | [.id, .level, .check.kind, (.appliesTo // ""), .check.text] | @tsv' target/pauta/$EDITION/rules.json
 ```
 
@@ -99,9 +100,12 @@ Read the whole rule (`text`, `why`, `check`, `appliesTo`) before judging it. The
    lacks ("no tray: no `SystemTray` or `TrayIcon` in `src/`"). A limited rule needs no exception; a `pauta.json`
    entry for one is a problem (PAUTA-05).
 2. **Met?** Check it as its kind says:
-   - **`code`.** When the rule has a `check.command`, run it with `sh -c` from the repository root: exit 0 is met,
-     and what it prints on failure is the evidence (add the `file:line` it names). Otherwise read or search the
-     source as `check.text` says (it names files, classes, properties or style
+   - **`code`.** When the rule has a `check.command`, run it with `sh -c` from the repository root (POSIX sh: Linux,
+     macOS, Git Bash or WSL). Exit 0: the check passes; still read the rest of the rule and cite the `file:line`
+     that meets it. Any other exit: the check fails, and what it printed is the evidence. A command only reads, and
+     fails outside an app's root; take it from `rules.json` with `jq -r '.rules[] | select(.id == "OS-02") |
+     .check.command'`, never through `@tsv`, which doubles its backslashes. Otherwise read or search the source as
+     `check.text` says (it names files, classes, properties or style
      classes as Editora spells them; find this app's equivalent). It is met only if everything the check names is
      there. Evidence is the `file:line` that satisfies it; for an unmet rule, the closest place it should be and what
      is missing.

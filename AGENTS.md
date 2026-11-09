@@ -113,7 +113,8 @@ Editora (`../Editora`) is the reference implementation.
   redirects to `latest/`. `scripts/build-site.mjs` (`npm run build`) builds this checkout twice, with `PAUTA_PATH`
   `latest` and the version (`astro.config.mjs` puts it in `base` and `outDir`), lays the earlier editions beside them
   from the `versions` branch, copies `CNAME`, `404.html`, `versions.js`, `downloads/`, `llms.txt`, `llms-full.txt`
-  and `rules.json` to the root for GitHub Pages and coding agents,
+  and `rules.json` to the root for GitHub Pages and coding agents, writes `robots.txt` there (everything allowed,
+  `latest/`'s sitemap),
   and writes `versions.json`, the list every page reads (`public/versions.js`) to offer editions published after it
   and, on an earlier edition, to point at the latest. The header's switcher (`src/components/EditionSelect.astro`, in the
   phone menu through `MobileMenuFooter.astro`) and the footer link the same page in another edition; a numbered folder carries `noindex`, so search engines index `latest/`.

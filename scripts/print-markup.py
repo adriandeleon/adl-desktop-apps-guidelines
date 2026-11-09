@@ -1,5 +1,5 @@
 """Applies the guide's table conventions to pandoc's HTML for print: status dots, level pills, matrix tables."""
-import re, sys
+import json, re, sys
 from pathlib import Path
 
 src, dst = sys.argv[1], sys.argv[2]
@@ -30,7 +30,32 @@ def pill(level):
 s = re.sub(r"<strong>(MUST|SHOULD|MAY)\.?</strong>", lambda m: pill(m.group(1)), s)
 # A rule, "**KBD-07 · MUST.**" opening a list item: its ID, then its level pill.
 s = re.sub(r"<strong>([A-Z]{2,6}-\d{2,3}) · (MUST|SHOULD|MAY)\.</strong>",
-           lambda m: f'<span class="rule-id">{m.group(1)}</span> {pill(m.group(2))}', s)
+           lambda m: f'<span class="rule-id" id="{m.group(1).lower()}">{m.group(1)}</span> {pill(m.group(2))}', s)
+
+# Links into this edition (scripts/combine.py made every page's relative links absolute) lead to the PDF's own pages:
+# the rule or section when it is on that page, else the page's heading. Each page is an <h2>, in pages.json order.
+ROOT = Path(__file__).resolve().parent.parent
+pkg = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
+EDITION = pkg["guidelines"]["url"].rstrip("/") + "/" + pkg["version"] + "/"
+slugs = [slug for g in json.loads((ROOT / "pages.json").read_text(encoding="utf-8"))["groups"] for slug in g["items"]]
+heads = list(re.finditer(r'<h2 id="([^"]+)"', s))
+if len(heads) != len(slugs):
+    sys.exit(f"print-markup: {len(heads)} page headings for {len(slugs)} pages in pages.json")
+pages = {}
+for i, (slug, h) in enumerate(zip(slugs, heads)):
+    end = heads[i + 1].start() if i + 1 < len(heads) else len(s)
+    pages[slug] = (h.group(1), re.findall(r'\sid="([^"]+)"', s[h.start():end]))
+
+def inside(m):
+    path, _, frag = m.group(1)[len(EDITION):].partition("#")
+    page = pages.get(path.strip("/"))
+    if not page:
+        return m.group(0)  # the overview or the changelog, which the PDF leaves out
+    head, ids = page
+    # pandoc numbers a repeated heading's id ("rules-3"), so a section is found by its name and an optional number.
+    found = next((i for i in ids if frag and re.fullmatch(re.escape(frag) + r"(-\d+)?", i)), head)
+    return f'href="#{found}"'
+s = re.sub(r'href="(' + re.escape(EDITION) + r'[^"]*)"', inside, s)
 KEEP = re.compile(r"<(code|pre|kbd|a|h[1-6]|th|style|script|svg)\b|<span class=\"lvl|<div class=\"mock-stage")
 def levels(html):
     out, depth = [], []

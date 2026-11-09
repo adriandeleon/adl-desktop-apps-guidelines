@@ -53,7 +53,8 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
   statement names (`help.about`, `palette.show`, `help.documentation`) is spelled that way in every app, so keymaps,
   docs and agents find it under one name; a name only its Check or Reference gives is Editora's spelling, and an
   app's equivalent meets it. Torrenta, Termina, Modula and nux use other ids for these commands today. The audit
-  skill, `llms.txt`, the Coding agents page and AGENTS.md say so.
+  skill, `llms.txt`, the Coding agents page and AGENTS.md say so, KBD-02's ids read as examples, and *Gaps per app*
+  lists what each app spells otherwise.
 - **The audit skill decides how to audit** and how to write the report; an edition supplies only its rules. The
   skill lists which `rules.json` fields each edition has, so an app on 2.0.x or 4.2.0 can be audited into a report
   that validates. `llms.txt`, the Coding agents page and the skill give one answer for an app that names no edition:

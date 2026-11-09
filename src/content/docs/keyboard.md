@@ -10,8 +10,8 @@ description: "Commands, the Command Palette, keymaps, focus and accessibility."
   - *Check (code):* menu items, toolbar buttons, palette rows and key bindings run a command id through the
     registry; no control's handler does work no command can reach.
   - *Reference:* Editora [`command/Command.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/Command.java), [`command/CommandRegistry.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/CommandRegistry.java).
-- **KBD-02 · SHOULD.** Command ids are dotted and grouped by area: `file.open`, `view.toggleStatusBar`,
-  `help.reportProblem`.
+- **KBD-02 · SHOULD.** Command ids are dotted and grouped by area, as in `file.open`, `view.toggleStatusBar`
+  and `help.reportProblem`. A rule that names a command's id requires that id; these three are examples.
   - *Check (code):* every registered id matches `<area>.<camelCaseName>`.
   - *Reference:* Editora [`ui/MenuBarModel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java).
 - **KBD-03 · MUST.** A command's title comes from `command.<id>` and its palette description from

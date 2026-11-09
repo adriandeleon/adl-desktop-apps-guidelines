@@ -60,8 +60,8 @@ Everything else, and in particular:
 ## Rules
 
 - **OS-01 · MUST.** Every command, setting and window exists on Windows, macOS and Linux, with the same default. Where
-  the OS can't do what one asks, it stays where it is, disabled, and says why; it is never hidden. The table above is
-  the only exception.
+  the OS can't do what one asks, it stays where it is, disabled, and says why; it is never hidden. The rows of
+  [Where the OS's way wins](#where-the-oss-way-wins) are the only exceptions.
   - *Why:* a user who moves to another OS looks for a feature where they left it. A missing row looks like a
     different app; a disabled one with a reason explains itself.
   - *Check (code):* no command, menu row or settings row is registered or added inside an OS check, and no default

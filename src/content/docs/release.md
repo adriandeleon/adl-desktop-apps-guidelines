@@ -17,8 +17,8 @@ is no cross-building.
 | Windows x64 | `windows-latest` | `.msi`, fat jar |
 | Windows arm64 | — | **Not possible yet**: OpenJFX publishes no `win-aarch64` natives (JDK-8314064). ARM users run the x64 MSI under emulation. |
 
-- **REL-01 · MUST.** jpackage builds the installers for the five targets in the table above, each on its own
-  runner, through the Maven `dist` profile.
+- **REL-01 · MUST.** jpackage builds the installers for five targets, Linux x64 and arm64, macOS arm64 and x64,
+  and Windows x64, each on its own runner, through the Maven `dist` profile.
   - *Check (code):* the release workflow's build matrix lists `linux-x64`, `linux-arm64`, `macos-arm64`,
     `macos-x64` and `windows-x64` on those runners, and `pom.xml` has a `dist` profile.
   - *Reference:* Editora [`release.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/release.yml) (the `build` job), [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml) (`dist`).

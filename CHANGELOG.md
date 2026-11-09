@@ -49,6 +49,17 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 
 ### Changed
 
+- **A name in a rule's statement is required.** A command id, catalog key, file, property or style class a rule's
+  statement names (`help.about`, `palette.show`, `help.documentation`) is spelled that way in every app, so keymaps,
+  docs and agents find it under one name; a name only its Check or Reference gives is Editora's spelling, and an
+  app's equivalent meets it. Torrenta, Termina, Modula and nux use other ids for these commands today. The audit
+  skill, `llms.txt`, the Coding agents page and AGENTS.md say so, KBD-02's ids read as examples, and *Gaps per app*
+  lists what each app spells otherwise.
+- **The audit skill decides how to audit** and how to write the report; an edition supplies only its rules. The
+  skill lists which `rules.json` fields each edition has, so an app on 2.0.x or 4.2.0 can be audited into a report
+  that validates. `llms.txt`, the Coding agents page and the skill give one answer for an app that names no edition:
+  ask, offering the newest, and with no one to ask, use the newest and say so. The sample audit prompt names the
+  edition instead of `latest/`, and a Partial app's `AGENTS.md` says "working toward".
 - **TRAY-09, TRAY-10 and TRAY-11** apply to every app that sends desktop notifications, with a tray or without one:
   they move to a *Notifications* section of their own, which also covers Editora and Termina. The page said no rule
   on it applied to those apps, while TRAY-09 cited Termina.
@@ -106,6 +117,11 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
   are missing, and Torrenta's coverage floor. The matrix's Inter row is no longer labeled a SHOULD (ICON-01 and
   ICON-02 are MUSTs), and the confirm-dialog page records Mirada's and nux's dialogs. The pages are still kept by
   hand until the apps ship `pauta.json`.
+- **Rules that leaned on their page** say what they mean or link the section, since agents read them alone: OS-01
+  (the table), PAUTA-01 (Complete, Core and Partial), PAUTA-09 (the file), INTL-01 (the six languages), REL-01 (the
+  five targets) and TABS-07. `npm run check` fails a rule that points at "the table above".
+- **Agent files:** the Changelog page is served as `changelog.md` too, `llms.txt` names `rules.json`'s `url` field
+  (it said `address`), and an audit result's `evidence` can't be empty.
 - **References and Checks that didn't match the code:** KBD-12 named a method that doesn't exist; TABS-18's Check
   wanted a binding Editora's float command doesn't have, so it now asks for a command; TRAY-09 cited nux, which
   still writes the message into an AppleScript string on macOS; REL-15's Check now accepts a script `release.yml`

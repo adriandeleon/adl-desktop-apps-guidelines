@@ -16,6 +16,7 @@ const COMMAND = /^(`{1,2}) ?(.+?) ?\1$/;
 export const GUARD = "[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; };";
 const WRITES =
   /(?:^|[;&|({!`]|\$\(|\b(?:do|then|else|xargs)|\s-exec)\s*(rm|rmdir|mv|cp|tee|dd|truncate|curl|wget|nc|ssh|scp|sudo|chmod|chown|ln|mkdir|touch|git|mvn|mvnw|\.\/mvnw|gradle|npm|npx|node|java|python3?|perl|ruby|sh|bash|dash|zsh|eval|exec|source|kill)(?=[\s;&|)]|$)|\s-delete\b|\bsed\s+-i|>/;
+const LEANS = /\b(?:as (?:defined |shown )?|shown |(?:table|list|mockup|languages|targets|spec) )(?:above|below)\b/i;
 const unquoted = (cmd) => cmd.replace(/'[^']*'/g, "''").replace(/"(?:[^"\\]|\\.)*"/g, '""');
 // "**Applies to:** an app with a tray icon." limits every rule after it: at the top of a page, before its first heading
 // and rule, it holds for the page; right under a "## " heading, for that section. A rule with neither applies to every
@@ -113,6 +114,10 @@ export function parsePage(slug, text) {
       }
       rule.command = c ? c[2] : null;
     }
+    // A rule reaches agents on its own (rules.json, llms-full.txt), so it can't lean on "the table above": it says
+    // what it means, or links the section.
+    const leans = [rule.text, rule.why, rule.check?.text].join(" ").match(LEANS);
+    if (leans) problems.push(`${slug}: ${id} points at "${leans[0]}" on its page; say it in the rule, or link the section`);
     rules.push(rule);
   }
   const prefixes = [...new Set(rules.map((r) => r.prefix))];

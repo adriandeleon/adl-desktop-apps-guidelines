@@ -8,6 +8,14 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 
 ## [Unreleased]
 
+## [5.0.0] - 2026-11-09
+
+Coding agents get commands for code checks, pinned References and one account of how to audit, and the rest of the
+4.5.0 review lands: twelve new rules, four of them MUSTs (PAUTA-17, CLI-11, and DIAG-09 and DIAG-10 split out of
+DIAG-05); WIN-03 and KBD-16 raised to MUSTs; PLAT-06 and TABS-14 retired into the rules that already held them. A
+major because one change asks an app to redo work: MENU-16's menu fonts now scale with the UI zoom instead of being
+pinned in absolute pixels. A command id or key that a rule's statement names is now required as written.
+
 ### Added
 
 - **Commands for code checks.** Twelve rules whose check a shell command can settle carry one, as a *Command* line

@@ -41,14 +41,16 @@ not apply, the ones it does differently on purpose, and the ones still pending. 
 - **PWIN-06 · SHOULD.** *Copy as text* copies the edition, the conformance and the list as Markdown, one line per exception,
   and leaves the window open; its label becomes "Copied".
   - *Check (code):* the button sits in the content, not the button bar, like About's *Copy details*.
-  - *Reference:* Editora [`AboutDialog`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/AboutDialog.java) (`about.copyDetails`, `about.copied`).
+  - *Reference:* the app template's [`ui/PautaWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/PautaWindow.java) (`pauta.copy`, `pauta.copied`), built
+    like Editora's About *Copy details*.
 - **PWIN-07 · SHOULD.** A *Conformance in the docs* link runs the `help.pautaDocs` command, which opens the app's
   docs page ([PAUTA-13](../../conformance/#pauta-13)) for this version, `/docs/v-<version>/pauta/`, where the site
   serves versioned docs ([DOCS-03](../../documentation/#docs-03)), and `/docs/pauta/` until it does. The README's
   badge links the unversioned page, which always shows the latest release.
   - *Check (code):* `help.pautaDocs` is registered and builds the URL from the app's docs base, like Help →
     Documentation.
-  - *Reference:* Editora [`AppInfo.docsUrl()`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/AppInfo.java).
+  - *Reference:* the app template's [`AppInfo.pautaDocsUrl()`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/AppInfo.java), registered as
+    `help.pautaDocs` in [`ui/Commands.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Commands.java).
 - **PWIN-08 · SHOULD.** With no exceptions, the list's place says so in one line, "No exceptions: Mirada meets every
   MUST and SHOULD of Pauta 4.2.0.", and the copy button still works.
   - *Check (by hand):* with an empty `exceptions` array, open the window.
@@ -108,8 +110,8 @@ The entries above show the layout with Mirada's name; they are not Mirada's reco
 |---|---|
 | `command.help.pauta` | Pauta Conformance |
 | `command.help.pauta.desc` | Show which edition of Pauta this app implements, how fully it conforms, and the rules it does not meet. |
-| `command.help.pautaRules` / `.desc` | Pauta Rules / Open the rules of the Pauta edition this app is built to, in your browser. |
-| `command.help.pautaDocs` / `.desc` | Pauta Conformance in the Docs / Open the page of this app's documentation that lists its Pauta exceptions. |
+| `command.help.pautaRules` / `.desc` | Pauta Rules / Open the rules of the Pauta edition this app implements. |
+| `command.help.pautaDocs` / `.desc` | Pauta Conformance in the Docs / Open the user guide's page on this app's Pauta conformance and exceptions. |
 | `dialog.pauta.title` | Pauta Conformance |
 | `pauta.edition` | Pauta {0} |
 | `pauta.conformance.complete` / `.core` / `.partial` | Complete / Core / Partial |
@@ -117,15 +119,16 @@ The entries above show the layout with Mirada's name; they are not Mirada's reco
 | `pauta.conformance.core.desc` | {0} meets every MUST of this edition; {1,choice,1#1 SHOULD is\|1<{1} SHOULDs are} pending. |
 | `pauta.conformance.partial.desc` | {0} does not meet every MUST yet: {1,choice,1#1 is\|1<{1} are} pending. |
 | `pauta.kind.pending` / `.deviation` / `.appOnly` / `.notApplicable` | Pending / Deviation / For each app made from it / Not applicable |
-| `pauta.count.pending` | {0,choice,1#1 pending\|1<{0} pending} |
+| `pauta.count.pending` | {0} pending |
 | `pauta.count.deviation` | {0,choice,1#1 deviation\|1<{0} deviations} |
-| `pauta.count.appOnly` | {0,choice,1#1 for each app\|1<{0} for each app} |
-| `pauta.count.notApplicable` | {0,choice,1#1 not applicable\|1<{0} not applicable} |
-| `pauta.decision` | Decision {0} |
+| `pauta.count.appOnly` | {0} for each app |
+| `pauta.count.notApplicable` | {0} not applicable |
+| `pauta.decision` / `pauta.link` | Decision {0} / Details |
 | `pauta.rules` / `pauta.docs` | Pauta {0} rules / Conformance in the docs |
 | `pauta.none` | No exceptions: {0} meets every MUST and SHOULD of Pauta {1}. |
 | `pauta.copy` / `pauta.copied` | Copy as text / Copied |
 
 The reasons themselves come from `pauta.json`, in English ([PAUTA-08](../../conformance/#pauta-08)); the window's
 own words are in the catalogs like every other string. Counts use `MessageFormat`'s `choice` so English reads "1
-SHOULD is pending", not "1 SHOULDs are". A command description takes no arguments, so it says "this app".
+SHOULD is pending", not "1 SHOULDs are". A command description takes no arguments, so it says "this app". The app template's catalog has every key
+but the app-only pair, which came with 4.2.0, after the edition the template is built to.

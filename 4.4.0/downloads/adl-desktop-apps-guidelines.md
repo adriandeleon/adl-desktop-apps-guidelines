@@ -26,7 +26,7 @@ Editora is the reference; each principle names where else it is written down.
 1. **Same app on every OS.** A user who moves between Windows, macOS and Linux finds the same features, the
    same commands and keymaps, the same look and the same installer quality, and never relearns the app. The OS's own
    way wins only where the app meets the OS itself (the system menu bar, the modifier key, file dialogs,
-   notifications, installers), and [Same on every OS](../same-on-every-os/) lists every such place. Those
+   notifications, installers), and [Same on every OS](https://pauta-project.dev/4.4.0/same-on-every-os/) lists every such place. Those
    differences live behind one class, never scattered `if (isMac)` checks. Every other principle serves this one.
 2. **Keyboard first.** Every action works without a mouse. The mouse is a shortcut to commands, not the
    other way round.
@@ -38,7 +38,7 @@ Editora is the reference; each principle names where else it is written down.
    Mirada.)*
 5. **The UI never waits.** The JavaFX application thread only touches the scene graph. Disk, network,
    processes, parsing and searching run on other threads and hand their result back; a keystroke, a scroll or a
-   window opening never waits for them. See [Performance](../performance/).
+   window opening never waits for them. See [Performance](https://pauta-project.dev/4.4.0/performance/).
 6. **Changes apply as they are made.** Settings have no Save button. A change reaches every open window.
 7. **Nothing fails silently.** Every failure reaches the status bar, the Message Log or the Debug Log, and
    the user can turn any of it into a GitHub issue.
@@ -61,7 +61,7 @@ Editora is the reference; each principle names where else it is written down.
 12. **Separate the decision from the UI, then test it.** Anything with a rule in it (which key does what, sort
     order, when a bar shows, whether a color is legible) is a small pure method or class with its own unit
     tests. UI classes stay thin and only wire decisions to controls. *(Termina, Torrenta, Mirada and nux
-    "Conventions"; Editora's pure decision helpers.)* See [Code quality gates](../quality/).
+    "Conventions"; Editora's pure decision helpers.)* See [Code quality gates](https://pauta-project.dev/4.4.0/quality/).
 13. **Verify by driving the real app.** UI bugs are visual and none of them throw. Before calling a UI change
     done, run the real window, press the real keys and look at the result, through a capture hook or a
     headless screenshot; reasoning about event order is not evidence. *(Termina and Torrenta's `DevCapture`,
@@ -70,7 +70,7 @@ Editora is the reference; each principle names where else it is written down.
 ## Same on every OS
 
 The family exists so that one app can be used the same way on Windows, macOS and Linux ([principle
-1](../principles/)). This page says where an app may follow the OS's own way and where it may not, and its rules
+1](https://pauta-project.dev/4.4.0/principles/)). This page says where an app may follow the OS's own way and where it may not, and its rules
 keep other differences out. Each difference is easy to add on its own: an `if (isMac)` that hides a menu row, a
 JavaFX default that orders buttons one way on Windows and another on macOS.
 
@@ -79,33 +79,33 @@ JavaFX default that orders buttons one way on Windows and another on macOS.
 Inside the window, Pauta's design wins: the same commands, keymaps, look, dialogs and files on every OS. The OS's
 own way wins only where the app hands work to the OS or sits in the OS's own interface, because there the user would
 be fighting the OS rather than learning the app. The table is the whole list. Any other difference between OSes is a
-bug, or a deviation recorded in `pauta.json` ([Conformance](../conformance/)).
+bug, or a deviation recorded in `pauta.json` ([Conformance](https://pauta-project.dev/4.4.0/conformance/)).
 
 | What | Windows | macOS | Linux | Rules |
 |------|---------|-------|-------|-------|
-| Primary modifier | `Ctrl` | `Cmd`, from each keymap's `.mac.json` variant | `Ctrl` | [KBD-09](../keyboard/#kbd-09), [KBD-10](../keyboard/#kbd-10), [KBD-21](../keyboard/#kbd-21) |
-| Menu bar | In the title bar | The system menu bar, in a decorated window | In the title bar | [WIN-03](../window-shell/#win-03) |
+| Primary modifier | `Ctrl` | `Cmd`, from each keymap's `.mac.json` variant | `Ctrl` | [KBD-09](https://pauta-project.dev/4.4.0/keyboard/#kbd-09), [KBD-10](https://pauta-project.dev/4.4.0/keyboard/#kbd-10), [KBD-21](https://pauta-project.dev/4.4.0/keyboard/#kbd-21) |
+| Menu bar | In the title bar | The system menu bar, in a decorated window | In the title bar | [WIN-03](https://pauta-project.dev/4.4.0/window-shell/#win-03) |
 | Open and save dialogs | The OS's own (`FileChooser`) | The OS's own | The OS's own | |
 | Opening a file or link, showing it in the file manager | Explorer | Finder (`open`) | `xdg-open` | |
-| Tray icon | AWT `SystemTray` | AWT `SystemTray` | StatusNotifierItem | [TRAY-01](../tray-and-background/#tray-01) |
-| Notifications | A PowerShell toast | `osascript` | `notify-send` | [TRAY-09](../tray-and-background/#tray-09) |
-| Start at login | The `HKCU` `Run` value | A LaunchAgent | An XDG autostart entry | [TRAY-06](../tray-and-background/#tray-06) |
-| Saved secrets | Credential Manager | Keychain | The Secret Service | [SET-13](../settings/#set-13) |
-| Installers | `.msi`, winget | `.dmg`, Homebrew | `.deb`, `.rpm`, `.AppImage`, `.tar.gz` | [REL-11](../release/#rel-11), [REL-12](../release/#rel-12), [REL-13](../release/#rel-13) |
+| Tray icon | AWT `SystemTray` | AWT `SystemTray` | StatusNotifierItem | [TRAY-01](https://pauta-project.dev/4.4.0/tray-and-background/#tray-01) |
+| Notifications | A PowerShell toast | `osascript` | `notify-send` | [TRAY-09](https://pauta-project.dev/4.4.0/tray-and-background/#tray-09) |
+| Start at login | The `HKCU` `Run` value | A LaunchAgent | An XDG autostart entry | [TRAY-06](https://pauta-project.dev/4.4.0/tray-and-background/#tray-06) |
+| Saved secrets | Credential Manager | Keychain | The Secret Service | [SET-13](https://pauta-project.dev/4.4.0/settings/#set-13) |
+| Installers | `.msi`, winget | `.dmg`, Homebrew | `.deb`, `.rpm`, `.AppImage`, `.tar.gz` | [REL-11](https://pauta-project.dev/4.4.0/release/#rel-11), [REL-12](https://pauta-project.dev/4.4.0/release/#rel-12), [REL-13](https://pauta-project.dev/4.4.0/release/#rel-13) |
 
 ### The same everywhere
 
 Everything else, and in particular:
 
-- **Commands, settings and windows**, with the same defaults: [OS-01](#os-01). A keymap's macOS variant binds the
-  same commands: [KBD-21](../keyboard/#kbd-21).
-- **The look.** Inter on every window ([ICON-01](../icons-and-color/#icon-01)), not the OS's UI font; the same
-  AtlantaFX themes ([PLAT-05](../platform/#plat-05)); the same icons on every menu row the app draws
-  ([MENU-14](../menus/#menu-14)).
-- **Dialogs.** The same buttons in the same order: [WIN-11](../window-shell/#win-11).
-- **Files.** The config folder is `~/.<app>` on every OS ([SET-07](../settings/#set-07)), not `%APPDATA%` or
+- **Commands, settings and windows**, with the same defaults: [OS-01](https://pauta-project.dev/4.4.0/same-on-every-os/#os-01). A keymap's macOS variant binds the
+  same commands: [KBD-21](https://pauta-project.dev/4.4.0/keyboard/#kbd-21).
+- **The look.** Inter on every window ([ICON-01](https://pauta-project.dev/4.4.0/icons-and-color/#icon-01)), not the OS's UI font; the same
+  AtlantaFX themes ([PLAT-05](https://pauta-project.dev/4.4.0/platform/#plat-05)); the same icons on every menu row the app draws
+  ([MENU-14](https://pauta-project.dev/4.4.0/menus/#menu-14)).
+- **Dialogs.** The same buttons in the same order: [WIN-11](https://pauta-project.dev/4.4.0/window-shell/#win-11).
+- **Files.** The config folder is `~/.<app>` on every OS ([SET-07](https://pauta-project.dev/4.4.0/settings/#set-07)), not `%APPDATA%` or
   `~/Library/Application Support`, so the folder a user backs up, syncs or reads about in the docs is the same one.
-- **The command line** ([Command line](../command-line/)) and the user docs: one set for all three, which names a
+- **The command line** ([Command line](https://pauta-project.dev/4.4.0/command-line/)) and the user docs: one set for all three, which names a
   difference only where this page lists it.
 
 ### Rules
@@ -117,20 +117,20 @@ Everything else, and in particular:
     different app; a disabled one with a reason explains itself.
   - *Check (code):* no command, menu row or settings row is registered or added inside an OS check, and no default
     in the settings model depends on the OS. A row the OS can't serve calls `setDisable` and carries its reason
-    ([KBD-04](../keyboard/#kbd-04) for a command).
+    ([KBD-04](https://pauta-project.dev/4.4.0/keyboard/#kbd-04) for a command).
   - *Reference:* Editora [`ui/SettingsWindow.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsWindow.java) (the extended-window row, disabled on macOS
     "rather than hidden, so its note still explains why").
 - **OS-02 · MUST.** One class answers which OS the app runs on (`Os`, with `isWindows()`, `isMac()` and
   `isLinux()`), and no other class reads the `os.name` property.
   - *Why:* checks scattered through the code are how apps drift apart on one OS without anyone choosing it. In one
     class, every difference can be found with one search, and a test can run the app as any OS
-    ([OS-03](#os-03)).
+    ([OS-03](https://pauta-project.dev/4.4.0/same-on-every-os/#os-03)).
   - *Check (code):* `grep -rln '"os.name"' src/main/java` lists one file.
   - *Reference:* no app yet. Every app reads `os.name` in several classes, Editora in about fifty; Editora's
     [`process/DesktopActions.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/process/DesktopActions.java) has the `Os` enum to start from.
 - **OS-03 · SHOULD.** Tests can run as any OS: the `Os` class takes an override, and one test asserts that the
   command ids, the menu bar's rows and the settings pages are the same for Windows, macOS and Linux.
-  - *Why:* CI runs the FX tests on one or two OSes ([REL-20](../release/#rel-20)); with the override, the
+  - *Why:* CI runs the FX tests on one or two OSes ([REL-20](https://pauta-project.dev/4.4.0/release/#rel-20)); with the override, the
     comparison runs on every pull request on Linux alone.
   - *Check (test):* a test sets each OS in turn through the override and compares the three lists.
   - *Reference:* no app yet. Editora's [`KeymapsTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/command/KeymapsTest.java)
@@ -149,218 +149,218 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 
 ### Conformance
 
-[Conformance](../conformance/) · [Pauta window](../templates/pauta-window/) · [About window](../templates/about/)
+[Conformance](https://pauta-project.dev/4.4.0/conformance/) · [Pauta window](https://pauta-project.dev/4.4.0/templates/pauta-window/) · [About window](https://pauta-project.dev/4.4.0/templates/about/)
 
-- [ ] The app implements one edition, named by `pauta.version` in `pom.xml`, and states its conformance: Complete, Core or Partial · [PAUTA-01](../conformance/#pauta-01)
-- [ ] The first release is at Core or Complete · [PAUTA-03](../conformance/#pauta-03)
-- [ ] Every MUST and SHOULD the app does not meet is an exception in `pauta.json`: not applicable, a deviation (SHOULDs only) with a decision record, or pending with an issue in the app's own repository, each with a one-sentence reason · [PAUTA-04](../conformance/#pauta-04), [PAUTA-05](../conformance/#pauta-05), [PAUTA-06](../conformance/#pauta-06), [PAUTA-07](../conformance/#pauta-07), [PAUTA-08](../conformance/#pauta-08), [PAUTA-09](../conformance/#pauta-09)
-- [ ] A template repository says so in its `pauta.json` and records the rules only an app made from it can meet as `app-only` · [PAUTA-16](../conformance/#pauta-16)
-- [ ] The conformance is computed from the exceptions by one tested helper, never stored · [PAUTA-02](../conformance/#pauta-02)
-- [ ] `PautaConformanceTest` checks `pauta.json` and the README against the edition's `rules.json` · [PAUTA-10](../conformance/#pauta-10), [PAUTA-15](../conformance/#pauta-15)
-- [ ] About links the edition, *Built to Pauta 4.3.0*, read from `pauta.version`, and shows the conformance · [ABOUT-05](../templates/about/#about-05), [ABOUT-06](../templates/about/#about-06), [ABOUT-07](../templates/about/#about-07), [ABOUT-08](../templates/about/#about-08), [ABOUT-09](../templates/about/#about-09)
-- [ ] A Pauta window, `help.pauta`, in the palette, the Help menu and About's link, listing every exception with fixed links · [PAUTA-12](../conformance/#pauta-12), [PWIN-01](../templates/pauta-window/#pwin-01), [PWIN-02](../templates/pauta-window/#pwin-02), [PWIN-03](../templates/pauta-window/#pwin-03), [PWIN-04](../templates/pauta-window/#pwin-04)
-- [ ] A *Pauta conformance* page in the user docs with the same list · [PAUTA-13](../conformance/#pauta-13)
-- [ ] That page generated from `pauta.json` (SHOULD) · [PAUTA-14](../conformance/#pauta-14)
+- [ ] The app implements one edition, named by `pauta.version` in `pom.xml`, and states its conformance: Complete, Core or Partial · [PAUTA-01](https://pauta-project.dev/4.4.0/conformance/#pauta-01)
+- [ ] The first release is at Core or Complete · [PAUTA-03](https://pauta-project.dev/4.4.0/conformance/#pauta-03)
+- [ ] Every MUST and SHOULD the app does not meet is an exception in `pauta.json`: not applicable, a deviation (SHOULDs only) with a decision record, or pending with an issue in the app's own repository, each with a one-sentence reason · [PAUTA-04](https://pauta-project.dev/4.4.0/conformance/#pauta-04), [PAUTA-05](https://pauta-project.dev/4.4.0/conformance/#pauta-05), [PAUTA-06](https://pauta-project.dev/4.4.0/conformance/#pauta-06), [PAUTA-07](https://pauta-project.dev/4.4.0/conformance/#pauta-07), [PAUTA-08](https://pauta-project.dev/4.4.0/conformance/#pauta-08), [PAUTA-09](https://pauta-project.dev/4.4.0/conformance/#pauta-09)
+- [ ] A template repository says so in its `pauta.json` and records the rules only an app made from it can meet as `app-only` · [PAUTA-16](https://pauta-project.dev/4.4.0/conformance/#pauta-16)
+- [ ] The conformance is computed from the exceptions by one tested helper, never stored · [PAUTA-02](https://pauta-project.dev/4.4.0/conformance/#pauta-02)
+- [ ] `PautaConformanceTest` checks `pauta.json` and the README against the edition's `rules.json` · [PAUTA-10](https://pauta-project.dev/4.4.0/conformance/#pauta-10), [PAUTA-15](https://pauta-project.dev/4.4.0/conformance/#pauta-15)
+- [ ] About links the edition, *Built to Pauta 4.3.0*, read from `pauta.version`, and shows the conformance · [ABOUT-05](https://pauta-project.dev/4.4.0/templates/about/#about-05), [ABOUT-06](https://pauta-project.dev/4.4.0/templates/about/#about-06), [ABOUT-07](https://pauta-project.dev/4.4.0/templates/about/#about-07), [ABOUT-08](https://pauta-project.dev/4.4.0/templates/about/#about-08), [ABOUT-09](https://pauta-project.dev/4.4.0/templates/about/#about-09)
+- [ ] A Pauta window, `help.pauta`, in the palette, the Help menu and About's link, listing every exception with fixed links · [PAUTA-12](https://pauta-project.dev/4.4.0/conformance/#pauta-12), [PWIN-01](https://pauta-project.dev/4.4.0/templates/pauta-window/#pwin-01), [PWIN-02](https://pauta-project.dev/4.4.0/templates/pauta-window/#pwin-02), [PWIN-03](https://pauta-project.dev/4.4.0/templates/pauta-window/#pwin-03), [PWIN-04](https://pauta-project.dev/4.4.0/templates/pauta-window/#pwin-04)
+- [ ] A *Pauta conformance* page in the user docs with the same list · [PAUTA-13](https://pauta-project.dev/4.4.0/conformance/#pauta-13)
+- [ ] That page generated from `pauta.json` (SHOULD) · [PAUTA-14](https://pauta-project.dev/4.4.0/conformance/#pauta-14)
 
 ### Platform
 
-[Platform baseline](../platform/)
+[Platform baseline](https://pauta-project.dev/4.4.0/platform/)
 
-- [ ] JDK 25 or newer (`release` 25 is the floor) and JavaFX 27 or newer, with a jlinked runtime in every installer · [PLAT-01](../platform/#plat-01), [PLAT-02](../platform/#plat-02), [PLAT-03](../platform/#plat-03)
-- [ ] One JPMS module, `com.<app>` · [PLAT-04](../platform/#plat-04)
-- [ ] Maven Wrapper committed (`mvnw`, `mvnw.cmd`, `.mvn/wrapper/`) · [PLAT-08](../platform/#plat-08)
-- [ ] AtlantaFX 3 controls, and app stylesheets that take their colors from its `-color-*` tokens · [PLAT-05](../platform/#plat-05), [PLAT-06](../platform/#plat-06)
+- [ ] JDK 25 or newer (`release` 25 is the floor) and JavaFX 27 or newer, with a jlinked runtime in every installer · [PLAT-01](https://pauta-project.dev/4.4.0/platform/#plat-01), [PLAT-02](https://pauta-project.dev/4.4.0/platform/#plat-02), [PLAT-03](https://pauta-project.dev/4.4.0/platform/#plat-03)
+- [ ] One JPMS module, `com.<app>` · [PLAT-04](https://pauta-project.dev/4.4.0/platform/#plat-04)
+- [ ] Maven Wrapper committed (`mvnw`, `mvnw.cmd`, `.mvn/wrapper/`) · [PLAT-08](https://pauta-project.dev/4.4.0/platform/#plat-08)
+- [ ] AtlantaFX 3 controls, and app stylesheets that take their colors from its `-color-*` tokens · [PLAT-05](https://pauta-project.dev/4.4.0/platform/#plat-05), [PLAT-06](https://pauta-project.dev/4.4.0/platform/#plat-06)
 
 ### Same on every OS
 
-[Same on every OS](../same-on-every-os/)
+[Same on every OS](https://pauta-project.dev/4.4.0/same-on-every-os/)
 
-- [ ] Every command, setting and window on Windows, macOS and Linux, with the same defaults; one the OS can't serve is disabled and says why · [OS-01](../same-on-every-os/#os-01)
-- [ ] One `Os` class reads `os.name`, and no other class does · [OS-02](../same-on-every-os/#os-02)
-- [ ] A test runs as each OS and finds the same commands, menu rows and settings pages (SHOULD) · [OS-03](../same-on-every-os/#os-03)
+- [ ] Every command, setting and window on Windows, macOS and Linux, with the same defaults; one the OS can't serve is disabled and says why · [OS-01](https://pauta-project.dev/4.4.0/same-on-every-os/#os-01)
+- [ ] One `Os` class reads `os.name`, and no other class does · [OS-02](https://pauta-project.dev/4.4.0/same-on-every-os/#os-02)
+- [ ] A test runs as each OS and finds the same commands, menu rows and settings pages (SHOULD) · [OS-03](https://pauta-project.dev/4.4.0/same-on-every-os/#os-03)
 
 ### Code quality
 
-[Code quality gates](../quality/)
+[Code quality gates](https://pauta-project.dev/4.4.0/quality/)
 
-- [ ] Every package `@NullMarked`; NullAway on Error Prone fails the build · [PLAT-09](../platform/#plat-09)
-- [ ] Spotless with Palantir Java Format, checked in CI · [PLAT-10](../platform/#plat-10)
-- [ ] JUnit 5 and headless FX tests (`-Dglass.platform=Headless`), FX tests tagged `fx` · [PLAT-11](../platform/#plat-11), [QUAL-06](../quality/#qual-06)
-- [ ] JaCoCo check at 0.90 lines and 0.90 methods · [PLAT-12](../platform/#plat-12)
-- [ ] Rules live in pure, unit-tested helpers; UI classes stay thin · [QUAL-05](../quality/#qual-05)
-- [ ] A capture hook or headless screenshot drives the real window for UI checks · [QUAL-09](../quality/#qual-09)
+- [ ] Every package `@NullMarked`; NullAway on Error Prone fails the build · [PLAT-09](https://pauta-project.dev/4.4.0/platform/#plat-09)
+- [ ] Spotless with Palantir Java Format, checked in CI · [PLAT-10](https://pauta-project.dev/4.4.0/platform/#plat-10)
+- [ ] JUnit 5 and headless FX tests (`-Dglass.platform=Headless`), FX tests tagged `fx` · [PLAT-11](https://pauta-project.dev/4.4.0/platform/#plat-11), [QUAL-06](https://pauta-project.dev/4.4.0/quality/#qual-06)
+- [ ] JaCoCo check at 0.90 lines and 0.90 methods · [PLAT-12](https://pauta-project.dev/4.4.0/platform/#plat-12)
+- [ ] Rules live in pure, unit-tested helpers; UI classes stay thin · [QUAL-05](https://pauta-project.dev/4.4.0/quality/#qual-05)
+- [ ] A capture hook or headless screenshot drives the real window for UI checks · [QUAL-09](https://pauta-project.dev/4.4.0/quality/#qual-09)
 
 ### Performance
 
-[Performance](../performance/)
+[Performance](https://pauta-project.dev/4.4.0/performance/)
 
-- [ ] No I/O, process, parsing or waiting on the JavaFX application thread; results return through `Platform.runLater` · [PERF-01](../performance/#perf-01), [PERF-02](../performance/#perf-02)
-- [ ] Background results applied under a generation guard; blocking work kept off the common pool · [PERF-03](../performance/#perf-03), [PERF-05](../performance/#perf-05)
-- [ ] Redraws coalesced to one per pulse; streams delivered in batches; work only on what is visible and changed · [PERF-06](../performance/#perf-06), [PERF-07](../performance/#perf-07), [PERF-08](../performance/#perf-08)
-- [ ] Logs, histories and caches bounded; large inputs guarded; a closed window releases what it held · [PERF-11](../performance/#perf-11), [PERF-12](../performance/#perf-12), [PERF-13](../performance/#perf-13)
-- [ ] Only the first frame built before it paints; update check and extras deferred · [PERF-14](../performance/#perf-14), [PERF-15](../performance/#perf-15)
-- [ ] Every thread named and a daemon (SHOULD) · [PERF-04](../performance/#perf-04)
+- [ ] No I/O, process, parsing or waiting on the JavaFX application thread; results return through `Platform.runLater` · [PERF-01](https://pauta-project.dev/4.4.0/performance/#perf-01), [PERF-02](https://pauta-project.dev/4.4.0/performance/#perf-02)
+- [ ] Background results applied under a generation guard; blocking work kept off the common pool · [PERF-03](https://pauta-project.dev/4.4.0/performance/#perf-03), [PERF-05](https://pauta-project.dev/4.4.0/performance/#perf-05)
+- [ ] Redraws coalesced to one per pulse; streams delivered in batches; work only on what is visible and changed · [PERF-06](https://pauta-project.dev/4.4.0/performance/#perf-06), [PERF-07](https://pauta-project.dev/4.4.0/performance/#perf-07), [PERF-08](https://pauta-project.dev/4.4.0/performance/#perf-08)
+- [ ] Logs, histories and caches bounded; large inputs guarded; a closed window releases what it held · [PERF-11](https://pauta-project.dev/4.4.0/performance/#perf-11), [PERF-12](https://pauta-project.dev/4.4.0/performance/#perf-12), [PERF-13](https://pauta-project.dev/4.4.0/performance/#perf-13)
+- [ ] Only the first frame built before it paints; update check and extras deferred · [PERF-14](https://pauta-project.dev/4.4.0/performance/#perf-14), [PERF-15](https://pauta-project.dev/4.4.0/performance/#perf-15)
+- [ ] Every thread named and a daemon (SHOULD) · [PERF-04](https://pauta-project.dev/4.4.0/performance/#perf-04)
 
 ### Keyboard and commands
 
-[Keyboard first](../keyboard/) · [Command Palette](../templates/command-palette/) · [Find bar](../templates/find-bar/)
+[Keyboard first](https://pauta-project.dev/4.4.0/keyboard/) · [Command Palette](https://pauta-project.dev/4.4.0/templates/command-palette/) · [Find bar](https://pauta-project.dev/4.4.0/templates/find-bar/)
 
-- [ ] One `CommandRegistry`: every action is a command with an id, its title and description from the message catalogs · [KBD-01](../keyboard/#kbd-01), [KBD-03](../keyboard/#kbd-03)
-- [ ] One Command Palette per window, `M-x` or `Ctrl+Shift+P`, an in-scene overlay (not a `Popup`) that lists every command · [KBD-05](../keyboard/#kbd-05), [KBD-07](../keyboard/#kbd-07), [PAL-01](../templates/command-palette/#pal-01), [PAL-02](../templates/command-palette/#pal-02)
-- [ ] Emacs and CUA keymaps at least, each `.mac.json` variant binding the same commands, with user overrides on top · [KBD-09](../keyboard/#kbd-09), [KBD-21](../keyboard/#kbd-21), [KBD-11](../keyboard/#kbd-11)
-- [ ] A find bar in the scene wherever there is text to search: searches as you type with a count, Enter and Shift+Enter step, Escape closes it; a list app filters instead · [FIND-01](../templates/find-bar/#find-01), [FIND-02](../templates/find-bar/#find-02), [FIND-03](../templates/find-bar/#find-03), [FIND-06](../templates/find-bar/#find-06), [FIND-07](../templates/find-bar/#find-07)
-- [ ] One QuickOpen-style picker for every list choice (themes, keymaps, recent items, a setting's values), in the overlay host (SHOULD) · [QOPEN-01](../templates/quick-open/#qopen-01), [QOPEN-02](../templates/quick-open/#qopen-02)
+- [ ] One `CommandRegistry`: every action is a command with an id, its title and description from the message catalogs · [KBD-01](https://pauta-project.dev/4.4.0/keyboard/#kbd-01), [KBD-03](https://pauta-project.dev/4.4.0/keyboard/#kbd-03)
+- [ ] One Command Palette per window, `M-x` or `Ctrl+Shift+P`, an in-scene overlay (not a `Popup`) that lists every command · [KBD-05](https://pauta-project.dev/4.4.0/keyboard/#kbd-05), [KBD-07](https://pauta-project.dev/4.4.0/keyboard/#kbd-07), [PAL-01](https://pauta-project.dev/4.4.0/templates/command-palette/#pal-01), [PAL-02](https://pauta-project.dev/4.4.0/templates/command-palette/#pal-02)
+- [ ] Emacs and CUA keymaps at least, each `.mac.json` variant binding the same commands, with user overrides on top · [KBD-09](https://pauta-project.dev/4.4.0/keyboard/#kbd-09), [KBD-21](https://pauta-project.dev/4.4.0/keyboard/#kbd-21), [KBD-11](https://pauta-project.dev/4.4.0/keyboard/#kbd-11)
+- [ ] A find bar in the scene wherever there is text to search: searches as you type with a count, Enter and Shift+Enter step, Escape closes it; a list app filters instead · [FIND-01](https://pauta-project.dev/4.4.0/templates/find-bar/#find-01), [FIND-02](https://pauta-project.dev/4.4.0/templates/find-bar/#find-02), [FIND-03](https://pauta-project.dev/4.4.0/templates/find-bar/#find-03), [FIND-06](https://pauta-project.dev/4.4.0/templates/find-bar/#find-06), [FIND-07](https://pauta-project.dev/4.4.0/templates/find-bar/#find-07)
+- [ ] One QuickOpen-style picker for every list choice (themes, keymaps, recent items, a setting's values), in the overlay host (SHOULD) · [QOPEN-01](https://pauta-project.dev/4.4.0/templates/quick-open/#qopen-01), [QOPEN-02](https://pauta-project.dev/4.4.0/templates/quick-open/#qopen-02)
 
 ### Window shell
 
-[Window shell](../window-shell/) · [Welcome page](../templates/welcome/) · [Confirm dialog](../templates/confirm-dialog/) · [About window](../templates/about/)
+[Window shell](https://pauta-project.dev/4.4.0/window-shell/) · [Welcome page](https://pauta-project.dev/4.4.0/templates/welcome/) · [Confirm dialog](https://pauta-project.dev/4.4.0/templates/confirm-dialog/) · [About window](https://pauta-project.dev/4.4.0/templates/about/)
 
-- [ ] A status bar whose echo area shows the last action's feedback, errors in red and warnings in amber, and opens the Message Log on a click · [WIN-01](../window-shell/#win-01)
-- [ ] Every destructive action asks first: the question names the thing, the button names the action in the `danger` style, Escape cancels; or the action can be taken back instead · [CONF-01](../templates/confirm-dialog/#conf-01), [CONF-02](../templates/confirm-dialog/#conf-02), [CONF-03](../templates/confirm-dialog/#conf-03), [CONF-04](../templates/confirm-dialog/#conf-04)
-- [ ] Dialog buttons in one order on every OS, Cancel to the left of the action · [WIN-11](../window-shell/#win-11)
-- [ ] About from Help, `help.about` and the macOS application menu: version and build, runtime, license, links and the last update check · [ABOUT-01](../templates/about/#about-01), [ABOUT-02](../templates/about/#about-02)
-- [ ] A Welcome page when there is nothing to restore, or an empty state that names the ways in with their chords (SHOULD) · [WELC-01](../templates/welcome/#welc-01), [WELC-02](../templates/welcome/#welc-02)
+- [ ] A status bar whose echo area shows the last action's feedback, errors in red and warnings in amber, and opens the Message Log on a click · [WIN-01](https://pauta-project.dev/4.4.0/window-shell/#win-01)
+- [ ] Every destructive action asks first: the question names the thing, the button names the action in the `danger` style, Escape cancels; or the action can be taken back instead · [CONF-01](https://pauta-project.dev/4.4.0/templates/confirm-dialog/#conf-01), [CONF-02](https://pauta-project.dev/4.4.0/templates/confirm-dialog/#conf-02), [CONF-03](https://pauta-project.dev/4.4.0/templates/confirm-dialog/#conf-03), [CONF-04](https://pauta-project.dev/4.4.0/templates/confirm-dialog/#conf-04)
+- [ ] Dialog buttons in one order on every OS, Cancel to the left of the action · [WIN-11](https://pauta-project.dev/4.4.0/window-shell/#win-11)
+- [ ] About from Help, `help.about` and the macOS application menu: version and build, runtime, license, links and the last update check · [ABOUT-01](https://pauta-project.dev/4.4.0/templates/about/#about-01), [ABOUT-02](https://pauta-project.dev/4.4.0/templates/about/#about-02)
+- [ ] A Welcome page when there is nothing to restore, or an empty state that names the ways in with their chords (SHOULD) · [WELC-01](https://pauta-project.dev/4.4.0/templates/welcome/#welc-01), [WELC-02](https://pauta-project.dev/4.4.0/templates/welcome/#welc-02)
 
 ### Icons and color
 
-[Icons and color](../icons-and-color/)
+[Icons and color](https://pauta-project.dev/4.4.0/icons-and-color/)
 
-- [ ] Inter's four faces bundled, registered before any CSS, and attached by a scene stylesheet to every scene, dialogs and popups included · [ICON-01](../icons-and-color/#icon-01), [ICON-02](../icons-and-color/#icon-02)
-- [ ] Light and dark themes switched at run time, a "follow the system" choice, and an unknown theme falling back to the default · [ICON-15](../icons-and-color/#icon-15), [ICON-16](../icons-and-color/#icon-16), [ICON-17](../icons-and-color/#icon-17)
-- [ ] State colors named once on `.root` from the theme's roles, no fixed hex in a component rule · [ICON-07](../icons-and-color/#icon-07), [ICON-08](../icons-and-color/#icon-08)
-- [ ] Tinted text at 4.5:1 on its fill and on both grounds; `-color-fg-emphasis` on an emphasis fill; one focus ring · [ICON-10](../icons-and-color/#icon-10), [ICON-11](../icons-and-color/#icon-11), [ICON-12](../icons-and-color/#icon-12)
-- [ ] Icons in one family's style class each, the same glyph for an action everywhere it is reached, every glyph set credited in `NOTICE` · [ICON-19](../icons-and-color/#icon-19), [ICON-20](../icons-and-color/#icon-20), [ICON-24](../icons-and-color/#icon-24)
-- [ ] Readable text in `-color-fg-muted` or stronger, held by a pure contrast test over the stylesheets (SHOULD) · [ICON-09](../icons-and-color/#icon-09), [ICON-14](../icons-and-color/#icon-14)
+- [ ] Inter's four faces bundled, registered before any CSS, and attached by a scene stylesheet to every scene, dialogs and popups included · [ICON-01](https://pauta-project.dev/4.4.0/icons-and-color/#icon-01), [ICON-02](https://pauta-project.dev/4.4.0/icons-and-color/#icon-02)
+- [ ] Light and dark themes switched at run time, a "follow the system" choice, and an unknown theme falling back to the default · [ICON-15](https://pauta-project.dev/4.4.0/icons-and-color/#icon-15), [ICON-16](https://pauta-project.dev/4.4.0/icons-and-color/#icon-16), [ICON-17](https://pauta-project.dev/4.4.0/icons-and-color/#icon-17)
+- [ ] State colors named once on `.root` from the theme's roles, no fixed hex in a component rule · [ICON-07](https://pauta-project.dev/4.4.0/icons-and-color/#icon-07), [ICON-08](https://pauta-project.dev/4.4.0/icons-and-color/#icon-08)
+- [ ] Tinted text at 4.5:1 on its fill and on both grounds; `-color-fg-emphasis` on an emphasis fill; one focus ring · [ICON-10](https://pauta-project.dev/4.4.0/icons-and-color/#icon-10), [ICON-11](https://pauta-project.dev/4.4.0/icons-and-color/#icon-11), [ICON-12](https://pauta-project.dev/4.4.0/icons-and-color/#icon-12)
+- [ ] Icons in one family's style class each, the same glyph for an action everywhere it is reached, every glyph set credited in `NOTICE` · [ICON-19](https://pauta-project.dev/4.4.0/icons-and-color/#icon-19), [ICON-20](https://pauta-project.dev/4.4.0/icons-and-color/#icon-20), [ICON-24](https://pauta-project.dev/4.4.0/icons-and-color/#icon-24)
+- [ ] Readable text in `-color-fg-muted` or stronger, held by a pure contrast test over the stylesheets (SHOULD) · [ICON-09](https://pauta-project.dev/4.4.0/icons-and-color/#icon-09), [ICON-14](https://pauta-project.dev/4.4.0/icons-and-color/#icon-14)
 
 ### Toolbars and tooltips
 
-[Toolbars and tooltips](../toolbars-and-tooltips/)
+[Toolbars and tooltips](https://pauta-project.dev/4.4.0/toolbars-and-tooltips/)
 
-- [ ] Icon-only buttons built by one helper that sets the tooltip and the accessible name (`Icons.button`, `Icons.name`) · [TBAR-01](../toolbars-and-tooltips/#tbar-01)
-- [ ] Toolbar buttons out of the Tab order; every tooltip names the command and its chord from the active keymap · [TBAR-02](../toolbars-and-tooltips/#tbar-02), [TBAR-03](../toolbars-and-tooltips/#tbar-03)
-- [ ] The toolbar never holds the only way to an action, and its right-click menu is one reused menu · [TBAR-08](../toolbars-and-tooltips/#tbar-08), [TBAR-10](../toolbars-and-tooltips/#tbar-10)
-- [ ] Groups separated by spacing on one chrome band, no hairlines; a toggle wears `:open` while it is on (SHOULD) · [TBAR-04](../toolbars-and-tooltips/#tbar-04), [TBAR-06](../toolbars-and-tooltips/#tbar-06), [TBAR-07](../toolbars-and-tooltips/#tbar-07)
+- [ ] Icon-only buttons built by one helper that sets the tooltip and the accessible name (`Icons.button`, `Icons.name`) · [TBAR-01](https://pauta-project.dev/4.4.0/toolbars-and-tooltips/#tbar-01)
+- [ ] Toolbar buttons out of the Tab order; every tooltip names the command and its chord from the active keymap · [TBAR-02](https://pauta-project.dev/4.4.0/toolbars-and-tooltips/#tbar-02), [TBAR-03](https://pauta-project.dev/4.4.0/toolbars-and-tooltips/#tbar-03)
+- [ ] The toolbar never holds the only way to an action, and its right-click menu is one reused menu · [TBAR-08](https://pauta-project.dev/4.4.0/toolbars-and-tooltips/#tbar-08), [TBAR-10](https://pauta-project.dev/4.4.0/toolbars-and-tooltips/#tbar-10)
+- [ ] Groups separated by spacing on one chrome band, no hairlines; a toggle wears `:open` while it is on (SHOULD) · [TBAR-04](https://pauta-project.dev/4.4.0/toolbars-and-tooltips/#tbar-04), [TBAR-06](https://pauta-project.dev/4.4.0/toolbars-and-tooltips/#tbar-06), [TBAR-07](https://pauta-project.dev/4.4.0/toolbars-and-tooltips/#tbar-07)
 
 ### Tabs and panels
 
-[Tabs and tool panels](../tabs-and-panels/)
+[Tabs and tool panels](https://pauta-project.dev/4.4.0/tabs-and-panels/)
 
-- [ ] Every tab operation is a command · [TABS-01](../tabs-and-panels/#tabs-01)
-- [ ] One tab header carries the title and the states: `•` and amber italic for unsaved, a pin and bold for pinned, muted italic for read-only (`TabHeaders`) · [TABS-02](../tabs-and-panels/#tabs-02), [TABS-03](../tabs-and-panels/#tabs-03)
-- [ ] Bulk close skips pinned tabs, pinning moves a tab to the end of the pinned group, and Reopen Closed Tab brings the last one back (`ClosedTabs`) · [TABS-04](../tabs-and-panels/#tabs-04), [TABS-05](../tabs-and-panels/#tabs-05), [TABS-06](../tabs-and-panels/#tabs-06)
-- [ ] A command toggles each panel, and a panel's content is built on first use (`ToolWindowManager`) · [TABS-13](../tabs-and-panels/#tabs-13), [TABS-14](../tabs-and-panels/#tabs-14)
-- [ ] Panel side, order and divider positions restored on the next launch (SHOULD) · [TABS-15](../tabs-and-panels/#tabs-15)
+- [ ] Every tab operation is a command · [TABS-01](https://pauta-project.dev/4.4.0/tabs-and-panels/#tabs-01)
+- [ ] One tab header carries the title and the states: `•` and amber italic for unsaved, a pin and bold for pinned, muted italic for read-only (`TabHeaders`) · [TABS-02](https://pauta-project.dev/4.4.0/tabs-and-panels/#tabs-02), [TABS-03](https://pauta-project.dev/4.4.0/tabs-and-panels/#tabs-03)
+- [ ] Bulk close skips pinned tabs, pinning moves a tab to the end of the pinned group, and Reopen Closed Tab brings the last one back (`ClosedTabs`) · [TABS-04](https://pauta-project.dev/4.4.0/tabs-and-panels/#tabs-04), [TABS-05](https://pauta-project.dev/4.4.0/tabs-and-panels/#tabs-05), [TABS-06](https://pauta-project.dev/4.4.0/tabs-and-panels/#tabs-06)
+- [ ] A command toggles each panel, and a panel's content is built on first use (`ToolWindowManager`) · [TABS-13](https://pauta-project.dev/4.4.0/tabs-and-panels/#tabs-13), [TABS-14](https://pauta-project.dev/4.4.0/tabs-and-panels/#tabs-14)
+- [ ] Panel side, order and divider positions restored on the next launch (SHOULD) · [TABS-15](https://pauta-project.dev/4.4.0/tabs-and-panels/#tabs-15)
 
 ### Menus
 
-[Menus](../menus/)
+[Menus](https://pauta-project.dev/4.4.0/menus/)
 
-- [ ] Menu rows are commands: icon, title and chord from the registry and the active keymap, no `KeyCombination` accelerators · [MENU-01](../menus/#menu-01), [MENU-02](../menus/#menu-02)
-- [ ] Every row of every menu, right-click menus and drop-downs included, has an icon that depicts it and its chord when bound · [MENU-14](../menus/#menu-14), [MENU-15](../menus/#menu-15)
-- [ ] Menus draw in Inter 14 px whatever they were opened from (`.context-menu` pins the font in pixels) · [MENU-16](../menus/#menu-16)
-- [ ] Every row, tab and editor has a right-click menu with its own actions · [MENU-05](../menus/#menu-05)
-- [ ] One right-click menu at a time; a press anywhere outside closes it, and so does Escape, returning focus (`ContextMenuDismissal`) · [MENU-06](../menus/#menu-06), [MENU-07](../menus/#menu-07), [MENU-08](../menus/#menu-08)
-- [ ] Right-click menus open from the Menu key and Shift+F10 at the selected row (`RowContextMenu`) · [MENU-09](../menus/#menu-09)
+- [ ] Menu rows are commands: icon, title and chord from the registry and the active keymap, no `KeyCombination` accelerators · [MENU-01](https://pauta-project.dev/4.4.0/menus/#menu-01), [MENU-02](https://pauta-project.dev/4.4.0/menus/#menu-02)
+- [ ] Every row of every menu, right-click menus and drop-downs included, has an icon that depicts it and its chord when bound · [MENU-14](https://pauta-project.dev/4.4.0/menus/#menu-14), [MENU-15](https://pauta-project.dev/4.4.0/menus/#menu-15)
+- [ ] Menus draw in Inter 14 px whatever they were opened from (`.context-menu` pins the font in pixels) · [MENU-16](https://pauta-project.dev/4.4.0/menus/#menu-16)
+- [ ] Every row, tab and editor has a right-click menu with its own actions · [MENU-05](https://pauta-project.dev/4.4.0/menus/#menu-05)
+- [ ] One right-click menu at a time; a press anywhere outside closes it, and so does Escape, returning focus (`ContextMenuDismissal`) · [MENU-06](https://pauta-project.dev/4.4.0/menus/#menu-06), [MENU-07](https://pauta-project.dev/4.4.0/menus/#menu-07), [MENU-08](https://pauta-project.dev/4.4.0/menus/#menu-08)
+- [ ] Right-click menus open from the Menu key and Shift+F10 at the selected row (`RowContextMenu`) · [MENU-09](https://pauta-project.dev/4.4.0/menus/#menu-09)
 
 ### Tray and background
 
-[Tray and background](../tray-and-background/) (for an app that keeps working without its window)
+[Tray and background](https://pauta-project.dev/4.4.0/tray-and-background/) (for an app that keeps working without its window)
 
-- [ ] The shared `tray/` package: StatusNotifierItem on Linux, AWT elsewhere, and the app fully usable without an icon · [TRAY-01](../tray-and-background/#tray-01), [TRAY-02](../tray-and-background/#tray-02)
-- [ ] Closing the window hides it only while an icon is up and the setting says so; Quit is explicit and one path · [TRAY-03](../tray-and-background/#tray-03), [TRAY-04](../tray-and-background/#tray-04)
-- [ ] Desktop notifications through one `Notifier`, for what happened while the window was away, one switch per event · [TRAY-09](../tray-and-background/#tray-09), [TRAY-10](../tray-and-background/#tray-10)
-- [ ] Start at login writes the OS's own entry (XDG autostart, LaunchAgent, `HKCU` Run), and `--minimized` comes up behind the icon (SHOULD) · [TRAY-05](../tray-and-background/#tray-05), [TRAY-06](../tray-and-background/#tray-06)
+- [ ] The shared `tray/` package: StatusNotifierItem on Linux, AWT elsewhere, and the app fully usable without an icon · [TRAY-01](https://pauta-project.dev/4.4.0/tray-and-background/#tray-01), [TRAY-02](https://pauta-project.dev/4.4.0/tray-and-background/#tray-02)
+- [ ] Closing the window hides it only while an icon is up and the setting says so; Quit is explicit and one path · [TRAY-03](https://pauta-project.dev/4.4.0/tray-and-background/#tray-03), [TRAY-04](https://pauta-project.dev/4.4.0/tray-and-background/#tray-04)
+- [ ] Desktop notifications through one `Notifier`, for what happened while the window was away, one switch per event · [TRAY-09](https://pauta-project.dev/4.4.0/tray-and-background/#tray-09), [TRAY-10](https://pauta-project.dev/4.4.0/tray-and-background/#tray-10)
+- [ ] Start at login writes the OS's own entry (XDG autostart, LaunchAgent, `HKCU` Run), and `--minimized` comes up behind the icon (SHOULD) · [TRAY-05](https://pauta-project.dev/4.4.0/tray-and-background/#tray-05), [TRAY-06](https://pauta-project.dev/4.4.0/tray-and-background/#tray-06)
 
 ### Settings
 
-[Settings](../settings/) · [Settings Sync](../templates/settings-sync/)
+[Settings](https://pauta-project.dev/4.4.0/settings/) · [Settings Sync](https://pauta-project.dev/4.4.0/templates/settings-sync/)
 
-- [ ] Settings window from a palette command (`Ctrl+,`), with a page sidebar and search · [SET-01](../settings/#set-01), [SET-02](../settings/#set-02), [SET-03](../settings/#set-03)
-- [ ] Live apply with no Save button, and a palette command for every setting · [SET-04](../settings/#set-04), [SET-06](../settings/#set-06)
-- [ ] Config in `~/.<app>`, versioned with migrations, a file newer than the build backed up and defaults loaded · [SET-07](../settings/#set-07), [SET-09](../settings/#set-09), [SET-10](../settings/#set-10)
-- [ ] Config read with suspicion: values clamped on load, an unreadable file kept as a backup and defaults loaded · [SET-11](../settings/#set-11)
-- [ ] Export and import of the config folder · [SET-12](../settings/#set-12)
-- [ ] No secret in a config file: keys and tokens in the OS keychain, a credential the app can ask for again in memory only · [SET-13](../settings/#set-13), [SET-14](../settings/#set-14)
-- [ ] A secret in the wrong place refused (a sync URL with a password, an unredacted problem report), and an option that weakens security only a config key · [SET-15](../settings/#set-15), [SET-16](../settings/#set-16)
-- [ ] Settings sync through a Git repository the user owns (SHOULD) · [SYNC-01](../templates/settings-sync/#sync-01), [SYNC-02](../templates/settings-sync/#sync-02)
+- [ ] Settings window from a palette command (`Ctrl+,`), with a page sidebar and search · [SET-01](https://pauta-project.dev/4.4.0/settings/#set-01), [SET-02](https://pauta-project.dev/4.4.0/settings/#set-02), [SET-03](https://pauta-project.dev/4.4.0/settings/#set-03)
+- [ ] Live apply with no Save button, and a palette command for every setting · [SET-04](https://pauta-project.dev/4.4.0/settings/#set-04), [SET-06](https://pauta-project.dev/4.4.0/settings/#set-06)
+- [ ] Config in `~/.<app>`, versioned with migrations, a file newer than the build backed up and defaults loaded · [SET-07](https://pauta-project.dev/4.4.0/settings/#set-07), [SET-09](https://pauta-project.dev/4.4.0/settings/#set-09), [SET-10](https://pauta-project.dev/4.4.0/settings/#set-10)
+- [ ] Config read with suspicion: values clamped on load, an unreadable file kept as a backup and defaults loaded · [SET-11](https://pauta-project.dev/4.4.0/settings/#set-11)
+- [ ] Export and import of the config folder · [SET-12](https://pauta-project.dev/4.4.0/settings/#set-12)
+- [ ] No secret in a config file: keys and tokens in the OS keychain, a credential the app can ask for again in memory only · [SET-13](https://pauta-project.dev/4.4.0/settings/#set-13), [SET-14](https://pauta-project.dev/4.4.0/settings/#set-14)
+- [ ] A secret in the wrong place refused (a sync URL with a password, an unredacted problem report), and an option that weakens security only a config key · [SET-15](https://pauta-project.dev/4.4.0/settings/#set-15), [SET-16](https://pauta-project.dev/4.4.0/settings/#set-16)
+- [ ] Settings sync through a Git repository the user owns (SHOULD) · [SYNC-01](https://pauta-project.dev/4.4.0/templates/settings-sync/#sync-01), [SYNC-02](https://pauta-project.dev/4.4.0/templates/settings-sync/#sync-02)
 
 ### Diagnostics
 
-[Diagnostics and support](../diagnostics/) · [Message Log](../templates/message-log/)
+[Diagnostics and support](https://pauta-project.dev/4.4.0/diagnostics/) · [Message Log](https://pauta-project.dev/4.4.0/templates/message-log/)
 
-- [ ] Message Log of the session's echo-area messages · [DIAG-01](../diagnostics/#diag-01)
-- [ ] Debug Log with a session file in its own window, and an uncaught exception handler installed at the start of `main` · [DIAG-02](../diagnostics/#diag-02), [DIAG-03](../diagnostics/#diag-03), [DIAG-04](../diagnostics/#diag-04)
-- [ ] Daily update check with an off switch · [DIAG-05](../diagnostics/#diag-05)
-- [ ] Report a Problem: a redacted, prefilled GitHub issue · [DIAG-06](../diagnostics/#diag-06)
+- [ ] Message Log of the session's echo-area messages · [DIAG-01](https://pauta-project.dev/4.4.0/diagnostics/#diag-01)
+- [ ] Debug Log with a session file in its own window, and an uncaught exception handler installed at the start of `main` · [DIAG-02](https://pauta-project.dev/4.4.0/diagnostics/#diag-02), [DIAG-03](https://pauta-project.dev/4.4.0/diagnostics/#diag-03), [DIAG-04](https://pauta-project.dev/4.4.0/diagnostics/#diag-04)
+- [ ] Daily update check with an off switch · [DIAG-05](https://pauta-project.dev/4.4.0/diagnostics/#diag-05)
+- [ ] Report a Problem: a redacted, prefilled GitHub issue · [DIAG-06](https://pauta-project.dev/4.4.0/diagnostics/#diag-06)
 
 ### Command line and languages
 
-[Command line](../command-line/) · [Internationalization](../i18n/)
+[Command line](https://pauta-project.dev/4.4.0/command-line/) · [Internationalization](https://pauta-project.dev/4.4.0/i18n/)
 
-- [ ] `--help`, `--version`, `--config-dir`, `--dev` and `--report` · [CLI-01](../command-line/#cli-01), [CLI-02](../command-line/#cli-02), [CLI-05](../command-line/#cli-05)
-- [ ] Single instance per config folder · [CLI-07](../command-line/#cli-07)
-- [ ] Six message catalogs, each with every key, held by a parity test · [INTL-01](../i18n/#intl-01), [INTL-08](../i18n/#intl-08)
+- [ ] `--help`, `--version`, `--config-dir`, `--dev` and `--report` · [CLI-01](https://pauta-project.dev/4.4.0/command-line/#cli-01), [CLI-02](https://pauta-project.dev/4.4.0/command-line/#cli-02), [CLI-05](https://pauta-project.dev/4.4.0/command-line/#cli-05)
+- [ ] Single instance per config folder · [CLI-07](https://pauta-project.dev/4.4.0/command-line/#cli-07)
+- [ ] Six message catalogs, each with every key, held by a parity test · [INTL-01](https://pauta-project.dev/4.4.0/i18n/#intl-01), [INTL-08](https://pauta-project.dev/4.4.0/i18n/#intl-08)
 
 ### Repository
 
-[Repository documents](../repository/)
+[Repository documents](https://pauta-project.dev/4.4.0/repository/)
 
-- [ ] `README.md` as a landing page of about 200 lines, with the badge row and the hero screenshot · [REPO-01](../repository/#repo-01)
-- [ ] `CHANGELOG.md` in Keep a Changelog format · [REPO-02](../repository/#repo-02)
-- [ ] MIT `LICENSE`, and `NOTICE` with every third-party license · [REPO-03](../repository/#repo-03), [REPO-04](../repository/#repo-04)
-- [ ] `AGENTS.md`, with a one-line `CLAUDE.md` pointing to it · [REPO-05](../repository/#repo-05), [DOCS-14](../documentation/#docs-14)
-- [ ] `CONTRIBUTING.md`, `docs/` and `branding/` · [REPO-06](../repository/#repo-06), [REPO-07](../repository/#repo-07), [REPO-10](../repository/#repo-10)
-- [ ] `.github/ISSUE_TEMPLATE/bug_report.yml` · [REPO-09](../repository/#repo-09)
+- [ ] `README.md` as a landing page of about 200 lines, with the badge row and the hero screenshot · [REPO-01](https://pauta-project.dev/4.4.0/repository/#repo-01)
+- [ ] `CHANGELOG.md` in Keep a Changelog format · [REPO-02](https://pauta-project.dev/4.4.0/repository/#repo-02)
+- [ ] MIT `LICENSE`, and `NOTICE` with every third-party license · [REPO-03](https://pauta-project.dev/4.4.0/repository/#repo-03), [REPO-04](https://pauta-project.dev/4.4.0/repository/#repo-04)
+- [ ] `AGENTS.md`, with a one-line `CLAUDE.md` pointing to it · [REPO-05](https://pauta-project.dev/4.4.0/repository/#repo-05), [DOCS-14](https://pauta-project.dev/4.4.0/documentation/#docs-14)
+- [ ] `CONTRIBUTING.md`, `docs/` and `branding/` · [REPO-06](https://pauta-project.dev/4.4.0/repository/#repo-06), [REPO-07](https://pauta-project.dev/4.4.0/repository/#repo-07), [REPO-10](https://pauta-project.dev/4.4.0/repository/#repo-10)
+- [ ] `.github/ISSUE_TEMPLATE/bug_report.yml` · [REPO-09](https://pauta-project.dev/4.4.0/repository/#repo-09)
 
 ### Documentation
 
-[Documentation](../documentation/)
+[Documentation](https://pauta-project.dev/4.4.0/documentation/)
 
-- [ ] User docs on the app's website under `/docs/`: Getting started, a page per feature area, the keyboard reference, Settings and an FAQ · [DOCS-01](../documentation/#docs-01), [DOCS-02](../documentation/#docs-02)
-- [ ] Help → Documentation as a command (`help.documentation`) · [DOCS-06](../documentation/#docs-06)
-- [ ] A one-line `command.<id>.desc` for every command, held by the parity test · [DOCS-09](../documentation/#docs-09)
-- [ ] Release notes written for users, and the Welcome page's *What's New* opens this build's release · [DOCS-05](../documentation/#docs-05)
-- [ ] `docs/README.md` indexes the contributor guides · [DOCS-12](../documentation/#docs-12)
-- [ ] Docs change in the same PR as the code; when they disagree with the code, the code wins and the docs are fixed · [DOCS-16](../documentation/#docs-16), [DOCS-17](../documentation/#docs-17)
-- [ ] The Help menu in the family's order, Documentation first after the Command Palette (SHOULD) · [DOCS-07](../documentation/#docs-07)
-- [ ] Deep links from the app open the running version's docs, `/docs/v-<version>/` (SHOULD) · [DOCS-03](../documentation/#docs-03)
-- [ ] Command and keybinding references generated from the source, with a check that quoted ids and chords exist (SHOULD) · [DOCS-04](../documentation/#docs-04)
+- [ ] User docs on the app's website under `/docs/`: Getting started, a page per feature area, the keyboard reference, Settings and an FAQ · [DOCS-01](https://pauta-project.dev/4.4.0/documentation/#docs-01), [DOCS-02](https://pauta-project.dev/4.4.0/documentation/#docs-02)
+- [ ] Help → Documentation as a command (`help.documentation`) · [DOCS-06](https://pauta-project.dev/4.4.0/documentation/#docs-06)
+- [ ] A one-line `command.<id>.desc` for every command, held by the parity test · [DOCS-09](https://pauta-project.dev/4.4.0/documentation/#docs-09)
+- [ ] Release notes written for users, and the Welcome page's *What's New* opens this build's release · [DOCS-05](https://pauta-project.dev/4.4.0/documentation/#docs-05)
+- [ ] `docs/README.md` indexes the contributor guides · [DOCS-12](https://pauta-project.dev/4.4.0/documentation/#docs-12)
+- [ ] Docs change in the same PR as the code; when they disagree with the code, the code wins and the docs are fixed · [DOCS-16](https://pauta-project.dev/4.4.0/documentation/#docs-16), [DOCS-17](https://pauta-project.dev/4.4.0/documentation/#docs-17)
+- [ ] The Help menu in the family's order, Documentation first after the Command Palette (SHOULD) · [DOCS-07](https://pauta-project.dev/4.4.0/documentation/#docs-07)
+- [ ] Deep links from the app open the running version's docs, `/docs/v-<version>/` (SHOULD) · [DOCS-03](https://pauta-project.dev/4.4.0/documentation/#docs-03)
+- [ ] Command and keybinding references generated from the source, with a check that quoted ids and chords exist (SHOULD) · [DOCS-04](https://pauta-project.dev/4.4.0/documentation/#docs-04)
 
 ### Packaging and signing
 
-[Packaging, signing and release](../release/)
+[Packaging, signing and release](https://pauta-project.dev/4.4.0/release/)
 
-- [ ] jpackage installers for Linux x64 and arm64, macOS arm64 and x64 and Windows x64; JReleaser creates the GitHub release with every download · [REL-01](../release/#rel-01), [REL-03](../release/#rel-03), [REL-11](../release/#rel-11)
-- [ ] The version in `pom.xml` is the one source: a `vX.Y.Z` tag releases it · [REL-05](../release/#rel-05)
-- [ ] macOS `.dmg` signed with Developer ID, notarized and stapled · [REL-15](../release/#rel-15)
-- [ ] Linux downloads with `.asc` signatures from the shared release key · [REL-16](../release/#rel-16)
-- [ ] Build provenance attestations for every download · [REL-18](../release/#rel-18)
-- [ ] Windows `.msi` Authenticode, once the certificate is chosen (SHOULD) · [REL-17](../release/#rel-17)
-- [ ] Homebrew cask in `adriandeleon/homebrew-tap` and a winget package `AdrianDeLeon.<App>` (SHOULD) · [REL-12](../release/#rel-12), [REL-13](../release/#rel-13)
+- [ ] jpackage installers for Linux x64 and arm64, macOS arm64 and x64 and Windows x64; JReleaser creates the GitHub release with every download · [REL-01](https://pauta-project.dev/4.4.0/release/#rel-01), [REL-03](https://pauta-project.dev/4.4.0/release/#rel-03), [REL-11](https://pauta-project.dev/4.4.0/release/#rel-11)
+- [ ] The version in `pom.xml` is the one source: a `vX.Y.Z` tag releases it · [REL-05](https://pauta-project.dev/4.4.0/release/#rel-05)
+- [ ] macOS `.dmg` signed with Developer ID, notarized and stapled · [REL-15](https://pauta-project.dev/4.4.0/release/#rel-15)
+- [ ] Linux downloads with `.asc` signatures from the shared release key · [REL-16](https://pauta-project.dev/4.4.0/release/#rel-16)
+- [ ] Build provenance attestations for every download · [REL-18](https://pauta-project.dev/4.4.0/release/#rel-18)
+- [ ] Windows `.msi` Authenticode, once the certificate is chosen (SHOULD) · [REL-17](https://pauta-project.dev/4.4.0/release/#rel-17)
+- [ ] Homebrew cask in `adriandeleon/homebrew-tap` and a winget package `AdrianDeLeon.<App>` (SHOULD) · [REL-12](https://pauta-project.dev/4.4.0/release/#rel-12), [REL-13](https://pauta-project.dev/4.4.0/release/#rel-13)
 
 ### CI/CD (GitHub Actions)
 
-[CI/CD](../release/#cicd-github-actions)
+[CI/CD](https://pauta-project.dev/4.4.0/release/#cicd-github-actions)
 
-- [ ] `ci.yml` on every push and pull request: Format and Build & Test, both required checks for `master` · [REL-19](../release/#rel-19)
-- [ ] `release.yml` on a version tag that matches the pom, with a `workflow_dispatch` dry run · [REL-21](../release/#rel-21)
-- [ ] Every third-party action pinned to a commit SHA · [REL-22](../release/#rel-22)
-- [ ] Dependabot for `github-actions` and `maven` · [REL-23](../release/#rel-23)
-- [ ] `permissions: contents: read` by default; write only in publishing jobs · [REL-24](../release/#rel-24)
-- [ ] `timeout-minutes` on every job; superseded pull-request runs canceled · [REL-26](../release/#rel-26)
-- [ ] Test and coverage reports uploaded; coverage totals in the job summary · [REL-27](../release/#rel-27)
-- [ ] Signing skipped without secrets, but a tag without them fails · [REL-28](../release/#rel-28)
-- [ ] A smoke launch of the packaged app on each OS before release · [REL-29](../release/#rel-29)
-- [ ] `full-tests.yml` daily, on a `full-ci` label and before every release (SHOULD) · [REL-20](../release/#rel-20)
+- [ ] `ci.yml` on every push and pull request: Format and Build & Test, both required checks for `master` · [REL-19](https://pauta-project.dev/4.4.0/release/#rel-19)
+- [ ] `release.yml` on a version tag that matches the pom, with a `workflow_dispatch` dry run · [REL-21](https://pauta-project.dev/4.4.0/release/#rel-21)
+- [ ] Every third-party action pinned to a commit SHA · [REL-22](https://pauta-project.dev/4.4.0/release/#rel-22)
+- [ ] Dependabot for `github-actions` and `maven` · [REL-23](https://pauta-project.dev/4.4.0/release/#rel-23)
+- [ ] `permissions: contents: read` by default; write only in publishing jobs · [REL-24](https://pauta-project.dev/4.4.0/release/#rel-24)
+- [ ] `timeout-minutes` on every job; superseded pull-request runs canceled · [REL-26](https://pauta-project.dev/4.4.0/release/#rel-26)
+- [ ] Test and coverage reports uploaded; coverage totals in the job summary · [REL-27](https://pauta-project.dev/4.4.0/release/#rel-27)
+- [ ] Signing skipped without secrets, but a tag without them fails · [REL-28](https://pauta-project.dev/4.4.0/release/#rel-28)
+- [ ] A smoke launch of the packaged app on each OS before release · [REL-29](https://pauta-project.dev/4.4.0/release/#rel-29)
+- [ ] `full-tests.yml` daily, on a `full-ci` label and before every release (SHOULD) · [REL-20](https://pauta-project.dev/4.4.0/release/#rel-20)
 
 ## Conformance
 
 An app implements one edition of Pauta, says how fully it conforms (Complete, Core or Partial), and shows both in its
 About window. The rules it does not meet are not hidden: each one is an **exception**, written down once in the app's `pauta.json`, shown in the app's
-[Pauta window](../templates/pauta-window/) and listed in its user docs. Its conformance is worked out from that list,
+[Pauta window](https://pauta-project.dev/4.4.0/templates/pauta-window/) and listed in its user docs. Its conformance is worked out from that list,
 never typed in by hand, so the claim and the evidence can't drift apart.
 
-No app does this yet. The audit in [Coding agents and LLMs](../coding-agents/#audit-an-app) produces the first list:
+No app does this yet. The audit in [Coding agents and LLMs](https://pauta-project.dev/4.4.0/coding-agents/#audit-an-app) produces the first list:
 each MUST and SHOULD it reports as `fail` becomes an exception, of the kind that fits. A `limited` result needs none.
 
 ### Complete, Core and Partial
@@ -380,19 +380,19 @@ Partial is how an app that already ships says it is on its way: it took up an ed
 moved to a newer one with new MUSTs. A new app is not released at Partial.
 
 - **PAUTA-01 · MUST.** Every app implements Pauta: it names one edition (the `pauta.version` of
-  [ABOUT-08](../templates/about/#about-08)) and states its conformance, Complete, Core or Partial, as defined above.
+  [ABOUT-08](https://pauta-project.dev/4.4.0/templates/about/#about-08)) and states its conformance, Complete, Core or Partial, as defined above.
   - *Why:* an app that is in the family answers to these rules; saying which ones, and how far, is the first of them.
   - *Check (code):* `pom.xml` defines `pauta.version` and `src/main/resources/com/<app>/pauta.json` exists.
   - *Reference:* no app yet.
 - **PAUTA-02 · MUST.** The conformance is computed, never stored: one pure helper reads the exceptions and returns Partial
   when any MUST is pending, Core when any SHOULD is pending, and Complete otherwise. About, the Pauta window and the
   docs page take it from there; the README, which can't call the helper, is held to it by a test (PAUTA-15).
-  - *Why:* [*One source of truth for each fact*](../principles/#for-the-people-building-them). A conformance typed
+  - *Why:* [*One source of truth for each fact*](https://pauta-project.dev/4.4.0/principles/#for-the-people-building-them). A conformance typed
     in by hand stays "Complete" after a pending exception is added.
   - *Check (test):* a unit test of the helper (`PautaConformance`, or the app's equivalent) covers all three and
     shows that deviation, not-applicable and app-only entries leave the result alone.
   - *Reference:* no app yet.
-- **PAUTA-03 · MUST.** A new app's first release is at Core or Complete: the [New app checklist](../checklist/)'s
+- **PAUTA-03 · MUST.** A new app's first release is at Core or Complete: the [New app checklist](https://pauta-project.dev/4.4.0/checklist/)'s
   MUSTs are release blockers, and recording one as pending does not lift that. A template repository is never
   released as an app, so this rule is for the app made from it and the template records no entry for it.
   - *Check (by hand):* the About window of the app's first release says Core or Complete.
@@ -414,23 +414,23 @@ an app, and a fourth for a template repository; each one asks for something diff
   exception names a rule the app does not meet. An unmet rule with no entry is a failed audit, not an exception; an
   entry for a rule the app now meets is removed in the same change that meets it. A rule checked by hand counts like
   any other: someone checks it in the running app before the conformance is claimed, and one that fails is pending.
-  - *Why:* [*Never claim what is not true*](../principles/#for-the-people-using-the-apps). The list is the app's
+  - *Why:* [*Never claim what is not true*](https://pauta-project.dev/4.4.0/principles/#for-the-people-using-the-apps). The list is the app's
     claim; it has to be whole and current.
-  - *Check (by hand):* audit the app against its edition ([Coding agents and LLMs](../coding-agents/#audit-an-app)):
+  - *Check (by hand):* audit the app against its edition ([Coding agents and LLMs](https://pauta-project.dev/4.4.0/coding-agents/#audit-an-app)):
     no MUST or SHOULD is `fail`, every `manual` result has been checked by a person, and no result reports an entry
     for a rule that passes.
   - *Reference:* no app yet.
 - **PAUTA-05 · MUST.** A rule limited to apps with a feature needs no entry in an app without that feature. A rule is
   limited when its own text says so ("An app with user data worth carrying between computers…"), when its page or
-  section opens with an **Applies to** line (the [Tray and background](../tray-and-background/) page; `appliesTo` in
-  `rules.json`), or when it details a rule that is limited (WELC-03 onward detail the Welcome page of [WELC-01](../templates/welcome/#welc-01)).
+  section opens with an **Applies to** line (the [Tray and background](https://pauta-project.dev/4.4.0/tray-and-background/) page; `appliesTo` in
+  `rules.json`), or when it details a rule that is limited (WELC-03 onward detail the Welcome page of [WELC-01](https://pauta-project.dev/4.4.0/templates/welcome/#welc-01)).
   `not-applicable` is for a rule that reads as applying to every app.
   - *Check (code):* no `not-applicable` entry names a rule whose text, page, section or parent rule already limits
     it.
   - *Reference:* no app yet.
 - **PAUTA-06 · MUST.** A `deviation` is a choice, not a gap, and only a SHOULD can have one: a SHOULD is expected
   unless the app has a stated reason, and the deviation is that reason. It links a decision record in
-  `docs/decisions/` ([DOCS-13](../documentation/#docs-13)) that gives the context, what the app does instead, and what
+  `docs/decisions/` ([DOCS-13](https://pauta-project.dev/4.4.0/documentation/#docs-13)) that gives the context, what the app does instead, and what
   it costs. A MUST the app does not meet is `pending`, as is any work it has not done yet.
   - *Why:* a deviation keeps the conformance; a deviation from a MUST, or missing work called a deviation, would let
     the app say it is built to an edition it does not meet.
@@ -455,7 +455,7 @@ an app, and a fourth for a template repository; each one asks for something diff
   met, or recorded as `pending` with an issue in the app's own repository.
   - *Why:* a template can't have the website or screenshots of an app that doesn't exist yet, and an app must not
     inherit its template's issues as its own. A build that failed the moment the app was made would fail its first
-    step; the release is where it has to be settled ([PAUTA-03](#pauta-03)).
+    step; the release is where it has to be settled ([PAUTA-03](https://pauta-project.dev/4.4.0/conformance/#pauta-03)).
   - *Check (code):* in a template, `pauta.json` has `"template": true` and the rename script sets it to `false`; in
     an app, the release build runs the test with inherited entries treated as failures, and the app's first
     release has no `app-only` entry.
@@ -465,7 +465,7 @@ an app, and a fourth for a template repository; each one asks for something diff
 
 The exceptions live in one file, bundled with the app so the Pauta window can read it:
 `src/main/resources/com/<app>/pauta.json`. The edition stays in `pom.xml` (ABOUT-08). Each entry copies the rule's
-`level` and `url` from the edition's [`rules.json`](../coding-agents/) so the app needs nothing else at run time, and
+`level` and `url` from the edition's [`rules.json`](https://pauta-project.dev/4.4.0/coding-agents/) so the app needs nothing else at run time, and
 a test keeps the copies honest.
 
 ```json
@@ -508,7 +508,7 @@ a test keeps the copies honest.
   names a rule the edition does not have, when its `level` or `url` differs from the edition's, when a rule appears
   twice, when a deviation names a MUST, or when a deviation or pending entry has no `link`. Outside a template, it
   reports each `app-only` entry and each `pending` link that is not an issue in the app's own repository (the one
-  `AppInfo` names), and fails on them in the release build ([PAUTA-16](#pauta-16)).
+  `AppInfo` names), and fails on them in the release build ([PAUTA-16](https://pauta-project.dev/4.4.0/conformance/#pauta-16)).
   - *Why:* moving to a newer edition changes levels and retires IDs; the test turns each stale entry into a failure.
   - *Check (test):* `PautaConformanceTest`, or the app's equivalent, runs in the build.
   - *Reference:* no app yet.
@@ -516,29 +516,29 @@ a test keeps the copies honest.
   update `pauta.json`, then change `pauta.version`, the README and `AGENTS.md` together.
   - *Check (by hand):* the change that raises `pauta.version` also replaces `pauta-rules.json` and touches
     `pauta.json` where the audit found something new.
-  - *Reference:* [Move an app to a newer edition](../coding-agents/#move-an-app-to-a-newer-edition).
+  - *Reference:* [Move an app to a newer edition](https://pauta-project.dev/4.4.0/coding-agents/#move-an-app-to-a-newer-edition).
 
 ### Where it shows
 
 The same list reaches three readers: the person using the app, the person reading its docs, and whoever reviews
 the repository.
 
-- **PAUTA-12 · MUST.** In the app: About names the edition and the conformance ([ABOUT-09](../templates/about/#about-09)),
+- **PAUTA-12 · MUST.** In the app: About names the edition and the conformance ([ABOUT-09](https://pauta-project.dev/4.4.0/templates/about/#about-09)),
   and the Pauta window, opened from About, the Help menu and the Command Palette, lists every exception
-  ([Pauta window](../templates/pauta-window/)).
+  ([Pauta window](https://pauta-project.dev/4.4.0/templates/pauta-window/)).
   - *Check (code):* `help.pauta` is registered and About's *Pauta conformance* link runs it.
   - *Reference:* no app yet.
 - **PAUTA-13 · MUST.** In the user docs: the app's website has a *Pauta conformance* page under `/docs/`
-  ([DOCS-02](../documentation/#docs-02)) with the edition, the conformance and every exception, grouped by kind, each with
+  ([DOCS-02](https://pauta-project.dev/4.4.0/documentation/#docs-02)) with the edition, the conformance and every exception, grouped by kind, each with
   its rule ID linked to the edition's rule, its reason and its link. The Pauta window links to it.
   - *Check (code):* the website's `src/content/docs/` has the page, and it lists the same rules as `pauta.json`.
   - *Reference:* no app yet.
 - **PAUTA-14 · SHOULD.** The docs page is generated from `pauta.json`, like the Commands page
-  ([DOCS-04](../documentation/#docs-04)), so it cannot list a different set from the app.
+  ([DOCS-04](https://pauta-project.dev/4.4.0/documentation/#docs-04)), so it cannot list a different set from the app.
   - *Check (code):* the website's `scripts/` has a generator that reads the app's `pauta.json`, and its output is
     committed.
   - *Reference:* no app yet; editora-website's [`scripts/GenCommands.java`](https://github.com/adriandeleon/editora-website/blob/master/scripts/GenCommands.java) is the pattern.
-- **PAUTA-15 · MUST.** In the repository: the README's Pauta badge ([README badges](../repository/#readme-badges-in-this-order))
+- **PAUTA-15 · MUST.** In the repository: the README's Pauta badge ([README badges](https://pauta-project.dev/4.4.0/repository/#readme-badges-in-this-order))
   and its "Built to" line (at Partial, "Working toward") name the edition and the conformance, and both link to the
   docs page.
   - *Check (test):* `PautaConformanceTest` fails when the README's badge or line names another edition than
@@ -571,7 +571,7 @@ numbered edition, so a rule an agent cites keeps its address. `llms.txt`, `llms-
 served from 2.0.0 on, the page Markdown, the skill and the schemas from 4.3.1; the 1.x editions, from before rules
 had IDs, have their pages only. `versions.json` at the site root lists every published edition.
 
-The [single Markdown file](../downloads/adl-desktop-apps-guidelines.md) is the whole guide in one file. It is large,
+The [single Markdown file](https://pauta-project.dev/4.4.0/downloads/adl-desktop-apps-guidelines.md) is the whole guide in one file. It is large,
 and its pages and rules are the same.
 
 ### What a rule looks like
@@ -612,16 +612,16 @@ rule is:
 - **`appliesTo`** is `null` for a rule that covers every app, unless its own text says otherwise. Otherwise it is the
   **Applies to** line its page or section opens with: "an app whose work goes on without its window" for every
   `TRAY` rule. `pages` lists every page with its prefix, its Markdown address and its `appliesTo`.
-- **`statuses`** are what an audit reports for a rule ([Audit an app](#audit-an-app)), and `audit` is the address
+- **`statuses`** are what an audit reports for a rule ([Audit an app](https://pauta-project.dev/4.4.0/coding-agents/#audit-an-app)), and `audit` is the address
   of the report's schema.
 
 ### Point the app's agent at its edition
 
 An app is built to one edition, the one `pauta.version` in its `pom.xml` names (see
-[About window](../templates/about/)). Its agent should read that edition, not `latest/`: a newer edition may hold
+[About window](https://pauta-project.dev/4.4.0/templates/about/)). Its agent should read that edition, not `latest/`: a newer edition may hold
 MUSTs the app doesn't meet yet, and an agent that reads them will "fix" what nobody asked it to.
 
-Say so in the app's `AGENTS.md` ([Repository documents](../repository/)), next to the line that names the edition.
+Say so in the app's `AGENTS.md` ([Repository documents](https://pauta-project.dev/4.4.0/repository/)), next to the line that names the edition.
 The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`AGENTS.md`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/AGENTS.md) already names its edition in its first lines;
 add the addresses:
 
@@ -672,8 +672,8 @@ ships it) or point the agent at it. `llms.txt` and `llms-full.txt` carry it in s
    test, or the app's equivalent, and confirm the build runs it. A *by hand* check: report it as manual.
 3. A rule applies to every app unless it is limited: its text names the apps it covers ("An app with user
    documents…"), its page or section opens with an **Applies to** line, or it details a limited rule
-   ([PAUTA-05](../conformance/#pauta-05)). An app outside a limited rule gets `limited`, and needs no exception.
-4. Read the app's `pauta.json` ([Conformance](../conformance/)). An unmet rule it lists gets the entry's kind as its
+   ([PAUTA-05](https://pauta-project.dev/4.4.0/conformance/#pauta-05)). An app outside a limited rule gets `limited`, and needs no exception.
+4. Read the app's `pauta.json` ([Conformance](https://pauta-project.dev/4.4.0/conformance/)). An unmet rule it lists gets the entry's kind as its
    status; MAYs need no entry. An unmet MUST or SHOULD it doesn't list is `fail`. An entry for a rule that passes or
    is limited, and a deviation or pending entry with no link, are problems.
 5. Report one result per rule: its ID, level, status and evidence as `file:line`. A failed MUST blocks a release.
@@ -716,13 +716,13 @@ MENU-14  MUST    pending  pauta.json: issue #212
 - **Manual means a person.** A *by hand* check needs the running app, often on a particular OS. The agent lists
   them; someone runs them.
 - **Gaps per app** on this site is the same audit, done by hand for the six apps. An agent's report for one of them
-  should agree with [Gaps per app](../family/gaps/); where it doesn't, one of them is wrong.
+  should agree with [Gaps per app](https://pauta-project.dev/4.4.0/family/gaps/); where it doesn't, one of them is wrong.
 
 ### Move an app to a newer edition
 
-The version says how much work the move is ([how editions are numbered](../changelog/#how-editions-are-numbered)): a
+The version says how much work the move is ([how editions are numbered](https://pauta-project.dev/4.4.0/changelog/#how-editions-are-numbered)): a
 newer patch asks nothing of the app, a newer minor asks it to add, a newer major asks it to undo or redo something.
-The [Changelog](../changelog/) says what each edition added and which rules became stronger. To see it rule by
+The [Changelog](https://pauta-project.dev/4.4.0/changelog/) says what each edition added and which rules became stronger. To see it rule by
 rule, compare two editions' `rules.json`:
 
 ```bash
@@ -734,7 +734,7 @@ diff <(curl -s https://pauta-project.dev/$old/rules.json | jq -r '.rules[] | "\(
 A line only in the new edition is a new rule or a raised level; one only in the old is a retired rule (the new
 edition's `retired` list says where it went) or a lowered level. Give the agent that list and the new edition's `llms-full.txt`, have it meet each new MUST or record it in `pauta.json`,
 replace `src/test/resources/pauta-rules.json` with the new edition's, then change `pauta.version`, `AGENTS.md` and the
-README together ([PAUTA-11](../conformance/#pauta-11)).
+README together ([PAUTA-11](https://pauta-project.dev/4.4.0/conformance/#pauta-11)).
 
 ### Working on Pauta itself
 
@@ -767,7 +767,7 @@ in the next edition with nothing else to update.
     dark theme.
   - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml), [`ui/Themes.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Themes.java).
 - **PLAT-06 · MUST.** App stylesheets take their colors from AtlantaFX `-color-*` tokens, or from state tokens
-  built on them; no component rule carries a fixed hex. See [Icons and color](../icons-and-color/).
+  built on them; no component rule carries a fixed hex. See [Icons and color](https://pauta-project.dev/4.4.0/icons-and-color/).
   - *Check (code):* `grep -nE '#[0-9a-fA-F]{3,8}\b' app.css` finds hexes only where a token is defined (a
     `ladder()` of the ground, a scoped `-color-*` block), not in a component's `-fx-*-color` or `-fx-fill`.
   - *Reference:* Editora [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css); [`StyleContrastTest.severityAndDebugColoursComeFromTheStateTokens`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java) holds the
@@ -797,17 +797,17 @@ in the next edition with nothing else to update.
     0.90 `METHOD`.
   - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml) `jacoco-check`.
 - **PLAT-13 · SHOULD.** The app logs through `java.util.logging` and no other logging API. The Debug Log captures
-  it: [DIAG-02](../diagnostics/#diag-02).
+  it: [DIAG-02](https://pauta-project.dev/4.4.0/diagnostics/#diag-02).
   - *Check (code):* the app's own code imports no logging API other than `java.util.logging`.
   - *Reference:* Editora [`ui/DebugLog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/DebugLog.java).
 - **PLAT-14 · SHOULD.** Config files are JSON, read and written by Jackson as plain classes (POJOs). Their schema
-  versions and migrations are [SET-09](../settings/#set-09).
+  versions and migrations are [SET-09](https://pauta-project.dev/4.4.0/settings/#set-09).
   - *Check (code):* every class written to the config folder is read and written through Jackson's
     `ObjectMapper`; no store builds or parses its JSON by hand.
   - *Reference:* Editora [`config/Settings`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/Settings.java), [`config/migration/ConfigSchema.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/migration/ConfigSchema.java).
 
 The app's typeface is Inter, bundled and registered before any CSS and attached to every scene:
-[ICON-01](../icons-and-color/#icon-01) and [ICON-02](../icons-and-color/#icon-02).
+[ICON-01](https://pauta-project.dev/4.4.0/icons-and-color/#icon-01) and [ICON-02](https://pauta-project.dev/4.4.0/icons-and-color/#icon-02).
 
 ![Editora's Appearance settings page with font, theme and editor theme choices and a code preview](https://raw.githubusercontent.com/adriandeleon/adl-desktop-apps-guidelines/master/src/assets/shots/editora-themes-fonts.png "Settings → Appearance in Editora: language, fonts, app theme and editor theme, with a live preview.")
 
@@ -894,7 +894,7 @@ filled in for a placeholder app, `ExampleApp`. `scripts/rename.sh <AppName> <pac
 
 The Pauta badge names the edition and the conformance, in green `2ea043` for Complete, blue `5b8def` for Core and
 amber `d29922` for Partial (where it reads "Working toward"), and links to the app's *Pauta conformance* docs page; a test holds
-it to `pauta.version` and the computed conformance ([Conformance](../conformance/#pauta-15)).
+it to `pauta.version` and the computed conformance ([Conformance](https://pauta-project.dev/4.4.0/conformance/#pauta-15)).
 
 The hero screenshot is a `<picture>` with a dark `srcset` under `prefers-color-scheme: dark`, so GitHub
 shows the screenshot that matches the reader's theme. Screenshots are taken at 2× by a headless harness so
@@ -936,7 +936,7 @@ repository's [`docs/README.md`](https://github.com/adriandeleon/Editora/blob/mas
   own version with `-SNAPSHOT` dropped, so a development build points at the release it is working toward instead
   of a path that would always 404.
   - *Why:* a release that pointed at another release's docs would claim what is not true
-    ([*Never claim what is not true*](../principles/#for-the-people-using-the-apps)), so this becomes a must the day
+    ([*Never claim what is not true*](https://pauta-project.dev/4.4.0/principles/#for-the-people-using-the-apps)), so this becomes a must the day
     the app links to a specific page.
   - *Check (code):* the app's docs URL is `<homepage>/docs/v-` plus its version without `-SNAPSHOT`; the site's
     `astro.config.mjs` serves `/docs/v-<version>/` and redirects the unversioned paths.
@@ -947,16 +947,16 @@ repository's [`docs/README.md`](https://github.com/adriandeleon/Editora/blob/mas
   from `TODO.md` and `CHANGELOG.md`; the version from `pom.xml`. The output is committed, so the site builds
   without the app checked out. A check fails the site when a docs page quotes a command id that does not exist or a
   chord that is bound to a different command.
-  - *Why:* one fact, one source ([*One source of truth for each fact*](../principles/#for-the-people-building-them)).
+  - *Why:* one fact, one source ([*One source of truth for each fact*](https://pauta-project.dev/4.4.0/principles/#for-the-people-building-them)).
   - *Check (code):* the website's `scripts/` holds the generators, their output under `src/lib/` is committed, and
     `npm run check:docs` runs the id and chord check.
   - *Reference:* editora-website [`scripts/GenCommands.java`](https://github.com/adriandeleon/editora-website/blob/master/scripts/GenCommands.java) (every `Command.of` in Editora's `com.editora.ui`,
     [`MainController`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java) holding most), [`GenRoadmap.java`](https://github.com/adriandeleon/editora-website/blob/master/scripts/GenRoadmap.java), [`GenFeatures.java`](https://github.com/adriandeleon/editora-website/blob/master/scripts/GenFeatures.java); [`scripts/check-doc-commands.mjs`](https://github.com/adriandeleon/editora-website/blob/master/scripts/check-doc-commands.mjs)
     (`npm run check:docs`).
 - **DOCS-05 · MUST.** Release notes are written for users. Each `CHANGELOG.md` entry opens with a bold one-line
-  summary ([Repository documents](../repository/)); the Welcome page's *What's New* opens this build's release,
+  summary ([Repository documents](https://pauta-project.dev/4.4.0/repository/)); the Welcome page's *What's New* opens this build's release,
   and the website's What's new is generated from the same file. The GitHub release carrying the section is
-  [REL-04](../release/#rel-04).
+  [REL-04](https://pauta-project.dev/4.4.0/release/#rel-04).
   - *Check (code):* the Welcome page's *What's New* opens `AppInfo.releaseNotesUrl()`; the website's What's new
     is generated from `CHANGELOG.md`.
   - *Reference:* Editora [`AppInfo.releaseNotesUrl()`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/AppInfo.java), [`WelcomePane`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WelcomePane.java) (`welcome.whatsNew`); editora-website
@@ -982,12 +982,12 @@ The documentation is one command away, so nobody has to know the website's addre
   or the keybinding editor.
   - *Check (by hand):* open it from Help, search for a command, and find its key.
   - *Reference:* Termina's and Mirada's [`ShortcutsWindow`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/ShortcutsWindow.java); Editora's keybinding editor
-    ([Keyboard first](../keyboard/)).
+    ([Keyboard first](https://pauta-project.dev/4.4.0/keyboard/)).
 - **DOCS-09 · MUST.** Every command has a one-line description (`command.<id>.desc`), shown under the title in the
   palette. It is the in-app documentation of the command.
   - *Check (test):* the parity test fails when a `command.<id>` title has no `.desc`.
   - *Reference:* Editora [`messages.properties`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/i18n/messages.properties), [`MessagesTest.everyCommandTitleHasAMatchingDescription`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/i18n/MessagesTest.java)
-    ([Code quality gates](../quality/)).
+    ([Code quality gates](https://pauta-project.dev/4.4.0/quality/)).
 - **DOCS-10 · MAY.** The palette opens per-command help. With a command highlighted, `C-h` opens its page,
   `/docs/v-<version>/commands/<id>`; where the keymap binds `C-h`, the first free of `F1` and `Shift+F1` does.
   Search Everywhere shares the URL builder so the two pickers can never disagree.
@@ -1011,7 +1011,7 @@ The documentation is one command away, so nobody has to know the website's addre
 
 - **DOCS-12 · MUST.** `docs/` has an index. `docs/README.md` says who the folder is for (contributors; user docs
   live on the website), states that the code wins when the two disagree, and lists every guide with one line. The
-  set is the one [Repository documents](../repository/) names: `architecture.md`, `conventions.md`, `testing.md`,
+  set is the one [Repository documents](https://pauta-project.dev/4.4.0/repository/) names: `architecture.md`, `conventions.md`, `testing.md`,
   `gotchas.md`, `release.md`, `building-and-packaging.md` and `decisions/`.
   - *Check (code):* `docs/README.md` exists, says those two things, and links each guide in `docs/`.
   - *Reference:* Editora's [`docs/README.md`](https://github.com/adriandeleon/Editora/blob/master/docs/README.md); the template's [`docs/`](https://github.com/adriandeleon/adl-desktop-app-template/tree/master/docs).
@@ -1048,15 +1048,15 @@ The documentation is one command away, so nobody has to know the website's addre
   after any UI change, for the README (its hero in light and dark), the website and bug reports.
   - *Why:* a stale screenshot claims what is not true.
   - *Check (code):* the app has a capture hook or a headless harness that writes the real window to a PNG.
-  - *Reference:* `DevCapture` ([Shared features](../family/shared-features/)); Editora's headless harness.
+  - *Reference:* `DevCapture` ([Shared features](https://pauta-project.dev/4.4.0/family/shared-features/)); Editora's headless harness.
 
 The README's own shape, about 200 lines that leave the detail to the website's docs, is
-[REPO-01](../repository/#repo-01).
+[REPO-01](https://pauta-project.dev/4.4.0/repository/#repo-01).
 
 ## Code quality gates
 
 NullAway runs as an error on every package, each `@NullMarked` in its own `package-info.java`:
-[PLAT-09](../platform/#plat-09). What follows is how to live with it.
+[PLAT-09](https://pauta-project.dev/4.4.0/platform/#plat-09). What follows is how to live with it.
 
 - **QUAL-02 · SHOULD.** A NullAway report is fixed, not suppressed: put `@Nullable` on what may be null.
   - *Check (code):* `grep -rn '@SuppressWarnings("NullAway")' src/main` finds nothing.
@@ -1072,7 +1072,7 @@ NullAway runs as an error on every package, each `@NullMarked` in its own `packa
     table.
   - *Reference:* Editora [`BuildHygieneTest.theCoverageFloorsQuotedInTheTestingGuideAreTheOnesTheBuildEnforces`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/packaging/BuildHygieneTest.java),
     [`docs/testing.md`](https://github.com/adriandeleon/Editora/blob/master/docs/testing.md).
-- **QUAL-05 · MUST.** Extract the decision, then test it ([principle 12](../principles/#for-the-people-building-them)).
+- **QUAL-05 · MUST.** Extract the decision, then test it ([principle 12](https://pauta-project.dev/4.4.0/principles/#for-the-people-building-them)).
   Prefer a pure decision helper plus unit tests; use the headless FX harness only when controller or toolkit
   behavior is the point.
   - *Check (code):* enablement, visibility and navigation rules sit in classes that import no `javafx` type, each
@@ -1093,7 +1093,7 @@ NullAway runs as an error on every package, each `@NullMarked` in its own `packa
   - *Check (test):* the command sweep checks the home directory after running every command.
   - *Reference:* Editora [`CommandSweepFxTest.leftInTheHomeDirectory`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/CommandSweepFxTest.java).
 - **QUAL-09 · MUST.** UI work is verified in the running app
-  ([principle 13](../principles/#for-the-people-building-them)): a capture hook or headless screenshot of the real
+  ([principle 13](https://pauta-project.dev/4.4.0/principles/#for-the-people-building-them)): a capture hook or headless screenshot of the real
   window, with real key and mouse events, before a UI change is called done.
   - *Check (code):* the app has a capture hook (`DevCapture`) or a headless fixture that builds the real window.
   - *Reference:* Editora [`FxWindowFixture`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/FxWindowFixture.java) (the real [`MainController`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java) window, headless); Torrenta and Termina
@@ -1117,8 +1117,8 @@ Guard tests that pay for themselves across the family:
   - *Reference:* Editora [`ReleaseSupplyChainTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/packaging/ReleaseSupplyChainTest.java).
 
 Two more guard tests are rules on the pages they guard: the message parity test is
-[INTL-08](../i18n/#intl-08) (every key in every catalog) and [DOCS-09](../documentation/#docs-09) (every command has a
-description), and the contrast test is [ICON-14](../icons-and-color/#icon-14).
+[INTL-08](https://pauta-project.dev/4.4.0/i18n/#intl-08) (every key in every catalog) and [DOCS-09](https://pauta-project.dev/4.4.0/documentation/#docs-09) (every command has a
+description), and the contrast test is [ICON-14](https://pauta-project.dev/4.4.0/icons-and-color/#icon-14).
 
 ## Performance
 
@@ -1307,7 +1307,7 @@ in Termina the terminal grid, in Mirada stepping between images.
     (`Cmd-S-p`), all to `palette.show`.
 - **KBD-06 · SHOULD.** The palette matches fuzzily over title, id and description; a query that names a command's
   title outranks a fuzzy hit. Each row shows the command's binding in the active keymap. See the
-  [Command Palette template](../templates/command-palette/).
+  [Command Palette template](https://pauta-project.dev/4.4.0/templates/command-palette/).
   - *Check (test):* a ranking test puts the title match first.
   - *Reference:* Editora [`ui/CommandPalette.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java), [`search/FuzzyMatch.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/search/FuzzyMatch.java).
 - **KBD-07 · MUST.** The palette is an in-scene overlay in the window's root `StackPane`, not a
@@ -1318,7 +1318,7 @@ in Termina the terminal grid, in Mirada stepping between images.
   - *Reference:* Editora [`ui/CommandPalette.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java).
 
 Every other list choice (recent files, themes, keymaps, a setting's values) uses the same picker:
-[QOPEN-01](../templates/quick-open/#qopen-01).
+[QOPEN-01](https://pauta-project.dev/4.4.0/templates/quick-open/#qopen-01).
 
 ![Editora's command palette filtered to Git commands](https://raw.githubusercontent.com/adriandeleon/adl-desktop-apps-guidelines/master/src/assets/shots/editora-palette.png "Editora: M-x over the editor; typing git lists every Git command.")
 ![Torrenta's command palette listing Rename, Remove and Force Resume with shortcuts](https://raw.githubusercontent.com/adriandeleon/adl-desktop-apps-guidelines/master/src/assets/shots/torrenta-palette.png "Torrenta: the same palette, filtered to torrent actions with their shortcuts.")
@@ -1335,7 +1335,7 @@ Every other list choice (recent files, themes, keymaps, a setting's values) uses
   - *Reference:* Editora [`src/main/resources/com/editora/keymaps/`](https://github.com/adriandeleon/Editora/tree/master/src/main/resources/com/editora/keymaps).
 - **KBD-21 · MUST.** A keymap's `.mac.json` variant binds the same commands as the keymap it varies. A chord may
   differ, to put `Cmd` where the other has `Ctrl`, to follow the macOS keymap of the editor it copies, or where
-  macOS keeps the chord for itself (`Cmd+Space`, `Cmd+Tab`). See [Same on every OS](../same-on-every-os/).
+  macOS keeps the chord for itself (`Cmd+Space`, `Cmd+Tab`). See [Same on every OS](https://pauta-project.dev/4.4.0/same-on-every-os/).
   - *Why:* a command with no chord on one OS is a command that user never finds from the keyboard.
   - *Check (test):* a test loads each keymap and its `.mac.json` variant and compares the commands they bind.
   - *Reference:* Editora [`KeymapsTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/command/KeymapsTest.java) (`guiKeymapsBindSameCommandSetOnBothPlatforms`).
@@ -1368,7 +1368,7 @@ Every other list choice (recent files, themes, keymaps, a setting's values) uses
 
 - **KBD-15 · SHOULD.** Every interactive control is reachable with Tab and operable with Space or Enter. Toolbar
   buttons are the exception: they stay out of the Tab order (see
-  [Toolbars and tooltips](../toolbars-and-tooltips/)).
+  [Toolbars and tooltips](https://pauta-project.dev/4.4.0/toolbars-and-tooltips/)).
   - *Check (by hand):* Tab through every window and dialog without the mouse.
   - *Reference:* Editora; [`FocusRingFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/FocusRingFxTest.java) holds that every control family draws the focus ring when Tab
     reaches it.
@@ -1381,8 +1381,8 @@ Every other list choice (recent files, themes, keymaps, a setting's values) uses
   - *Reference:* Editora [`ui/SettingSwitch.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingSwitch.java).
 
 Related rules on other pages: every icon-only button gets its name from one helper,
-[TBAR-01](../toolbars-and-tooltips/#tbar-01); rows wrap instead of being cut short in every language,
-[INTL-04](../i18n/#intl-04); readable text and its contrast are one rule, [ICON-09](../icons-and-color/#icon-09).
+[TBAR-01](https://pauta-project.dev/4.4.0/toolbars-and-tooltips/#tbar-01); rows wrap instead of being cut short in every language,
+[INTL-04](https://pauta-project.dev/4.4.0/i18n/#intl-04); readable text and its contrast are one rule, [ICON-09](https://pauta-project.dev/4.4.0/icons-and-color/#icon-09).
 
 ## Window shell
 
@@ -1393,7 +1393,7 @@ Related rules on other pages: every icon-only button gets its name from one help
   - *Check (code):* the echo label switches between an error and a warning style class, and its click handler runs
     the Message Log command.
   - *Reference:* Editora [`ui/StatusBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusBar.java) (`status-echo-error`, `status-echo-warn`; a click runs
-    `view.messageLog`) and the [Message Log template](../templates/message-log/).
+    `view.messageLog`) and the [Message Log template](https://pauta-project.dev/4.4.0/templates/message-log/).
 - **WIN-03 · SHOULD.** The title bar uses JavaFX 27's `HeaderBar` with `StageStyle.EXTENDED` to carry the menu or
   tabs, with a decorated-window fallback, and `useSystemMenuBar` on macOS.
   - *Check (code):* the main stage is created `StageStyle.EXTENDED` with a `HeaderBar`, a setting falls back to a
@@ -1404,16 +1404,16 @@ Related rules on other pages: every icon-only button gets its name from one help
   - *Check (code):* every `Alert` and `Dialog` the app builds passes through the helper.
   - *Reference:* Editora [`ui/Dialogs.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Dialogs.java) ([`Dialogs.styled`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Dialogs.java)).
 - **WIN-11 · MUST.** A dialog's buttons are in the same order on every OS, with Cancel to the left of the action, as the
-  [Confirm dialog](../templates/confirm-dialog/) draws them: the dialog's `ButtonBar` gets one fixed order, never
-  JavaFX's default for the OS. See [Same on every OS](../same-on-every-os/).
+  [Confirm dialog](https://pauta-project.dev/4.4.0/templates/confirm-dialog/) draws them: the dialog's `ButtonBar` gets one fixed order, never
+  JavaFX's default for the OS. See [Same on every OS](https://pauta-project.dev/4.4.0/same-on-every-os/).
   - *Why:* JavaFX orders a `ButtonBar` by the OS it runs on (`BUTTON_ORDER_WINDOWS`, `_MAC_OS`, `_LINUX`), so the
     same confirmation puts its action on the left on Windows and on the right on macOS and Linux.
-  - *Check (code):* the dialog helper ([WIN-04](#win-04)), or each dialog, calls `setButtonOrder` on the dialog
+  - *Check (code):* the dialog helper ([WIN-04](https://pauta-project.dev/4.4.0/window-shell/#win-04)), or each dialog, calls `setButtonOrder` on the dialog
     pane's `ButtonBar` with one constant.
   - *Reference:* no app yet. Editora's Git confirmations give their buttons the `OK_DONE` and `CANCEL_CLOSE` roles
     and leave the order to JavaFX.
 - **WIN-08 · SHOULD.** Window size, position, maximized state and open items are restored on the next launch.
-  `--no-session` skipping the restore is [CLI-04](../command-line/#cli-04).
+  `--no-session` skipping the restore is [CLI-04](https://pauta-project.dev/4.4.0/command-line/#cli-04).
   - *Check (test):* a round-trip test of the saved workspace state.
   - *Reference:* Editora [`config/WorkspaceState.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/WorkspaceState.java) (`windowX` … `windowMaximized`),
     [`ui/WindowSessionCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowSessionCoordinator.java), [`App.noSessionFlag`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java); tests [`WorkspaceStateV29Test`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/config/WorkspaceStateV29Test.java), [`AppArgsTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/AppArgsTest.java),
@@ -1429,12 +1429,12 @@ Related rules on other pages: every icon-only button gets its name from one help
     [`ui/Chrome.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Chrome.java).
 
 The rest of the window has its own pages. Light and dark themes switched at run time, the "follow the system" choice
-and what the state colors mean are [ICON-15](../icons-and-color/#icon-15), [ICON-16](../icons-and-color/#icon-16) and
-[ICON-18](../icons-and-color/#icon-18). A destructive action asks first through the
-[Confirm dialog](../templates/confirm-dialog/) ([CONF-01](../templates/confirm-dialog/#conf-01) to
-[CONF-04](../templates/confirm-dialog/#conf-04)). The [Welcome page](../templates/welcome/) is
-[WELC-01](../templates/welcome/#welc-01), and the [About window](../templates/about/) is
-[ABOUT-02](../templates/about/#about-02) and [ABOUT-09](../templates/about/#about-09).
+and what the state colors mean are [ICON-15](https://pauta-project.dev/4.4.0/icons-and-color/#icon-15), [ICON-16](https://pauta-project.dev/4.4.0/icons-and-color/#icon-16) and
+[ICON-18](https://pauta-project.dev/4.4.0/icons-and-color/#icon-18). A destructive action asks first through the
+[Confirm dialog](https://pauta-project.dev/4.4.0/templates/confirm-dialog/) ([CONF-01](https://pauta-project.dev/4.4.0/templates/confirm-dialog/#conf-01) to
+[CONF-04](https://pauta-project.dev/4.4.0/templates/confirm-dialog/#conf-04)). The [Welcome page](https://pauta-project.dev/4.4.0/templates/welcome/) is
+[WELC-01](https://pauta-project.dev/4.4.0/templates/welcome/#welc-01), and the [About window](https://pauta-project.dev/4.4.0/templates/about/) is
+[ABOUT-02](https://pauta-project.dev/4.4.0/templates/about/#about-02) and [ABOUT-09](https://pauta-project.dev/4.4.0/templates/about/#about-09).
 
 ![Mirada with its file name and folder in a HeaderBar title bar, an info panel and a thumbnail strip](https://raw.githubusercontent.com/adriandeleon/adl-desktop-apps-guidelines/master/src/assets/shots/mirada-main.png "Mirada's HeaderBar title bar carries the file name and folder; the info panel and thumbnails are commands too.")
 ![Termina window with tabs in the title bar and a tab context menu](https://raw.githubusercontent.com/adriandeleon/adl-desktop-apps-guidelines/master/src/assets/shots/termina-tabs.png "Termina puts its tabs in the title bar with JavaFX 27's HeaderBar.")
@@ -1459,7 +1459,7 @@ timestamps.
 | Property | Value | Reference |
 |---|---|---|
 | UI family | Inter, in four faces, bundled in the app's resources and registered before any CSS is applied | `Fonts.UI`, `Fonts.loadForFirstPaint`, `resources/com/editora/fonts/inter/` |
-| Root size | 14 px, the AtlantaFX theme's root size; popups pin absolute pixels where an owner's font would leak (see [Menus](../menus/)) | `MainMenuBar.UI_FONT_SIZE` |
+| Root size | 14 px, the AtlantaFX theme's root size; popups pin absolute pixels where an owner's font would leak (see [Menus](https://pauta-project.dev/4.4.0/menus/)) | `MainMenuBar.UI_FONT_SIZE` |
 | How it is attached | A scene stylesheet (`ui-font.css`, one `.root` rule whose `-fx-font-family` names Inter) on every window's scene, dialogs and popups included | `App.installUiFont` |
 | Monospace | JetBrains Mono by default; Cascadia Code, Fira Code, IBM Plex Mono and Source Code Pro are bundled as editor choices | `Fonts.DEFAULT`, `Fonts.BUNDLED` |
 
@@ -1482,7 +1482,7 @@ timestamps.
     called from [`App`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java)). Termina and Torrenta bundle the same four faces.
 
 Modula is the stated exception to ICON-01 and ICON-02: IBM Plex Mono everywhere, because every reading on a radio is
-a number (see *Before adding a setting* in [Settings](../settings/)).
+a number (see *Before adding a setting* in [Settings](https://pauta-project.dev/4.4.0/settings/)).
 
 ### The palette: Caret & Ink
 
@@ -1574,7 +1574,7 @@ pill, a row tint and a hover state come from the same place. `.state-pill` is th
     paint on an emphasis fill use it.
   - *Reference:* Editora [`StyleContrastTest.inkOnAnEmphasisFillIsTheThemesOnEmphasisColour`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java).
 - **ICON-12 · MUST.** One focus ring, `-focus-ring: -color-accent-emphasis`, drawn by the `:focus-visible` block at
-  the end of `app.css`, at 3:1 or better on every surface (see [Keyboard first](../keyboard/)).
+  the end of `app.css`, at 3:1 or better on every surface (see [Keyboard first](https://pauta-project.dev/4.4.0/keyboard/)).
   - *Check (test):* a test reads `-focus-ring` from `.root` and computes it on the default, subtle, inset and
     overlay grounds.
   - *Reference:* Editora [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) (*Keyboard focus*),
@@ -1595,7 +1595,7 @@ pill, a row tint and a hover state come from the same place. `.state-pill` is th
 ### Themes
 
 - **ICON-15 · MUST.** The app has light and dark themes and switches between them at run time, without a restart
-  (see [Window shell](../window-shell/)).
+  (see [Window shell](https://pauta-project.dev/4.4.0/window-shell/)).
   - *Check (code):* picking a theme calls `Application.setUserAgentStylesheet` in the running app.
   - *Reference:* Editora [`ui/Themes.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Themes.java) (`applyAppTheme`).
 - **ICON-16 · MUST.** A "follow the system" choice applies the light or dark theme to match the system's color
@@ -1673,7 +1673,7 @@ are not interchangeable.
     Font, Octicons and Seti UI (MIT) among them.
 
 An icon-only control gets its tooltip and its accessible name from one helper (`Icons.button`,
-`Icons.toolbarButton`, `Icons.name`): [TBAR-01](../toolbars-and-tooltips/#tbar-01).
+`Icons.toolbarButton`, `Icons.name`): [TBAR-01](https://pauta-project.dev/4.4.0/toolbars-and-tooltips/#tbar-01).
 
 #### In the apps
 
@@ -1688,8 +1688,8 @@ An icon-only control gets its tooltip and its accessible name from one helper (`
 
 ## Toolbars and tooltips
 
-A toolbar is the fast path to commands that are also in the [menus](../menus/) and the
-[Command Palette](../templates/command-palette/): nothing lives only on it. Every button is a command, so its icon,
+A toolbar is the fast path to commands that are also in the [menus](https://pauta-project.dev/4.4.0/menus/) and the
+[Command Palette](https://pauta-project.dev/4.4.0/templates/command-palette/): nothing lives only on it. Every button is a command, so its icon,
 title and chord come from the registry and the active keymap. Reference: Editora's [`ui/Icons.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Icons.java) (`button`,
 `toolbarButton`, `name`), [`ui/ToolbarCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolbarCoordinator.java) (the customizable bar), [`ui/WindowChromeCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowChromeCoordinator.java)
 (`collapseToolbarSeparators`), [`ui/ToolWindowManager.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolWindowManager.java) (the tool window stripes) and the `.tool-bar`,
@@ -1711,16 +1711,16 @@ title and chord come from the registry and the active keymap. Reference: Editora
 <div class="mock-stage">
 <div class="m-tb-stage" role="img" aria-label="Mockup of a toolbar: grouped icon buttons, a tooltip under Save, the Find toggle lit, and the pinned tail">
 <div class="m-tb-bar">
-<span class="m-tb-btn"><svg><use href="#tb-new"/></svg></span>
-<span class="m-tb-btn"><svg><use href="#tb-open"/></svg></span>
-<span class="m-tb-btn hover"><svg><use href="#tb-save"/></svg><span class="pin out" style="left:5px;top:-24px">1</span></span>
+<span class="m-tb-btn"><svg><use href="https://pauta-project.dev/4.4.0/toolbars-and-tooltips/#tb-new"/></svg></span>
+<span class="m-tb-btn"><svg><use href="https://pauta-project.dev/4.4.0/toolbars-and-tooltips/#tb-open"/></svg></span>
+<span class="m-tb-btn hover"><svg><use href="https://pauta-project.dev/4.4.0/toolbars-and-tooltips/#tb-save"/></svg><span class="pin out" style="left:5px;top:-24px">1</span></span>
 <span class="m-tb-gap"><span class="pin out" style="left:-2px;top:-24px">2</span></span>
-<span class="m-tb-btn"><svg><use href="#tb-undo"/></svg></span>
-<span class="m-tb-btn"><svg><use href="#tb-redo"/></svg></span>
+<span class="m-tb-btn"><svg><use href="https://pauta-project.dev/4.4.0/toolbars-and-tooltips/#tb-undo"/></svg></span>
+<span class="m-tb-btn"><svg><use href="https://pauta-project.dev/4.4.0/toolbars-and-tooltips/#tb-redo"/></svg></span>
 <span class="m-tb-gap"></span>
-<span class="m-tb-btn open"><svg><use href="#tb-find"/></svg><span class="pin out" style="left:5px;top:-24px">4</span></span>
-<span class="m-tb-btn"><svg><use href="#tb-palette"/></svg></span>
-<span class="m-tb-tail"><span class="m-tb-combo">Project: Editora ▾</span><span class="m-tb-btn"><svg><use href="#tb-settings"/></svg></span><span class="pin out" style="right:-26px;top:5px">6</span></span>
+<span class="m-tb-btn open"><svg><use href="https://pauta-project.dev/4.4.0/toolbars-and-tooltips/#tb-find"/></svg><span class="pin out" style="left:5px;top:-24px">4</span></span>
+<span class="m-tb-btn"><svg><use href="https://pauta-project.dev/4.4.0/toolbars-and-tooltips/#tb-palette"/></svg></span>
+<span class="m-tb-tail"><span class="m-tb-combo">Project: Editora ▾</span><span class="m-tb-btn"><svg><use href="https://pauta-project.dev/4.4.0/toolbars-and-tooltips/#tb-settings"/></svg></span><span class="pin out" style="right:-26px;top:5px">6</span></span>
 </div>
 <div class="m-tb-tabs"><span class="tab on">Main.java</span><span class="tab">pom.xml</span><span class="pin out" style="left:-26px;top:5px">5</span></div>
 <div class="m-tb-tip">Save (C-x C-s)<span class="pin out" style="right:-26px;top:3px">3</span></div>
@@ -1761,7 +1761,7 @@ title and chord come from the registry and the active keymap. Reference: Editora
     both by hand on its "?" button for the same reason. Editora doesn't yet on its main toolbar:
     [`WindowToolbar.setupButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowToolbar.java) and [`ToolbarCoordinator.buildExtraButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolbarCoordinator.java) set the tooltip only.
 - **TBAR-02 · MUST.** Toolbar buttons stay out of the Tab order: the command, the palette and the menus reach the
-  action, and Tab is for the content. The [keyboard page](../keyboard/#focus-and-accessibility) has the general
+  action, and Tab is for the content. The [keyboard page](https://pauta-project.dev/4.4.0/keyboard/#focus-and-accessibility) has the general
   focus rules.
   - *Check (code):* every button on a toolbar is built by `Icons.toolbarButton` or calls
     `setFocusTraversable(false)`.
@@ -1815,7 +1815,7 @@ title and chord come from the registry and the active keymap. Reference: Editora
   - *Check (test):* an FX test right-clicks the bar twice and finds one menu, then presses on the bar and elsewhere
     in the window and finds it closed.
   - *Reference:* Editora [`ToolbarCoordinator`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolbarCoordinator.java), [`ContextMenuDismissal`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ContextMenuDismissal.java), [`ToolbarContextMenuDismissFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ToolbarContextMenuDismissFxTest.java). See
-    [Menus](../menus/), whose rules on icons, chords and the 14 px font ([MENU-16](../menus/#menu-16)) hold for this
+    [Menus](https://pauta-project.dev/4.4.0/menus/), whose rules on icons, chords and the 14 px font ([MENU-16](https://pauta-project.dev/4.4.0/menus/#menu-16)) hold for this
     menu too.
 - **TBAR-12 · SHOULD.** Tool window stripes are toolbars: a stripe button is built like a toolbar button, with the
   chord in its tooltip, accessible text bound to the window's title, and a right-click menu with *Open in Split* and
@@ -1889,7 +1889,7 @@ rules in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/mai
 
 - **TABS-01 · MUST.** Every tab operation is a command, so it can be bound to a chord, is in the palette and has a
   menu row: close, close others, close all, close unmodified, close to the left and right, pin, reopen closed, next
-  and previous. The tab's [right-click menu](../menus/) lists the ones that act on a tab.
+  and previous. The tab's [right-click menu](https://pauta-project.dev/4.4.0/menus/) lists the ones that act on a tab.
   - *Check (code):* each operation has a registered command id, and `TabContextMenu` lists the per-tab ones.
   - *Reference:* Editora [`ui/WindowCommandRegistrar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowCommandRegistrar.java) (`buffer.close`, `buffer.closeOthers`, `buffer.closeAll`,
     `buffer.closeUnmodified`, `buffer.closeLeft`, `buffer.closeRight`, `buffer.togglePin`, `buffer.reopenClosed`,
@@ -1944,7 +1944,7 @@ rules in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/mai
   - *Check (code):* the code that sets the stage title adds all three and the marker.
   - *Reference:* Editora [`MainController.updateWindowTitle`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java).
 - **TABS-11 · SHOULD.** Tabs sit in the title bar through JavaFX 27's `HeaderBar`; see
-  [Window shell](../window-shell/).
+  [Window shell](https://pauta-project.dev/4.4.0/window-shell/).
   - *Check (by hand):* the tab strip shares the title bar's row.
   - *Reference:* Termina [`ui/TerminalWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalWindow.java).
 - **TABS-12 · SHOULD.** A command hides the tab bar.
@@ -2041,7 +2041,7 @@ maximized pane wears a "Pane 2 of 3" badge so the others are known to still be t
 ## Menus
 
 Two surfaces show the same rows: the **menu bar**, a browsable map of every command, and **right-click menus**, what
-can be done with the thing under the pointer. Both are built from the [command registry](../keyboard/), so a row's
+can be done with the thing under the pointer. Both are built from the [command registry](https://pauta-project.dev/4.4.0/keyboard/), so a row's
 title, icon, chord and enabled state come from the command and never drift from the palette or the toolbar.
 Reference: Editora's [`ui/MainMenuBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java) (menu bar), [`ui/ContextMenuDismissal.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ContextMenuDismissal.java), [`ui/LazyContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/LazyContextMenu.java),
 [`ui/RowContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/RowContextMenu.java) and [`ui/TabContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabContextMenu.java) (right-click menus), and the `.menu-item` and `.context-menu`
@@ -2090,8 +2090,8 @@ of the next menu button. The offset must be at least the radius; Editora pins it
 
 The three rules below hold for every menu the app draws itself: the menu bar, right-click menus, the drop-down of a menu
 button or a split button, and the toolbar's overflow. The menus a platform draws (the macOS system menu bar, a
-tray icon's menu) show text only; there the chord is appended to the title ([MENU-02](#menu-02)) and the
-[tray](../tray-and-background/) shows neither.
+tray icon's menu) show text only; there the chord is appended to the title ([MENU-02](https://pauta-project.dev/4.4.0/menus/#menu-02)) and the
+[tray](https://pauta-project.dev/4.4.0/tray-and-background/) shows neither.
 
 - **MENU-14 · MUST.** Every row of every menu the app draws carries an icon that depicts it. A command row wears its
   command's glyph; a row that names a thing rather than an action (a recent file, a branch, a project) wears that
@@ -2099,7 +2099,7 @@ tray icon's menu) show text only; there the chord is appended to the title ([MEN
   icon column. Where the icon set has no glyph that depicts a command, the app adds one (a Material 24 dp path, or a
   line glyph in the kit's style) instead of leaving the row blank or borrowing another command's.
   - *Why:* a menu is scanned before it is read, and the glyph is what the eye finds first; the same glyph on the
-    toolbar, in the palette and in the menu ([ICON-20](../icons-and-color/#icon-20)) is learned once. A blank
+    toolbar, in the palette and in the menu ([ICON-20](https://pauta-project.dev/4.4.0/icons-and-color/#icon-20)) is learned once. A blank
     cell breaks the column, and a borrowed glyph says something else.
   - *Check (test):* an FX test opens the menu bar's menus and the right-click menus of a tab, an editor, a list row
     and the toolbar, and fails on any visible row that is not a check or radio item and has no graphic.
@@ -2133,15 +2133,15 @@ tray icon's menu) show text only; there the chord is appended to the title ([MEN
 <div class="m-menubar-stage" role="img" aria-label="Mockup of the File menu open under the menu bar">
 <div class="m-menubar"><span class="mb on">File<span class="pin out" style="left:-26px;top:3px">1</span></span><span class="mb">Edit</span><span class="mb">View</span><span class="mb">Find</span><span class="mb">Go</span><span class="mb">Run</span><span class="mb">Git</span><span class="mb">Tools</span><span class="mb">Window</span><span class="mb">Help</span></div>
 <div class="m-card m-menu">
-<div class="mi"><span class="ic"><svg><use href="#i-open"/></svg></span><span class="t">Open…</span><span class="k">C-x C-f</span><span class="pin out" style="left:-26px">2</span></div>
-<div class="mi"><span class="ic"><svg><use href="#i-save"/></svg></span><span class="t">Save <span class="pin" style="margin-left:6px">3</span></span><span class="k">C-x C-s</span><span class="pin out" style="right:-26px">4</span></div>
-<div class="mi"><span class="ic"><svg><use href="#i-saveas"/></svg></span><span class="t">Save As…</span><span class="k">C-x C-w</span></div>
-<div class="mi"><span class="ic"><svg><use href="#i-close"/></svg></span><span class="t">Close</span><span class="k">C-x k</span></div>
-<div class="mi"><span class="ic"><svg><use href="#i-print"/></svg></span><span class="t">Print…</span><span class="k"></span><span class="pin out" style="right:-26px">5</span></div>
+<div class="mi"><span class="ic"><svg><use href="https://pauta-project.dev/4.4.0/menus/#i-open"/></svg></span><span class="t">Open…</span><span class="k">C-x C-f</span><span class="pin out" style="left:-26px">2</span></div>
+<div class="mi"><span class="ic"><svg><use href="https://pauta-project.dev/4.4.0/menus/#i-save"/></svg></span><span class="t">Save <span class="pin" style="margin-left:6px">3</span></span><span class="k">C-x C-s</span><span class="pin out" style="right:-26px">4</span></div>
+<div class="mi"><span class="ic"><svg><use href="https://pauta-project.dev/4.4.0/menus/#i-saveas"/></svg></span><span class="t">Save As…</span><span class="k">C-x C-w</span></div>
+<div class="mi"><span class="ic"><svg><use href="https://pauta-project.dev/4.4.0/menus/#i-close"/></svg></span><span class="t">Close</span><span class="k">C-x k</span></div>
+<div class="mi"><span class="ic"><svg><use href="https://pauta-project.dev/4.4.0/menus/#i-print"/></svg></span><span class="t">Print…</span><span class="k"></span><span class="pin out" style="right:-26px">5</span></div>
 <div class="sep"></div>
-<div class="mi sub"><span class="ic"><svg><use href="#i-recent"/></svg></span><span class="t">Recent Files</span><span class="k ghost">C-x C-w</span><span class="arrow">›</span><span class="pin out" style="right:-26px">6</span></div>
+<div class="mi sub"><span class="ic"><svg><use href="https://pauta-project.dev/4.4.0/menus/#i-recent"/></svg></span><span class="t">Recent Files</span><span class="k ghost">C-x C-w</span><span class="arrow">›</span><span class="pin out" style="right:-26px">6</span></div>
 <div class="sep"></div>
-<div class="mi"><span class="ic"><svg><use href="#i-quit"/></svg></span><span class="t">Quit</span><span class="k">C-x C-c</span></div>
+<div class="mi"><span class="ic"><svg><use href="https://pauta-project.dev/4.4.0/menus/#i-quit"/></svg></span><span class="t">Quit</span><span class="k">C-x C-c</span></div>
 <span class="pin out" style="left:-26px;bottom:-4px">7</span>
 </div>
 </div>
@@ -2195,21 +2195,21 @@ The mockup is an editor tab's menu, shortened; Editora's has twenty-five rows.
 <div class="m-tabs"><span class="tab on">Main.java<span class="x">×</span></span><span class="tab">pom.xml</span><span class="tab dirty">README.md</span></div>
 <div class="m-card m-menu ctx">
 <span class="pin out" style="left:-10px;top:-10px">1</span>
-<div class="mi off"><span class="ic"><svg><use href="#i-save"/></svg></span><span class="t">Save</span><span class="k">C-x C-s</span><span class="pin out" style="right:-26px">3</span></div>
-<div class="mi"><span class="ic"><svg><use href="#i-saveas"/></svg></span><span class="t">Save As…</span><span class="k">C-x C-w</span><span class="pin out" style="left:-26px">2</span></div>
-<div class="mi"><span class="ic"><svg><use href="#i-lock"/></svg></span><span class="t">Encrypt…</span><span class="pin out" style="right:-26px">6</span></div>
+<div class="mi off"><span class="ic"><svg><use href="https://pauta-project.dev/4.4.0/menus/#i-save"/></svg></span><span class="t">Save</span><span class="k">C-x C-s</span><span class="pin out" style="right:-26px">3</span></div>
+<div class="mi"><span class="ic"><svg><use href="https://pauta-project.dev/4.4.0/menus/#i-saveas"/></svg></span><span class="t">Save As…</span><span class="k">C-x C-w</span><span class="pin out" style="left:-26px">2</span></div>
+<div class="mi"><span class="ic"><svg><use href="https://pauta-project.dev/4.4.0/menus/#i-lock"/></svg></span><span class="t">Encrypt…</span><span class="pin out" style="right:-26px">6</span></div>
 <div class="sep"></div>
-<div class="mi"><span class="ic"><svg><use href="#i-close"/></svg></span><span class="t">Close</span><span class="k">C-x k</span></div>
-<div class="mi"><span class="ic"><svg><use href="#i-closeall"/></svg></span><span class="t">Close Others</span></div>
-<div class="mi"><span class="ic"><svg><use href="#i-closeall"/></svg></span><span class="t">Close All</span></div>
+<div class="mi"><span class="ic"><svg><use href="https://pauta-project.dev/4.4.0/menus/#i-close"/></svg></span><span class="t">Close</span><span class="k">C-x k</span></div>
+<div class="mi"><span class="ic"><svg><use href="https://pauta-project.dev/4.4.0/menus/#i-closeall"/></svg></span><span class="t">Close Others</span></div>
+<div class="mi"><span class="ic"><svg><use href="https://pauta-project.dev/4.4.0/menus/#i-closeall"/></svg></span><span class="t">Close All</span></div>
 <div class="sep"><span class="pin out" style="right:-26px;top:-9px">4</span></div>
-<div class="mi"><span class="ic"><svg><use href="#i-recent"/></svg></span><span class="t">Local History</span></div>
-<div class="mi sub"><span class="ic"><svg><use href="#i-git"/></svg></span><span class="t">Git</span><span class="arrow">›</span><span class="pin out" style="right:-26px">5</span></div>
+<div class="mi"><span class="ic"><svg><use href="https://pauta-project.dev/4.4.0/menus/#i-recent"/></svg></span><span class="t">Local History</span></div>
+<div class="mi sub"><span class="ic"><svg><use href="https://pauta-project.dev/4.4.0/menus/#i-git"/></svg></span><span class="t">Git</span><span class="arrow">›</span><span class="pin out" style="right:-26px">5</span></div>
 <div class="sep"></div>
-<div class="mi"><span class="ic"><svg><use href="#i-terminal"/></svg></span><span class="t">Open Terminal Here</span></div>
-<div class="mi"><span class="ic"><svg><use href="#i-copy"/></svg></span><span class="t">Copy Path</span></div>
-<div class="mi"><span class="ic"><svg><use href="#i-pin"/></svg></span><span class="t">Pin Tab</span></div>
-<div class="mi"><span class="ic"><svg><use href="#i-rename"/></svg></span><span class="t">Rename…</span></div>
+<div class="mi"><span class="ic"><svg><use href="https://pauta-project.dev/4.4.0/menus/#i-terminal"/></svg></span><span class="t">Open Terminal Here</span></div>
+<div class="mi"><span class="ic"><svg><use href="https://pauta-project.dev/4.4.0/menus/#i-copy"/></svg></span><span class="t">Copy Path</span></div>
+<div class="mi"><span class="ic"><svg><use href="https://pauta-project.dev/4.4.0/menus/#i-pin"/></svg></span><span class="t">Pin Tab</span></div>
+<div class="mi"><span class="ic"><svg><use href="https://pauta-project.dev/4.4.0/menus/#i-rename"/></svg></span><span class="t">Rename…</span></div>
 </div>
 </div>
 </div>
@@ -2267,7 +2267,7 @@ The mockup is an editor tab's menu, shortened; Editora's has twenty-five rows.
   - *Reference:* Editora [`ui/LazyContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/LazyContextMenu.java), [`LazyContextMenuFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/LazyContextMenuFxTest.java). A read-only console's menu is just
     Select All and Copy, both disabled while it is empty ([`ConsoleContextMenu`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ConsoleContextMenu.java)).
 - **MENU-12 · SHOULD.** A destructive row carries the `danger` class. The action follows the
-  [window shell](../window-shell/) rule: it asks first with a button that names it, or is undoable.
+  [window shell](https://pauta-project.dev/4.4.0/window-shell/) rule: it asks first with a button that names it, or is undoable.
   - *Check (code):* rows that delete, discard or reset add `danger` to their style classes.
   - *Reference:* Editora `.menu-item.danger` in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css), [`ui/BranchPopup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/BranchPopup.java).
 - **MENU-13 · MAY.** In a terminal view, a program that grabbed the mouse owns the right-click;
@@ -2327,7 +2327,7 @@ are the same code with their own menus; nux's [`TrayController`](https://github.
 <li><span class="pin">5</span><span><strong>Quit</strong>, after a separator. The only way to end the program apart from File → Quit and the system's Quit.</span></li>
 </ol>
 
-Tray menus are text only: AWT's `PopupMenu` and dbusmenu show no item icons, so the [menu rules](../menus/) about
+Tray menus are text only: AWT's `PopupMenu` and dbusmenu show no item icons, so the [menu rules](https://pauta-project.dev/4.4.0/menus/) about
 icons and chords do not apply here. The order does.
 
 - **TRAY-01 · MUST.** The tray comes from the shared `tray/` package: a StatusNotifierItem on Linux, AWT's
@@ -2423,7 +2423,7 @@ icons and chords do not apply here. The order does.
   - *Check (test):* a pure test of the badge state.
   - *Reference:* Torrenta [`os/Badges.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/os/Badges.java), [`BadgeState`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/os/BadgeState.java), [`BadgeStateTest`](https://github.com/adriandeleon/torrenta/blob/master/src/test/java/com/torrenta/os/BadgeStateTest.java).
 - **TRAY-13 · SHOULD.** A second launch brings the hidden window forward: the
-  [single-instance hand-off](../command-line/) shows a window hidden to the tray before it opens what it was given.
+  [single-instance hand-off](https://pauta-project.dev/4.4.0/command-line/) shows a window hidden to the tray before it opens what it was given.
   - *Check (by hand):* close to the tray, then launch the app again with a file.
   - *Reference:* Torrenta [`MainWindow.showFromTray`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java).
 - **TRAY-14 · SHOULD.** AWT stays headless unless the tray needs it. Linux never needs it; Windows and macOS lift the
@@ -2501,7 +2501,7 @@ keymap, a theme, a language), not when the developer could not decide.
 ### Config folder and schema
 
 - **SET-07 · MUST.** Config lives in `~/.<app>`, unless `<APP>_CONFIG_DIR` or a command-line flag
-  ([CLI-02](../command-line/#cli-02)) names another folder.
+  ([CLI-02](https://pauta-project.dev/4.4.0/command-line/#cli-02)) names another folder.
   - *Check (code):* one resolver picks the folder, in the order `--config-dir`, the environment variable, the
     default.
   - *Reference:* Editora [`App`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java) and [`ConfigManager.configDirFor`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/ConfigManager.java), [`ConfigDirTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/config/ConfigDirTest.java).
@@ -2549,8 +2549,8 @@ keymap, a theme, a language), not when the developer could not decide.
   - *Check (code):* the credential is a field of a runtime object, absent from every config class.
   - *Reference:* nux's UPS login ([`app/CommandRunner.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/app/CommandRunner.java)).
 - **SET-15 · MUST.** A secret in the wrong place is refused. A repository URL with a password or token in it is
-  refused, with the fix ([Settings Sync](../templates/settings-sync/)); a problem report redacts tokens, credentials,
-  e-mail addresses, user names and home paths before anyone sees it ([Diagnostics](../diagnostics/)).
+  refused, with the fix ([Settings Sync](https://pauta-project.dev/4.4.0/templates/settings-sync/)); a problem report redacts tokens, credentials,
+  e-mail addresses, user names and home paths before anyone sees it ([Diagnostics](https://pauta-project.dev/4.4.0/diagnostics/)).
   - *Check (by hand):* paste `https://user:token@host/repo.git` as the sync repository.
   - *Reference:* Editora [`ui/SettingsSyncPage.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsSyncPage.java) (`settings.sync.repo.credentials`), [`sync/SyncEngine.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/sync/SyncEngine.java)
     (`hasCredentials`, checked again at sync time), [`report/Redactor.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/report/Redactor.java).
@@ -2563,8 +2563,8 @@ keymap, a theme, a language), not when the developer could not decide.
 ### Settings Sync (Git / GitHub)
 
 An app with user data worth carrying between computers offers sync, on its own Settings page
-([SYNC-01](../templates/settings-sync/#sync-01)), into a Git repository the user owns
-([SYNC-02](../templates/settings-sync/#sync-02)). The rules below are how it behaves.
+([SYNC-01](https://pauta-project.dev/4.4.0/templates/settings-sync/#sync-01)), into a Git repository the user owns
+([SYNC-02](https://pauta-project.dev/4.4.0/templates/settings-sync/#sync-02)). The rules below are how it behaves.
 
 - **SET-18 · SHOULD.** Setup is by pasting a repo URL, or **Create on GitHub** through the `gh` CLI. The account
   that can read the repo is pinned per clone, so machines with two GitHub accounts work.
@@ -2592,7 +2592,7 @@ An app with user data worth carrying between computers offers sync, on its own S
 
 - **DIAG-01 · MUST.** The **Message Log** is a session-only, bounded history of every echo-area message with
   `HH:mm:ss` times, newest first. Esc closes it; Clear empties it. A click on the echo area opens it
-  ([WIN-01](../window-shell/#win-01)); the [Message Log template](../templates/message-log/) has the rest.
+  ([WIN-01](https://pauta-project.dev/4.4.0/window-shell/#win-01)); the [Message Log template](https://pauta-project.dev/4.4.0/templates/message-log/) has the rest.
   - *Check (test):* a test records messages newest first, evicts the oldest past the cap, and clears.
   - *Reference:* Editora [`ui/MessageLog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLog.java) ([`MessageLogTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/MessageLogTest.java)), [`ui/MessageLogPopup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java).
 - **DIAG-02 · MUST.** The **Debug Log** captures all `java.util.logging` records and uncaught exceptions in memory
@@ -2623,7 +2623,7 @@ An app with user data worth carrying between computers offers sync, on its own S
   Debug Log), **redacts** it (home paths, user names, e-mail addresses, credentials, tokens), shows it editable,
   copies it to the clipboard and opens a prefilled GitHub issue from `bug_report.yml`. Over about 7,500 characters
   the link falls back to "paste from the clipboard". Nothing is uploaded. The same report from the command line, for
-  when the app cannot start, is [CLI-05](../command-line/#cli-05).
+  when the app cannot start, is [CLI-05](https://pauta-project.dev/4.4.0/command-line/#cli-05).
   - *Check (test):* redaction tests cover home paths, user names, e-mail addresses, credentials in URLs and
     tokens; a report test puts a short report in the link and leaves the paste hint for a long one.
   - *Reference:* Editora [`report/ProblemReport.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/report/ProblemReport.java), [`report/Redactor.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/report/Redactor.java), [`report/ReportCommand.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/report/ReportCommand.java),
@@ -2643,7 +2643,7 @@ An app with user data worth carrying between computers offers sync, on its own S
 ![Editora's About window](https://raw.githubusercontent.com/adriandeleon/adl-desktop-apps-guidelines/master/src/assets/shots/editora-about.png "About: version, runtime, license, links and the update status.")
 ![Editora's Doctor page](https://raw.githubusercontent.com/adriandeleon/adl-desktop-apps-guidelines/master/src/assets/shots/editora-doctor.png "Doctor: each external tool with its version, or what to install.")
 
-Secrets never reach a log, a report or a config file: see [Secrets stay out of files](../settings/#secrets-stay-out-of-files).
+Secrets never reach a log, a report or a config file: see [Secrets stay out of files](https://pauta-project.dev/4.4.0/settings/#secrets-stay-out-of-files).
 
 ## Command line and launch
 
@@ -2729,7 +2729,7 @@ Adding a language:
   - *Reference:* Editora `messages_*.properties`.
 - **INTL-04 · SHOULD.** The layout holds in every language at 1024 px wide: rows wrap, never cut. German is today's
   longest.
-  - *Check (by hand):* run the app in each language at 1024 px wide (see [Quality](../quality/)).
+  - *Check (by hand):* run the app in each language at 1024 px wide (see [Quality](https://pauta-project.dev/4.4.0/quality/)).
   - *Reference:* Editora [`messages_de.properties`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/i18n/messages_de.properties).
 - **INTL-05 · SHOULD.** A Chinese, Japanese or Korean catalog comes with a font fallback for its script.
   - *Why:* Inter has no CJK glyphs.
@@ -2780,7 +2780,7 @@ Torrenta shares [`MatchText`](https://github.com/adriandeleon/torrenta/blob/mast
 
 - **PAL-01 · MUST.** Every app has one Command Palette per window, opened by the `palette.show` command. Its chords,
   `M-x` in the Emacs keymap and `Ctrl+Shift+P` (`Cmd+Shift+P` on macOS) in the others, are
-  [KBD-05](../../keyboard/#kbd-05).
+  [KBD-05](https://pauta-project.dev/4.4.0/keyboard/#kbd-05).
   - *Check (code):* the window builds one `CommandPalette`, and `palette.show` opens it.
   - *Reference:* Editora [`ui/CommandPalette.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java), built once in [`MainController`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java).
 - **PAL-02 · MUST.** The palette lists every registered command, with its title from `command.<id>` and its
@@ -2790,7 +2790,7 @@ Torrenta shares [`MatchText`](https://github.com/adriandeleon/torrenta/blob/mast
   - *Reference:* Editora [`CommandPalette.filter`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java) (`registry.all()`), [`MessagesTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/i18n/MessagesTest.java); the Spec table below.
 
 The palette is an in-scene overlay in the window's root `StackPane`, over a faint scrim, never a
-`javafx.stage.Popup`: [KBD-07](../../keyboard/#kbd-07).
+`javafx.stage.Popup`: [KBD-07](https://pauta-project.dev/4.4.0/keyboard/#kbd-07).
 
 ### Anatomy
 
@@ -2879,8 +2879,8 @@ The palette is an in-scene overlay in the window's root `StackPane`, over a fain
 ## QuickOpen picker
 
 The picker for every "choose one from a list" moment: recent files, themes, keymaps, a setting's values, a branch to
-compare with. It is the [Command Palette](../command-palette/) card with a title over the field and a prompt in it, so
-a list choice is made the way a command is run: type a few letters, Enter. The [keyboard page](../../keyboard/)
+compare with. It is the [Command Palette](https://pauta-project.dev/4.4.0/templates/command-palette/) card with a title over the field and a prompt in it, so
+a list choice is made the way a command is run: type a few letters, Enter. The [keyboard page](https://pauta-project.dev/4.4.0/keyboard/)
 states the rule; this page is the shape.
 
 ### Rules
@@ -3101,7 +3101,7 @@ Editora's [`ui/WelcomeText.java`](https://github.com/adriandeleon/Editora/blob/m
 
 ### Behavior
 
-**Applies to:** an app with a Welcome page ([WELC-01](#welc-01)).
+**Applies to:** an app with a Welcome page ([WELC-01](https://pauta-project.dev/4.4.0/templates/welcome/#welc-01)).
 
 - **WELC-03 · SHOULD.** The page is shown at startup when there is no session to restore (so always with
   `--no-session`), by the `view.welcome` command (Help → Welcome Page), and when the tab strip is empty after a
@@ -3226,7 +3226,7 @@ Config: ~/.editora</div><span class="pin">6</span></div>
 <li><span class="pin">2</span><span><strong>Version and tagline.</strong> Version 14 px muted; a snapshot build appends its Git branch, "0.28.0-SNAPSHOT (feat/map)". The tagline is the README's one-line pitch, 13 px muted.</span></li>
 <li><span class="pin">3</span><span><strong>Update status.</strong> What the last update check found (see the states below), when it ran, and <em>Check now</em>. Nothing is claimed before a check has answered.</span></li>
 <li><span class="pin">4</span><span><strong>Copyright</strong>, muted.</span></li>
-<li><span class="pin">5</span><span><strong>Links.</strong> License, homepage, source code and releases, the Pauta edition the app is built to and its conformance, which opens the <a href="../pauta-window/">Pauta window</a> (see below), and the settings file, which opens in the app (or in the file manager for apps with no editor).</span></li>
+<li><span class="pin">5</span><span><strong>Links.</strong> License, homepage, source code and releases, the Pauta edition the app is built to and its conformance, which opens the <a href="https://pauta-project.dev/4.4.0/templates/pauta-window/">Pauta window</a> (see below), and the settings file, which opens in the app (or in the file manager for apps with no editor).</span></li>
 <li><span class="pin">6</span><span><strong>Environment.</strong> Monospace 11.5 px, muted: version and build time, commit, Pauta edition and conformance, Java and JavaFX versions with vendor, OS with architecture, config folder. Home folders shown as <code>~</code>.</span></li>
 <li><span class="pin">7</span><span><strong>Copy details</strong> copies the environment block and stays open; its label becomes "Copied". It sits in the content, not the button bar, so pressing it does not close the panel.</span></li>
 <li><span class="pin">8</span><span><strong>Close</strong>, the one button, and the default: Enter and Esc both close.</span></li>
@@ -3235,7 +3235,7 @@ Config: ~/.editora</div><span class="pin">6</span></div>
 ### Pauta edition and conformance
 
 About names the edition of these guidelines the app implements and how fully it conforms
-([Conformance](../../conformance/)), so a user, a bug report and a reviewer all know which
+([Conformance](https://pauta-project.dev/4.4.0/conformance/)), so a user, a bug report and a reviewer all know which
 rules the app answers to. No app does it yet; the app template names its edition in its README and [`AGENTS.md`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/AGENTS.md) only.
 
 - **ABOUT-05 · MUST.** The edition appears in two places: a link, *Built to Pauta 2.0.0*, among the others, and a
@@ -3259,12 +3259,12 @@ rules the app answers to. No app does it yet; the app template names its edition
     the README names the same number.
   - *Reference:* no app yet.
 - **ABOUT-09 · MUST.** About shows the app's conformance, Complete, Core or Partial, as the helper computes it from
-  `pauta.json` ([PAUTA-02](../../conformance/#pauta-02)) and never higher: a link, *Pauta conformance: Core*, right
-  after the edition's, that opens the [Pauta window](../pauta-window/), and a line `Pauta conformance: Core (2
+  `pauta.json` ([PAUTA-02](https://pauta-project.dev/4.4.0/conformance/#pauta-02)) and never higher: a link, *Pauta conformance: Core*, right
+  after the edition's, that opens the [Pauta window](https://pauta-project.dev/4.4.0/templates/pauta-window/), and a line `Pauta conformance: Core (2
   exceptions)` right after the `Pauta:` line; with one it says `(1 exception)`, with none `(no exceptions)`. At
   Partial the edition's link reads *Working toward Pauta 4.2.0*: the app does not meet that edition yet, so it does
   not say it is built to it.
-  - *Why:* [*Never claim what is not true*](../../principles/#for-the-people-using-the-apps).
+  - *Why:* [*Never claim what is not true*](https://pauta-project.dev/4.4.0/principles/#for-the-people-using-the-apps).
   - *Check (code):* About calls the conformance helper and holds no conformance name of its own; the link runs
     `help.pauta`; at Partial the edition's link uses `about.pautaWorkingToward`.
   - *Reference:* no app yet.
@@ -3296,7 +3296,7 @@ date": with no answer, the panel says it has not checked.
 | Environment | JetBrains Mono 11.5 px, muted | `.about-env` |
 | Source of the version | Maven-filtered `build-info.properties`, read by `AppInfo`: the same text as `--version` and a problem report | `AppInfo` |
 | Pauta edition | `pauta.version` in `pom.xml`, filtered into `build-info.properties`; the link opens `https://pauta-project.dev/<edition>/` | no app yet |
-| Pauta conformance | Computed from `pauta.json` by the conformance helper; the link opens the Pauta window | [Conformance](../../conformance/) |
+| Pauta conformance | Computed from `pauta.json` by the conformance helper; the link opens the Pauta window | [Conformance](https://pauta-project.dev/4.4.0/conformance/) |
 
 ### Copy
 
@@ -3321,9 +3321,9 @@ date": with no answer, the panel says it has not checked.
 ## Pauta window
 
 About says which edition of Pauta the app is built to and how fully it conforms; the Pauta window shows the evidence. It
-lists every exception the app records in its `pauta.json` (see [Conformance](../../conformance/)): the rules that do
+lists every exception the app records in its `pauta.json` (see [Conformance](https://pauta-project.dev/4.4.0/conformance/)): the rules that do
 not apply, the ones it does differently on purpose, and the ones still pending. It is built like the
-[About window](../about/): one modal panel, read-only, with a copyable summary. No app has one yet.
+[About window](https://pauta-project.dev/4.4.0/templates/about/): one modal panel, read-only, with a copyable summary. No app has one yet.
 
 ### Rules
 
@@ -3338,7 +3338,7 @@ not apply, the ones it does differently on purpose, and the ones still pending. 
   - *Check (by hand):* open the window and compare it with `pauta.json`, entry by entry.
   - *Reference:* no app yet; the Anatomy below.
 - **PWIN-03 · MUST.** It reads from `pauta.json` and `AppInfo` alone, and takes the conformance from the same helper
-  as About ([PAUTA-02](../../conformance/#pauta-02)). Nothing in it is written in the window's code.
+  as About ([PAUTA-02](https://pauta-project.dev/4.4.0/conformance/#pauta-02)). Nothing in it is written in the window's code.
   - *Check (code):* the window loads the exceptions through one loader and calls the conformance helper; it holds no
     rule IDs or conformance names of its own.
   - *Reference:* no app yet.
@@ -3348,7 +3348,7 @@ not apply, the ones it does differently on purpose, and the ones still pending. 
   - *Why:* an app built to 4.2.0 answers to 4.2.0's rules; `latest/` moves on.
   - *Check (code):* `help.pautaRules` is registered and builds the edition URL from `pauta.version`; rule links use
     each entry's `url`.
-  - *Reference:* [ABOUT-06](../about/#about-06).
+  - *Reference:* [ABOUT-06](https://pauta-project.dev/4.4.0/templates/about/#about-06).
 - **PWIN-05 · SHOULD.** Pending exceptions come first, then deviations, then app-only (in a template), then
   not-applicable; within a kind, MUSTs before SHOULDs, then by ID.
   - *Why:* what the app still owes is what a reader came to find.
@@ -3359,8 +3359,8 @@ not apply, the ones it does differently on purpose, and the ones still pending. 
   - *Check (code):* the button sits in the content, not the button bar, like About's *Copy details*.
   - *Reference:* Editora [`AboutDialog`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/AboutDialog.java) (`about.copyDetails`, `about.copied`).
 - **PWIN-07 · SHOULD.** A *Conformance in the docs* link runs the `help.pautaDocs` command, which opens the app's
-  docs page ([PAUTA-13](../../conformance/#pauta-13)) for this version, `/docs/v-<version>/pauta/`, where the site
-  serves versioned docs ([DOCS-03](../../documentation/#docs-03)), and `/docs/pauta/` until it does. The README's
+  docs page ([PAUTA-13](https://pauta-project.dev/4.4.0/conformance/#pauta-13)) for this version, `/docs/v-<version>/pauta/`, where the site
+  serves versioned docs ([DOCS-03](https://pauta-project.dev/4.4.0/documentation/#docs-03)), and `/docs/pauta/` until it does. The README's
   badge links the unversioned page, which always shows the latest release.
   - *Check (code):* `help.pautaDocs` is registered and builds the URL from the app's docs base, like Help →
     Documentation.
@@ -3415,8 +3415,8 @@ The entries above show the layout with Mirada's name; they are not Mirada's reco
 | Head | The Pauta mark PNG at 72 px; "Pauta" and the edition 26 px bold | `.about-name` |
 | Conformance pill | Complete `-color-success-*`, Core `-color-accent-*`, Partial `-color-warning-*` | `.pauta-conformance` |
 | Rule ID | JetBrains Mono 12 px, accent, a link | `.pauta-rule` |
-| Source | `pauta.json` in the app's resources and `pauta.version` through `AppInfo` | [Conformance](../../conformance/#the-file) |
-| Conformance | The conformance helper, never stored | [PAUTA-02](../../conformance/#pauta-02) |
+| Source | `pauta.json` in the app's resources and `pauta.version` through `AppInfo` | [Conformance](https://pauta-project.dev/4.4.0/conformance/#the-file) |
+| Conformance | The conformance helper, never stored | [PAUTA-02](https://pauta-project.dev/4.4.0/conformance/#pauta-02) |
 
 ### Copy
 
@@ -3442,7 +3442,7 @@ The entries above show the layout with Mirada's name; they are not Mirada's reco
 | `pauta.none` | No exceptions: {0} meets every MUST and SHOULD of Pauta {1}. |
 | `pauta.copy` / `pauta.copied` | Copy as text / Copied |
 
-The reasons themselves come from `pauta.json`, in English ([PAUTA-08](../../conformance/#pauta-08)); the window's
+The reasons themselves come from `pauta.json`, in English ([PAUTA-08](https://pauta-project.dev/4.4.0/conformance/#pauta-08)); the window's
 own words are in the catalogs like every other string. Counts use `MessageFormat`'s `choice` so English reads "1
 SHOULD is pending", not "1 SHOULDs are". A command description takes no arguments, so it says "this app".
 
@@ -3451,7 +3451,7 @@ SHOULD is pending", not "1 SHOULDs are". A command description takes no argument
 One question before anything the user made is removed, deleted, discarded or overwritten, asked the same way
 everywhere: the text names the thing and what happens to it, the confirming button is the action's own verb in red,
 and Cancel is the way out. An action that can be taken back needs no question (see
-[Window shell](../../window-shell/)).
+[Window shell](https://pauta-project.dev/4.4.0/window-shell/)).
 
 ### Rules
 
@@ -3585,7 +3585,7 @@ trash is undoable, and Modula's preset chips remove on one click, which this tem
 
 The bar for searching text: in an editor, a read-only console, a terminal's scrollback. It is part of the window and
 searches as you type. Mirada has no text to search: its *Find Image…* is a picker, see the
-[QuickOpen template](../quick-open/).
+[QuickOpen template](https://pauta-project.dev/4.4.0/templates/quick-open/).
 
 ### Rules
 
@@ -3764,8 +3764,8 @@ The status bar's echo line shows one message and replaces it with the next; the 
 the app said is lost because it scrolled past.
 
 Every app keeps one, session-only and bounded, newest first, with Esc to close and Clear to empty it:
-[DIAG-01](../../diagnostics/#diag-01). A click on the status bar's echo area opens it:
-[WIN-01](../../window-shell/#win-01). This page is what the log looks like and how it behaves beyond that.
+[DIAG-01](https://pauta-project.dev/4.4.0/diagnostics/#diag-01). A click on the status bar's echo area opens it:
+[WIN-01](https://pauta-project.dev/4.4.0/window-shell/#win-01). This page is what the log looks like and how it behaves beyond that.
 
 ### Anatomy
 
@@ -3856,7 +3856,7 @@ Every app keeps one, session-only and bounded, newest first, with Esc to close a
 Keeps the user's data (snippets, templates, shortcuts, profiles, saved views) the same on every computer. No server
 and no account of ours: the store is a private Git repository the user owns.
 
-**Applies to:** an app with user data worth carrying between computers ([SYNC-01](#sync-01)).
+**Applies to:** an app with user data worth carrying between computers ([SYNC-01](https://pauta-project.dev/4.4.0/templates/settings-sync/#sync-01)).
 
 ### Rules
 
@@ -3867,7 +3867,7 @@ and no account of ours: the store is a private Git repository the user owns.
     [`SettingsWindow`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsWindow.java) (`Category.SYNC`).
 - **SYNC-02 · SHOULD.** The store is a Git repository the user owns, reached through their own Git credentials (a
   credential helper or an SSH key), with no server or account of ours. Refusing a URL with a password or token in it
-  is [SET-15](../../settings/#set-15).
+  is [SET-15](https://pauta-project.dev/4.4.0/settings/#set-15).
   - *Check (code):* the sync package runs `git` against the user's URL, with no server or account of the app's own.
   - *Reference:* Editora [`sync/`](https://github.com/adriandeleon/Editora/tree/master/src/main/java/com/editora/sync) package ([`SyncEngine`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/sync/SyncEngine.java), [`SyncMerge`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/sync/SyncMerge.java), [`SyncAccount`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/sync/SyncAccount.java)), [`SyncEngine.hasCredentials`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/sync/SyncEngine.java);
     Termina carries the same package, Torrenta its own [`sync/`](https://github.com/adriandeleon/torrenta/tree/master/src/main/java/com/torrenta/sync) with [`SyncEngine`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/sync/SyncEngine.java) and [`SyncAccount`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/sync/SyncAccount.java); the Spec table
@@ -3952,7 +3952,7 @@ that would remove most of a kind of data and waits for confirmation). The pill's
 | Conflicts | Per entry; this computer wins; the other version stays in history | `SyncMerge` |
 | Safety | Files a sync replaces are copied to the sync folder first; a sync that would remove most of a kind of data stops and asks | `SyncReport` |
 | One runner | Sync runs in the first instance only; a second instance says so | `status.sync.secondaryInstance` |
-| Failures | To the status bar and the [Message Log](../message-log/), said once per failure, not once per interval | `SettingsSync` |
+| Failures | To the status bar and the [Message Log](https://pauta-project.dev/4.4.0/templates/message-log/), said once per failure, not once per interval | `SettingsSync` |
 | Palette | Settings Sync: Set Up…, Sync Now, and Toggle Sync Automatically | `sync.setup`, `sync.now`, `sync.toggleAuto` |
 
 ### Copy

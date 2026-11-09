@@ -28,7 +28,7 @@ Surveyed on 2026-11-05 from each repository's default branch (the rows added in 
 | Inter UI font (SHOULD) | ● | ● | ● | — Plex Mono | — | — |
 | NullAway + every package `@NullMarked` | ● | ● | ● | ● | ● | — |
 | Spotless (Palantir) | ● | ● | ● | ● | ● | — |
-| JaCoCo gate | ● 0.90 L/M | ● 0.90 L | ◐ per-package | — | — | — |
+| JaCoCo gate | ● 0.90 L/M | ◐ 0.90 L only | ◐ 0.90 L/M, 0.73 B | — | — | — |
 | Headless FX tests | ● | ● | ● | — | ● | ● |
 | Six or more message catalogs | ● | ● | ● | — | — | ● |
 | README badges + screenshot | ● | ● | ● | ● | ◐ no shot | ● |
@@ -86,10 +86,10 @@ Surveyed on 2026-11-05 from each repository's default branch (the rows added in 
 | Update notification (GitHub releases) | ● | ● | ● | ● | — | ● |
 | Report a Problem → GitHub issue (+ `--report`) | ● | ● | — | — | — | — |
 | About window with runtime versions | ● | ● | ● | ● | ● | ● |
-| About names the Pauta edition it implements | — | — | — | — | — | — |
+| About names the Pauta edition it implements | — | — | ● link and environment line | — | — | — |
 | Pauta window and `pauta.json` exceptions | — | — | — | — | — | — |
 | Welcome page | ● | ● | — | — | — | — |
-| Confirm dialog: named red action button, Escape cancels, or undo instead | ● | ● `RemoveConfirm` + undo | ◐ asks, button not red | — presets remove on one click | ◐ trash is undoable, no question | — nothing to confirm |
+| Confirm dialog: named red action button, Escape cancels, or undo instead | ● | ● `RemoveConfirm` + undo | ● `Confirm`: named red button, Cancel default | — presets remove on one click | ◐ trash is undoable, no question | — nothing to confirm |
 | Doctor / diagnosis | ● | ◐ per torrent | — | ◐ native libs | — | — |
 | Single instance (hand off to running app) | ● | ● | — | — | — | ● |
 | `--config-dir` and other CLI flags | ● | ● | ● | — | — | ◐ |

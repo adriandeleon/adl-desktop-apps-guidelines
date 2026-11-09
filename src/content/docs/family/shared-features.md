@@ -16,8 +16,8 @@ guideline:
 5. **Extended title bar** with JavaFX 27 `HeaderBar` and `StageStyle.EXTENDED`, falling back to a
    decorated window; the macOS system menu bar via `useSystemMenuBar`. *(Editora, Termina, Mirada,
    Torrenta opt-in)*
-6. **macOS app-menu integration**: About and Settings in the application menu, `openFiles` Apple Events
-   reaching the running app (`MacOpenFiles` / `MacHandlers`). *(Editora, Mirada, Torrenta)*
+6. **macOS integration**: About and Settings in the application menu *(Mirada; Termina has About only)*, and
+   `openFiles` Apple Events reaching the running app (`MacOpenFiles` / `MacHandlers`). *(Editora, Mirada, Torrenta)*
 7. **Tray package** (`AwtTray`, `SniTray`, `StatusNotifierItem` over dbus-java) plus **autostart** (XDG
    autostart, LaunchAgent, `HKCU\…\Run`) and `--minimized`. *(Torrenta, Modula, nux)*
 8. **Desktop notifications** through one `Notifier`: `notify-send`/`gdbus` on Linux, `osascript` on macOS,

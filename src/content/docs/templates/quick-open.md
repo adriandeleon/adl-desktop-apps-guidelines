@@ -15,7 +15,9 @@ states the rule; this page is the shape.
   - *Check (code):* those choices are instances of one generic picker class; there is no second list-picker class or
     `ChoiceDialog` for them.
   - *Reference:* Editora [`ui/QuickOpen.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java) (one generic class, instantiated more than seventy times), driven by
-    [`PickerKeys`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java).
+    [`PickerKeys`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java). Editora still asks with a `ChoiceDialog` in three places: the Git reset mode and the
+    merge parent to revert against ([`ui/GitWindowCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/GitWindowCoordinator.java)), and the settings backup to restore
+    ([`ui/SettingsResetFlow.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsResetFlow.java)).
 - **QOPEN-02 · SHOULD.** The picker is the palette's card in the shared in-scene overlay host, with a title naming the
   command over the field and a prompt in the field; never a `javafx.stage.Popup`.
   - *Check (code):* the picker shows its card through the overlay host and sets a title and a prompt text.

@@ -8,6 +8,54 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 
 ## [Unreleased]
 
+## [4.5.0] - 2026-11-08
+
+Accessibility gets a page and rules of its own, and the facts the 4.2.0 review found stale or wrong are corrected
+against the apps' code. A minor: seven new rules and one raised to a MUST; no rule is retired, and none asks an app to
+undo work.
+
+### Added
+
+- **Accessibility**, a page after Keyboard first, with the prefix `ACC`. It says what JavaFX gives a screen reader on
+  each OS (Narrator on Windows, VoiceOver on macOS, nothing on Linux), links the accessibility rules already on other
+  pages, and adds:
+  - **ACC-01 · MUST.** Every control a person can reach has an accessible name, rows drawn from graphics included.
+  - **ACC-02 · SHOULD.** A control the app builds itself states its role and its state.
+  - **ACC-03 · SHOULD.** Content painted on a `Canvas` is exposed to the screen reader.
+  - **ACC-04 · SHOULD.** Animations follow the OS's reduced-motion setting.
+  - **ACC-05 · SHOULD.** Color is never the only signal.
+  - **ACC-06 · SHOULD.** Commands move focus between the window's regions, bound in every keymap.
+  - **ACC-07 · SHOULD.** The release smoke test includes a pass with Narrator and VoiceOver.
+- *Same on every OS* lists the screen reader among the differences between OSes.
+- The New app checklist has an *Accessibility* group.
+
+### Changed
+
+- **KBD-15 is a MUST**: every control is reachable with Tab and works with Space or Enter. Its exception now names
+  the find bar's buttons beside the toolbar's, as the find bar's spec already had them.
+- **REL-20** asks for the pure suite on Linux, macOS and Windows and the FX suite on Linux and at least one more OS,
+  which is what Editora runs; it used to ask for the full suite on all three, which no app did.
+- **KBD-05** and **PAL-01** let the IntelliJ keymap open the palette with IntelliJ's `Ctrl+Shift+A`, as Editora's does.
+- **REL-21** recommends a version-shaped tag pattern over a bare `v*`, and **REL-22**'s Check accepts a branch name
+  in the comment of an action that publishes no tag.
+
+### Fixed
+
+- Conformance, About and the Pauta window cite the app template, which implements them, and Termina, whose About
+  names its edition, instead of "no app yet".
+- Principle 9 allows the network calls the user set up (feeds, transfers) beside the release check.
+- The tray anatomy states nux's number as the exception it is; the shared-features list says only Mirada (and Termina,
+  About only) put About and Settings in the macOS application menu; QOPEN-01 names the three `ChoiceDialog`s Editora
+  still has.
+- ICON-11 says the emphasis ink is white only in the light themes; ICON-09 gives subtle ink's real range (2.7:1 to
+  3.9:1); the Caret & Ink table names `-color-bg-inset` for `#12141d`; KBD-16 and ICON-12 say the focus-ring block
+  comes after the rules it must win over, not at the very end of `app.css`.
+- PLAT-11's Check allows xvfb in a release leg that trains the AOT cache; the Performance page no longer calls
+  `daemon()` a shared Editora helper.
+- The matrix: Torrenta's JaCoCo gate is ◐ (lines only), Termina's ◐ (0.73 branches), Termina's About names its
+  edition, and Termina's close-running-program question now has a named red button.
+- The Settings Sync subtitle matches Editora's string, and the About examples name 4.2.0 throughout.
+
 ## [4.4.0] - 2026-11-08
 
 The reason the family exists, one app that is the same on Windows, macOS and Linux, now has rules an audit can check.

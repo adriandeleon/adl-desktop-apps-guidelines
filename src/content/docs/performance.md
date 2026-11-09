@@ -33,7 +33,7 @@ every change on a hot path there must honor.
     window closes.
   - *Check (code):* every `Executors.new…` and `new Thread` gets a name and `setDaemon(true)`, through a thread
     factory such as `daemon("my-feature")`; virtual threads are daemons already.
-  - *Reference:* Editora `daemon("my-feature")` in the shape below, [`terminal/TerminalExecutors.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/terminal/TerminalExecutors.java).
+  - *Reference:* the shape below; Editora [`terminal/TerminalExecutors.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/terminal/TerminalExecutors.java).
 - **PERF-05 · MUST.** Blocking work stays off the common `ForkJoinPool`, and a `Process` subclass overrides
   `onExit()`.
   - *Why:* the common pool has one worker fewer than the machine has cores, so a few blocked waits
@@ -43,7 +43,8 @@ every change on a hot path there must honor.
   - *Reference:* Editora [`process/ExitWatch.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/process/ExitWatch.java), [`docs/gotchas.md`](https://github.com/adriandeleon/Editora/blob/master/docs/gotchas.md). Editora's [`DapManager.reportJavaExit`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/dap/DapManager.java) still
     waits up to 3 s for an exit code in a `supplyAsync` on the common pool.
 
-The canonical shape, used by every Editora service:
+The canonical shape, where `daemon(name)` is a small factory that names the thread and marks it a daemon, as in
+Editora's `TerminalExecutors`:
 
 ```java
 private final ExecutorService exec = Executors.newSingleThreadExecutor(daemon("my-feature"));

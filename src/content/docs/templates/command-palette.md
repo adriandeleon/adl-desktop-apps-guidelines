@@ -11,7 +11,8 @@ Torrenta shares [`MatchText`](https://github.com/adriandeleon/torrenta/blob/mast
 ## Rules
 
 - **PAL-01 · MUST.** Every app has one Command Palette per window, opened by the `palette.show` command. Its chords,
-  `M-x` in the Emacs keymap and `Ctrl+Shift+P` (`Cmd+Shift+P` on macOS) in the others, are
+  `M-x` in the Emacs keymap and `Ctrl+Shift+P` (`Cmd+Shift+P` on macOS) in the others (`Ctrl+Shift+A` allowed in the
+  IntelliJ keymap), are
   [KBD-05](../../keyboard/#kbd-05).
   - *Check (code):* the window builds one `CommandPalette`, and `palette.show` opens it.
   - *Reference:* Editora [`ui/CommandPalette.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java), built once in [`MainController`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java).

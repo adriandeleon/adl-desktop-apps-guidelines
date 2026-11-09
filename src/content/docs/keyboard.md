@@ -28,10 +28,11 @@ description: "Commands, the Command Palette, keymaps, focus and accessibility."
 ## Command Palette
 
 - **KBD-05 · MUST.** The Command Palette opens with `M-x` in the Emacs keymap and `Ctrl+Shift+P` (`Cmd+Shift+P` on
-  macOS) in the others.
+  macOS) in the others; the IntelliJ keymap may use IntelliJ's own Find Action chord, `Ctrl+Shift+A`
+  (`Cmd+Shift+A`), instead.
   - *Check (code):* each bundled keymap binds that chord to the palette command.
   - *Reference:* Editora [`keymaps/emacs.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/emacs.json) (`M-x`), [`cua.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/cua.json) and [`vscode.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/vscode.json) (`C-S-p`), [`cua.mac.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/cua.mac.json)
-    (`Cmd-S-p`), all to `palette.show`.
+    (`Cmd-S-p`), all to `palette.show`; [`intellij.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/intellij.json) binds `C-S-a`.
 - **KBD-06 · SHOULD.** The palette matches fuzzily over title, id and description; a query that names a command's
   title outranks a fuzzy hit. Each row shows the command's binding in the active keymap. See the
   [Command Palette template](../templates/command-palette/).
@@ -93,13 +94,16 @@ Every other list choice (recent files, themes, keymaps, a setting's values) uses
 
 ## Focus and accessibility
 
-- **KBD-15 · SHOULD.** Every interactive control is reachable with Tab and operable with Space or Enter. Toolbar
-  buttons are the exception: they stay out of the Tab order (see
-  [Toolbars and tooltips](../toolbars-and-tooltips/)).
+- **KBD-15 · MUST.** Every interactive control is reachable with Tab and operable with Space or Enter. A button whose
+  command the keyboard reaches another way is the exception: toolbar buttons
+  ([TBAR-02](../toolbars-and-tooltips/#tbar-02)) and the find bar's buttons
+  ([Find bar](../templates/find-bar/)) stay out of the Tab order. See [Accessibility](../accessibility/).
+  - *Why:* a control that Tab can't reach is one a keyboard-only or screen-reader user can't use at all.
   - *Check (by hand):* Tab through every window and dialog without the mouse.
   - *Reference:* Editora; [`FocusRingFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/FocusRingFxTest.java) holds that every control family draws the focus ring when Tab
     reaches it.
-- **KBD-16 · SHOULD.** The keyboard focus ring is one layer of `:focus-visible` rules at the end of `app.css`.
+- **KBD-16 · SHOULD.** The keyboard focus ring is one layer of `:focus-visible` rules in `app.css`, after every rule
+  that sets a border or background on the same controls, since rules of equal specificity are decided by order.
   - *Check (test):* an FX test tabs to each control family and asserts the ring.
   - *Reference:* Editora [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) (*Keyboard focus*, one layer for every control), [`FocusRingFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/FocusRingFxTest.java).
 - **KBD-18 · SHOULD.** On/off rows use a keyboard-operable switch with the `TOGGLE_BUTTON` role.

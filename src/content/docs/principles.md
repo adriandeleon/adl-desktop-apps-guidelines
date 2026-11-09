@@ -33,8 +33,9 @@ Editora is the reference; each principle names where else it is written down.
 8. **Never claim what is not true.** No link that looks like a link and does nothing, no "up to date" before
    an update check has answered, no setting that seems to apply when it cannot: a setting that waits for a
    restart says so on its own row. *(Modula's About, Editora's update status, Termina's settings rows.)*
-9. **Local first, nothing sent without asking.** No telemetry. The only automatic network call is a
-   once-a-day release check the user can turn off. Problem reports are built locally and submitted by the
+9. **Local first, nothing sent without asking.** No telemetry. Apart from what the user set up (a feed they
+   subscribed to, a transfer they started), the only automatic network call is a once-a-day release check the user
+   can turn off. Problem reports are built locally and submitted by the
    user.
 10. **Users' data outlives versions.** Config files carry a schema version and migrate forward. An older
     build never overwrites a newer config.

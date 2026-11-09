@@ -25,6 +25,7 @@ bug, or a deviation recorded in `pauta.json` ([Conformance](../conformance/)).
 | Notifications | A PowerShell toast | `osascript` | `notify-send` | [TRAY-09](../tray-and-background/#tray-09) |
 | Start at login | The `HKCU` `Run` value | A LaunchAgent | An XDG autostart entry | [TRAY-06](../tray-and-background/#tray-06) |
 | Saved secrets | Credential Manager | Keychain | The Secret Service | [SET-13](../settings/#set-13) |
+| Screen reader | Narrator (UI Automation) | VoiceOver | None: JavaFX has no bridge to the Linux accessibility bus | [Accessibility](../accessibility/) |
 | Installers | `.msi`, winget | `.dmg`, Homebrew | `.deb`, `.rpm`, `.AppImage`, `.tar.gz` | [REL-11](../release/#rel-11), [REL-12](../release/#rel-12), [REL-13](../release/#rel-13) |
 
 ## The same everywhere

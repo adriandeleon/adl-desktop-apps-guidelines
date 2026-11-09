@@ -64,17 +64,18 @@ Config: ~/.editora</div><span class="pin">6</span></div>
 
 About names the edition of these guidelines the app implements and how fully it conforms
 ([Conformance](../../conformance/)), so a user, a bug report and a reviewer all know which
-rules the app answers to. No app does it yet; the app template names its edition in its README and [`AGENTS.md`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/AGENTS.md) only.
+rules the app answers to. The [app template](https://github.com/adriandeleon/adl-desktop-app-template) shows both; Termina's About names its edition but not its
+conformance.
 
-- **ABOUT-05 · MUST.** The edition appears in two places: a link, *Built to Pauta 2.0.0*, among the others, and a
-  line `Pauta: 2.0.0` in the environment block, right after the commit, so *Copy details* carries it.
+- **ABOUT-05 · MUST.** The edition appears in two places: a link, *Built to Pauta 4.2.0*, among the others, and a
+  line `Pauta: 4.2.0` in the environment block, right after the commit, so *Copy details* carries it.
   - *Check (code):* the links use the `about.pauta` key, and the environment block writes a `Pauta:` line after the
     commit.
-  - *Reference:* no app yet.
+  - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`ui/AboutDialog.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AboutDialog.java) and [`AppInfo.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/AppInfo.java); Termina's [`ui/AboutWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/AboutWindow.java) and [`AppInfo.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/AppInfo.java).
 - **ABOUT-06 · MUST.** The link opens the edition's own address, `https://pauta-project.dev/<edition>/` (for example
-  `https://pauta-project.dev/2.0.0/`), which never changes, not `latest/`, which moves on to newer editions.
+  `https://pauta-project.dev/4.2.0/`), which never changes, not `latest/`, which moves on to newer editions.
   - *Check (code):* the URL is built from the edition number and never contains `latest`.
-  - *Reference:* no app yet.
+  - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`AppInfo.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/AppInfo.java) (`pautaUrl`); Termina's [`AppInfo.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/AppInfo.java) (`pautaUrl`).
 - **ABOUT-07 · MUST.** The number is the edition the app meets, not the newest. Moving to a newer edition means
   reading its changelog for new or stronger MUSTs, meeting them, then changing the number. An app at Partial names
   the edition it is working toward instead, and says so (ABOUT-09).
@@ -85,7 +86,7 @@ rules the app answers to. No app does it yet; the app template names its edition
   to" line name the same edition and change with it.
   - *Check (code):* `pom.xml` defines `pauta.version`, `build-info.properties` carries it, `AppInfo` reads it, and
     the README names the same number.
-  - *Reference:* no app yet.
+  - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`pom.xml`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/pom.xml), `build-info.properties` and [`AppInfo.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/AppInfo.java); Termina's the same, with [`AppInfo.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/AppInfo.java).
 - **ABOUT-09 · MUST.** About shows the app's conformance, Complete, Core or Partial, as the helper computes it from
   `pauta.json` ([PAUTA-02](../../conformance/#pauta-02)) and never higher: a link, *Pauta conformance: Core*, right
   after the edition's, that opens the [Pauta window](../pauta-window/), and a line `Pauta conformance: Core (2
@@ -95,7 +96,7 @@ rules the app answers to. No app does it yet; the app template names its edition
   - *Why:* [*Never claim what is not true*](../../principles/#for-the-people-using-the-apps).
   - *Check (code):* About calls the conformance helper and holds no conformance name of its own; the link runs
     `help.pauta`; at Partial the edition's link uses `about.pautaWorkingToward`.
-  - *Reference:* no app yet.
+  - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`ui/AboutDialog.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AboutDialog.java) and [`PautaConformance.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/PautaConformance.java) (`environmentLine`). Termina's About shows the edition but not the conformance.
 
 ## Update status states
 
@@ -123,7 +124,7 @@ date": with no answer, the panel says it has not checked.
 | Update colors | Available: accent, bold. Up to date: green. Failed: red. Last checked: muted | `.about-update*` |
 | Environment | JetBrains Mono 11.5 px, muted | `.about-env` |
 | Source of the version | Maven-filtered `build-info.properties`, read by `AppInfo`: the same text as `--version` and a problem report | `AppInfo` |
-| Pauta edition | `pauta.version` in `pom.xml`, filtered into `build-info.properties`; the link opens `https://pauta-project.dev/<edition>/` | no app yet |
+| Pauta edition | `pauta.version` in `pom.xml`, filtered into `build-info.properties`; the link opens `https://pauta-project.dev/<edition>/` | the app template's and Termina's `AppInfo.pautaUrl` |
 | Pauta conformance | Computed from `pauta.json` by the conformance helper; the link opens the Pauta window | [Conformance](../../conformance/) |
 
 ## Copy

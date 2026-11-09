@@ -12,8 +12,8 @@ Editora (`../Editora`) is the reference implementation.
 - `npm run preview` — serves `dist/` as deployed, at http://localhost:4321/
 - `npm run check` — fails on a malformed rule, a retired ID in use, a broken link to a rule, or a checklist line
   whose level isn't its rules' (`scripts/check-rules.mjs`); `npm run build` runs it first
-- `node scripts/check-edition.mjs` — fails when this branch's edition clashes with `origin/master` or a tag (see
-  **Several sessions at once**)
+- `node scripts/check-edition.mjs` — fails when this branch's changelog or edition clashes with `origin/master` or a
+  tag (see **Several sessions at once**)
 
 ## Rules
 
@@ -69,13 +69,22 @@ Editora (`../Editora`) is the reference implementation.
   build does the same in `scripts/print-markup.py`). Change both if the convention changes.
 - Plain, direct sentences written for the app developer. No marketing copy. American spelling throughout (color,
   behavior, gray, license, customize, canceled), in pages, the changelog, the README and comments alike.
-- **Every guidance change is an edition; a format change is not.** A change to what a reader takes as guidance (a
-  rule, a fact about an app, the checklist, the matrix, a screenshot, a page's prose) bumps the version in
-  `package.json` in the same commit and is described under its `## [x.y.z] - YYYY-MM-DD` section in `CHANGELOG.md`
-  (Keep a Changelog). `## [Unreleased]` holds nothing when a change lands on `master`. A change that only touches
-  how the guide is shown (typos and spelling, links, Markdown and markup, styles, scripts, the build, branding, the
-  PDF's layout) takes no edition and no changelog entry. When it touches a page, `pages.json` or a screenshot, say
-  so with an `Edition: none` trailer on one of its commits, or the edition check fails it.
+- **Guidance collects under `## [Unreleased]`; editions are cut in batches.** A change to what a reader takes as
+  guidance (a rule, a fact about an app, the checklist, the matrix, a screenshot, a page's prose) keeps the version in
+  `package.json` and is described under `## [Unreleased]` in `CHANGELOG.md` (Keep a Changelog), in the section its
+  edition will have (Added, Changed, Fixed). A rule it retires goes in `retired-rules.json` with the edition
+  `"Unreleased"`. A change that only touches how the guide is shown (typos and spelling, links, Markdown and markup,
+  styles, scripts, the build, branding, the PDF's layout) takes no changelog entry. When it touches a page,
+  `pages.json` or a screenshot, say so with an `Edition: none` trailer on one of its commits, or the edition check
+  fails it.
+  **A release** is its own pull request, made when the user asks for one: it sets the version and the date in
+  `package.json`, renames `## [Unreleased]` to `## [x.y.z] - YYYY-MM-DD` above a new empty `## [Unreleased]`, adds
+  the edition's one-paragraph summary under its heading, and replaces `"Unreleased"` in `retired-rules.json` with the
+  number. **Version numbers** below says which part to raise, for the whole batch.
+  While `[Unreleased]` holds anything, CI checks and builds `master` but deploys, tags and archives nothing: the
+  checkout is not yet the edition its number names. The site, `latest/` and the agent files change only when an
+  edition is released, and a site-only fix waits for the next release too (a patch can carry one when the batch
+  allows it).
 - **Version numbers** (the Changelog page, `src/content/docs/changelog.mdx`, says the same for readers). Judge by
   the rules alone: what moving an app to the new edition costs. The largest change sets the number.
   - **Patch**: an app does nothing. No rule's ID, level or requirement changes: wording, a fixed fact (matrix, gaps,
@@ -85,29 +94,34 @@ Editora (`../Editora`) is the reference implementation.
   - **Major**: an app undoes or redoes work that conformed. A rule reversed or replaced by one that asks for
     something else, a requirement changed so the old way fails (a file name, value, chord, color or layout), or a
     change to what the levels or "built to an edition" mean. Rare: when in doubt, it is a minor.
-  The edition check fails a patch or a no-edition change that adds, retires or re-levels a rule; it cannot tell a
-  minor from a major, so that call is yours. Say in the changelog entry why a major is one.
+  The edition check judges a release against the edition before it (its tag), so the whole batch counts: it fails a
+  patch whose rules gained, lost or re-leveled an ID. It cannot tell a minor from a major, so that call is yours. Say
+  in the changelog entry why a major is one.
 - Screenshots live in `src/assets/shots/<app>-<what>.png` (max 1600 px wide, palette PNG). In a page, put an
   image alone in a paragraph with a title (`![alt](../../assets/shots/x.png "Caption.")`); several images in one
   paragraph become a gallery row. Captions describe what the image shows, in one sentence.
 - Never commit `dist/`, `build/` or `public/downloads/`.
-- **Editions.** `package.json` holds the version and `guidelines.date`; the footer, the hero, *What's new*, the
-  Changelog page, the PDF and the Markdown download read them from there. To publish one: set the version and the date
-  in `package.json`, head its changelog section `## [x.y.z] - YYYY-MM-DD`, commit. **Version numbers** above says
-  which part to raise.
+- **Editions.** `package.json` holds the version and `guidelines.date` of the newest released edition; the footer,
+  the hero, *What's new*, the Changelog page, the PDF and the Markdown download read them from there. To publish one,
+  make a release (above).
 - **Several sessions at once.** Other sessions may be working in this repository at the same time, so:
   - Work in your own worktree and branch, never in a checkout another session is using.
-  - Choose the version last, just before you push: `git fetch origin`, rebase on `origin/master`, and raise the part
-    your change calls for above the higher of `origin/master`'s version and the newest `v*` tag on origin
-    (`git ls-remote --tags origin`). If
-    someone else took it meanwhile, renumber; don't stack a second edition on top.
-  - One edition per branch. A change that grows keeps its one changelog section and raises its number if it must,
-    instead of adding sections.
-  - Never create or push a tag. CI tags `v<version>` on `master`'s commit after the merge.
+  - A guidance change adds its lines under `## [Unreleased]`. When you rebase on `origin/master` and another
+    change has added lines there too, keep both.
+  - A release chooses its version last, just before you push: `git fetch origin`, rebase on `origin/master`, and
+    raise the part the batch calls for above the higher of `origin/master`'s version and the newest `v*` tag on
+    origin (`git ls-remote --tags origin`). If someone else released meanwhile, renumber. A release changes nothing
+    but the version, the date, the changelog's headings and summary, and `retired-rules.json`.
+  - Never create or push a tag. CI tags `v<version>` on `master`'s commit after a release merges.
   - Run `node scripts/check-edition.mjs` before you push. CI runs it on every pull request and push to `master`; it
-    fails on more than one edition in a change, a number at or below master's or a tag on origin, a content change
-    with neither an edition nor an `Edition: none` trailer, a patch or no-edition change whose rules gained, lost or
-    changed the level of an ID, or a changelog that doesn't match `package.json`.
+    fails on a content change that adds nothing under `[Unreleased]` and has no `Edition: none` trailer, a numbered
+    section added without raising the version, a release that leaves anything under `[Unreleased]`, a release
+    numbered at or below master's or a tag on origin, a patch release whose rules gained, lost or re-leveled an ID
+    since the edition before it, a retired ID not listed with `"Unreleased"` (or, in a release, its number), or a
+    changelog whose newest numbered section doesn't match `package.json`.
+  - A merge right after a release can make GitHub cancel the release's run while it waits, and the runs after it
+    deploy nothing while `[Unreleased]` holds the next batch. If the released edition isn't live, re-run the release
+    commit's workflow run.
 - **Editions on the site.** Every page is served under its edition: `https://pauta-project.dev/1.4.0/principles/` is
   permanent, `https://pauta-project.dev/latest/principles/` is always the newest edition, and the unnumbered address
   redirects to `latest/`. `scripts/build-site.mjs` (`npm run build`) builds this checkout twice, with `PAUTA_PATH`

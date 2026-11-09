@@ -23,6 +23,7 @@ jobs:
     timeout-minutes: 30
     outputs:
       version: ${{ steps.version.outputs.version }}
+      pending: ${{ steps.version.outputs.pending }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -30,12 +31,17 @@ jobs:
           fetch-depth: 0 # the edition check compares with the base commit and the tags
           persist-credentials: false
       - name: Check the edition
-        # One edition per change, numbered above master's and every tag (scripts/check-edition.mjs).
+        # Guidance under [Unreleased], or a release numbered above master's and every tag (scripts/check-edition.mjs).
         if: github.event_name != 'workflow_dispatch'
         run: node scripts/check-edition.mjs "${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || github.event.before }}"
       - name: Read the version
+        # `pending` is true while CHANGELOG.md's [Unreleased] holds changes: the checkout is not an edition yet, so the
+        # site, the tags and the versions branch wait for the release that publishes it (AGENTS.md, "Editions").
         id: version
-        run: echo "version=$(node -p 'require("./package.json").version')" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "version=$(node -p 'require("./package.json").version')" >> "$GITHUB_OUTPUT"
+          echo "pending=$(node --input-type=module -e 'import { readFileSync } from "node:fs"; import { parseEditions } from "./src/lib/editions.mjs"; console.log(parseEditions(readFileSync("CHANGELOG.md", "utf8")).some((e) => e.version === "Unreleased"))')" >> "$GITHUB_OUTPUT"
+          grep pending= "$GITHUB_OUTPUT"
       - name: Set up Node
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
@@ -72,12 +78,12 @@ jobs:
         # scripts/build-site.mjs: every edition in its folder. In CI it fails when an edition or a download is missing.
         run: npm run build
       - name: Upload the site for Pages
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && steps.version.outputs.pending == 'false'
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: dist
       - name: Upload the editions to archive
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' && steps.version.outputs.pending == 'false'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: editions
@@ -90,7 +96,7 @@ jobs:
   # Tags the edition and keeps it on the versions branch. The one job that can write to the repository; it installs
   # nothing and runs only this repository's scripts.
   publish:
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' && needs.build.outputs.pending == 'false'
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -127,7 +133,7 @@ jobs:
 
   deploy:
     # After the publish job on a push, so an edition is tagged and archived before it goes live; alone otherwise.
-    if: ${{ !cancelled() && github.event_name != 'pull_request' && needs.build.result == 'success' && needs.publish.result != 'failure' }}
+    if: ${{ !cancelled() && github.event_name != 'pull_request' && needs.build.result == 'success' && needs.build.outputs.pending == 'false' && needs.publish.result != 'failure' }}
     needs: [build, publish]
     runs-on: ubuntu-latest
     timeout-minutes: 25

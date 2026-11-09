@@ -33,6 +33,12 @@ const run = (cmd, args, options = {}) => {
 step("rules");
 run("node", ["scripts/check-rules.mjs"]);
 
+// While CHANGELOG.md's [Unreleased] holds changes, this checkout is not the edition its number names; CI builds it as a
+// check and deploys nothing (.github/workflows/pages.yml).
+if (parseEditions(readFileSync("CHANGELOG.md", "utf8")).some((e) => e.version === "Unreleased")) {
+  console.warn(`Note: [Unreleased] holds changes, so dist/${version}/ shows them under ${version}; CI won't deploy this build.`);
+}
+
 // 1. This edition, twice: at latest/ and at its own number.
 rmSync("dist", { recursive: true, force: true });
 for (const edition of ["latest", version]) {

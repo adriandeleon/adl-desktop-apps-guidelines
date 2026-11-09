@@ -80,8 +80,12 @@ icons and chords do not apply here. The order does.
 - **TRAY-04 · MUST.** Quit is explicit and one path: the tray's Quit, File → Quit and the system's Quit all run the
   same method, which closes open dialogs first and saves the window geometry.
   - *Why:* quitting from inside a nested event loop aborted the JVM.
-  - *Check (code):* every quit entry point calls the one quit method.
-  - *Reference:* Torrenta [`MainWindow.quit`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java).
+  - *Check (code):* every quit entry point calls the one quit method. On macOS that includes the app menu's and the
+    Dock's Quit, which JavaFX turns into a close request on every window (`GlassStage.requestClosingAllWindows`)
+    unless the app catches Glass's quit action; a tray app that doesn't would hide to the tray instead of quitting.
+  - *Reference:* Torrenta [`MainWindow.quit`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java) for the tray and File → Quit; it doesn't catch macOS's Quit
+    yet, so there Quit hides the window. Editora's [`MacOpenFiles`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/MacOpenFiles.java) wraps Glass's handler (`handleQuitAction`), the
+    place to call the quit method from.
 - **TRAY-05 · SHOULD.** `--minimized` comes up behind the icon. The window is never shown until the tray attempt
   has answered; if no icon comes, the window is shown after all. With the tray setting off, Torrenta starts
   minimized instead and nux ignores the flag.

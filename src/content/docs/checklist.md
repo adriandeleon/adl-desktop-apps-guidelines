@@ -81,7 +81,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 
 [Accessibility](../accessibility/)
 
-- [ ] Every control reachable with Tab and operable with Space or Enter, except buttons whose command the keyboard reaches another way · [KBD-15](../keyboard/#kbd-15)
+- [ ] Every control reachable with Tab and operable with Space or Enter, except buttons whose command the keyboard reaches another way, and showing the focus ring when it has focus · [KBD-15](../keyboard/#kbd-15), [KBD-16](../keyboard/#kbd-16)
 - [ ] Every control a person can reach has an accessible name, rows drawn from graphics included · [ACC-01](../accessibility/#acc-01)
 - [ ] Custom controls state their role and state; canvas content is exposed to the screen reader (SHOULD) · [ACC-02](../accessibility/#acc-02), [ACC-03](../accessibility/#acc-03)
 - [ ] Animations follow the OS's reduced motion; color is never the only signal (SHOULD) · [ACC-04](../accessibility/#acc-04), [ACC-05](../accessibility/#acc-05)
@@ -173,6 +173,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 [Command line](../command-line/) · [Internationalization](../i18n/)
 
 - [ ] `--help`, `--version`, `--config-dir`, `--dev` and `--report` · [CLI-01](../command-line/#cli-01), [CLI-02](../command-line/#cli-02), [CLI-05](../command-line/#cli-05)
+- [ ] On Windows, a console launcher (or an attached console) so the flags print · [CLI-11](../command-line/#cli-11)
 - [ ] Single instance per config folder · [CLI-07](../command-line/#cli-07)
 - [ ] Six message catalogs, each with every key, held by a parity test · [INTL-01](../i18n/#intl-01), [INTL-08](../i18n/#intl-08)
 

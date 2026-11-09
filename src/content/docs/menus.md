@@ -210,13 +210,20 @@ The mockup is an editor tab's menu, shortened; Editora's has twenty-five rows.
   - *Check (by hand):* open a menu, press Escape, and type: the keys reach the control that had focus.
   - *Reference:* the stock `ContextMenu` hide-on-Escape (Spec below); Termina's `onKeyPressed` filter hides the menu
     and consumes the key ([`TerminalView`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalView.java)).
-- **MENU-09 · MUST.** The Menu key and <kbd>Shift+F10</kbd> open the selected row's menu, scrolled into view first,
+- **MENU-09 · MUST.** The Menu key and `Shift+F10` open the selected row's menu, scrolled into view first,
   so every row action a mouse can reach the keyboard can too.
   - *Why:* those keys arrive at the focused control, not at a row's cell, so a menu installed on cells never saw
     them.
   - *Check (test):* an FX test sends a keyboard request to a tree and a list and finds the selected row's menu,
     anchored to that row.
   - *Reference:* Editora [`RowContextMenu.install(tree)`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/RowContextMenu.java), [`RowContextMenuFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/RowContextMenuFxTest.java).
+- **MENU-17 · SHOULD.** The in-window menu bar is reachable from the keyboard in every keymap. JavaFX opens its first
+  menu on `F10` (`Ctrl+F10` on macOS) and on a lone `Alt`; a keymap that binds that key to something else binds a
+  command that focuses the menu bar instead.
+  - *Why:* the menus are a keyboard user's map of the app; a chord that never reaches them hides it.
+  - *Check (by hand):* in each keymap, reach the first menu with the keyboard alone and walk the bar with the arrows.
+  - *Reference:* no app yet. Editora's CUA, VS Code and Sublime keymaps bind `F10` to `debug.stepOver`
+    ([`keymaps/cua.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/cua.json)), and no command focuses the bar.
 - **MENU-10 · SHOULD.** A right-click selects first. In an editor, a right-click outside every selection moves the
   caret to the click (so Paste lands there); inside a selection it keeps carets and selections (so Cut and Copy act
   on what was clicked). From the keyboard the target is the caret. In a list, the menu is the clicked row's.
@@ -234,7 +241,7 @@ The mockup is an editor tab's menu, shortened; Editora's has twenty-five rows.
   - *Check (code):* rows that delete, discard or reset add `danger` to their style classes.
   - *Reference:* Editora `.menu-item.danger` in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css), [`ui/BranchPopup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/BranchPopup.java).
 - **MENU-13 · MAY.** In a terminal view, a program that grabbed the mouse owns the right-click;
-  <kbd>Shift</kbd>+right-click always opens the menu, and the keyboard request is never contested.
+  `Shift`+right-click always opens the menu, and the keyboard request is never contested.
   - *Check (test):* a pure test of when the menu shows, per mouse mode, Shift and trigger.
   - *Reference:* Termina's [`TerminalView.shouldShowMenu`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalView.java), [`ContextMenuContentionTest`](https://github.com/adriandeleon/Termina/blob/master/src/test/java/com/termina/ui/ContextMenuContentionTest.java).
 

@@ -13,20 +13,34 @@ JavaFX default that orders buttons one way on Windows and another on macOS.
 Inside the window, Pauta's design wins: the same commands, keymaps, look, dialogs and files on every OS. The OS's
 own way wins only where the app hands work to the OS or sits in the OS's own interface, because there the user would
 be fighting the OS rather than learning the app. The table is the whole list. Any other difference between OSes is a
-bug, or a deviation recorded in `pauta.json` ([Conformance](../conformance/)).
+bug: an app records it in `pauta.json` as `pending`, with an issue, until it is fixed ([Conformance](../conformance/)).
 
 | What | Windows | macOS | Linux | Rules |
 |------|---------|-------|-------|-------|
 | Primary modifier | `Ctrl` | `Cmd`, from each keymap's `.mac.json` variant | `Ctrl` | [KBD-09](../keyboard/#kbd-09), [KBD-10](../keyboard/#kbd-10), [KBD-21](../keyboard/#kbd-21) |
+| How a chord is written | `Ctrl+Shift+P` | `⇧⌘P`, in Apple's modifier order | `Ctrl+Shift+P` | |
+| Quit | File → Quit, the tray's Quit | The same, plus the app menu's and the Dock's Quit, caught as the app's own | File → Quit, the tray's Quit | [TRAY-04](../tray-and-background/#tray-04) |
 | Menu bar | In the title bar | The system menu bar, in a decorated window | In the title bar | [WIN-03](../window-shell/#win-03) |
 | Open and save dialogs | The OS's own (`FileChooser`) | The OS's own | The OS's own | |
 | Opening a file or link, showing it in the file manager | Explorer | Finder (`open`) | `xdg-open` | |
 | Tray icon | AWT `SystemTray` | AWT `SystemTray` | StatusNotifierItem | [TRAY-01](../tray-and-background/#tray-01) |
-| Notifications | A PowerShell toast | `osascript` | `notify-send` | [TRAY-09](../tray-and-background/#tray-09) |
+| Notifications | A PowerShell toast, shown as Windows PowerShell's | `osascript`, shown as Script Editor's | `notify-send`, shown as the app's | [TRAY-09](../tray-and-background/#tray-09) |
+| Dock or taskbar badge | None | The dock icon | A launcher that honors `LauncherEntry` | [TRAY-12](../tray-and-background/#tray-12) |
+| Command line | A console launcher, beside the GUI one | The app's own launcher | The app's own launcher | [CLI-11](../command-line/#cli-11) |
+| Middle-click paste | None | None | The X11 primary selection, in a terminal | |
 | Start at login | The `HKCU` `Run` value | A LaunchAgent | An XDG autostart entry | [TRAY-06](../tray-and-background/#tray-06) |
 | Saved secrets | Credential Manager | Keychain | The Secret Service | [SET-13](../settings/#set-13) |
 | Screen reader | Narrator (UI Automation) | VoiceOver | None: JavaFX has no bridge to the Linux accessibility bus | [Accessibility](../accessibility/) |
-| Installers | `.msi`, winget | `.dmg`, Homebrew | `.deb`, `.rpm`, `.AppImage`, `.tar.gz` | [REL-11](../release/#rel-11), [REL-12](../release/#rel-12), [REL-13](../release/#rel-13) |
+| Installers | `.msi` (unsigned until [REL-17](../release/#rel-17) is met), winget on x64 | `.dmg`, Homebrew on Apple Silicon | `.deb`, `.rpm`, `.AppImage`, `.tar.gz`; on arm64, `.tar.gz` (and `.deb` where the tooling allows) | [REL-11](../release/#rel-11), [REL-12](../release/#rel-12), [REL-13](../release/#rel-13) |
+
+Some differences in the apps today are on no row, so each breaks a rule until it is fixed:
+
+- Mirada keeps its settings in `~/Library/Application Support` and `%APPDATA%`, not `~/.mirada`
+  ([SET-07](../settings/#set-07)).
+- Torrenta hides its "on metered connections" row on macOS instead of disabling it ([OS-01](#os-01)).
+- Editora's move to the Trash does nothing on Windows, where Mirada and Torrenta use the Recycle Bin ([OS-01](#os-01)).
+- No app's macOS Quit reaches a tray app's quit yet ([TRAY-04](../tray-and-background/#tray-04)), and no app's
+  flags print on Windows ([CLI-11](../command-line/#cli-11)).
 
 ## The same everywhere
 

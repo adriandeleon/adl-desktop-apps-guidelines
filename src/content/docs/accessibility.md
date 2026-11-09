@@ -44,21 +44,26 @@ reaches every menu command through the Command Palette, which lists them all ([K
   list cell that lays out its own nodes) carries its text too.
   - *Why:* a screen reader announces an unnamed control as "button", or says nothing.
   - *Check (test):* an FX test opens each window and dialog and fails on a focus-traversable node that has no text,
-    no accessible text and no label pointing at it.
+    no accessible text and no label pointing at it, and on a list cell or menu row that reads as nothing. JavaFX
+    names a `CustomMenuItem` row from its content's accessible text, and a cell from its text or its graphic's, so a
+    row that lays out its own nodes sets `setAccessibleText` on them.
   - *Reference:* Editora names its controls area by area
     ([`NamedControlsFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/NamedControlsFxTest.java)), and
     and sets each row's text on the macOS system menu bar. Its in-window rows, a `CustomMenuItem` that draws an icon,
     a title and a chord ([`ui/MainMenuBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java)), carry no text yet, so a screen reader on Windows
     reads nothing for them. No app has the test that sweeps every window yet.
-- **ACC-02 · SHOULD.** A control the app builds from panes or draws itself says what it is: `setAccessibleRole` with
-  the role it acts as (`BUTTON`, `TOGGLE_BUTTON`, `LIST_VIEW`, `TREE_ITEM`), its state answered from
-  `queryAccessibleAttribute` (selected, expanded, checked), and `notifyAccessibleAttributeChanged` when the state
-  changes.
-  - *Why:* without a role, a screen reader can't tell a status-bar segment that opens a picker from a label.
+- **ACC-02 · SHOULD.** A control the app builds from panes or draws itself says what it is and does what its role
+  offers: `setAccessibleRole` with the role it acts as (`BUTTON`, `TOGGLE_BUTTON`, `LIST_VIEW`, `TREE_ITEM`), its
+  state answered from `queryAccessibleAttribute` (selected, expanded, checked), `notifyAccessibleAttributeChanged`
+  when the state changes, and the role's actions (`FIRE`, `TOGGLE`, `EXPAND`) handled in `executeAccessibleAction`.
+  - *Why:* without a role, a screen reader can't tell a status-bar segment that opens a picker from a label; and it
+    presses a control through its action, not a mouse click, so a `BUTTON` that ignores `FIRE` can be found but not
+    used.
   - *Check (code):* every `Pane`, `Region`, `Label` or `Canvas` that handles a click or a key sets an accessible
-    role.
-  - *Reference:* Editora's status-bar segments ([`ui/StatusBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusBar.java), `BUTTON` with accessible help) and
-    [`ui/SettingSwitch.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingSwitch.java) (`TOGGLE_BUTTON`).
+    role and overrides `executeAccessibleAction` for that role's actions.
+  - *Reference:* Editora [`ui/SettingSwitch.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingSwitch.java) (`TOGGLE_BUTTON`, `TOGGLE` and `FIRE`) and
+    [`ui/MapAccessibleRows.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MapAccessibleRows.java). Its status-bar segments ([`ui/StatusBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusBar.java)) take the
+    `BUTTON` role but don't handle `FIRE` yet.
 - **ACC-03 · SHOULD.** An app that paints content on a `Canvas` (a map, a strip of images, a terminal grid) gives it
   to the screen reader: an accessible text that sums it up and, where a person moves through items in it, one
   accessible node for each item on screen.
@@ -68,11 +73,11 @@ reaches every menu command through the Command Palette, which lists them all ([K
 - **ACC-04 · SHOULD.** Motion follows the OS: while `Platform.getPreferences().isReducedMotion()` is true, an
   animation jumps to its end, and a change to the setting applies at once.
   - *Why:* sliding and fading can make a person dizzy or sick, and they turned motion off in the OS for that reason.
-  - *Check (code):* every `Transition` or `Timeline` that moves or fades part of the UI starts through one helper that
-    reads `reducedMotionProperty()`.
+  - *Check (code):* every `Transition`, `Timeline` or `AnimationTimer` that moves, fades or flashes part of the UI
+    starts through one helper that reads `reducedMotionProperty()`.
   - *Reference:* no app yet. Mirada fades its on-screen controls in and out
-    ([`ui/OnScreenControls.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/OnScreenControls.java), a `FadeTransition`) and reads no motion setting; the other apps don't
-    animate their UI.
+    ([`ui/OnScreenControls.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/OnScreenControls.java), a `FadeTransition`), and Editora's Project Map flashes a revealed row for 900 ms
+    ([`ui/MapSurface.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MapSurface.java), an `AnimationTimer`); neither reads a motion setting.
 - **ACC-05 · SHOULD.** Color is never the only signal: a state shown in color (an error, a changed line, a status)
   also shows a word, a glyph or a shape.
   - *Why:* about one man in twelve can't tell red from green.
@@ -90,4 +95,19 @@ reaches every menu command through the Command Palette, which lists them all ([K
   pass with the screen reader: with Narrator and with VoiceOver, open the Command Palette, run a command, and move
   through Settings, hearing each control's name and role.
   - *Check (by hand):* the release checklist has the step, and someone did it for this release.
+  - *Reference:* no app yet.
+- **ACC-08 · SHOULD.** In an overlay list that keeps focus in its text field (the Command Palette, QuickOpen), the
+  row the arrow keys select is announced, with its state: the list tells the screen reader its focused item moved
+  (`notifyAccessibleAttributeChanged(FOCUS_ITEM)`), and a row that can't run says so in its accessible text.
+  - *Why:* the arrows move the highlight, not the focus, so a screen reader stays on the text field and reads
+    nothing as the user moves through the list.
+  - *Check (test):* a test moves the selection with the arrow keys and reads the list's `FOCUS_ITEM` and that row's
+    accessible text.
+  - *Reference:* no app yet. Editora's palette rows are graphics with no text
+    ([`ui/CommandPalette.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java)).
+- **ACC-09 · SHOULD.** In Windows' high-contrast mode the app switches to a high-contrast theme, and back when the
+  mode ends: it follows `Platform.getPreferences()`'s `Windows.SPI.HighContrast`.
+  - *Why:* JavaFX applies its own high-contrast stylesheet only over its built-in Modena theme, which AtlantaFX
+    replaces, so without this the app ignores a setting the person turned on to read the screen at all.
+  - *Check (code):* a listener on the preference switches the theme, and the theme list has a high-contrast theme.
   - *Reference:* no app yet.

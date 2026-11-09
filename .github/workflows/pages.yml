@@ -54,7 +54,9 @@ jobs:
           if [ -n "$publish" ] && [ "$publish" != "$(git rev-parse HEAD)" ]; then git checkout --quiet --detach "$publish"; fi
       - name: Check the edition
         # Guidance under [Unreleased], or a release numbered above master's and every tag (scripts/check-edition.mjs),
-        # for what this run builds.
+        # for what this run builds. A release commit that already carries its own v<version> tag passed this check when
+        # it was merged and tagged; it is only being published again (its deploy failed), and its own copy of the
+        # script, which this checkout now runs, would see its tag as taken.
         env:
           EVENT: ${{ github.event_name }}
           PR_BASE: ${{ github.base_ref }}
@@ -65,6 +67,11 @@ jobs:
           elif [ -n "$PUBLISH_BASE" ]; then base="$PUBLISH_BASE"
           elif [ -n "$BEFORE" ] && [ -n "${BEFORE//0/}" ]; then base="$BEFORE"
           else base="HEAD^1"; fi
+          version=$(node -p 'require("./package.json").version')
+          if [ "$EVENT" != pull_request ] && [ "$(git rev-parse -q --verify "refs/tags/v$version^{commit}")" = "$(git rev-parse HEAD)" ]; then
+            echo "v$version is tagged at this commit: it passed the edition check when it was released"
+            exit 0
+          fi
           node scripts/check-edition.mjs "$base"
       - name: Read the version
         id: version
@@ -184,6 +191,7 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
         with:
-          # Pages sometimes sits in "updating_pages" for over ten minutes (the action's default wait), and a
-          # canceled deployment cannot be re-run: its ID is the commit SHA. Wait longer instead.
-          timeout: 1200000
+          # The most the action waits (it caps anything higher at ten minutes). Pages sometimes syncs longer, and the
+          # action then cancels the deployment, which can't be re-run under the same ID (the commit SHA). The next
+          # push to master publishes it again: scripts/release-state.mjs republishes an edition that isn't live.
+          timeout: 600000

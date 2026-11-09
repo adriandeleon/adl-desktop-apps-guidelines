@@ -17,6 +17,16 @@ export function parseEditions(text) {
 
 export const isVersion = (s) => /^\d+\.\d+\.\d+$/.test(s);
 
+/** What CHANGELOG.md holds under "## [Unreleased]", trimmed: "" when nothing waits for a release. The one parser for
+ *  it (scripts/check-edition.mjs, scripts/release-state.mjs, scripts/build-site.mjs). */
+export function unreleased(text) {
+  const lines = text.replace(/\r\n/g, "\n").split("\n");
+  const start = lines.findIndex((l) => /^## \[Unreleased\]\s*$/i.test(l));
+  if (start < 0) return "";
+  const end = lines.findIndex((l, i) => i > start && /^## /.test(l));
+  return lines.slice(start + 1, end < 0 ? undefined : end).join("\n").trim();
+}
+
 /** Released editions only: headed by a version number and a date. */
 export const released = (editions) => editions.filter((e) => isVersion(e.version) && e.date);
 

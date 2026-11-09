@@ -9,8 +9,14 @@ import { join } from "node:path";
 const HEAD = /^- \*\*([A-Z]{2,6})-(\d{2,3}) · (MUST|SHOULD|MAY)\.\*\*\s*(.*)$/;
 const LOOSE = /\*\*[A-Z]{2,6}-\d/;
 const SUB = /^ {2}- \*(Why|Check \((code|test|by hand)\)|Command|Reference):\*\s*(.*)$/;
-// A Command is one code span, in single or double backticks (double when the command itself has a backtick).
+// A Command is one code span, in single or double backticks (double when the command itself has a backtick). It opens
+// with GUARD, so run anywhere but an app's root it fails rather than passing on an empty tree, and it only reads: once
+// quoted text is set aside, no redirect into a file and none of WRITES (agents run these from a downloaded file).
 const COMMAND = /^(`{1,2}) ?(.+?) ?\1$/;
+export const GUARD = "[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; };";
+const WRITES =
+  /(?:^|[;&|({!`]|\$\(|\b(?:do|then|else|xargs)|\s-exec)\s*(rm|rmdir|mv|cp|tee|dd|truncate|curl|wget|nc|ssh|scp|sudo|chmod|chown|ln|mkdir|touch|git|mvn|mvnw|\.\/mvnw|gradle|npm|npx|node|java|python3?|perl|ruby|sh|bash|dash|zsh|eval|exec|source|kill)(?=[\s;&|)]|$)|\s-delete\b|\bsed\s+-i|>/;
+const unquoted = (cmd) => cmd.replace(/'[^']*'/g, "''").replace(/"(?:[^"\\]|\\.)*"/g, '""');
 // "**Applies to:** an app with a tray icon." limits every rule after it: at the top of a page, before its first heading
 // and rule, it holds for the page; right under a "## " heading, for that section. A rule with neither applies to every
 // app unless its own text names the apps it covers (Conformance, PAUTA-05).
@@ -100,6 +106,11 @@ export function parsePage(slug, text) {
       const c = join_(rule.command.lines).match(COMMAND);
       if (!c) problems.push(`${slug}: ${id}'s Command is not one code span: ${join_(rule.command.lines).slice(0, 50)}`);
       else if (rule.check?.kind !== "code") problems.push(`${slug}: ${id} has a Command, but only a Check (code) takes one`);
+      else if (!c[2].startsWith(GUARD + " ")) problems.push(`${slug}: ${id}'s Command must open with the app-root guard: ${GUARD}`);
+      else {
+        const w = unquoted(c[2]).match(WRITES);
+        if (w) problems.push(`${slug}: ${id}'s Command may only read; it has ${w[1] ?? w[0].trim()}`);
+      }
       rule.command = c ? c[2] : null;
     }
     rules.push(rule);

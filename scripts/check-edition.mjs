@@ -18,6 +18,8 @@
 // Tags are CI's: nothing else creates or pushes them.
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
+import { unreleased } from "../src/lib/editions.mjs";
+import { originTags, releaseCommits } from "../src/lib/releases.mjs";
 import { pageOrder, parsePage, readRetired } from "../src/lib/rules.mjs";
 
 const args = process.argv.slice(2);
@@ -45,7 +47,6 @@ const head = changelog.match(/^## \[(\d+\.\d+\.\d+)\] - (\S+)$/m);
 if (!head || head[1] !== version || head[2] !== pkg.guidelines.date) {
   errors.push(`CHANGELOG.md's newest section must be "## [${version}] - ${pkg.guidelines.date}" (package.json)`);
 }
-const unreleased = (md) => (md.match(/^## \[Unreleased\]\n([\s\S]*?)(?=^## \[)/m)?.[1] ?? "").trim();
 const pending = unreleased(changelog);
 const basePending = unreleased(git("show", `${base}:CHANGELOG.md`));
 const release = version !== baseVersion;
@@ -62,11 +63,7 @@ if (added.length > 1) {
 
 // The tags on origin, not local ones: a local tag may be a stray from another session.
 // Version -> the commit its tag points at (an annotated tag's peeled `^{}` line wins).
-const tags = new Map();
-for (const line of git("ls-remote", "--tags", "origin").split("\n")) {
-  const m = line.match(/^(\w+)\s+refs\/tags\/v(\d+\.\d+\.\d+)(\^\{\})?$/);
-  if (m && (m[3] || !tags.has(m[2]))) tags.set(m[2], m[1]);
-}
+const tags = originTags();
 const tagCommit = (v) => tags.get(v) ?? "";
 const newest = [...tags.keys()].sort(cmp).at(-1);
 
@@ -86,8 +83,16 @@ const levels = (ref) => {
   }
   return map;
 };
-// A release is judged against the edition before it, so the whole batch counts; an unreleased change against its base.
-const previous = release ? tagCommit(baseVersion) || base : base;
+// A release is judged against the edition before it, so the whole batch counts: its tag, or, when a canceled run left
+// it untagged, the commit that released it. An unreleased change is judged against its base.
+let previous = base;
+if (release) {
+  previous = tagCommit(baseVersion) || releaseCommits(base).get(baseVersion);
+  if (!previous) {
+    errors.push(`${baseVersion}, the edition before this one, has no tag on origin and no release commit on ${base}'s history`);
+    previous = base;
+  }
+}
 const [before, after] = [levels(previous), levels("HEAD")];
 const ruleChanges = [];
 for (const [id, level] of after) {
@@ -112,8 +117,19 @@ if (release && ruleChanges.length && major === baseMajor && minor === baseMinor)
   );
 }
 
+if (release) {
+  // A release names the batch; it doesn't change it. Anything else it touches would reach readers unchecked.
+  const allowed = new Set(["package.json", "CHANGELOG.md", "retired-rules.json", "pins.json"]);
+  const others = git("diff", "--name-only", base, "HEAD").split("\n").filter((f) => f && !allowed.has(f));
+  if (others.length) {
+    errors.push(`a release changes only ${[...allowed].join(", ")}; land these first, under [Unreleased]:\n    ${others.join("\n    ")}`);
+  }
+  const left = readRetired().filter((r) => r.edition === "Unreleased").map((r) => r.id);
+  if (left.length) errors.push(`retired-rules.json still says "Unreleased" for ${left.join(", ")}; a release numbers them ${version}`);
+}
+
 if (!release) {
-  const content = git("diff", "--name-only", base, "HEAD", "--", "src/content/docs", "pages.json", "src/assets/shots");
+  const content = git("diff", "--name-only", base, "HEAD", "--", "src/content/docs", "pages.json", "src/assets/shots", "skills");
   const formatOnly = /^Edition: none\s*$/im.test(git("log", "--format=%B", `${base}..HEAD`));
   if (content && !formatOnly && pending === basePending) {
     errors.push(

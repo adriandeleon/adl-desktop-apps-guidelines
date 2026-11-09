@@ -28,6 +28,8 @@ ln -s "$PWD/node_modules" "$wt/node_modules"
 [ "$(node -p "require('./$wt/package.json').version")" = "$v" ] || { echo "$commit does not carry version $v" >&2; exit 1; }
 
 (cd "$wt" && bash scripts/build-print.sh >/dev/null && PAUTA_PATH="$v" npx astro build >/dev/null)
+# This checkout's pin pass, with the edition's own pins.json: an edition from before pins keeps its branch links.
+node scripts/pin-dist.mjs "$wt" "$wt/dist/$v"
 [ -f "$wt/dist/$v/index.html" ] || { echo "the build of $v made no pages" >&2; exit 1; }
 [ -s "$wt/dist/$v/downloads/adl-desktop-apps-guidelines.pdf" ] || { echo "the build of $v made no PDF" >&2; exit 1; }
 

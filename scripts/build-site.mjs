@@ -13,8 +13,7 @@
 import { spawnSync } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
-import { compareVersions, isVersion, parseEditions, released } from "../src/lib/editions.mjs";
-import { pin, pinsFor } from "../src/lib/pins.mjs";
+import { compareVersions, isVersion, parseEditions, released, unreleased } from "../src/lib/editions.mjs";
 
 process.chdir(new URL("..", import.meta.url).pathname);
 const pkg = JSON.parse(readFileSync("package.json", "utf8"));
@@ -37,7 +36,7 @@ run("node", ["scripts/check-rules.mjs"]);
 
 // While CHANGELOG.md's [Unreleased] holds changes, this checkout is not the edition its number names; CI builds it as a
 // check and deploys nothing (.github/workflows/pages.yml).
-if (parseEditions(readFileSync("CHANGELOG.md", "utf8")).some((e) => e.version === "Unreleased")) {
+if (unreleased(readFileSync("CHANGELOG.md", "utf8"))) {
   console.warn(`Note: [Unreleased] holds changes, so dist/${version}/ shows them under ${version}; CI won't deploy this build.`);
 }
 
@@ -49,25 +48,8 @@ for (const edition of ["latest", version]) {
 }
 
 // 1b. The References this edition links, pinned to the commits pins.json recorded at its release (src/lib/pins.mjs).
-const pins = pinsFor(version);
-step(pins ? `references pinned to pins.json (${version})` : "references left on their branches: pins.json is for another edition");
-if (pins) {
-  const walk = (dir) =>
-    readdirSync(dir).flatMap((name) => {
-      const path = join(dir, name);
-      return statSync(path).isDirectory() ? walk(path) : /\.(html|md|txt|json)$/.test(name) ? [path] : [];
-    });
-  let changed = 0;
-  for (const file of ["latest", version].flatMap((e) => walk(join("dist", e)))) {
-    const text = readFileSync(file, "utf8");
-    const pinned = pin(text, pins);
-    if (pinned !== text) {
-      writeFileSync(file, pinned);
-      changed++;
-    }
-  }
-  console.log(`${changed} files`);
-}
+step("references");
+run("node", ["scripts/pin-dist.mjs", ".", join("dist", "latest"), join("dist", version)]);
 
 // 2. The earlier editions, archived on the `versions` branch: origin's if reachable, else a local one. In CI (where
 // GitHub sets CI=true) a deploy without them would take every earlier address off the site, so anything less than

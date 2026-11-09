@@ -57,11 +57,11 @@ Every other list choice (recent files, themes, keymaps, a setting's values) uses
 - **KBD-09 · MUST.** Emacs and CUA keymaps ship as JSON resources, CUA with a `.mac.json` variant where Cmd replaces
   Ctrl.
   - *Check (code):* `emacs.json`, `cua.json` and `cua.mac.json` are in the app's resources.
-  - *Command:* `! for f in emacs.json cua.json cua.mac.json; do find src/main/resources -name "$f" | grep -q . || echo "missing $f"; done | grep .`
+  - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; ! for f in emacs.json cua.json cua.mac.json; do find src/main/resources -name "$f" | grep -q . || echo "missing $f"; done | grep .`
   - *Reference:* Editora [`src/main/resources/com/editora/keymaps/`](https://github.com/adriandeleon/Editora/tree/master/src/main/resources/com/editora/keymaps).
 - **KBD-10 · SHOULD.** IntelliJ, VS Code and Sublime keymaps ship the same way, each with its `.mac.json` variant.
   - *Check (code):* `intellij`, `vscode` and `sublime` `.json` and `.mac.json` files are in the resources.
-  - *Command:* `! for k in intellij vscode sublime; do for f in "$k.json" "$k.mac.json"; do find src/main/resources -name "$f" | grep -q . || echo "missing $f"; done; done | grep .`
+  - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; ! for k in intellij vscode sublime; do for f in "$k.json" "$k.mac.json"; do find src/main/resources -name "$f" | grep -q . || echo "missing $f"; done; done | grep .`
   - *Reference:* Editora [`src/main/resources/com/editora/keymaps/`](https://github.com/adriandeleon/Editora/tree/master/src/main/resources/com/editora/keymaps).
 - **KBD-21 · MUST.** A keymap's `.mac.json` variant binds the same commands as the keymap it varies. A chord may
   differ, to put `Cmd` where the other has `Ctrl`, to follow the macOS keymap of the editor it copies, or where

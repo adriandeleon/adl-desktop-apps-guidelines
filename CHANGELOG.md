@@ -16,7 +16,7 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
   prints what it found when it fails; each was tried on the six apps and the template. The audit skill and
   `llms.txt` run it before reading the code.
 - **Pinned References.** From the next edition, what an edition serves links each app's code at the commit it was at
-  when the edition was released, not `master`, so a Reference keeps showing the code the rule was checked against.
+  when the edition was released, not `master`, so a Reference keeps showing the code as it was then.
 - **PAUTA-17 · MUST.** An app's `AGENTS.md` has a `## Pauta` section that names the edition `pauta.version` names and
   links that edition's `llms.txt` and `llms-full.txt`, never `latest/`, so its coding agent reads the rules the app
   is built to. The Coding agents page has the block to copy, and the checklist the line.
@@ -26,6 +26,20 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 - **Editions come out in batches.** Changes to the guidance now collect under *Unreleased* and are published together
   as one edition when a batch is ready, instead of each change being an edition of its own. The Changelog page says
   so, and the largest change in the batch sets the number.
+
+### Fixed
+
+- **ACC-01's Reference** no longer says Editora's menu rows carry their text: only its macOS system-menu rows do; the
+  in-window rows are drawn and silent to a screen reader.
+- **PAUTA-17's Reference** says the template's test checks the edition its `AGENTS.md` names, not yet the `llms.txt`
+  link.
+- **PLAT-01** and **PLAT-10**'s Checks test what their rules ask: a compiler release of 25 or later, and Spotless's
+  check run by CI either as `spotless:check` or bound to a phase CI runs, which Torrenta, Modula and Mirada do.
+- **The check commands** open with a guard that fails them outside an app's root, so an empty folder no longer passes
+  three of them; OS-02's needs exactly one class reading `os.name`; REPO-03's reads a Windows checkout's line endings.
+  The skill, `llms.txt`, the schema and the Coding agents page now say the same thing about a result: exit 0 passes the
+  check, and the agent still reads the rest of the rule.
+
 
 ## [4.5.0] - 2026-11-08
 

@@ -142,7 +142,7 @@ export function rulesSchema(base) {
                 command: {
                   ...text,
                   description:
-                    "For some code checks: one POSIX shell command, run from the app's repository root, that exits 0 when the check passes and prints what it found when it fails. Read the rule too: the command settles the check, not every word of the rule.",
+                    "For some code checks: one read-only POSIX shell command. Run it with sh -c from the app's repository root. Exit 0: the check passes; still read the rest of the rule and cite the file:line that meets it. Any other exit: the check fails, and what it printed is the evidence.",
                 },
               },
             },

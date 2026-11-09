@@ -1,6 +1,6 @@
 // References link the apps' code on its default branch, which moves on after an edition is released. pins.json
 // records each repository's commit at the release (scripts/pin-references.mjs), and what that edition serves links
-// those commits instead, so its References keep pointing at the code they were checked against. Links into this
+// those commits instead, so its References keep pointing at the code as it was at the release. Links into this
 // repository point at the edition's tag. A checkout whose pins.json is for another edition (unreleased work, or an
 // edition from before pins) keeps the branch links. Used by scripts/build-site.mjs; scripts/combine.py does the same
 // for the downloads.

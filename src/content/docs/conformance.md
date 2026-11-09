@@ -32,7 +32,7 @@ moved to a newer one with new MUSTs. A new app is not released at Partial.
   [ABOUT-08](../templates/about/#about-08)) and states its conformance, Complete, Core or Partial, as defined above.
   - *Why:* an app that is in the family answers to these rules; saying which ones, and how far, is the first of them.
   - *Check (code):* `pom.xml` defines `pauta.version` and `src/main/resources/com/<app>/pauta.json` exists.
-  - *Command:* `{ grep -q '<pauta.version>' pom.xml || { echo 'no pauta.version in pom.xml'; false; }; } && { find src/main/resources -path '*/com/*' -name pauta.json | grep . || { echo 'no pauta.json'; false; }; }`
+  - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; { grep -q '<pauta.version>' pom.xml || { echo 'no pauta.version in pom.xml'; false; }; } && { find src/main/resources -path '*/com/*' -name pauta.json | grep . || { echo 'no pauta.json'; false; }; }`
   - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`pom.xml`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/pom.xml) (`pauta.version`) and [`pauta.json`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/pauta.json).
 - **PAUTA-02 · MUST.** The conformance is computed, never stored: one pure helper reads the exceptions and returns Partial
   when any MUST is pending, Core when any SHOULD is pending, and Complete otherwise. About, the Pauta window and the
@@ -201,5 +201,6 @@ the repository.
     edition the app hasn't moved to.
   - *Check (test):* a test fails when `AGENTS.md`'s Pauta section names another edition than `pauta.version`, or
     doesn't link `https://pauta-project.dev/<edition>/llms.txt`.
-  - *Reference:* the app template's [`AGENTS.md`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/AGENTS.md), whose edition [`EditionTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/EditionTest.java)
-    (`theReadmeAndAgentsNameTheSameEdition`) checks; Termina's [`AGENTS.md`](https://github.com/adriandeleon/Termina/blob/master/AGENTS.md).
+  - *Reference:* the app template's [`AGENTS.md`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/AGENTS.md) and Termina's [`AGENTS.md`](https://github.com/adriandeleon/Termina/blob/master/AGENTS.md) have the section.
+    The template's [`EditionTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/EditionTest.java) (`theReadmeAndAgentsNameTheSameEdition`) checks the edition the file names, but
+    not the section's `llms.txt` link yet.

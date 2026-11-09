@@ -153,7 +153,7 @@ The certificate renews before 2027-11-30; the Apple membership before 2027-10-31
   (`actions/setup-java@b843ebf… # v6.1.0`).
   - *Check (code):* every `uses:` in `.github/workflows/` ends in a 40-character SHA and a comment naming its version
     (`# vX.Y.Z`), or its branch when the action publishes no tag (Editora's `jreleaser/release-action … # v2`).
-  - *Command:* `! grep -rhE '^[[:space:]]*-?[[:space:]]*uses:' .github/workflows | grep -vE 'uses:[[:space:]]*\./' | grep -vE '@[0-9a-f]{40}[[:space:]]+#[[:space:]]*[^[:space:]]+'`
+  - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; [ -d .github/workflows ] || { echo 'no .github/workflows'; exit 1; }; ! grep -rhE '^[[:space:]]*-?[[:space:]]*uses:' .github/workflows | grep -vE 'uses:[[:space:]]*\./' | grep -vE '@[0-9a-f]{40}[[:space:]]+#[[:space:]]*[^[:space:]]+'`
   - *Reference:* Editora [`.github/workflows/`](https://github.com/adriandeleon/Editora/tree/master/.github/workflows).
 - **REL-23 · MUST.** Dependabot updates `github-actions` and `maven` weekly.
   - *Check (code):* `.github/dependabot.yml` lists both ecosystems with `interval: weekly`.

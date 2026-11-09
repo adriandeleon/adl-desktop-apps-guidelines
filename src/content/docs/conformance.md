@@ -8,7 +8,8 @@ About window. The rules it does not meet are not hidden: each one is an **except
 [Pauta window](../templates/pauta-window/) and listed in its user docs. Its conformance is worked out from that list,
 never typed in by hand, so the claim and the evidence can't drift apart.
 
-No app does this yet. The audit in [Coding agents and LLMs](../coding-agents/#audit-an-app) produces the first list:
+No released app does this yet; the [app template](https://github.com/adriandeleon/adl-desktop-app-template) does: `pauta.json` holds its exceptions, `PautaConformance`
+computes its conformance and `PautaConformanceTest` checks both. The audit in [Coding agents and LLMs](../coding-agents/#audit-an-app) produces the first list:
 each MUST and SHOULD it reports as `fail` becomes an exception, of the kind that fits. A `limited` result needs none.
 
 ## Complete, Core and Partial
@@ -31,7 +32,7 @@ moved to a newer one with new MUSTs. A new app is not released at Partial.
   [ABOUT-08](../templates/about/#about-08)) and states its conformance, Complete, Core or Partial, as defined above.
   - *Why:* an app that is in the family answers to these rules; saying which ones, and how far, is the first of them.
   - *Check (code):* `pom.xml` defines `pauta.version` and `src/main/resources/com/<app>/pauta.json` exists.
-  - *Reference:* no app yet.
+  - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`pom.xml`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/pom.xml) (`pauta.version`) and [`pauta.json`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/pauta.json).
 - **PAUTA-02 · MUST.** The conformance is computed, never stored: one pure helper reads the exceptions and returns Partial
   when any MUST is pending, Core when any SHOULD is pending, and Complete otherwise. About, the Pauta window and the
   docs page take it from there; the README, which can't call the helper, is held to it by a test (PAUTA-15).
@@ -39,7 +40,7 @@ moved to a newer one with new MUSTs. A new app is not released at Partial.
     in by hand stays "Complete" after a pending exception is added.
   - *Check (test):* a unit test of the helper (`PautaConformance`, or the app's equivalent) covers all three and
     shows that deviation, not-applicable and app-only entries leave the result alone.
-  - *Reference:* no app yet.
+  - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`PautaConformance.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/PautaConformance.java) (`of`, `conformance`), tested by [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java).
 - **PAUTA-03 · MUST.** A new app's first release is at Core or Complete: the [New app checklist](../checklist/)'s
   MUSTs are release blockers, and recording one as pending does not lift that. A template repository is never
   released as an app, so this rule is for the app made from it and the template records no entry for it.
@@ -67,7 +68,7 @@ an app, and a fourth for a template repository; each one asks for something diff
   - *Check (by hand):* audit the app against its edition ([Coding agents and LLMs](../coding-agents/#audit-an-app)):
     no MUST or SHOULD is `fail`, every `manual` result has been checked by a person, and no result reports an entry
     for a rule that passes.
-  - *Reference:* no app yet.
+  - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`pauta.json`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/pauta.json).
 - **PAUTA-05 · MUST.** A rule limited to apps with a feature needs no entry in an app without that feature. A rule is
   limited when its own text says so ("An app with user data worth carrying between computers…"), when its page or
   section opens with an **Applies to** line (the [Tray and background](../tray-and-background/) page; `appliesTo` in
@@ -84,17 +85,17 @@ an app, and a fourth for a template repository; each one asks for something diff
     the app say it is built to an edition it does not meet.
   - *Check (code):* every `deviation` entry names a SHOULD, and its `link` opens a file under `docs/decisions/` that
     names the rule's ID.
-  - *Reference:* no app yet.
+  - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java) (`eachKindHasWhatItNeeds`).
 - **PAUTA-07 · MUST.** A `pending` exception links an open issue in the app's own repository that names the rule's
   ID and edition, "MENU-14 (Pauta 4.2.0)". One issue may hold several rules, one per page for example, if it names
   each one that way. Closing the issue removes its entries.
   - *Check (code):* every `pending` entry's `link` is an issue URL in the app's repository whose text names that
     entry's rule ID and edition.
-  - *Reference:* no app yet.
+  - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java) (`eachKindHasWhatItNeeds`), whose pending entries link issues in the template's own repository.
 - **PAUTA-08 · MUST.** Each exception's `reason` is one plain sentence for the person using the app, in English like
   the changelog: what is different and, for a deviation, what they get instead. No rule text, no class names.
   - *Check (by hand):* read each reason in the Pauta window as a user would.
-  - *Reference:* no app yet.
+  - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java) (`eachKindHasWhatItNeeds`: a reason ends with a period and names no rule ID).
 - **PAUTA-16 · MUST.** A template repository, one that new apps are made from, sets `"template": true` in its
   `pauta.json` and records as `app-only` the rules that only an app made from it can meet. `app-only` leaves the
   conformance as it is, like `not-applicable`, and nothing but a template may use it. Making an app from the
@@ -150,7 +151,7 @@ a test keeps the copies honest.
   `reason` on every entry, `link` on every deviation and pending entry, one entry per rule, and `"template": true`
   beside `exceptions` only in a template repository (PAUTA-16).
   - *Check (code):* the file exists at that path, and each entry has the fields its kind needs.
-  - *Reference:* no app yet.
+  - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`pauta.json`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/pauta.json), read by [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java) (`parsesEveryField`, `everyEntryNamesARuleOfTheEditionWithItsLevelAndAddress`).
 - **PAUTA-10 · MUST.** A test reads `pauta.json` against a copy of the edition's `rules.json` in
   `src/test/resources/pauta-rules.json` and fails when the copy's `edition` is not `pauta.version`, when an entry
   names a rule the edition does not have, when its `level` or `url` differs from the edition's, when a rule appears
@@ -159,7 +160,7 @@ a test keeps the copies honest.
   `AppInfo` names), and fails on them in the release build ([PAUTA-16](#pauta-16)).
   - *Why:* moving to a newer edition changes levels and retires IDs; the test turns each stale entry into a failure.
   - *Check (test):* `PautaConformanceTest`, or the app's equivalent, runs in the build.
-  - *Reference:* no app yet.
+  - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java) and its copy of the edition's rules, [`pauta-rules.json`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/resources/pauta-rules.json). The template parts (`app-only`, inherited links) aren't built yet.
 - **PAUTA-11 · SHOULD.** Moving to a newer edition is one change: replace `pauta-rules.json`, run the audit again,
   update `pauta.json`, then change `pauta.version`, the README and `AGENTS.md` together.
   - *Check (by hand):* the change that raises `pauta.version` also replaces `pauta-rules.json` and touches
@@ -175,7 +176,7 @@ the repository.
   and the Pauta window, opened from About, the Help menu and the Command Palette, lists every exception
   ([Pauta window](../templates/pauta-window/)).
   - *Check (code):* `help.pauta` is registered and About's *Pauta conformance* link runs it.
-  - *Reference:* no app yet.
+  - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`ui/Commands.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Commands.java) (`help.pauta`) and [`ui/AboutDialog.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AboutDialog.java) (the link that runs it).
 - **PAUTA-13 · MUST.** In the user docs: the app's website has a *Pauta conformance* page under `/docs/`
   ([DOCS-02](../documentation/#docs-02)) with the edition, the conformance and every exception, grouped by kind, each with
   its rule ID linked to the edition's rule, its reason and its link. The Pauta window links to it.
@@ -191,4 +192,4 @@ the repository.
   docs page.
   - *Check (test):* `PautaConformanceTest` fails when the README's badge or line names another edition than
     `pauta.version` or another conformance than `PautaConformance` returns.
-  - *Reference:* no app yet; the [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s README names its edition.
+  - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s README (the badge and the *Working toward* line), checked by [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java) (`theReadmeNamesTheEditionAndTheConformanceAndLinksTheDocsPage`).

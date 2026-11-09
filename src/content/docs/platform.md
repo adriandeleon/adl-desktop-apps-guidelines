@@ -46,8 +46,8 @@ description: "JDK, JavaFX, AtlantaFX, NullAway, Maven Wrapper, tests and coverag
   - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml) (spotless plugin), [`.github/workflows/ci.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/ci.yml) (*Format*).
 - **PLAT-11 · MUST.** Tests run on **JUnit** (Jupiter, 5 or newer) and **TestFX** over JavaFX's built-in
   **Headless** glass platform (`-Dglass.platform=Headless`), so FX tests need no display, no xvfb and no Monocle.
-  - *Check (code):* surefire's `systemPropertyVariables` set `glass.platform` to `Headless`; no Monocle dependency
-    and no xvfb step in CI.
+  - *Check (code):* surefire's `systemPropertyVariables` set `glass.platform` to `Headless`; no Monocle dependency,
+    and no xvfb in a step that runs tests (a release leg may use it to train the AOT cache, [REL-10](../release/#rel-10)).
   - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml) (surefire), [`docs/testing.md`](https://github.com/adriandeleon/Editora/blob/master/docs/testing.md), [`FxTestSupport`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/FxTestSupport.java).
 - **PLAT-12 · MUST.** A **JaCoCo** `check` runs at `mvn verify`: **≥ 0.90 lines, ≥ 0.90 methods**, ≥ 0.79
   branches, plus per-package floors.

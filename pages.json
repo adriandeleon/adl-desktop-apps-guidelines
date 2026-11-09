@@ -25,6 +25,7 @@
       "label": "Experience",
       "items": [
         "keyboard",
+        "accessibility",
         "window-shell",
         "icons-and-color",
         "toolbars-and-tooltips",

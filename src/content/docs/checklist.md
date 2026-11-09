@@ -76,6 +76,15 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 - [ ] A find bar in the scene wherever there is text to search: searches as you type with a count, Enter and Shift+Enter step, Escape closes it; a list app filters instead · [FIND-01](../templates/find-bar/#find-01), [FIND-02](../templates/find-bar/#find-02), [FIND-03](../templates/find-bar/#find-03), [FIND-06](../templates/find-bar/#find-06), [FIND-07](../templates/find-bar/#find-07)
 - [ ] One QuickOpen-style picker for every list choice (themes, keymaps, recent items, a setting's values), in the overlay host (SHOULD) · [QOPEN-01](../templates/quick-open/#qopen-01), [QOPEN-02](../templates/quick-open/#qopen-02)
 
+## Accessibility
+
+[Accessibility](../accessibility/)
+
+- [ ] Every control reachable with Tab and operable with Space or Enter, except buttons whose command the keyboard reaches another way · [KBD-15](../keyboard/#kbd-15)
+- [ ] Every control a person can reach has an accessible name, rows drawn from graphics included · [ACC-01](../accessibility/#acc-01)
+- [ ] Custom controls state their role and state; canvas content is exposed to the screen reader (SHOULD) · [ACC-02](../accessibility/#acc-02), [ACC-03](../accessibility/#acc-03)
+- [ ] Animations follow the OS's reduced motion; color is never the only signal (SHOULD) · [ACC-04](../accessibility/#acc-04), [ACC-05](../accessibility/#acc-05)
+
 ## Window shell
 
 [Window shell](../window-shell/) · [Welcome page](../templates/welcome/) · [Confirm dialog](../templates/confirm-dialog/) · [About window](../templates/about/)

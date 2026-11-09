@@ -55,7 +55,7 @@ grounds, and **brace** periwinkle reserved for the keyboard. Amber, red and gree
 <div class="m-ic-palette" role="img" aria-label="The Caret and Ink palette: each token's light and dark value">
 <div class="m-ic-head"><span></span><span>Light</span><span>Dark</span><span>Token</span></div>
 <div class="m-ic-row"><span class="n">Ground</span><span class="m-ic-chip" style="--c:#ffffff"><i>#ffffff</i></span><span class="m-ic-chip" style="--c:#1b1e2a"><i>#1b1e2a</i></span><span class="t">-color-bg-default</span></div>
-<div class="m-ic-row"><span class="n">Porcelain / Abyss</span><span class="m-ic-chip" style="--c:#f4f5f9"><i>#f4f5f9</i></span><span class="m-ic-chip" style="--c:#12141d"><i>#12141d</i></span><span class="t">-color-bg-subtle / -color-dark</span></div>
+<div class="m-ic-row"><span class="n">Porcelain / Abyss</span><span class="m-ic-chip" style="--c:#f4f5f9"><i>#f4f5f9</i></span><span class="m-ic-chip" style="--c:#12141d"><i>#12141d</i></span><span class="t">-color-bg-subtle / -color-bg-inset</span></div>
 <div class="m-ic-row"><span class="n">Ink</span><span class="m-ic-chip" style="--c:#1b1e2a"><i>#1b1e2a</i></span><span class="m-ic-chip" style="--c:#e8eaf3"><i>#e8eaf3</i></span><span class="t">-color-fg-default</span></div>
 <div class="m-ic-row"><span class="n">Muted ink</span><span class="m-ic-chip" style="--c:#575d6e"><i>#575d6e</i></span><span class="m-ic-chip" style="--c:#9ba1b5"><i>#9ba1b5</i></span><span class="t">-color-fg-muted</span></div>
 <div class="m-ic-row"><span class="n">Subtle ink</span><span class="m-ic-chip" style="--c:#8b91a3"><i>#8b91a3</i></span><span class="m-ic-chip" style="--c:#6c7288"><i>#6c7288</i></span><span class="t">-color-fg-subtle</span></div>
@@ -120,7 +120,8 @@ pill, a row tint and a hover state come from the same place. `.state-pill` is th
     in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) still carry fixed hexes.
 - **ICON-09 · SHOULD.** Readable text uses `-color-fg-muted` or stronger, which is 4.5:1 on the default, subtle and
   overlay grounds in both flagship themes: a line of UI text is `-color-fg-default` and secondary text
-  `-color-fg-muted`. `-color-fg-subtle` (about 3:1) is for disabled or decorative text only.
+  `-color-fg-muted`. `-color-fg-subtle` (2.7:1 to 3.9:1, under 3:1 on Editora Light's subtle and inset grounds) is for disabled or
+  decorative text only.
   - *Check (test):* a contrast test computes muted ink on each ground, and fails a readable selector set in
     `-color-fg-subtle`.
   - *Reference:* Editora [`StyleContrastTest.textThatMustBeReadUsesTheMutedRoleNotSubtle`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java).
@@ -129,13 +130,14 @@ pill, a row tint and a hover state come from the same place. `.state-pill` is th
     `-color-bg-default`, in both flagship themes.
   - *Reference:* Editora [`StyleContrastTest.lightTintedTextReachesAaOnItsOwnGroundAndOnTheSubtleSurface`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java),
     `darkTintedTextStaysAa`.
-- **ICON-11 · MUST.** Ink on an emphasis fill is `-color-fg-emphasis`, never white.
+- **ICON-11 · MUST.** Ink on an emphasis fill is `-color-fg-emphasis`, never a fixed white: the token is white in
+  the light themes and a dark ink in the dark ones.
   - *Why:* white on the dark accent is 1.68:1.
   - *Check (test):* a contrast test computes `-color-fg-emphasis` on each role's `-emphasis`, and the rules that
     paint on an emphasis fill use it.
   - *Reference:* Editora [`StyleContrastTest.inkOnAnEmphasisFillIsTheThemesOnEmphasisColour`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java).
-- **ICON-12 · MUST.** One focus ring, `-focus-ring: -color-accent-emphasis`, drawn by the `:focus-visible` block at
-  the end of `app.css`, at 3:1 or better on every surface (see [Keyboard first](../keyboard/)).
+- **ICON-12 · MUST.** One focus ring, `-focus-ring: -color-accent-emphasis`, drawn by the `:focus-visible` block in
+  `app.css` ([KBD-16](../keyboard/#kbd-16)), at 3:1 or better on every surface (see [Keyboard first](../keyboard/)).
   - *Check (test):* a test reads `-focus-ring` from `.root` and computes it on the default, subtle, inset and
     overlay grounds.
   - *Reference:* Editora [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) (*Keyboard focus*),

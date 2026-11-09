@@ -40,7 +40,7 @@ and no account of ours: the store is a private Git repository the user owns.
 <div class="nav"><span class="m-icon"></span>Advanced</div>
 </div>
 <div class="page">
-<div><h4>Sync</h4><div class="m-muted" style="margin-top:3px">Keep your snippets, abbreviations, templates and personal dictionary the same on every computer, through a Git repository you own.</div></div>
+<div><h4>Sync</h4><div class="m-muted" style="margin-top:3px">Keep your snippets, abbreviations, templates, personal dictionary and shortcuts the same on every computer, through a Git repository you own.</div></div>
 <div class="m-card2">
 <div class="m-setrow"><div class="m-grow"><div class="label">Repository <span class="pin">2</span></div><div class="note">The URL of a private Git repository, empty or already used by another of your computers.</div><div class="m-field" style="margin-top:6px"><span class="ph">git@github.com:you/editora-sync.git</span></div></div></div>
 <div class="m-setrow"><div class="m-grow"><div class="label">Branch</div><div class="note">The branch your synced files are kept on; main unless the repository also holds something else.</div></div><div class="m-field" style="width:90px">main</div><span class="m-btn primary">Connect</span><span class="m-btn">Create on GitHub…</span><span class="pin">3</span></div>
@@ -109,7 +109,7 @@ that would remove most of a kind of data and waits for confirmation). The pill's
 
 | Key | English |
 |---|---|
-| `settings.sync.subtitle` | Keep your snippets, abbreviations, templates and personal dictionary the same on every computer, through a Git repository you own. |
+| `settings.sync.subtitle` | Keep your snippets, abbreviations, templates, personal dictionary and shortcuts the same on every computer, through a Git repository you own. |
 | `settings.sync.connect` / `settings.sync.createGithub` | Connect / Create on GitHub… |
 | `settings.sync.now` / `settings.sync.openFolder` | Sync Now / Open Sync Folder |
 | `settings.sync.pill.*` | Connected · Not connected · Sync failing · syncing… · retrying · synced {0} min ago |

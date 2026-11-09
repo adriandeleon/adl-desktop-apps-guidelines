@@ -130,21 +130,29 @@ The certificate renews before 2027-11-30; the Apple membership before 2027-10-31
   - *Check (code):* `ci.yml` triggers on `push` to `master` and on `pull_request`, with the two jobs; the
     repository's rules for `master` require both.
   - *Reference:* Editora [`ci.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/ci.yml).
-- **REL-20 · SHOULD.** `full-tests.yml` runs the full suite on Linux, macOS and Windows daily, on a pull request
-  labeled `full-ci`, and before every release, and lists flaky tests in the job summary.
-  - *Check (code):* `full-tests.yml` has a `schedule` and a `pull_request` trigger gated on the label, and the
-    release preflight waits for its run on the tagged commit.
-  - *Reference:* Editora [`full-tests.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/full-tests.yml), [`scripts/ci/ReportFlakes.java`](https://github.com/adriandeleon/Editora/blob/master/scripts/ci/ReportFlakes.java), and the "Check that the Full tests
+- **REL-20 · SHOULD.** The tests run on all three OSes: the pure suite (no JavaFX toolkit) on Linux, macOS and
+  Windows, and the FX suite on Linux and at least one more. `ci.yml` covers Linux on every pull request;
+  `full-tests.yml` covers the rest daily, on a pull request labeled `full-ci`, and before every release, and lists
+  flaky tests in the job summary.
+  - *Why:* path separators, line endings, case-insensitive file systems and process spawning fail on one OS only, and
+    the pure suite is where they show; the FX suite catches layout and focus differences.
+  - *Check (code):* `full-tests.yml`'s jobs run the pure suite on `windows-*` and `macos-*` and the FX suite
+    (`-Dgroups=fx`) on at least one of them; it has a `schedule` and a `pull_request` trigger gated on the label, and
+    the release preflight waits for its run on the tagged commit.
+  - *Reference:* Editora [`full-tests.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/full-tests.yml) (the pure suite on Windows and macOS, the FX suite on macOS in three
+    shards), [`scripts/ci/ReportFlakes.java`](https://github.com/adriandeleon/Editora/blob/master/scripts/ci/ReportFlakes.java), and the "Check that the Full tests
     passed on this commit" step in [`release.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/release.yml).
-- **REL-21 · MUST.** `release.yml` runs on a `v*` tag that matches the pom version, with `workflow_dispatch` as a
-  dry run. It runs the five-target matrix, the signing jobs, attestations, the release-asset check, JReleaser, then
+- **REL-21 · MUST.** `release.yml` runs on a version tag (`v*`, or better the version-shaped
+  `v[0-9]+.[0-9]+.[0-9]+*`, which a tag like `vendor-import` doesn't match) that matches the pom version, with
+  `workflow_dispatch` as a dry run. It runs the five-target matrix, the signing jobs, attestations, the release-asset check, JReleaser, then
   the bump to the next snapshot. A dry run builds and signs and publishes nothing.
   - *Check (code):* `release.yml` triggers on the tag pattern and `workflow_dispatch`, and a dispatch runs
     JReleaser with `--dry-run`.
   - *Reference:* Editora [`release.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/release.yml).
 - **REL-22 · MUST.** Every workflow pins each third-party action to a commit SHA, with its version in a comment
   (`actions/setup-java@b843ebf… # v6.1.0`).
-  - *Check (code):* every `uses:` in `.github/workflows/` ends in a 40-character SHA and a `# vX.Y.Z` comment.
+  - *Check (code):* every `uses:` in `.github/workflows/` ends in a 40-character SHA and a comment naming its version
+    (`# vX.Y.Z`), or its branch when the action publishes no tag (Editora's `jreleaser/release-action … # v2`).
   - *Reference:* Editora [`.github/workflows/`](https://github.com/adriandeleon/Editora/tree/master/.github/workflows).
 - **REL-23 · MUST.** Dependabot updates `github-actions` and `maven` weekly.
   - *Check (code):* `.github/dependabot.yml` lists both ecosystems with `interval: weekly`.

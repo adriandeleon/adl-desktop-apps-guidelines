@@ -4,7 +4,8 @@ description: "JDK, JavaFX, AtlantaFX, NullAway, Maven Wrapper, tests and coverag
 ---
 
 - **PLAT-01 · MUST.** The app builds on **JDK 25 or newer**. `maven.compiler.release` 25 is the floor, not the
-  ceiling: build and bundle a current JDK.
+  ceiling: a newer JDK builds the app too. CI builds and bundles JDK 25, the current LTS, in every app
+  ([REL-25](../release/#rel-25)); the family moves to the next LTS together, in an edition of Pauta.
   - *Check (code):* `pom.xml` sets `maven.compiler.release` to 25 or later and the enforcer's `requireJavaVersion` to the
     open-ended range `[25,)`.
   - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; r=$(sed -n 's:.*<maven.compiler.release>\([0-9]*\)<.*:\1:p' pom.xml | head -n 1); [ "${r:-0}" -ge 25 ] && grep -qE '<version>\[2[5-9],\)</version>' pom.xml || { echo "maven.compiler.release ${r:-none}"; grep -nE 'requireJavaVersion|<version>\[' pom.xml; false; }`

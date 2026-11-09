@@ -43,10 +43,12 @@ description: "The flags every app accepts and the single-instance hand-off."
 - **CLI-08 · SHOULD.** An advisory lock tells two processes on one config folder about each other.
   - *Check (test):* a test takes the lock from two processes.
   - *Reference:* Editora [`config/InstanceLock.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/InstanceLock.java) ([`InstanceLockTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/config/InstanceLockTest.java)).
-- **CLI-09 · SHOULD.** `main` sets `java.awt.headless=true` before any AWT class loads.
+- **CLI-09 · SHOULD.** `main` sets `java.awt.headless=true` before any AWT class loads. The one exception is an AWT
+  tray on Windows or macOS, which `main` decides once, before that point ([TRAY-14](../tray-and-background/#tray-14)).
   - *Why:* on macOS, AWT's native toolkit and JavaFX contend for the one AppKit run loop and can hang; headless
     Java2D still draws to images.
-  - *Check (code):* `System.setProperty("java.awt.headless", "true")` is among the first statements of `main`.
+  - *Check (code):* `System.setProperty("java.awt.headless", …)` is among the first statements of `main`, and it is
+    `"true"` unless the tray needs AWT.
   - *Reference:* Editora [`App.main`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java).
 - **CLI-10 · SHOULD.** External tools are resolved through the login shell's `PATH`.
   - *Why:* a `.app` launched from Finder inherits a stripped `PATH`.

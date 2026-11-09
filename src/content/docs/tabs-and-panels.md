@@ -136,8 +136,9 @@ rules in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/mai
     dragging).
 - **TABS-18 · SHOULD.** Panels float, maximize, resize and close from the keyboard, and at most one window is
   maximized at a time.
-  - *Check (code):* the commands are registered and bound in the Emacs keymap.
-  - *Reference:* Editora `view.floatToolWindow`, `view.maximizeToolWindow` (`C-x f`),
+  - *Check (code):* each action is a registered command, so the palette runs it; the Emacs keymap binds maximize,
+    close and resize.
+  - *Reference:* Editora `view.floatToolWindow` (palette only), `view.maximizeToolWindow` (`C-x f`),
     `view.closeFocusedToolWindow` (`C-x 0`), the resize commands (`C-x S-.`, `C-x S-,`, `C-x S-6`).
 - **TABS-19 · SHOULD.** Closing the panel that holds keyboard focus returns focus to where it was in the editor.
   - *Check (code):* the manager keeps the last editor focus owner and refocuses it on close.

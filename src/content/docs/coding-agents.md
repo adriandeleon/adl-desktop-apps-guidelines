@@ -76,8 +76,8 @@ rule is:
   up to 4.5.0 link the apps' default branches.
 - **`why`** is `null` when the rule has no reason worth stating.
 - **`appliesTo`** is `null` for a rule that covers every app, unless its own text says otherwise. Otherwise it is the
-  **Applies to** line its page or section opens with: "an app whose work goes on without its window" for every
-  `TRAY` rule. `pages` lists every page with its prefix, its Markdown address and its `appliesTo`.
+  **Applies to** line its page or section opens with: "an app whose work goes on without its window" for the
+  `TRAY` rules, and "every app that sends desktop notifications…" for TRAY-09 to TRAY-11. `pages` lists every page with its prefix, its Markdown address and its `appliesTo`.
 - **`statuses`** are what an audit reports for a rule ([Audit an app](#audit-an-app)), and `audit` is the address
   of the report's schema.
 

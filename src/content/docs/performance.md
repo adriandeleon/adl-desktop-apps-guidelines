@@ -144,7 +144,7 @@ in Termina the terminal grid, in Mirada stepping between images.
 - **PERF-19 · SHOULD.** Start-up is measured by a script that takes the median of several cold launches, and by
   phase marks in the app.
   - *Check (code):* the repository has the script, and `main` and the first paint record phase marks.
-  - *Reference:* `scripts/measure-startup.sh` in Editora and Mirada; Editora [`perf/Startup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/perf/Startup.java).
+  - *Reference:* `scripts/measure-startup.sh` in Editora, Termina and Mirada; Editora [`perf/Startup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/perf/Startup.java).
 - **PERF-20 · SHOULD.** The app can sample its FX thread when something stalls.
   - *Check (code):* an environment variable or property turns on a sampler of the FX thread's stack.
   - *Reference:* Editora [`perf/Startup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/perf/Startup.java) (`EDITORA_PERF_SAMPLE=1`).

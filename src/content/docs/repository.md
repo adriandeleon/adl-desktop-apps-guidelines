@@ -17,9 +17,10 @@ filled in for a placeholder app, `ExampleApp`. `scripts/rename.sh <AppName> <pac
   - *Check (code):* the file names Keep a Changelog and Semantic Versioning, starts with `## [Unreleased]`, and every
     entry starts with `- **`.
   - *Reference:* Editora [`CHANGELOG.md`](https://github.com/adriandeleon/Editora/blob/master/CHANGELOG.md).
-- **REPO-03 · MUST.** `LICENSE` is MIT, "Copyright (c) 2026 Adrián Arturo De León Saldivar".
-  - *Check (code):* `LICENSE` opens with `MIT License` and that copyright line.
-  - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; tr -d '\r' < LICENSE | head -n 1 | grep -qx 'MIT License' && tr -d '\r' < LICENSE | grep -qx 'Copyright (c) 2026 Adrián Arturo De León Saldivar' || { head -n 3 LICENSE; false; }`
+- **REPO-03 · MUST.** `LICENSE` is MIT, "Copyright (c) 2026 Adrián Arturo De León Saldivar", with the year the app
+  started in: 2026 for the six apps, later for a newer one.
+  - *Check (code):* `LICENSE` opens with `MIT License` and has that copyright line, with a year from 2026 on.
+  - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; tr -d '\r' < LICENSE | head -n 1 | grep -qx 'MIT License' && tr -d '\r' < LICENSE | grep -qxE 'Copyright \(c\) 20(2[6-9]|[3-9][0-9]) Adrián Arturo De León Saldivar' || { head -n 3 LICENSE; false; }`
   - *Reference:* Editora [`LICENSE`](https://github.com/adriandeleon/Editora/blob/master/LICENSE).
 - **REPO-04 · MUST.** `NOTICE` gives the app name, the copyright, "licensed under the MIT License", then every
   bundled third-party component with its license (Inter is OFL, AtlantaFX is MIT, OpenJFX is GPLv2+CPE…). It

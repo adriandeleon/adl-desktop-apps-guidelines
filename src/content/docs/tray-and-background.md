@@ -9,7 +9,8 @@ tray icon. Reference: Torrenta's [`tray/`](https://github.com/adriandeleon/torre
 are the same code with their own menus; nux's [`TrayController`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/app/TrayController.java) holds the close policy.
 
 **Applies to:** an app whose work goes on without its window, as Torrenta's, Modula's and nux's does. For the others
-(Editora, Termina, Mirada) a tray is MAY, none has one, and no rule on this page applies.
+(Editora, Termina, Mirada) a tray is MAY, none has one, and only [Notifications](#notifications) applies, to an app
+that sends them.
 
 ## The icon and its menu
 
@@ -111,25 +112,6 @@ icons and chords do not apply here. The order does.
   - *Check (code):* every `Autostart` read and write starts on a worker thread.
   - *Reference:* Torrenta [`SettingsWindow`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/SettingsWindow.java) (`autostart-read`, `autostart-write`) and [`MainWindow`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java)
     (`autostart-refresh`); nux's [`App`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/App.java) (`nux-autostart`).
-- **TRAY-09 · MUST.** Desktop notifications go through one `Notifier`: `notify-send` on Linux (nux and Termina fall
-  back to `gdbus` against the freedesktop service), `osascript` with `display notification` on macOS, a PowerShell
-  toast on Windows. Each is a short program run with the title and message as arguments, never as part of a script,
-  off the FX thread and bounded to a few seconds; a failure is logged and never breaks the app.
-  - *Why:* text from a torrent name or a remote shell then cannot run anything.
-  - *Check (test):* a test holds that each platform's command line passes the text as arguments and that a missing
-    program is a problem, not an exception.
-  - *Reference:* Torrenta [`automation/Notifiers.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/automation/Notifiers.java), [`ProcessNotifier`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/automation/ProcessNotifier.java), [`NotifierTest`](https://github.com/adriandeleon/torrenta/blob/master/src/test/java/com/torrenta/automation/NotifierTest.java) (it ships [`toast.ps1`](https://github.com/adriandeleon/torrenta/blob/master/src/main/resources/com/torrenta/automation/toast.ps1));
-    nux's [`service/Notifier`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/service/Notifier.java) raises it through the tray icon, which it keeps as the last resort on every platform;
-    Termina's [`DesktopNotifier`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/DesktopNotifier.java).
-- **TRAY-10 · MUST.** Notifications are for what happened while the window was away, with one switch per event and
-  few on by default.
-  - *Check (code):* each notified event has its own setting, and most default to off.
-  - *Reference:* Torrenta notifies on added, finished, seeding done, error and updated, with only *finished* on at
-    first, and a Test button in Settings shows one now ([`automation/AutomationSettings.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/automation/AutomationSettings.java)); nux notifies on
-    power events with a rule per UPS; Termina and Editora relay a program's own OSC 9 and OSC 777 notifications.
-- **TRAY-11 · SHOULD.** A notification is never the only place a state is said: the in-app status already shows it.
-  - *Check (by hand):* trigger each notified event with notifications off; the window still shows it.
-  - *Reference:* Torrenta's status bar and transfer list.
 - **TRAY-12 · MAY.** A dock badge: Torrenta puts the download rate on the macOS dock icon through AWT's `Taskbar`
   and a count on a Linux launcher that honors Unity's `LauncherEntry` signal (KDE, Dash to Dock); nothing on
   Windows, whose taskbar badges only AWT's own windows. It is cleared when nothing downloads and has its own switch.
@@ -144,6 +126,31 @@ icons and chords do not apply here. The order does.
   icon" rather than "unsupported".
   - *Check (test):* a test holds that AWT is headful only where the tray is AWT's and wanted.
   - *Reference:* Torrenta [`Trays.usesAwt`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/tray/Trays.java), `os.AwtUse`, [`TraysTest`](https://github.com/adriandeleon/torrenta/blob/master/src/test/java/com/torrenta/tray/TraysTest.java).
+
+## Notifications
+
+**Applies to:** every app that sends desktop notifications, with a tray or without one: Torrenta and nux
+for their own events, Editora and Termina for a program's OSC 9 and OSC 777.
+
+- **TRAY-09 · MUST.** Desktop notifications go through one `Notifier`: `notify-send` on Linux (nux and Termina fall
+  back to `gdbus` against the freedesktop service), `osascript` with `display notification` on macOS, a PowerShell
+  toast on Windows. Each is a short program run with the title and message as arguments, never as part of a script,
+  off the FX thread and bounded to a few seconds; a failure is logged and never breaks the app.
+  - *Why:* text from a torrent name or a remote shell then cannot run anything.
+  - *Check (test):* a test holds that each platform's command line passes the text as arguments and that a missing
+    program is a problem, not an exception.
+  - *Reference:* Torrenta [`automation/Notifiers.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/automation/Notifiers.java), [`ProcessNotifier`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/automation/ProcessNotifier.java), [`NotifierTest`](https://github.com/adriandeleon/torrenta/blob/master/src/test/java/com/torrenta/automation/NotifierTest.java) (it ships [`toast.ps1`](https://github.com/adriandeleon/torrenta/blob/master/src/main/resources/com/torrenta/automation/toast.ps1));
+    Termina's [`DesktopNotifier`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/DesktopNotifier.java). nux's [`service/Notifier`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/service/Notifier.java) doesn't meet it yet: on macOS it
+    escapes the message into an AppleScript string instead of passing it as an argument.
+- **TRAY-10 · MUST.** Notifications are for what happened while the window was away, with one switch per event and
+  few on by default.
+  - *Check (code):* each notified event has its own setting, and most default to off.
+  - *Reference:* Torrenta notifies on added, finished, seeding done, error and updated, with only *finished* on at
+    first, and a Test button in Settings shows one now ([`automation/AutomationSettings.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/automation/AutomationSettings.java)); nux notifies on
+    power events with a rule per UPS; Termina and Editora relay a program's own OSC 9 and OSC 777 notifications.
+- **TRAY-11 · SHOULD.** A notification is never the only place a state is said: the in-app status already shows it.
+  - *Check (by hand):* trigger each notified event with notifications off; the window still shows it.
+  - *Reference:* Torrenta's status bar and transfer list.
 
 ## Settings copy
 

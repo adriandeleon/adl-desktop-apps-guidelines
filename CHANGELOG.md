@@ -42,8 +42,19 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
   Torrenta and Termina on the log.
 - **ABOUT-10 · SHOULD.** In About, "Update available" is bold amber (`-state-amber`), a color no link or label there
   uses, so the one line that asks for action stands out; it was the accent every link wears.
+- **INTL-12 · SHOULD.** A message with a count words it for the count with a `{0,choice,…}` pattern, never "(s)".
+  Editora still has a few.
+- **INTL-13 · SHOULD.** A chord reads the same in every language: modifier names and the macOS glyphs are never
+  translated.
 
 ### Changed
+
+- **TRAY-09, TRAY-10 and TRAY-11** apply to every app that sends desktop notifications, with a tray or without one:
+  they move to a *Notifications* section of their own, which also covers Editora and Termina. The page said no rule
+  on it applied to those apps, while TRAY-09 cited Termina.
+- **REPO-03** takes the year the app started in, from 2026 on, so an app started later can pass it.
+- **PLAT-01** says CI builds and bundles JDK 25, the current LTS, as REL-25 sets up, and that the family moves to the
+  next LTS together. It asked for "a current JDK".
 
 - **WIN-03 is a MUST, and the title-bar menu is on by default**: on Windows and Linux the menu bar sits in the title
   bar (`HeaderBar`) unless the user turns it off; on macOS it stays in the system menu bar. Editora, Torrenta and
@@ -88,6 +99,16 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 - **ACC-01**'s Check covers list cells and menu rows, and says how JavaFX names a `CustomMenuItem` row.
 - **ACC-04** names Editora's Project Map flash and checks `AnimationTimer` too.
 - MENU-09 and MENU-13 write their keys in backticks, not `<kbd>` tags, which reached the agent files as raw HTML.
+- **References and Checks that didn't match the code:** KBD-12 named a method that doesn't exist; TABS-18's Check
+  wanted a binding Editora's float command doesn't have, so it now asks for a command; TRAY-09 cited nux, which
+  still writes the message into an AppleScript string on macOS; REL-15's Check now accepts a script `release.yml`
+  runs, which is how Mirada signs; PERF-19 adds Termina's start-up script.
+- **CLI-09** allows the AWT tray TRAY-14 describes, which it contradicted.
+- **INTL-05**'s *Why* gives the real reason: JavaFX falls back to whatever font the OS has, so the text differs
+  between OSes.
+- **Principles** no longer say all of them come from what the apps already do, and principle 4 no longer cites
+  "fast first" in Termina, which doesn't say it.
+- The checklist's About line reads *Built to Pauta x.y.z*, not an old edition.
 
 ## [4.5.0] - 2026-11-08
 

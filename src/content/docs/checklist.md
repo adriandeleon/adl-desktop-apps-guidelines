@@ -23,7 +23,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 - [ ] The conformance is computed from the exceptions by one tested helper, never stored · [PAUTA-02](../conformance/#pauta-02)
 - [ ] `PautaConformanceTest` checks `pauta.json` and the README against the edition's `rules.json` · [PAUTA-10](../conformance/#pauta-10), [PAUTA-15](../conformance/#pauta-15)
 - [ ] `AGENTS.md` has a `## Pauta` section that names the edition and links its numbered `llms.txt` · [PAUTA-17](../conformance/#pauta-17)
-- [ ] About links the edition, *Built to Pauta 4.3.0*, read from `pauta.version`, and shows the conformance · [ABOUT-05](../templates/about/#about-05), [ABOUT-06](../templates/about/#about-06), [ABOUT-07](../templates/about/#about-07), [ABOUT-08](../templates/about/#about-08), [ABOUT-09](../templates/about/#about-09)
+- [ ] About links the edition, *Built to Pauta x.y.z*, read from `pauta.version`, and shows the conformance · [ABOUT-05](../templates/about/#about-05), [ABOUT-06](../templates/about/#about-06), [ABOUT-07](../templates/about/#about-07), [ABOUT-08](../templates/about/#about-08), [ABOUT-09](../templates/about/#about-09)
 - [ ] A Pauta window, `help.pauta`, in the palette, the Help menu and About's link, listing every exception with fixed links · [PAUTA-12](../conformance/#pauta-12), [PWIN-01](../templates/pauta-window/#pwin-01), [PWIN-02](../templates/pauta-window/#pwin-02), [PWIN-03](../templates/pauta-window/#pwin-03), [PWIN-04](../templates/pauta-window/#pwin-04)
 - [ ] A *Pauta conformance* page in the user docs with the same list · [PAUTA-13](../conformance/#pauta-13)
 - [ ] That page generated from `pauta.json` (SHOULD) · [PAUTA-14](../conformance/#pauta-14)
@@ -144,8 +144,11 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 
 - [ ] The shared `tray/` package: StatusNotifierItem on Linux, AWT elsewhere, and the app fully usable without an icon · [TRAY-01](../tray-and-background/#tray-01), [TRAY-02](../tray-and-background/#tray-02)
 - [ ] Closing the window hides it only while an icon is up and the setting says so; Quit is explicit and one path · [TRAY-03](../tray-and-background/#tray-03), [TRAY-04](../tray-and-background/#tray-04)
-- [ ] Desktop notifications through one `Notifier`, for what happened while the window was away, one switch per event · [TRAY-09](../tray-and-background/#tray-09), [TRAY-10](../tray-and-background/#tray-10)
 - [ ] Start at login writes the OS's own entry (XDG autostart, LaunchAgent, `HKCU` Run), and `--minimized` comes up behind the icon (SHOULD) · [TRAY-05](../tray-and-background/#tray-05), [TRAY-06](../tray-and-background/#tray-06)
+
+[Notifications](../tray-and-background/#notifications) (for an app that sends desktop notifications, with a tray or without one)
+
+- [ ] Desktop notifications through one `Notifier`, for what happened while the window was away, one switch per event · [TRAY-09](../tray-and-background/#tray-09), [TRAY-10](../tray-and-background/#tray-10)
 
 ## Settings
 

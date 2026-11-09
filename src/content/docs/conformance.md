@@ -193,3 +193,12 @@ the repository.
   - *Check (test):* `PautaConformanceTest` fails when the README's badge or line names another edition than
     `pauta.version` or another conformance than `PautaConformance` returns.
   - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s README (the badge and the *Working toward* line), checked by [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java) (`theReadmeNamesTheEditionAndTheConformanceAndLinksTheDocsPage`).
+- **PAUTA-17 · MUST.** For the app's coding agent: `AGENTS.md` has a `## Pauta` section that names the edition
+  `pauta.version` names and links that edition's `llms.txt` and `llms-full.txt` at its numbered address, never
+  `latest/` ([Coding agents and LLMs](../coding-agents/#point-the-apps-agent-at-its-edition)).
+  - *Why:* an agent that reads no rules builds without them, and one that reads `latest/` "fixes" MUSTs of a newer
+    edition the app hasn't moved to.
+  - *Check (test):* a test fails when `AGENTS.md`'s Pauta section names another edition than `pauta.version`, or
+    doesn't link `https://pauta-project.dev/<edition>/llms.txt`.
+  - *Reference:* the app template's [`AGENTS.md`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/AGENTS.md), whose edition [`EditionTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/EditionTest.java)
+    (`theReadmeAndAgentsNameTheSameEdition`) checks; Termina's [`AGENTS.md`](https://github.com/adriandeleon/Termina/blob/master/AGENTS.md).

@@ -8,6 +8,15 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 
 ## [Unreleased]
 
+### Changed
+
+- **PLAT-11** no longer requires TestFX: FX tests run on JUnit over the Headless glass platform, and TestFX MAY
+  drive them. Torrenta, Termina, Modula and nux test that way without it, and failed the MUST only for the
+  dependency ([#19](https://github.com/adriandeleon/adl-desktop-apps-guidelines/issues/19)).
+- **KBD-09**'s terminal keymap binds no app command to a plain `Ctrl` or `Alt` with a letter off macOS, since those
+  belong to the shell, and **KBD-10**'s extra keymaps don't apply to a terminal
+  ([#18](https://github.com/adriandeleon/adl-desktop-apps-guidelines/issues/18)).
+
 ## [5.0.0] - 2026-11-09
 
 Coding agents get commands for code checks, pinned References and one account of how to audit, and the rest of the

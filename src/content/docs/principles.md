@@ -12,7 +12,9 @@ Editora is the reference; each principle names where else it is written down.
 ## For the people using the apps
 
 1. **Same app on every OS.** A user who moves between Windows, macOS and Linux finds the same features, the
-   same commands and keymaps, the same look and the same installer quality, and never relearns the app. Platform
+   same commands and keymaps, the same look and the same installer quality, and never relearns the app. The OS's own
+   way wins only where the app meets the OS itself (the system menu bar, the modifier key, file dialogs,
+   notifications, installers), and [Same on every OS](../same-on-every-os/) lists every such place. Those
    differences live behind one class, never scattered `if (isMac)` checks. Every other principle serves this one.
 2. **Keyboard first.** Every action works without a mouse. The mouse is a shortcut to commands, not the
    other way round.

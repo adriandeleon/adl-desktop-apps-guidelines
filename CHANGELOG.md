@@ -8,6 +8,34 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 
 ## [Unreleased]
 
+## [4.4.0] - 2026-11-08
+
+The reason the family exists, one app that is the same on Windows, macOS and Linux, now has rules an audit can check.
+A minor: five new rules, four of them MUSTs, of which no app meets OS-02 or WIN-11 yet. No rule changes or retires.
+
+### Added
+
+- **Same on every OS**, a page in *Start here* after Principles, with the prefix `OS`. It lists every place where an
+  app follows the OS's own way (the modifier key, the menu bar, file dialogs, opening files and links, the tray,
+  notifications, start at login, saved secrets, installers), each with its rule, and says that any other difference
+  is a bug or a recorded deviation. Its rules:
+  - **OS-01 · MUST.** Every command, setting and window exists on every OS with the same default; one the OS can't
+    serve is disabled and says why, never hidden.
+  - **OS-02 · MUST.** One class answers which OS the app runs on, and no other class reads `os.name`. No app does
+    this yet: each reads it in several classes, Editora in about fifty.
+  - **OS-03 · SHOULD.** Tests can run as any OS, and one compares the commands, menu rows and settings pages across
+    the three.
+- **KBD-21 · MUST.** A keymap's `.mac.json` variant binds the same commands as the keymap it varies; only the chords
+  may differ. Editora's `KeymapsTest` already checks it.
+- **WIN-11 · MUST.** A dialog's buttons are in one order on every OS, Cancel to the left of the action. JavaFX
+  orders a `ButtonBar` by OS, so today the same confirmation puts its action on the left on Windows and on the right
+  on macOS and Linux.
+- The New app checklist has a *Same on every OS* group, and its keyboard and window lines name KBD-21 and WIN-11.
+
+### Changed
+
+- Principle 1 says where the OS's own way wins and links the new page.
+
 ## [4.3.1] - 2026-11-08
 
 What coding agents read now carries what a person reads around the rules: which apps a page's rules cover, each page

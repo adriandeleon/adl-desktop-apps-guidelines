@@ -5,6 +5,7 @@
       "label": "Start here",
       "items": [
         "principles",
+        "same-on-every-os",
         "checklist",
         "conformance",
         "coding-agents"

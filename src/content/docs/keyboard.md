@@ -60,6 +60,12 @@ Every other list choice (recent files, themes, keymaps, a setting's values) uses
 - **KBD-10 · SHOULD.** IntelliJ, VS Code and Sublime keymaps ship the same way, each with its `.mac.json` variant.
   - *Check (code):* `intellij`, `vscode` and `sublime` `.json` and `.mac.json` files are in the resources.
   - *Reference:* Editora [`src/main/resources/com/editora/keymaps/`](https://github.com/adriandeleon/Editora/tree/master/src/main/resources/com/editora/keymaps).
+- **KBD-21 · MUST.** A keymap's `.mac.json` variant binds the same commands as the keymap it varies. A chord may
+  differ, to put `Cmd` where the other has `Ctrl`, to follow the macOS keymap of the editor it copies, or where
+  macOS keeps the chord for itself (`Cmd+Space`, `Cmd+Tab`). See [Same on every OS](../same-on-every-os/).
+  - *Why:* a command with no chord on one OS is a command that user never finds from the keyboard.
+  - *Check (test):* a test loads each keymap and its `.mac.json` variant and compares the commands they bind.
+  - *Reference:* Editora [`KeymapsTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/command/KeymapsTest.java) (`guiKeymapsBindSameCommandSetOnBothPlatforms`).
 - **KBD-11 · MUST.** Keymaps are applied in layers: base keymap → user overrides → plugin keymaps → the user's own
   bindings again. An app without plugins has the first two.
   - *Why:* the user always has the last word, and a plugin can still use a chord the user freed.

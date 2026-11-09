@@ -60,7 +60,7 @@ Editora (`../Editora`) is the reference implementation.
   **One requirement, one rule.** Before adding a rule, search the pages for the same requirement; when another page
   states it, link to that rule instead (an overview page points at the template that details it). Two IDs for one
   requirement make an app record two exceptions, and they drift apart in level.
-  One prefix per page: PLAT platform, REPO repository, DOCS documentation, QUAL quality, PERF performance, KBD
+  One prefix per page: OS same-on-every-os, PLAT platform, REPO repository, DOCS documentation, QUAL quality, PERF performance, KBD
   keyboard, WIN window-shell, ICON icons-and-color, TBAR toolbars-and-tooltips, TABS tabs-and-panels, MENU menus,
   TRAY tray-and-background, SET settings, DIAG diagnostics, CLI command-line, INTL i18n, REL release; templates PAL,
   QOPEN, WELC, ABOUT, PWIN (pauta-window), CONF, FIND, MLOG, SYNC; PAUTA for the conformance page. A new rule takes the page's next free number, wherever it sits.

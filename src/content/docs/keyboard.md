@@ -54,11 +54,16 @@ Every other list choice (recent files, themes, keymaps, a setting's values) uses
 
 ## Keymaps
 
-- **KBD-09 · MUST.** Emacs and CUA keymaps ship as JSON resources, CUA with a `.mac.json` variant where Cmd replaces
-  Ctrl.
-  - *Check (code):* `emacs.json`, `cua.json` and `cua.mac.json` are in the app's resources.
-  - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; ! for f in emacs.json cua.json cua.mac.json; do find src/main/resources -name "$f" | grep -q . || echo "missing $f"; done | grep .`
-  - *Reference:* Editora [`src/main/resources/com/editora/keymaps/`](https://github.com/adriandeleon/Editora/tree/master/src/main/resources/com/editora/keymaps).
+- **KBD-09 · MUST.** Except in a terminal, Emacs and CUA keymaps ship as JSON resources, CUA with a `.mac.json`
+  variant where Cmd replaces Ctrl. A terminal's keys belong to the program it runs (`C-a`, `M-x` reach the shell), so
+  it ships one keymap of its own instead, `keymap.json` and `keymap.mac.json`, binding its commands to chords
+  programs don't use.
+  - *Why:* an Emacs keymap in a terminal would take the shell's own keys away from it.
+  - *Check (code):* `emacs.json`, `cua.json` and `cua.mac.json` are in the app's resources; in a terminal,
+    `keymap.json` and `keymap.mac.json` are. The command passes either set; judge which one the app should have.
+  - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; has() { for f in "$@"; do find src/main/resources -name "$f" | grep -q . || return 1; done; }; has emacs.json cua.json cua.mac.json || has keymap.json keymap.mac.json || { echo 'missing emacs.json, cua.json and cua.mac.json (or, in a terminal, keymap.json and keymap.mac.json)'; false; }`
+  - *Reference:* Editora [`src/main/resources/com/editora/keymaps/`](https://github.com/adriandeleon/Editora/tree/master/src/main/resources/com/editora/keymaps);
+    Termina's [`keymaps/`](https://github.com/adriandeleon/Termina/tree/master/src/main/resources/com/termina/keymaps).
 - **KBD-10 · SHOULD.** IntelliJ, VS Code and Sublime keymaps ship the same way, each with its `.mac.json` variant.
   - *Check (code):* `intellij`, `vscode` and `sublime` `.json` and `.mac.json` files are in the resources.
   - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; ! for k in intellij vscode sublime; do for f in "$k.json" "$k.mac.json"; do find src/main/resources -name "$f" | grep -q . || echo "missing $f"; done; done | grep .`

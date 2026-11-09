@@ -67,8 +67,10 @@ and Cancel is the way out. An action that can be taken back needs no question (s
   - *Check (code):* the unsaved-changes alert sets Save, Discard and Cancel in that order and styles the first two.
   - *Reference:* Editora [`CloseCoordinator.unsavedAlert`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CloseCoordinator.java), [`MainController.styleUnsavedChangesButtons`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java).
 - **CONF-06 · SHOULD.** A question about ending a running program, which is not the user's data, words the button
-  Close and makes Cancel the default button, so dismissing the dialog by any route keeps the program alive.
-  - *Check (code):* the close-running-program alert calls `setDefaultButton(true)` on Cancel.
+  Close, in the `danger` style like every confirming button ([CONF-03](#conf-03)), and makes Cancel the default button, so
+  dismissing the dialog by any route keeps the program alive.
+  - *Check (code):* the close-running-program alert gives Close the `danger` style class and calls
+    `setDefaultButton(true)` on Cancel.
   - *Reference:* Termina [`ui/TerminalWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalWindow.java) (`dialog.closeAnyway`).
 - **CONF-07 · SHOULD.** Where the action can be taken back, the app asks nothing and offers Undo instead.
   - *Check (by hand):* close a clean tab and reopen it with Reopen Closed Tab; in Mirada, trash an image and undo.

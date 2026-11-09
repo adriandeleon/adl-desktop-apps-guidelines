@@ -23,7 +23,9 @@ Editora (`../Editora`) is the reference implementation.
   `astro.config.mjs` and the PDF has no changelog.
 - A rule states a level (MUST / SHOULD / MAY) and names the Editora class or file it comes from. Verify claims
   against the apps' code on their default branch, not from memory; when Editora and the guide disagree, the code
-  wins and the guide is fixed in the same change.
+  wins and the guide is fixed in the same change. A MUST that one kind of app can't sensibly meet (a terminal, whose
+  keys belong to the shell) says so in its own text, with what that app does instead (KBD-09); only a SHOULD can be
+  a deviation, so an app must never be left with a `pending` it can't close.
 - A file or class the guide names in an app, the template or editora-website links to it on GitHub, on the repo's
   default branch: ``[`ui/TabHeaders.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabHeaders.java)``,
   `tree/` for a folder. Keep the name as written and link the class's file for `Class.member`. Leave a name unlinked

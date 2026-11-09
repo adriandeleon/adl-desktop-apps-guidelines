@@ -49,6 +49,10 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 
 ### Changed
 
+- **KBD-09** lets a terminal ship one keymap of its own (`keymap.json` and `keymap.mac.json`) instead of Emacs and
+  CUA: in a terminal those chords belong to the shell. Termina could only have recorded the MUST as pending forever.
+  Its command passes either set.
+- **CONF-06**'s Close button is red, in the `danger` style like every confirming button, as Termina's is.
 - **A name in a rule's statement is required.** A command id, catalog key, file, property or style class a rule's
   statement names (`help.about`, `palette.show`, `help.documentation`) is spelled that way in every app, so keymaps,
   docs and agents find it under one name; a name only its Check or Reference gives is Editora's spelling, and an
@@ -95,6 +99,11 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 
 ### Fixed
 
+- **PWIN-06 and PWIN-07** reference the app template's Pauta window and `help.pautaDocs`, not Editora, which has
+  neither. The Pauta window's Copy table matches the template's catalog, with `pauta.link` added and the template's
+  wording for the two command descriptions.
+- **Shared features** says which rule now holds each feature it listed, and lists the few that aren't rules yet
+  (a window moved back on screen, atomic config writes, Settings in the macOS application menu, `SECURITY.md`).
 - **ACC-01's Reference** no longer says Editora's menu rows carry their text: only its macOS system-menu rows do; the
   in-window rows are drawn and silent to a screen reader.
 - **PAUTA-17's Reference** says the template's test checks the edition its `AGENTS.md` names, not yet the `llms.txt`

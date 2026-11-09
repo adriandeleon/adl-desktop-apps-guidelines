@@ -1,0 +1,244 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pauta-project.dev/4.5.0/rules.schema.json",
+  "title": "Pauta rules",
+  "description": "Every rule of one edition of Pauta, as rules.json serves it.",
+  "type": "object",
+  "required": [
+    "name",
+    "edition",
+    "date",
+    "url",
+    "levels",
+    "checks",
+    "statuses",
+    "pages",
+    "rules",
+    "retired"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri"
+    },
+    "name": {
+      "const": "Pauta"
+    },
+    "edition": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "description": "The edition's address; every URL in the file is under it."
+    },
+    "levels": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "MUST, SHOULD and MAY, and what each means."
+    },
+    "checks": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "code, test and by hand, and how each is verified."
+    },
+    "statuses": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "What an audit reports for a rule (audit.schema.json)."
+    },
+    "audit": {
+      "type": "string",
+      "format": "uri",
+      "description": "The audit report's JSON Schema."
+    },
+    "pages": {
+      "type": "array",
+      "description": "Every page, in reading order.",
+      "items": {
+        "type": "object",
+        "required": [
+          "slug",
+          "title",
+          "prefix",
+          "url",
+          "markdown",
+          "description",
+          "appliesTo",
+          "rules"
+        ],
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "prefix": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "markdown": {
+            "type": "string",
+            "format": "uri",
+            "description": "The page as Markdown: its prose, rules and spec tables."
+          },
+          "description": {
+            "type": "string"
+          },
+          "appliesTo": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The apps every rule on the page covers, when not every app."
+          },
+          "rules": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "level",
+          "page",
+          "pageTitle",
+          "section",
+          "appliesTo",
+          "url",
+          "text",
+          "why",
+          "check",
+          "reference"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Z]{2,6}-\\d{2,3}$"
+          },
+          "level": {
+            "enum": [
+              "MUST",
+              "SHOULD",
+              "MAY"
+            ]
+          },
+          "page": {
+            "type": "string"
+          },
+          "pageTitle": {
+            "type": "string"
+          },
+          "section": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The page's H2 the rule is under, or null above the first one."
+          },
+          "appliesTo": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Its page's or section's limit, when it has one. The rule's own text can limit it too (PAUTA-05)."
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "text": {
+            "type": "string"
+          },
+          "why": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "check": {
+            "type": "object",
+            "required": [
+              "kind",
+              "text"
+            ],
+            "properties": {
+              "kind": {
+                "enum": [
+                  "code",
+                  "test",
+                  "by hand"
+                ]
+              },
+              "text": {
+                "type": "string"
+              }
+            }
+          },
+          "reference": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "retired": {
+      "type": "array",
+      "description": "IDs no longer in use, never reused.",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "edition",
+          "see",
+          "seeUrl"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Z]{2,6}-\\d{2,3}$"
+          },
+          "edition": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+\\.\\d+$",
+            "description": "The edition that retired it."
+          },
+          "see": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The rule that holds its requirement now."
+          },
+          "seeUrl": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

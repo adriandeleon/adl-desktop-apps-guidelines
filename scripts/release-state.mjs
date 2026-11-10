@@ -3,12 +3,15 @@
 //
 //   version=<x.y.z>   package.json's: the newest released edition
 //   pending=<bool>    CHANGELOG.md's [Unreleased] holds changes, so HEAD is not the edition its number names
-//   publish=<sha>     the commit to build, deploy, tag and archive, or empty for none:
+//   publish=<sha>     the commit whose edition to tag and archive before the deploy, or empty for none:
 //                       - HEAD, when nothing is pending;
 //                       - the commit that released <version>, when something is pending and that edition isn't both
 //                         tagged on origin and live (its run was canceled while it waited, or failed): the release
 //                         is published from its own commit, and the batch after it waits;
 //                       - empty, when something is pending and the edition is tagged and live.
+//   site=<sha>        the commit latest/ and <version>/ are built from, which every run on master deploys: HEAD when
+//                     nothing is pending, else the commit that released <version>
+//   next=<sha>        HEAD when something is pending: next/ is built from it (scripts/build-next.mjs), else empty
 //   base=<sha>        what scripts/check-edition.mjs compares `publish` with: the release commit's first parent, or
 //                     $BEFORE (a push's previous master), or HEAD's first parent (a manual run)
 //
@@ -39,20 +42,22 @@ async function liveVersion() {
 }
 
 let publish = head;
+let site = head;
 let base = process.env.BEFORE && !/^0+$/.test(process.env.BEFORE) ? process.env.BEFORE : `${head}^1`;
 let why = "nothing pending: HEAD is the edition";
 if (pending) {
   const tagged = originTags().has(version);
   const live = await liveVersion();
+  const release = releaseCommits("HEAD").get(version);
+  if (!release) {
+    console.error(`no commit on HEAD's first-parent history carries ${version}`);
+    process.exit(1);
+  }
+  site = release;
   if (tagged && live === version) {
     publish = "";
-    why = `${version} is tagged and live; the batch under [Unreleased] waits for its release`;
+    why = `${version} is tagged and live: serving it from ${release.slice(0, 7)}, and the batch under [Unreleased] at next/`;
   } else {
-    const release = releaseCommits("HEAD").get(version);
-    if (!release) {
-      console.error(`no commit on HEAD's first-parent history carries ${version}`);
-      process.exit(1);
-    }
     publish = release;
     base = `${release}^1`;
     why = `${version} is ${tagged ? "" : "untagged"}${!tagged && live !== version ? " and " : ""}${live !== version ? `not live (live: ${live ?? "unknown"})` : ""}: publishing it from ${release.slice(0, 7)}`;
@@ -64,4 +69,6 @@ console.log(`version=${version}`);
 console.log(`pending=${pending}`);
 console.log(`publish=${publish}`);
 console.log(`base=${publish ? base : ""}`);
+console.log(`site=${site}`);
+console.log(`next=${pending ? head : ""}`);
 console.error(why);

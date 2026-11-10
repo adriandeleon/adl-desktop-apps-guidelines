@@ -16,6 +16,14 @@ const LEVELS = {
 
 const SKILL = "skills/pauta-audit/SKILL.md";
 
+// In next/ (scripts/build-next.mjs) the files describe the batch waiting under [Unreleased], not an edition.
+const isNext = () => process.env.PAUTA_PATH === "next";
+const stamp = (pkg) =>
+  isNext() ? `Pauta Next, the unreleased changes after ${pkg.version}` : `Pauta ${pkg.version} (${pkg.guidelines.date})`;
+const nextWarning = (pkg) =>
+  `**Not an edition.** This is Pauta Next: the changes waiting for the edition after ${pkg.version}, which may still
+change before it is released. Never cite a rule from it or audit an app against it; use ${editionUrl(pkg, "latest")}llms.txt.`;
+
 function load(root = process.cwd()) {
   const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
   const base = editionUrl(pkg);
@@ -40,6 +48,7 @@ export function rulesJson(root) {
     $schema: `${base}rules.schema.json`,
     name: "Pauta",
     edition: pkg.version,
+    ...(isNext() ? { next: `Not an edition: the changes waiting for the edition after ${pkg.version}. Audit against ${editionUrl(pkg, "latest")}rules.json.` } : {}),
     date: pkg.guidelines.date,
     url: base,
     levels: LEVELS,
@@ -81,7 +90,7 @@ export function rulesJson(root) {
 // How to use the edition. In llms.txt it is the prose before the first H2, as https://llmstxt.org has it; in
 // llms-full.txt it is a section of its own.
 const howTo = (base, version) => {
-  const edition = base.replace(`${version}/`, "<edition>/");
+  const edition = base.replace(/(?:\d+\.\d+\.\d+|next)\/$/, "<edition>/");
   return `**Starting a new app:** create it from the GitHub template repository
 https://github.com/adriandeleon/adl-desktop-app-template (\`gh repo create <name> --template
 adriandeleon/adl-desktop-app-template\`, or **Use this template** on GitHub), then run \`scripts/rename.sh <AppName>
@@ -137,12 +146,12 @@ export function llmsTxt(root) {
   });
   return `# Pauta
 
-> Pauta ${v} (${pkg.guidelines.date}): the UI, UX and platform rules for adl's family of JavaFX desktop apps, so the
+> ${stamp(pkg)}: the UI, UX and platform rules for adl's family of JavaFX desktop apps, so the
 > same apps look and work the same on Windows, macOS and Linux. ${rules.length} rules, each with a permanent ID, a level
 > (MUST, SHOULD or MAY), a check that says how to verify it in an app, and a reference into the code that does it.
 
-This file describes edition ${v}. The newest edition is always at ${site}llms.txt. Each page below is Markdown; the
-same page as HTML, with its screenshots and mockups, drops the \`.md\` and ends in \`/\`.
+${isNext() ? nextWarning(pkg) : `This file describes edition ${v}. The newest edition is always at ${site}llms.txt.`} Each page below is
+Markdown; the same page as HTML, with its screenshots and mockups, drops the \`.md\` and ends in \`/\`.
 
 ${howTo(base, v)}
 
@@ -170,11 +179,12 @@ ${listed.join("\n")}
 export function llmsFullTxt(root) {
   const { pkg, base, pages, rules } = load(root);
   const out = [
-    `# Pauta ${pkg.version}: every rule`,
+    `# ${isNext() ? "Pauta Next" : `Pauta ${pkg.version}`}: every rule`,
     "",
-    `> ${rules.length} rules from ${base}, published ${pkg.guidelines.date}. Each page's prose, screenshots and mockups are on`,
+    `> ${rules.length} rules from ${base}, ${isNext() ? `unreleased changes after ${pkg.version}` : `published ${pkg.guidelines.date}`}. Each page's prose, screenshots and mockups are on`,
     "> the page itself (as Markdown at the page's address with `.md` for the trailing `/`); this file holds the rules alone.",
     "",
+    ...(isNext() ? [nextWarning(pkg), ""] : []),
     "## Using Pauta",
     "",
     howTo(base, pkg.version),
@@ -256,7 +266,7 @@ export function changelogMarkdown(root = process.cwd()) {
 
 > ${get("description")}
 
-Pauta ${pkg.version} (${pkg.guidelines.date}). The page: ${url}.
+${stamp(pkg)}. The page: ${url}.
 
 ${body}
 `;
@@ -288,7 +298,7 @@ export function pageMarkdown(slug, root) {
 
 > ${p.description}
 
-Pauta ${pkg.version} (${pkg.guidelines.date}). The page with its screenshots and mockups: ${p.url}.
+${stamp(pkg)}. The page with its screenshots and mockups: ${p.url}.
 Every rule of the edition: ${base}llms-full.txt.
 
 ${body}

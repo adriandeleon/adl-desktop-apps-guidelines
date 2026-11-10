@@ -39,8 +39,9 @@ jobs:
           node-version: 24
           cache: npm
       - name: Decide what to publish
-        # The site: latest/ and <version>/ from HEAD when [Unreleased] is empty, else from the commit that released the
-        # current edition, with next/ from HEAD. What to tag and archive: HEAD when [Unreleased] is empty (the commit
+        # The site: latest/ and <version>/ from HEAD when [Unreleased] is empty, else from the last commit before the
+        # batch began (the commit that released the current edition, or a later one that changed only the site),
+        # with next/ from HEAD. What to tag and archive: HEAD when [Unreleased] is empty (the commit
         # that released the edition, if an earlier push did and it was never tagged), else the current edition if it
         # isn't tagged and live yet, else nothing (scripts/release-state.mjs). Only a run on master publishes or
         # deploys: a pull request, or a manual run on any other branch or tag, skips this step, so `publish`, `site`
@@ -195,9 +196,10 @@ jobs:
         run: node "$TOOLS/build-next.mjs" --add "$RUNNER_TEMP/next" dist
       - name: Rehearse the build of the released edition
         # A pull request only: what a run on master does while a batch waits under [Unreleased], which the steps
-        # above never do here. Master then builds latest/ and <version>/ from the commit that released the current
-        # edition, with the scripts of the commit it runs on; a change to scripts/ or src/lib would otherwise first
-        # meet that older tree on master, where a failure stops every deploy. So the checkout moves to that commit
+        # above never do here. Master then builds latest/ and <version>/ from the last commit before the batch
+        # began, the commit that released the current edition or a later site-only one, with the scripts of the
+        # commit it runs on; a change to scripts/ or src/lib would otherwise first meet that older tree on master,
+        # where a failure stops every deploy. So the checkout moves to that commit
         # (as "Switch to the released edition" moves it), and this pull request's copies of the scripts build its
         # downloads and its site, then add the next/ built above. Nothing here is uploaded, tagged or deployed: the
         # steps below and the jobs after this one are skipped on a pull request as before. When nothing waits (the

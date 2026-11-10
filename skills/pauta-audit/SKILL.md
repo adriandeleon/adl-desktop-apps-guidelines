@@ -121,12 +121,14 @@ Read the whole rule (`text`, `why`, `check`, `appliesTo`) before judging it.
 
 **Names.** Some names in a rule's `text` are required as spelled, because a user, the docs or another tool finds the
 thing by that name: a command id, a catalog key, a chord, a command-line flag, an environment variable, a property in
-`pom.xml` or `pauta.json`, and a file the repository must carry. Every app spells it that way, and the same thing
+`pom.xml` or `pauta.json`, and a file the repository must carry, whether a document at its root or a resource or
+tool configuration the rule names (`AGENTS.md`, `emacs.json`, `messages_<code>.properties`, `jreleaser.yml`). Every
+app spells it that way, and the same thing
 under another name fails the rule (say so in the evidence). A platform API the rule names (`javafx.stage.Popup`,
 `SystemTray`, `Platform.setImplicitExit(false)`, `Future.get()`) is the requirement itself: the JDK and JavaFX spell
 it one way for every app. Any other name is how Editora spells it, and the app's equivalent meets the rule: a class,
-method or constant of the app's own code, a CSS file or style class, a branch or workflow file, a config file's name.
-So is a name of the app's own code that only `check` or `reference` gives. Edition 5.0.0's list was a command id,
+method or constant of the app's own code, a CSS file or style class, a branch or workflow file, a file the app writes as
+it runs (its config files). So is a name of the app's own code that only `check` or `reference` gives. Edition 5.0.0's list was a command id,
 catalog key, file, property or style class, with nothing about platform APIs: for an app on 5.0.0, judge by that list.
 Earlier editions say nothing about names, so there an equivalent meets the rule.
 

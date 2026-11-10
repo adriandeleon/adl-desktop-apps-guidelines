@@ -194,7 +194,9 @@ The certificate renews before 2027-11-30; the Apple membership before 2027-10-31
     the "Build, test and package" step of Termina's [`release.yml`](https://github.com/adriandeleon/Termina/blob/master/.github/workflows/release.yml) and Mirada's [`release.yml`](https://github.com/adriandeleon/Mirada/blob/main/.github/workflows/release.yml) runs `./mvnw … verify` on
     every build leg; Modula's "Build the installer" step in [`release.yml`](https://github.com/adriandeleon/Modula/blob/master/.github/workflows/release.yml) runs `package` with the tests; nux's build
     legs run a "Test" step (`./mvnw test`) before they package, in [`release.yml`](https://github.com/adriandeleon/nux/blob/master/.github/workflows/release.yml). In each of the five the job that
-    publishes needs the build legs, directly or through the signing and asset-check jobs.
+    publishes needs the build legs, directly or through the signing and asset-check jobs. Mirada's [`codecs.yml`](https://github.com/adriandeleon/Mirada/blob/main/.github/workflows/codecs.yml) also creates a GitHub release, of the codec libraries its build
+    downloads by checksum: that is a dependency, not a release of the app, and the app's own release runs the suite
+    with them.
 - **REL-22 · MUST.** Every workflow pins each third-party action to a commit SHA, with its version in a comment
   (`actions/setup-java@b843ebf… # v6.1.0`).
   - *Check (code):* every `uses:` in `.github/workflows/`, and in a composite action under `.github/actions/` where

@@ -250,6 +250,11 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 - **SET-07** says which wins: `--config-dir`, then `--dev`, then the environment variable, since a flag is the more
   specific instruction. Mirada has that order; in Editora, Termina and the template the variable beats `--dev`.
 - **SET-13** says a run with no window reports a session-only secret on standard error.
+- **Which file names are required.** "A file the repository must carry" covers a document at its root and a
+  resource or tool configuration a rule's statement names: the keymap files (`emacs.json`, `cua.json`,
+  `cua.mac.json`, a terminal's `keymap.json`), the catalogs (`messages_<code>.properties`) and `jreleaser.yml`. A
+  file the app writes as it runs, such as its config files, is still Editora's spelling. KBD-09 names its files in
+  its statement. Every app that has these files already names them so.
 
 ### Fixed
 
@@ -367,6 +372,16 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
   Editora; counts that moved with Editora's last thirty commits are current; the worked `pauta.json` uses rules
   that still apply to every app; MENU-18, TBAR-14, ICON-01, INTL-07, WIN-14 and CLI-12 say what each of the seven
   apps does, checked in all seven.
+- **Leads from the second review, settled by reading.** MENU-07: Mirada closes its right-click menus on an outside
+  press in both windows that have one, and the matrix said it did not; Torrenta's menus, Termina's tab menus and
+  Modula's preset chips rely on the stock auto-hide, and *Gaps per app* now says so. ACC-01: no app has the test
+  that sweeps every window, which the gaps page did not list; Termina's sweep of icon-only buttons is named.
+  ABOUT-07: Termina's About says "Built to Pauta 2.0.2", an edition whose MUSTs it does not all meet. CLI-11:
+  Mirada's one Windows executable is its native image, and nothing in its files shows that it prints in the
+  console. REL-30: Mirada's `codecs.yml` releases a dependency, not the app.
+- **A fix to the site alone made after a release stays on the site** while the next batch waits: `latest/` is built
+  from the last commit before the batch began, not from the release commit. Nothing changes for 5.0.0, whose batch
+  began with the first push after it.
 
 ## [5.0.0] - 2026-11-09
 

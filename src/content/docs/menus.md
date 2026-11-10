@@ -245,7 +245,12 @@ The mockup is an editor tab's menu, shortened; Editora's has twenty-one rows.
   - *Check (test):* an FX test clicks inside the owner control and in another window, and the menu closes.
   - *Reference:* Editora [`ContextMenuDismissal.install()`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ContextMenuDismissal.java), called once in [`App`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java) at startup for every current and
     future window; [`ContextMenuDismissalFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ContextMenuDismissalFxTest.java), and for the toolbar's menu, whose owner is the whole bar,
-    [`ToolbarContextMenuDismissFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ToolbarContextMenuDismissFxTest.java).
+    [`ToolbarContextMenuDismissFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ToolbarContextMenuDismissFxTest.java). The app template installs the same class at
+    start-up. Mirada turns auto-hide off on its three menus and closes them from a press filter on the scene of
+    each window that has one ([`ui/Popups.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Popups.java), `closeOnPressOutside`). Termina's terminal view hides its menu from its own
+    press filter, but its tab menus have the stock auto-hide alone ([`ui/TerminalWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalWindow.java)); so have Modula's preset chips
+    ([`ui/PresetBar.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/PresetBar.java)), beside a pane menu that its own filter closes, and every right-click menu in Torrenta. nux has no
+    right-click menu.
 - **MENU-08 · MUST.** Escape closes a right-click menu and focus goes back where it was. In a terminal the Escape
   does not reach the shell.
   - *Check (by hand):* open a menu, press Escape, and type: the keys reach the control that had focus.

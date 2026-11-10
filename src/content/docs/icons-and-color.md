@@ -30,9 +30,15 @@ timestamps.
     that does not share `app.css`, and a scene sheet is re-applied cleanly when the theme switches at run time
     (`setUserAgentStylesheet`). AtlantaFX neither bundles nor names Inter, and JavaFX does not fall through a
     font-family list, so without the sheet the whole interface renders in the platform's "System" face.
-  - *Check (code):* a listener on `Window.getWindows()` adds `ui-font.css` to each window's scene, and to a new
-    scene when the window's scene changes; no `.root` rule in `app.css` sets `-fx-font-family`.
-  - *Reference:* Editora [`App.installUiFont`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java), [`styles/ui-font.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/ui-font.css). Termina and Torrenta carry the same sheet.
+  - *Check (code):* every window's scene gets `ui-font.css`: a listener on `Window.getWindows()` adds it to each
+    window's scene, and to a new scene when the window's scene changes, or every window and dialog the app builds
+    adds it itself, none left out. No `.root` rule in `app.css` sets `-fx-font-family`.
+  - *Reference:* Editora [`App.installUiFont`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java), a listener on `Window.getWindows()`, and [`styles/ui-font.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/ui-font.css); the app
+    template's [`ui/Themes.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Themes.java) (`installUiFont`, `hookUiFont`) and Mirada's [`ui/Fonts.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Fonts.java) (`installSheet`) do the same.
+    Termina and Torrenta carry the same sheet with no listener: each window and dialog adds it by calling
+    `Fonts.installUiFont`, about forty times in Torrenta. Termina doesn't meet the rule yet: its helper is called
+    for seven windows and [`ui/Confirm.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/Confirm.java) adds the sheet to its questions, but the two alerts built in
+    [`ui/TerminalWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalWindow.java) and the `TextInputDialog` in [`ui/SettingsWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/SettingsWindow.java) get none.
     Modula doesn't yet: the `.root` rule of its [`modula.css`](https://github.com/adriandeleon/Modula/blob/master/src/main/resources/com/modula/modula.css) sets IBM Plex Mono for the whole window.
 - **ICON-02 · MUST.** The app bundles Inter's four faces and registers them before any CSS is applied; it never
   maps the platform's own UI font.
@@ -107,8 +113,8 @@ Each of the first four also has a `-bg` (the role's `-subtle`) and a `-hover` (t
 pill, a row tint and a hover state come from the same place. `.state-pill` is the shape (bold, radius 999, padding
 1 × 8); the color variant beside it carries the meaning.
 
-- **ICON-07 · MUST.** Each state color is named once, as a `-state-*` token on `.root` that chains to one of the
-  theme's roles (or a `ladder()` of its ground), and component rules use the token.
+- **ICON-07 · MUST.** Each state color is named once, as a token on `.root` (Editora's `-state-*`) that chains to
+  one of the theme's roles (or a `ladder()` of its ground), and component rules use the token.
   - *Check (code):* the `-state-*` tokens are declared only in the `.root` block at the top of `app.css`, each
     chaining to a `-color-*` role or a `ladder()`.
   - *Reference:* Editora [`styles/app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) (`.root`).
@@ -126,9 +132,18 @@ pill, a row tint and a hover state come from the same place. `.state-pill` is th
   overlay grounds in both flagship themes: a line of UI text is `-color-fg-default` and secondary text
   `-color-fg-muted`. `-color-fg-subtle` (2.7:1 to 3.9:1, under 3:1 on Editora Light's subtle and inset grounds) is for disabled or
   decorative text only.
-  - *Check (test):* a contrast test computes muted ink on each ground, and fails a readable selector set in
-    `-color-fg-subtle`.
-  - *Reference:* Editora [`StyleContrastTest.textThatMustBeReadUsesTheMutedRoleNotSubtle`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java).
+  - *Check (test):* a contrast test computes muted ink on the default, subtle and overlay grounds of both flagship
+    themes, and walks every rule of the app's stylesheets: it fails a rule that sets a text fill (`-fx-text-fill`,
+    or `-fx-fill` on text) to `-color-fg-subtle` unless its selector is on a list the test names, of disabled and
+    decorative selectors only. A test that checks a list of readable selectors instead passes every selector it
+    doesn't name.
+  - *Reference:* no app's test walks every rule yet. Editora's
+    [`StyleContrastTest.textThatMustBeReadUsesTheMutedRoleNotSubtle`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java) computes the ratios and checks six selectors it names (the palette's
+    and the switcher's hints, an unbound shortcut, the line numbers of the notes and structure trees, the blame
+    date), so it passes while `.encryption-locked-hint` and `.pom-version-unknown` in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) set text a
+    person reads in `-color-fg-subtle`. The app template's test of the same name
+    ([`StyleContrastTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/StyleContrastTest.java)) checks fifteen named selectors the same way. Mirada's [`StyleContrastTest`](https://github.com/adriandeleon/Mirada/blob/main/src/test/java/com/mirada/ui/StyleContrastTest.java) has no
+    test for this rule, and Termina, Torrenta, Modula and nux have no contrast test of their stylesheets.
 - **ICON-10 · MUST.** Tinted text (`-color-<role>-fg`) reaches 4.5:1 on its own subtle fill and on both grounds.
   - *Check (test):* a contrast test computes each role's `-fg` on its `-subtle`, on `-color-bg-subtle` and on
     `-color-bg-default`, in both flagship themes.
@@ -140,9 +155,9 @@ pill, a row tint and a hover state come from the same place. `.state-pill` is th
   - *Check (test):* a contrast test computes `-color-fg-emphasis` on each role's `-emphasis`, and the rules that
     paint on an emphasis fill use it.
   - *Reference:* Editora [`StyleContrastTest.inkOnAnEmphasisFillIsTheThemesOnEmphasisColour`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java).
-- **ICON-12 · MUST.** One focus ring, `-focus-ring: -color-accent-emphasis`, drawn by the `:focus-visible` block in
-  the app stylesheet ([KBD-16](../keyboard/#kbd-16)), at 3:1 or better on every surface (see
-  [Keyboard first](../keyboard/)).
+- **ICON-12 · MUST.** One focus ring color, the theme's `-color-accent-emphasis`, named once on `.root` (Editora's
+  `-focus-ring`) and drawn by the `:focus-visible` block in the app stylesheet ([KBD-16](../keyboard/#kbd-16)), at
+  3:1 or better on every surface (see [Keyboard first](../keyboard/)).
   - *Check (test):* a test reads `-focus-ring` from `.root` and computes it on the default, subtle, inset and
     overlay grounds.
   - *Reference:* Editora [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) (*Keyboard focus*),
@@ -155,11 +170,15 @@ pill, a row tint and a hover state come from the same place. `.state-pill` is th
     [`StyleContrastTest.theGitOliveAndVioletFollowTheAppThemesGround`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java).
 - **ICON-14 · SHOULD.** The contrast tests are pure: they read the stylesheets and do the WCAG arithmetic without
   starting the toolkit, so they run with the unit tests on every OS.
-  - *Why:* a contrast regression is invisible in a code diff.
-  - *Check (code):* a test class reads the app's `.css` resources and computes contrast ratios without starting the
-    toolkit.
-  - *Reference:* Editora [`StyleContrastTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java). Mirada's [`AccentTest`](https://github.com/adriandeleon/Mirada/blob/main/src/test/java/com/mirada/ui/AccentTest.java) checks that the accent reads as text on both
-    grounds; Termina's [`ThemeTest`](https://github.com/adriandeleon/Termina/blob/master/src/test/java/com/termina/ui/ThemeTest.java) keeps every chromatic color of its terminal schemes legible.
+  - *Why:* a test that starts the toolkit is an FX test, tagged and run apart from the unit tests
+    ([QUAL-06](../quality/#qual-06)); a pure one fails the plain unit run on every OS, the first time a color
+    changes.
+  - *Check (code):* every test class that computes a contrast ratio reads the app's `.css` resources as text and
+    starts no toolkit: none is an FX test.
+  - *Reference:* Editora [`StyleContrastTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java), the app template's [`StyleContrastTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/StyleContrastTest.java) and Mirada's
+    [`StyleContrastTest`](https://github.com/adriandeleon/Mirada/blob/main/src/test/java/com/mirada/ui/StyleContrastTest.java): each reads the stylesheets as text and uses `javafx.scene.paint.Color` for the arithmetic
+    alone. Mirada's [`AccentTest`](https://github.com/adriandeleon/Mirada/blob/main/src/test/java/com/mirada/ui/AccentTest.java) is pure too, over the accent it derives from the system's, and so is Termina's
+    [`ThemeTest`](https://github.com/adriandeleon/Termina/blob/master/src/test/java/com/termina/ui/ThemeTest.java), which holds the colors of its terminal schemes and not the chrome's stylesheet.
 
 ## Themes
 

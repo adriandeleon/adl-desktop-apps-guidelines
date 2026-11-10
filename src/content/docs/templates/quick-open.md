@@ -79,18 +79,26 @@ this page; the rest is the shape.
   the cursor between keystrokes.
   - *Check (code):* the sort's last tiebreak is the supplier's index.
   - *Reference:* Editora [`QuickOpen.filter`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java).
-- **QOPEN-06 · SHOULD.** The active keymap's line and page chords (`nav.lineDown`, `nav.pageUp`, …) move the selection,
-  as do ↑ ↓, Page Up/Down and `Ctrl+Home`/`Ctrl+End` (`Cmd` on macOS), which always work; plain Home and End stay
-  with the field's caret. Enter or a click on a row chooses; the card hides first, then the choice runs, so focus is
-  already back where it belongs.
-  - *Check (code):* the accept path hides the card before it calls the choice handler.
-  - *Reference:* Editora [`QuickOpen`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java) (`hide()` then `onChoose`), [`PickerKeys.resolve`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java).
-- **QOPEN-07 · SHOULD.** The active keymap's cancel chord (`edit.cancel`), Esc or a click on the scrim cancels, and
-  the host restores focus; `C-g` is what the Emacs keymap gives. A picker that previewed something undoes it.
+- **QOPEN-06 · SHOULD.** The active keymap's line and page chords move the selection (in Editora, the chords of
+  its `nav.lineDown`, `nav.lineUp`, `nav.pageDown` and `nav.pageUp` commands), as do ↑ ↓, Page Up/Down and
+  `Ctrl+Home`/`Ctrl+End` (`Cmd` on macOS), which always work; plain Home and End stay with the field's caret. Enter
+  or a click on a row chooses; the card hides first, then the choice runs, so focus is already back where it
+  belongs.
+  - *Check (code):* the picker's key handler moves on the commands the active keymap binds for a line and a page up
+    and down, and on the fixed keys whatever the keymap; the accept path hides the card before it calls the choice
+    handler.
+  - *Reference:* Editora [`QuickOpen`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java) (`hide()` then `onChoose`), [`PickerKeys.resolve`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java), the only picker that asks
+    the keymap. The app template's [`ui/Picker.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Picker.java) moves on the arrows, the page keys and a fixed `Ctrl+N` and
+    `Ctrl+P`, and has no `Ctrl+Home` or `Ctrl+End`; Mirada's picker is its palette, whose [`ui/PaletteKeys.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/PaletteKeys.java)
+    carries a fixed table of Emacs chords (`EMACS`) beside the fixed keys. Termina, Torrenta, Modula and nux have
+    no picker ([Uses](#uses)).
+- **QOPEN-07 · SHOULD.** The active keymap's cancel chord, Esc or a click on the scrim cancels, and the host
+  restores focus. In Editora the chord is that of its `edit.cancel` command, `C-g` in the Emacs keymap. A picker
+  that previewed something undoes it.
   - *Check (test):* a test previews a row, dismisses the picker and finds the preview undone.
   - *Reference:* Editora [`OverlayHost`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java) (`previousFocus`; it cancels on [`PickerKeys.isCancel`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java)),
-    [`QuickOpenPreviewFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/QuickOpenPreviewFxTest.java) (`dismissingRestoresWhatWasPreviewed`). The app template hardcodes `Ctrl+G` in its
-    [`ui/OverlayHost.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/OverlayHost.java).
+    [`QuickOpenPreviewFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/QuickOpenPreviewFxTest.java) (`dismissingRestoresWhatWasPreviewed`). `Ctrl+G` is fixed in the app
+    template's [`ui/OverlayHost.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/OverlayHost.java) and in the `EMACS` table of Mirada's [`ui/PaletteKeys.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/PaletteKeys.java).
 - **QOPEN-08 · MAY.** A picker previews the highlighted row as the selection moves and undoes the preview on cancel
   (Recent Locations shows each place and returns to the origin on Esc). A preview without an undo is worse than none,
   and nothing is previewed for the row the picker opens on, only for one the user moved to. The theme and keymap

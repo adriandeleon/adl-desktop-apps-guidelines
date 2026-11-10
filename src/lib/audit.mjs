@@ -74,7 +74,7 @@ export function auditSchema(base) {
             problem: {
               type: "string",
               description:
-                "What is wrong with the app's pauta.json about this rule: an entry for a rule that passes or is limited, a deviation on a MUST, a deviation or pending entry with no link, a level or url that differs from the edition's, or a manual result with no `checked` entry.",
+                "What is wrong with the app's pauta.json about this rule: an entry for a rule that passes or is limited, a deviation on a MUST, a deviation or pending entry with no link, a level or url that differs from the edition's, a manual result with no `checked` entry (not recorded), or one whose `checked` entry is stale: its edition is older than the rule's `changed` in rules.json.",
             },
           },
         },
@@ -134,10 +134,16 @@ export function rulesSchema(base) {
         type: "array",
         items: {
           type: "object",
-          required: ["id", "level", "page", "pageTitle", "section", "appliesTo", "url", "text", "why", "check", "reference"],
+          required: ["id", "level", "changed", "page", "pageTitle", "section", "appliesTo", "url", "text", "why", "check", "reference"],
           properties: {
             id: { type: "string", pattern: ID },
             level: { enum: ["MUST", "SHOULD", "MAY"] },
+            changed: {
+              type: "string",
+              pattern: `${VERSION}|^next$`,
+              description:
+                'The edition in which the rule\'s level, scope (appliesTo) or statement (text) last changed; a rule unchanged since it was added has the edition that added it. In next/ only, "next": new or changed since `edition`. Its why, check, command and reference can change without it. An app\'s pauta.json `checked` entry is stale when its edition is older than this (Conformance, PAUTA-18).',
+            },
             page: { type: "string" },
             pageTitle: { type: "string" },
             section: { ...text, description: "The page's H2 the rule is under, or null above the first one." },

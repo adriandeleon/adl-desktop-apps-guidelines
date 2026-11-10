@@ -27,7 +27,7 @@ differently, — not found.
 |---|:-:|:-:|:-:|:-:|:-:|:-:|
 | JDK 25+ and JavaFX 27+, JPMS module, `mvnw` | ● | ● | ● | ● | ● | ● |
 | AtlantaFX 3 | ● | ● | ● | ● Primer | ● Cupertino | ● Primer |
-| Inter UI font | ● | ● | ● | — Plex Mono | ● | — |
+| Inter UI font | ● | ● | ◐ not on three dialogs | — Plex Mono | ● | — |
 | NullAway + every package `@NullMarked` | ● | ● | ● | ● | ● | — |
 | Spotless (Palantir) | ● | ● | ● | ● | ● | — |
 | JaCoCo gate | ● 0.90 L/M | ◐ 0.90 L only | ◐ 0.90 L/M, 0.73 B | — | ● 0.90 L/M, 0.79 B | — |
@@ -43,7 +43,7 @@ differently, — not found.
 | User docs on the website (`/docs/`) | ● 43 pages, versioned | ● 19 pages | ● 16 pages | — README only | ● 11 pages | — README only |
 | Help → Documentation command | ● | — | ● | — | ● | — |
 | `bug_report.yml` issue form | ● | ● | ● | — | ● | — |
-| Dependabot | ● | ◐ actions only | ● | ● | ● | ● |
+| Dependabot | ● | ◐ actions only | ● | ◐ actions monthly | ● | ● |
 
 
 ## Release and signing
@@ -90,8 +90,8 @@ differently, — not found.
 | About window with runtime versions | ● | ● | ● | ● | ● | ● |
 | About names the Pauta edition it implements | — | — | ● link and environment line | — | ● link and environment line | — |
 | Pauta window and `pauta.json` exceptions | — | — | — | — | — | — |
-| Welcome page | ● | ● | — | — | — | — |
-| Confirm dialog: named red action button, Escape cancels, or undo instead | ◐ the Project panel's delete asks with a stock OK | ● `RemoveConfirm` + undo | ● `Confirm`: named red button, Cancel default | — presets remove on one click | ● `Confirm`: named red button, Escape cancels; trash undoable | ◐ risky commands: named Run, Cancel default, not red |
+| Welcome page, or an empty state that names the ways in | ● page | ● empty state | — | — | ● empty state | — |
+| Confirm dialog: named red action button, Escape cancels, or undo instead | ◐ the Project panel's delete asks with a stock OK | ◐ `RemoveConfirm` + undo; the reset questions in Settings answer with a stock OK | ● `Confirm`: named red button; Cancel is the default when closing a running program only | — a preset is removed from its right-click menu without asking | ● `Confirm`: named red button, Escape cancels; trash undoable | ◐ risky commands: named Run, Cancel default, not red |
 | Doctor / diagnosis | ● | ◐ per torrent | — | ◐ native libs | — | — |
 | Single instance (hand off to running app) | ● | ● | ● | — | ● | ● |
 | `--config-dir` and other CLI flags | ● | ◐ no `--dev`, `--new-instance`, `--no-session` | ● | — | ● | ◐ |

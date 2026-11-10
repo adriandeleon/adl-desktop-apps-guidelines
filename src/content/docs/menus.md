@@ -54,7 +54,7 @@ rendered a third larger than every other menu in the app).
 
 The shadow's offset is not cosmetic. A menu is a native window sized to its root *including the effect*, so a shadow
 that reaches above the menu is invisible window over the bar the menu hangs from, and the pointer lands on it instead
-of the next menu button. The offset must be at least the radius ([MENU-18](#menu-18)); Editora pins it with [`MenuPopupBoundsFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/MenuPopupBoundsFxTest.java).
+of the next menu button. [MENU-18](#menu-18) asks for an offset of at least the radius; Editora pins it with [`MenuPopupBoundsFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/MenuPopupBoundsFxTest.java).
 
 The rules of this section hold for every menu the app draws itself: the menu bar, right-click menus, the drop-down of
 a menu button or a split button, and the toolbar's overflow. The menus a platform draws (the macOS system menu bar, a
@@ -90,7 +90,8 @@ tray icon's menu) show text only; there the chord is appended to the title ([MEN
   - *Reference:* Editora [`MainMenuBar.rowContent`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java) and `alignChordColumns`, `.menu-item-chord` in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css). Editora's
     right-click menus show no chords yet: a row there is a plain `MenuItem`, not the menu bar's row. The app
     template's do: [`ui/CommandMenu.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/CommandMenu.java) draws each row as the menu bar's ([`AppMenus.inWindowRow`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AppMenus.java)) and re-reads its
-    chord on every showing (`refresh`).
+    chord on every showing (`refresh`). The template colors the chord `-color-fg-muted`, not `-state-key`
+    (`.menu-item-chord` in its [`app.css`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/styles/app.css)), and so does Termina's menu bar ([`app.css`](https://github.com/adriandeleon/Termina/blob/master/src/main/resources/com/termina/styles/app.css)).
 - **MENU-16 · MUST.** Every menu draws its titles in Inter 14 px regular and its chords in Inter 11 px at the
   default zoom, scaled by the UI zoom ([WIN-12](../window-shell/#win-12)), whatever node it was opened from: the
   size is set on `.context-menu` and its rows' labels from one value the zoom sets, never inherited from the
@@ -112,14 +113,18 @@ tray icon's menu) show text only; there the chord is appended to the title ([MEN
   - *Check (code):* the stylesheet sets the row's padding and the popup's radius and shadow, with the shadow's
     offset no smaller than its radius; the row's layout sets the icon column's width and the chord's margin.
   - *Reference:* Editora `.menu-item` and `.context-menu` in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css), and [`MainMenuBar.ICON_COLUMN`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java) and
-    `rowContent`; [`MenuPopupBoundsFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/MenuPopupBoundsFxTest.java) holds the shadow below the popup. Termina's [`ui/MenuRows.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MenuRows.java) has the
-    same 22 px column and 18 px chord margin. The app template differs: [`ui/AppMenus.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AppMenus.java) has an 18 px icon column
-    (`ICON_SLOT`) and a 16 px chord margin, its [`app.css`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/styles/app.css) colors the chord `-color-fg-muted` where
-    [MENU-15](#menu-15) asks for `-state-key`, and its popup keeps the theme's shadow, radius 6 (8 in the dark
-    theme) at offset Y 2. Modula's [`modula.css`](https://github.com/adriandeleon/Modula/blob/master/src/main/resources/com/modula/modula.css) gives `.context-menu` a shadow of radius 20 at offset Y 6, and its
-    rows a padding of 4 × 8.
+    `rowContent`; [`MenuPopupBoundsFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/MenuPopupBoundsFxTest.java) holds the shadow below the popup. No other
+    app draws that card. Termina, Torrenta and the app template get the row's padding from the Editora themes
+    they ship, and keep those themes' popup: a radius of 4 and a shadow of radius 6 (8 in the dark theme) at offset
+    Y 2 (`.menu-item` and `.context-menu` in each one's `editora-light.css` and `editora-dark.css`). Termina's [`ui/MenuRows.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MenuRows.java) has
+    the same 22 px column and 18 px chord margin; the app template's [`ui/AppMenus.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AppMenus.java) has an 18 px icon column
+    (`ICON_SLOT`) and a 16 px chord margin. Mirada and nux write no radius or shadow for `.context-menu` and take
+    their AtlantaFX theme's popup (Cupertino, Primer). Modula's [`modula.css`](https://github.com/adriandeleon/Modula/blob/master/src/main/resources/com/modula/modula.css) gives `.context-menu` a radius of 8 and
+    a shadow of radius 20 at offset Y 6, and its rows a padding of 4 × 8.
 
 ## The menu bar
+
+**Applies to:** an app with a menu bar.
 
 <div class="mock-stage">
 <div class="m-menubar-stage" role="img" aria-label="Mockup of the File menu open under the menu bar">
@@ -185,7 +190,7 @@ tray icon's menu) show text only; there the chord is appended to the title ([MEN
     [`ui/CommandMenu.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/CommandMenu.java) builds each menu from registered command ids and runs a row through the registry
     (`onRow` for a list row, `onConsole` for a read-only console; [`RightClickMenusFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/RightClickMenusFxTest.java)).
 
-The mockup is an editor tab's menu, shortened; Editora's has twenty-five rows.
+The mockup is an editor tab's menu, shortened; Editora's has twenty-one rows.
 
 <div class="mock-stage">
 <div class="m-ctx-stage" role="img" aria-label="Mockup of a tab's right-click menu">
@@ -255,7 +260,9 @@ The mockup is an editor tab's menu, shortened; Editora's has twenty-five rows.
     anchored to that row.
   - *Reference:* Editora [`RowContextMenu.install(tree)`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/RowContextMenu.java), [`RowContextMenuFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/RowContextMenuFxTest.java): it answers the request
     JavaFX raises for those keys (`ContextMenuEvent.isKeyboardTrigger`). Termina's [`ui/ViewKeys.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/ViewKeys.java) and Mirada's
-    [`Popups.isMenuKey`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Popups.java) read the key press themselves, the same on every OS.
+    [`Popups.isMenuKey`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Popups.java) read the key press themselves, the same on every OS. One of Editora's keymaps gives the chord to a
+    command as well: IntelliJ's binds `S-f10` to `run.rerun` ([`keymaps/intellij.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/intellij.json)), a clash
+    [`RowContextMenuFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/RowContextMenuFxTest.java) does not cover: it raises the request itself and presses no key.
 - **MENU-17 · SHOULD.** The in-window menu bar is reachable from the keyboard in every keymap. JavaFX opens its first
   menu on `F10` (`Ctrl+F10` on macOS) and on a lone `Alt`; a keymap that binds that key to something else binds a
   command that focuses the menu bar instead. So does a terminal, where a plain `F10` goes to the program it runs.

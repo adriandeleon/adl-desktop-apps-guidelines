@@ -3,7 +3,7 @@ title: "Find bar"
 description: "The family's find bar: in-scene, incremental, with a count; Enter and Shift+Enter step, Escape gives the keyboard back."
 ---
 
-The bar for searching text: in an editor, a read-only console, a terminal's scrollback, a log window. It is part of
+The bar for searching text: in an editor, a read-only console, a terminal's scrollback, a log shown as text. It is part of
 the window and searches as you type. The page reaches every app, not only the ones with an editor or a terminal:
 every app has a Debug Log ([DIAG-03](../../diagnostics/#diag-03)), which is text to search, so
 [FIND-01](#find-01) asks for a find bar there. Mirada has no other text to search: its *Find Image…* is a picker,
@@ -12,24 +12,32 @@ see the [QuickOpen template](../quick-open/).
 ## Rules
 
 - **FIND-01 · MUST.** Wherever there is text to search (an editor, a read-only console, a terminal's scrollback, a
-  log window such as the Debug Log), the app has a find bar that is part of the window, never a popup.
+  log shown as text, such as the Debug Log), the app has a find bar that is part of the window, never a popup. A log
+  shown as a list of entries is narrowed by a filter instead ([FIND-03](#find-03)).
   - *Why:* every app has a Debug Log ([DIAG-03](../../diagnostics/#diag-03)), and a log is read by searching it.
   - *Check (code):* each view of searchable text, the Debug Log window among them, has a find bar that is a node in
-    its window's scene graph (docked or floating); no `Popup` or `Stage` is created for it.
+    its window's scene graph (docked or floating); no `Popup` or `Stage` is created for it. A log drawn as a
+    `ListView` or a `TableView` is not such a view.
   - *Reference:* Editora [`ui/FindReplaceBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/FindReplaceBar.java) (the editor's find and replace), with [`ui/ConsoleFindBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ConsoleFindBar.java)
     and [`ui/TerminalFindBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TerminalFindBar.java) as the same shape over a console and a terminal; Termina [`ui/SearchBar.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/SearchBar.java).
     Over a log window, the app template's [`ui/DebugLogFindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DebugLogFindBar.java), a row in its Debug Log window. No released
-    app's Debug Log has a find bar yet.
+    app's Debug Log has a find bar yet. Editora's Message Log ([`ui/MessageLogPopup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java)) and Torrenta's log
+    window ([`ui/LogWindow.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/LogWindow.java)) are lists, which [FIND-03](#find-03) covers.
 - **FIND-02 · MUST.** The bar searches as you type and shows a match count.
   - *Check (code):* the query field's text listener runs the search (debounced) and updates the count label.
   - *Reference:* Editora [`FindReplaceBar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/FindReplaceBar.java) (`debounce`, `find.count`); Termina [`SearchBar`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/SearchBar.java) (`search.count`); the
     app template's [`ui/DebugLogFindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DebugLogFindBar.java) (`searching`, `find.count`).
 - **FIND-03 · MUST.** In an app whose main content is a list, a filter box over the list takes the place of a find
-  bar there, with the same field and the same Escape.
+  bar there, with the same field and the same Escape. A log shown as a list of entries is covered the same way: a
+  filter over the list narrows it, and it needs no find bar.
   - *Check (code):* a filter field sits over the list and filters it as it is typed, and Escape pressed in it leads
     back to the list, as it leads back to the text from a find bar ([FIND-07](#find-07)). Whether the first Escape
-    empties the box before the next one leaves it is [FIND-14](#find-14)'s.
+    empties the box before the next one leaves it is [FIND-14](#find-14)'s. A log window that lists its entries has
+    a filter over the list.
   - *Reference:* Torrenta [`Omnibox`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/Omnibox.java), [`FilterQuery`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/FilterQuery.java), [`MainWindow.onOmniboxKey`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java).
+    Over a log shown as a list: Editora's [`ui/MessageLogPopup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java), a filter field over its `ListView`
+    (`applyFilter`); Torrenta's [`ui/LogWindow.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/LogWindow.java) filters its table by level with three check boxes and has no
+    field to type in.
 
 ## Anatomy
 
@@ -98,23 +106,40 @@ read as one family: a lens, the field as the card's own text, the count, a regex
 | Threading | A document up to 512 K characters is searched where the request is made; larger ones on one shared daemon thread, latest query only, the result applied on the FX thread. A scrollback is always scanned off the FX thread | `SYNC_SEARCH_CHARS`, `SEARCH_POOL`, `LatestOnly`, `TerminalView.searchAsync` |
 | Bounds | A page of matches around the active one, not every match of a query that matches millions of times; a regular expression has a time budget. Termina keeps the newest 1,000 matches | `SearchMatcher.DEFAULT_PAGE`, `find.tooComplex`, [`ScrollbackSearch.MAX_MATCHES`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/ScrollbackSearch.java) |
 | Bad regex | Said in place, never by a dialog: the status line ("Bad regex: …") or, in Termina, the field in `-state-red` and the count "Invalid" | `find.badRegex`, `.search-field:invalid` |
-| Focus | The buttons may leave the Tab order where a command reaches each; the fields and the option toggles stay in it ([FIND-16](#find-16)). In a terminal the whole bar is out: Tab belongs to the shell | `setFocusTraversable(false)` |
+| Focus | A button may leave the Tab order where a command, or Enter, Shift+Enter or Escape in the field, does what it does; an option toggle stays in it unless a command toggles the option ([FIND-16](#find-16)). A terminal's bar is no exception: Editora's keeps its field and its match-case toggle in the Tab order, Termina's only its field | `setFocusTraversable(false)` |
 
 ## Behavior
 
-- **FIND-04 · SHOULD.** The find command (`find.show`) opens the bar: `C-s` in the Emacs keymap and `Ctrl/Cmd+F` in
-  CUA, Sublime, VS Code and IntelliJ, with `F3` as well in CUA and Sublime (`Cmd+G` in place of `F3` in CUA on
-  macOS). A terminal uses `Ctrl+Shift+F`, `Cmd+F` on macOS, since a plain `Ctrl+letter` belongs to the shell. Run
-  while the bar is already open, the command finds the next match.
-  - *Check (code):* each bundled keymap binds that chord to the find command; run while the bar is shown, the
-    command steps to the next match.
-  - *Reference:* Editora `keymaps/*.json` and [`MainController.findShowOrNext`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java), which finds the next match while the bar is
-    open; Termina [`TerminalWindow`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalWindow.java) (`menu.find`, [`MenuAction.appChord`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MenuAction.java)) and [`TerminalView.showSearch`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalView.java), which doesn't
-    yet: it puts the caret back in the field instead.
-- **FIND-05 · SHOULD.** Typing highlights every match and selects and scrolls to the first one at or after the caret.
-  The anchor is the caret at open time, so refining the query does not run away down the document.
-  - *Check (code):* the search starts from an anchor saved when the bar opens, not from the current selection.
-  - *Reference:* Editora [`FindReplaceBar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/FindReplaceBar.java) (`searchAnchor`, `recompute`).
+- **FIND-04 · SHOULD.** A command opens each find bar, and run while its bar is already open it finds the next match.
+  For the main window's own text (the editor; the terminal in a terminal app) the command is `find.show`, bound to
+  `C-s` in the Emacs keymap and `Ctrl/Cmd+F` in CUA, Sublime, VS Code and IntelliJ, with `F3` as well in CUA and
+  Sublime (`Cmd+G` in place of `F3` in CUA on macOS); a terminal binds it to `Ctrl+Shift+F`, `Cmd+F` on macOS, since
+  a plain `Ctrl+letter` belongs to the shell. Any other bar (over a log window, or over a console or a terminal
+  panel beside the editor) has a command with an id of its own, as the app template's `debugLog.find` is for its
+  Debug Log.
+  - *Check (code):* each bundled keymap binds that chord to `find.show`; every other find bar is opened by a
+    registered command of its own; and each of these commands, run while its bar is shown, steps to the next match.
+  - *Reference:* Editora `keymaps/*.json` and [`MainController.findShowOrNext`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java), which finds the next match while the
+    editor's bar is open. No other bar does both yet. Termina's find command ([`TerminalWindow`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalWindow.java), `menu.find`,
+    [`MenuAction.appChord`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MenuAction.java)) runs [`TerminalView.showSearch`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalView.java), which puts the caret back in the field of a bar that is
+    already open. So do Editora's `terminal.find` over its terminal panel ([`TerminalCoordinator.find`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TerminalCoordinator.java)) and the app
+    template's `debugLog.find` over its Debug Log ([`MainWindow.findInDebugLog`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MainWindow.java)), which that window also runs on a
+    fixed `Ctrl/Cmd+F`. Editora's console bar has no command: the find command's chord pressed in the console opens
+    it (`ConsoleNav.onCommand` in [`ui/BuildToolPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/BuildToolPanel.java)), as does a button in the panel's header.
+- **FIND-05 · SHOULD.** Typing highlights every match, the active one distinctly, and selects and scrolls to the
+  match the search starts on. In a document (an editor, a console, a log) that is the first match at or after the
+  caret as it was when the bar opened, so refining the query does not run away down the document. In a terminal it
+  is the newest match at or above the bottom of the view, since a terminal is searched upward
+  ([FIND-06](#find-06)).
+  - *Check (code):* every match in view is painted while the bar is open, not only the active one. In a document the
+    search starts from an anchor saved when the bar opens, not from the current selection; in a terminal, from the
+    bottom row of the view.
+  - *Reference:* Editora [`FindReplaceBar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/FindReplaceBar.java) (`searchAnchor`, `recompute`) over the editor. Over a terminal, Editora's
+    [`terminal/TerminalView.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/terminal/TerminalView.java) (`startIndex`, `drawSearch`) and Termina's [`TerminalView`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalView.java) (`drawSearchMatches`)
+    with [`ScrollbackSearch.initial`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/ScrollbackSearch.java). Editora's [`ConsoleFindBar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ConsoleFindBar.java) and the app template's
+    [`ui/DebugLogFindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DebugLogFindBar.java) don't yet: each selects the active match and paints no other, and searches from the
+    current selection (`refine`). The template's log is a `TextArea`, which draws one selection and nothing else, so
+    its bar meets the rule only once the log is shown in a view that can paint the matches.
 - **FIND-06 · MUST.** Enter steps to the next match and Shift+Enter to the previous one, wrapping around at the ends. In
   a terminal the directions are up and down the scrollback: Enter steps up to older output, Shift+Enter down.
   - *Check (code):* the query field's key handler steps forward on Enter and backward on Shift+Enter.
@@ -132,9 +157,9 @@ read as one family: a lens, the field as the card's own text, the count, a regex
   own key and mouse filters leave every event aimed at the bar alone.
   - *Check (code):* the field consumes Escape, and the terminal's filters return early for events from the bar.
   - *Reference:* Termina [`SearchBar`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/SearchBar.java), [`TerminalView.fromSearchBar`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalView.java).
-- **FIND-09 · SHOULD.** The keymap's caret and editing chords (`C-a`, `C-e`, `C-k`, `C-y`, `Ctrl+V/X/C/Z`) act on the
-  field, not on the document. Find's own chords stay global, so next, previous, replace and close work while the field
-  has focus.
+- **FIND-09 · SHOULD.** The keymap's caret and editing chords (`C-a`, `C-e`, `C-k`, `C-y` in the Emacs keymap;
+  `Ctrl+V/X/C/Z` in CUA, `Cmd+V/X/C/Z` on macOS) act on the field, not on the document. Find's own chords stay
+  global, so next, previous, replace and close work while the field has focus.
   - *Check (code):* the find fields install the shared text-input keymap.
   - *Reference:* Editora [`TextInputKeymap.installShared`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/TextInputKeymap.java), installed on [`FindReplaceBar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/FindReplaceBar.java)'s find and replace fields.
     Termina's find field does not yet: its [`TextInputKeys`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TextInputKeys.java) is installed on the palette only.
@@ -166,21 +191,31 @@ read as one family: a lens, the field as the card's own text, the count, a regex
   - *Check (code):* the box is not focus-traversable, and the window's chord handlers return early when the focus
     owner is a `TextInputControl`.
   - *Reference:* Torrenta [`MainWindow.buildFilterBar`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java), [`MainWindow`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java) window chords.
-- **FIND-16 · MUST.** A control of the find bar or of a filter box leaves the Tab order only when a command does
-  what it does. The Next, Previous and Close buttons may leave it, since Enter, Shift+Enter and Escape do the same from
-  the field ([FIND-06](#find-06), [FIND-07](#find-07)). An option's toggle (match case, whole word, regular expression) stays in it unless a
-  command toggles that option. A list app's filter box leaves it ([FIND-15](#find-15)) because its command puts the
-  focus there ([FIND-13](#find-13)). In a terminal the whole bar is out, since Tab belongs to the shell, so every
-  control on it has a command.
-  - *Why:* [KBD-15](../../keyboard/#kbd-15) lets a control out of the Tab order only when the keyboard reaches it
+- **FIND-16 · MUST.** A control of a find bar or of a filter box leaves the Tab order only when the keyboard does
+  what it does another way: a registered command does the same, or the bar's own field handles a key that does. So
+  the Next, Previous and Close buttons may leave it, since Enter, Shift+Enter and Escape in the field do the same
+  ([FIND-06](#find-06), [FIND-07](#find-07)), and so may a field's clear button, since the field's editing keys
+  empty it. An option's toggle (match case, whole word, regular expression) stays in it unless a command toggles
+  that option. A list app's filter box leaves it ([FIND-15](#find-15)) because its command puts the focus there
+  ([FIND-13](#find-13)). A terminal's bar is no exception: Tab belongs to the shell only while the terminal has the
+  focus, so a toggle taken out of the Tab order there needs a command like any other.
+  - *Why:* [KBD-15](../../keyboard/#kbd-15) lets a control out of the Tab order only when the keyboard does its work
     another way. A toggle that is out of it with no command can be changed with the mouse alone.
-  - *Check (code):* every control of a find bar or filter box that is set not focus-traversable runs a registered
-    command, or has one that does the same.
-  - *Reference:* the app template's [`DebugLogFindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DebugLogFindBar.java), whose Previous, Next and Close buttons are out of the Tab order and run
-    `debugLog.findPrevious` and `debugLog.findNext`, with the Match Case box left in it; Torrenta's filter box,
-    reached by its `filter` command; Mirada's [`BookmarksWindow.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/BookmarksWindow.java), whose three kind toggles are out of it and
-    have a command each. Editora's [`FindReplaceBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/FindReplaceBar.java) keeps every button and box in the Tab order. Termina's
-    regex toggle doesn't meet it yet: it is out of the Tab order and no command reaches it ([`SearchBar.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/SearchBar.java)).
+  - *Check (code):* for every control of a find bar or filter box that is set not focus-traversable, a registered
+    command does what the control does, or the bar's field handles a key that does: Enter, Shift+Enter or Escape for
+    Next, Previous and Close, the editing keys for a clear button. A toggle that is not focus-traversable has a
+    command that toggles its option.
+  - *Reference:* Editora's [`FindReplaceBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/FindReplaceBar.java) keeps every button and option box in the Tab order, all but the
+    clear button inside each field. Its [`ConsoleFindBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ConsoleFindBar.java) and [`TerminalFindBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TerminalFindBar.java) take Previous, Next and Close
+    out of it, which Shift+Enter, Enter and Escape in the field do, and leave the field and the match-case toggle
+    in. The app template's [`DebugLogFindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DebugLogFindBar.java) takes the same three out: Previous and Next run
+    `debugLog.findPrevious` and `debugLog.findNext`, Close is the field's Escape, and the Match Case box stays in.
+    Torrenta's filter box is out of it and reached by its `filter` command
+    ([`MainWindow.buildFilterBar`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java)). In Mirada's [`BookmarksWindow.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/BookmarksWindow.java) the three kind toggles are out of it and
+    have a command each (`bookmarks.listAll`, `bookmarks.listBookmarked`, `bookmarks.listNotes`). Termina's
+    [`SearchBar.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/SearchBar.java) leaves only its field in the Tab order: the two arrows and Close are the field's Enter,
+    Shift+Enter and Escape, and the arrows its `findPrevious` and `findNext` commands too, but its regex toggle
+    doesn't meet the rule yet: it is out of the Tab order and no command toggles it.
 
 ## Copy
 

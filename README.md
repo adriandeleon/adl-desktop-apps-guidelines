@@ -85,7 +85,9 @@ While nothing waits under *Unreleased*, a push that changes only how the site lo
 with an `Edition: none` trailer) deploys the current edition again and re-archives its folder: the current edition's
 pages can change in form, never in their rules, and an older edition's folder never changes on the `versions` branch. The site serves the PDF of the two newest
 editions only; an older edition's overview links its PDF on that branch on GitHub. On
-every pull request `scripts/check-edition.mjs` checks the changelog and, for a release, its number.
+every pull request `scripts/check-edition.mjs` checks the changelog and, for a release, its number, `pins.json` and
+`rule-changes.json`; a pull request also rehearses the build of the released edition with its own scripts, as
+`master` will run it.
 
 ## License
 

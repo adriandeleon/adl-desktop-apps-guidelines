@@ -5,8 +5,8 @@ description: "Commands, the Command Palette, keymaps, focus and accessibility."
 
 ## Commands
 
-- **KBD-01 · MUST.** Every user-facing action is a `Command` (id, title, runnable) registered in one
-  `CommandRegistry`.
+- **KBD-01 · MUST.** Every user-facing action is a command (an id, a title and a runnable) registered in one
+  command registry (Editora's `Command` and `CommandRegistry`).
   - *Check (code):* menu items, toolbar buttons, palette rows and key bindings run a command id through the
     registry; no control's handler does work no command can reach.
   - *Reference:* Editora [`command/Command.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/Command.java), [`command/CommandRegistry.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/CommandRegistry.java).
@@ -48,12 +48,15 @@ description: "Commands, the Command Palette, keymaps, focus and accessibility."
     IntelliJ and VS Code give the command ([`command/OtherIdeNames.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/OtherIdeNames.java)). It doesn't match the rest of the id or the
     description, which is shown under the list. [`CommandPaletteRankTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/CommandPaletteRankTest.java) holds the order
     (`aCommandIsFoundByItsNamespaceWhenItsTitleDoesNotCarryIt`, `aKeywordMatchRanksBelowEveryTitleMatch`).
-- **KBD-07 · MUST.** The palette and every picker are in-scene overlays in the window's root `StackPane`, never a
+- **KBD-07 · MUST.** The palette and every picker (a card that lists choices to filter and pick one from:
+  [QOPEN-01](../templates/quick-open/#qopen-01)) are in-scene overlays in the window's root `StackPane`, never a
   `javafx.stage.Popup`.
   - *Why:* on Windows a Popup does not reliably take OS keyboard focus, and the whole app can stop receiving
     keystrokes.
   - *Check (code):* the palette and every picker add their node to the root `StackPane`; none creates a `Popup`.
-  - *Reference:* Editora [`ui/CommandPalette.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java).
+  - *Reference:* Editora [`ui/OverlayHost.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java), the one host installed in the scene's root `StackPane`, which shows the
+    palette ([`ui/CommandPalette.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java)), the picker ([`ui/QuickOpen.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java)) and the picker's relatives
+    ([QOPEN-12](../templates/quick-open/#qopen-12)).
 
 Every other list choice (recent files, themes, keymaps, a setting's values) uses the same picker:
 [QOPEN-01](../templates/quick-open/#qopen-01).
@@ -72,17 +75,19 @@ Every other list choice (recent files, themes, keymaps, a setting's values) uses
     `Ctrl+C` interrupts, `Alt+F` and `Alt+B` move by word.
   - *Check (code):* `emacs.json`, `cua.json` and `cua.mac.json` are in the app's resources. In a terminal,
     `keymap.json` and `keymap.mac.json` are there instead, and no default binding in `keymap.json` is a plain `Ctrl`
-    or `Alt` with a letter. The Command finds either set of files and cannot tell a terminal from
-    another app: when it passes, confirm the app has the set that is its own.
-  - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; has() { for f in "$@"; do find src/main/resources -name "$f" | grep -q . || return 1; done; }; has emacs.json cua.json cua.mac.json || has keymap.json keymap.mac.json || { echo 'missing emacs.json, cua.json and cua.mac.json (or, in a terminal, keymap.json and keymap.mac.json)'; false; }`
+    or `Alt` with a letter.
   - *Reference:* Editora [`src/main/resources/com/editora/keymaps/`](https://github.com/adriandeleon/Editora/tree/master/src/main/resources/com/editora/keymaps);
-    Termina's [`keymaps/`](https://github.com/adriandeleon/Termina/tree/master/src/main/resources/com/termina/keymaps), held by [`KeymapTest`](https://github.com/adriandeleon/Termina/blob/master/src/test/java/com/termina/ui/KeymapTest.java)
-    (`offMacOsAnApplicationChordNeverTakesPlainCtrlAndALetter`).
+    Termina's [`keymaps/`](https://github.com/adriandeleon/Termina/tree/master/src/main/resources/com/termina/keymaps), whose [`KeymapTest`](https://github.com/adriandeleon/Termina/blob/master/src/test/java/com/termina/ui/KeymapTest.java)
+    (`offMacOsAnApplicationChordNeverTakesPlainCtrlAndALetter`) holds the `Ctrl` half; no test holds the `Alt` half.
 - **KBD-10 · SHOULD.** Except in a terminal ([KBD-09](#kbd-09)), IntelliJ, VS Code and Sublime keymaps ship the same
   way, each with its `.mac.json` variant.
-  - *Check (code):* `intellij`, `vscode` and `sublime` `.json` and `.mac.json` files are in the resources.
-  - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; ! for k in intellij vscode sublime; do for f in "$k.json" "$k.mac.json"; do find src/main/resources -name "$f" | grep -q . || echo "missing $f"; done; done | grep .`
-  - *Reference:* Editora [`src/main/resources/com/editora/keymaps/`](https://github.com/adriandeleon/Editora/tree/master/src/main/resources/com/editora/keymaps).
+  - *Check (code):* `intellij`, `vscode` and `sublime` `.json` and `.mac.json` files are in the resources. An app
+    that ships a terminal's keymap, `keymap.json` and `keymap.mac.json` with no `emacs.json` and no `cua.json`
+    ([KBD-09](#kbd-09)), needs none of them.
+  - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; has() { find src/main/resources -name "$1" | grep -q .; }; if has keymap.json && has keymap.mac.json && ! has emacs.json && ! has cua.json; then exit 0; fi; ! for k in intellij vscode sublime; do for f in "$k.json" "$k.mac.json"; do has "$f" || echo "missing $f"; done; done | grep .`
+  - *Reference:* Editora [`src/main/resources/com/editora/keymaps/`](https://github.com/adriandeleon/Editora/tree/master/src/main/resources/com/editora/keymaps). Termina ships the terminal's two files only
+    ([`keymaps/`](https://github.com/adriandeleon/Termina/tree/master/src/main/resources/com/termina/keymaps)). The app template and Mirada ship Emacs and CUA and none of these three yet; Torrenta, Modula
+    and nux ship no keymap file.
 - **KBD-21 · MUST.** A keymap's `.mac.json` variant binds the same commands as the keymap it varies. A chord may
   differ, to put `Cmd` where the other has `Ctrl`, to follow the macOS keymap of the editor it copies, or where
   macOS keeps the chord for itself (`Cmd+Space`, `Cmd+Tab`). See [Same on every OS](../same-on-every-os/).
@@ -118,10 +123,10 @@ Every other list choice (recent files, themes, keymaps, a setting's values) uses
 
 ## Focus and accessibility
 
-- **KBD-15 · MUST.** Every interactive control is reachable with Tab and operable with Space or Enter. A control whose
-  command the keyboard reaches another way is the exception: toolbar buttons
+- **KBD-15 · MUST.** Every interactive control is reachable with Tab and operable with Space or Enter. A control is
+  the exception when the keyboard does what it does another way: toolbar buttons stay out of the Tab order
   ([TBAR-02](../toolbars-and-tooltips/#tbar-02)), and the find-bar and filter controls that
-  [FIND-16](../templates/find-bar/#find-16) names, stay out of the Tab order. See [Accessibility](../accessibility/).
+  [FIND-16](../templates/find-bar/#find-16) names may leave it. See [Accessibility](../accessibility/).
   - *Why:* a control that Tab can't reach is one a keyboard-only or screen-reader user can't use at all.
   - *Check (by hand):* Tab through every window and dialog without the mouse.
   - *Reference:* Editora; [`FocusRingFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/FocusRingFxTest.java) holds that every control family draws the focus ring when Tab
@@ -134,13 +139,24 @@ Every other list choice (recent files, themes, keymaps, a setting's values) uses
     drawing it.
   - *Check (test):* an FX test tabs to each control family and asserts the ring.
   - *Reference:* Editora [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) (*Keyboard focus*, one layer for every control), [`FocusRingFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/FocusRingFxTest.java).
-- **KBD-22 · SHOULD.** The ring is 2 px wide and sits just outside the control with a 1 px gap: a border with
-  negative insets, which adds nothing to the control's own, so focusing a control never moves the layout.
+- **KBD-22 · SHOULD.** The focus ring is 2 px wide at the default zoom and sits just outside the control with a
+  1 px gap: a border with negative insets, which adds nothing to the control's own, so focusing a control never moves
+  the layout. Two kinds of control draw it inside instead, at the same 2 px and still without moving anything: a
+  text field, whose own focus border is widened, and a control flush with the window's edge, where a ring outside
+  would be cut off.
   - *Why:* a ring drawn on the control's own border is lost on a flat or filled button, and one that takes room
-    makes the row jump as Tab moves along it.
-  - *Check (code):* the `:focus-visible` rules of [KBD-16](#kbd-16) set `-fx-border-width: 2` and
-    `-fx-border-insets: -3`.
-  - *Reference:* Editora [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) (*Keyboard focus*), Termina's [`app.css`](https://github.com/adriandeleon/Termina/blob/master/src/main/resources/com/termina/styles/app.css) and Mirada's [`mirada.css`](https://github.com/adriandeleon/Mirada/blob/main/src/main/resources/com/mirada/styles/mirada.css). The app template's
+    makes the row jump as Tab moves along it. A text field already draws an accent border on focus, so a second
+    ring around it would be one too many.
+  - *Check (code):* in the `:focus-visible` rules of [KBD-16](#kbd-16), the one for the controls that take the
+    outside ring (buttons, toggles, menu buttons, links, combo boxes, the boxes of check boxes and radio buttons, as
+    many of them as the app has) sets `-fx-border-width: 2` and `-fx-border-insets: -3`; the one for text fields
+    widens the field's focus border to 2 px instead
+    (`-fx-background-insets: 0, 2px`); and a rule that draws the ring inside a control at the window's edge keeps the
+    2 px width and takes the room back out of the control's padding.
+  - *Reference:* Editora [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) (*Keyboard focus*), Termina's [`app.css`](https://github.com/adriandeleon/Termina/blob/master/src/main/resources/com/termina/styles/app.css) and Mirada's [`mirada.css`](https://github.com/adriandeleon/Mirada/blob/main/src/main/resources/com/mirada/styles/mirada.css): the
+    same outside ring, and the same text-field rule (Mirada's covers text areas too). Editora alone has the second
+    exception: `.tool-stripe-button:focus-visible` draws the ring at `-fx-border-insets: 1` and gives 3 px of
+    padding back, since the stripes sit against the window's edge. The app template's
     [`app.css`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/styles/app.css) sets the ring's color only, so the ring is the theme's own 1 px border.
 - **KBD-18 · SHOULD.** On/off rows use a keyboard-operable switch with the `TOGGLE_BUTTON` role.
   - *Why:* a bare AtlantaFX `ToggleSwitch` is mouse-only.

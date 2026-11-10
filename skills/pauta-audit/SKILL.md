@@ -18,12 +18,15 @@ Audit this app against the Pauta edition it says it implements, one result per r
 `https://pauta-project.dev/<edition>/`. Editora (`../Editora`) is its reference implementation.
 
 This skill is part of Pauta: every edition from 4.3.1 serves its own copy at
-`https://pauta-project.dev/<edition>/skills/pauta-audit/SKILL.md`. Use the copy of the edition you audit against;
-for an edition before 4.3.1, which serves none, use the newest edition's.
+`https://pauta-project.dev/<edition>/skills/pauta-audit/SKILL.md`. **Audit with the copy of the edition you audit
+against**; for an edition before 4.3.1, which serves none, use the newest edition's. An app that keeps a copy
+(`.claude/skills/pauta-audit/`) replaces it with the new edition's when it moves to one (Conformance, PAUTA-11),
+so the copy beside the code is its edition's. If this file is not the one that edition serves, follow the
+edition's.
 
-**This skill decides how to audit and how to write the report; the edition supplies only its rules.** An older
-edition's `llms.txt` describes the procedure in short and sometimes differently (2.0.x reports "not applicable",
-with a space, and has no `limited`): where it disagrees with this skill, follow this skill.
+**That copy decides how to audit and how to write the report; `rules.json` supplies the rules.** An edition's
+`llms.txt` describes the procedure in short, and an older one sometimes differently (2.0.x reports "not
+applicable", with a space, and has no `limited`): where it disagrees with the skill, follow the skill.
 
 ## Arguments
 
@@ -73,8 +76,9 @@ stronger.
 
 `rules.json` holds the edition's `levels`, `checks` and `statuses` (what each one means), `pages[]` and `rules[]`,
 each rule with `id`, `level` (MUST, SHOULD, MAY), `page`, `pageTitle`, `section`, `appliesTo`, `url`, `text`, `why`,
-`check.kind` (`code`, `test` or `by hand`), `check.text`, `check.command` (on some code checks) and `reference`; and
-`retired[]`, the IDs no longer in use. An older edition has less:
+`check.kind` (`code`, `test` or `by hand`), `check.text`, `check.command` (on some code checks), `reference` and
+`changed` (the edition in which its level, scope or statement last changed); and `retired[]`, the IDs no longer in
+use. An older edition has less:
 
 | Editions | `rules.json` |
 |---|---|
@@ -82,7 +86,8 @@ each rule with `id`, `level` (MUST, SHOULD, MAY), `page`, `pageTitle`, `section`
 | 2.0.0 to 4.2.0 | `levels`, `checks` and `rules[]`, each rule without `appliesTo` or `check.command`: judge a limit from the rule's text and its page's **Applies to** line. No `audit.schema.json`, no page `.md`. |
 | 4.3.0 | Adds `retired[]`. |
 | 4.3.1 to 4.5.0 | Adds `statuses`, `audit`, `pages[]` and each rule's `appliesTo`; the edition serves `audit.schema.json`, each page as `.md` and this skill. |
-| After 4.5.0 | Adds `check.command` on some code checks. |
+| 5.0.0 | Adds `check.command` on some code checks. |
+| After 5.0.0 | Adds each rule's `changed`; `pauta.json` may hold a `checked` list (PAUTA-18). |
 
 Whatever the edition, the report uses this skill's statuses and format.
 The rules in scope:
@@ -105,18 +110,25 @@ Read `src/main/resources/com/<app>/pauta.json` (Conformance, PAUTA-09). Each ent
 entry, a `link`. `"template": true` marks a template repository. No file is a finding on PAUTA-01, and every unmet
 rule is then `fail`.
 
+Beside `exceptions` the file may hold `checked` (PAUTA-18): the by-hand rules a person checked in the running app
+and found met, each with its `rule`, the `edition` it was checked against and the `date`. It is a record, not an
+exception: a by-hand rule with no entry needs none, and the conformance does not count it. An edition up to 5.0.0
+has no such list.
+
 ## 4. Judge each rule
 
 Read the whole rule (`text`, `why`, `check`, `appliesTo`) before judging it.
 
-**Names.** Some names in the rule's own `text` are required as spelled, because a user, the docs or another tool
-finds the thing by that name: a command id, a catalog key, a chord, a command-line flag, an environment variable, a
-property in `pom.xml` or `pauta.json`, and a file the repository must carry. Every app spells it that way, and the
-same thing under another name fails the rule (say so in the evidence). Any other name in `text` (a Java class,
-method or constant, a CSS file or style class, a branch or workflow file, a config file's name), and every name
-that only `check` or `reference` gives, is how Editora spells it, and this app's equivalent meets it. Edition 5.0.0's
-list was a command id, catalog key, file, property or style class: for an app on 5.0.0, judge by that list. Earlier
-editions say nothing about names, so there an equivalent meets the rule.
+**Names.** Some names in a rule's `text` are required as spelled, because a user, the docs or another tool finds the
+thing by that name: a command id, a catalog key, a chord, a command-line flag, an environment variable, a property in
+`pom.xml` or `pauta.json`, and a file the repository must carry. Every app spells it that way, and the same thing
+under another name fails the rule (say so in the evidence). A platform API the rule names (`javafx.stage.Popup`,
+`SystemTray`, `Platform.setImplicitExit(false)`, `Future.get()`) is the requirement itself: the JDK and JavaFX spell
+it one way for every app. Any other name is how Editora spells it, and the app's equivalent meets the rule: a class,
+method or constant of the app's own code, a CSS file or style class, a branch or workflow file, a config file's name.
+So is a name of the app's own code that only `check` or `reference` gives. Edition 5.0.0's list was a command id,
+catalog key, file, property or style class, with nothing about platform APIs: for an app on 5.0.0, judge by that list.
+Earlier editions say nothing about names, so there an equivalent meets the rule.
 
 Then, in this order:
 
@@ -132,21 +144,29 @@ Then, in this order:
      that meets it. Any other exit: the check fails, and what it printed is the evidence. A command only reads, and
      fails outside an app's root; take it from `rules.json` with `jq -r '.rules[] | select(.id == "OS-02") |
      .check.command'`, never through `@tsv`, which doubles its backslashes. Otherwise read or search the source as
-     `check.text` says (a name only the check gives is Editora's spelling: find this app's
-     equivalent; a name of a required kind in the rule's `text` is required, as above). It is met only if everything the check names is
-     there. Evidence is the `file:line` that satisfies it; for an unmet rule, the closest place it should be and what
-     is missing.
+     `check.text` says (a name of the app's own code that only the check gives is Editora's spelling: find this
+     app's equivalent; a name of a required kind in the rule's `text`, and a platform API, is as written, as
+     above). It is met only if everything the check names is there. Evidence is the `file:line` that satisfies it;
+     for an unmet rule, the closest place it should be and what is missing.
    - **`test`.** The check names a test as Editora calls it. Find that test or this app's equivalent in `src/test/`,
      read it to confirm it asserts what the rule says (a test with the right name that checks something else does not
      meet it), and confirm `./mvnw verify` runs it: not `@Disabled`, not excluded by the Surefire configuration in
      `pom.xml` (`excludes`, `excludedGroups`, `groups`). Evidence is the test's `file:line`.
-   - **`by hand`.** Source alone can't settle it: **`manual`**, and the evidence says what to look at in the running
-     app (from `check.text`) and the `file:line` of the code involved, if any. When the source shows the feature
-     isn't there at all, it is unmet, not manual. Then look the rule up in `pauta.json`'s `checked` list
-     (Conformance, PAUTA-18), where the app records the by-hand rules a person has checked and found met: an entry
-     gives the result its `checked` field, the entry's `edition` and `date`. With no entry, the result's `problem`
-     says that nobody has recorded checking it. An edition older than PAUTA-18 has no such list; leave both out
-     there.
+   - **`by hand`.** Source alone can't settle it, so the audit does not judge it:
+     - When `pauta.json` has an exception for the rule, the app itself says it does not meet it: the status is the
+       entry's kind and the evidence its `reason`, as in step 4. It is not `manual`.
+     - When the source shows the feature isn't there at all, it is unmet, not manual: step 4 or 5.
+     - Otherwise the status is **`manual`**, and the evidence says what to look at in the running app (from
+       `check.text`) and the `file:line` of the code involved, if any. Then look the rule up in `pauta.json`'s
+       `checked` list (Conformance, PAUTA-18). An entry gives the result its `checked` field, the entry's `edition`
+       and `date`. With no entry, leave the field out and end the evidence with "not recorded": nobody has
+       recorded checking the rule. That is not a failure of the app and not a `problem`, it needs no exception,
+       and it does not change the conformance. Never write a `checked` entry yourself, and don't offer an
+       exception for the rule: the entry is for the person who checks it in the running app.
+     - A `checked` entry is stale when its `edition` is older than the rule's `changed` in `rules.json`, and only
+       then: the rule's level, scope or statement changed after the check. Give the result its `checked` field all
+       the same, and say in `problem` that the entry is stale, since which edition, and that it is to be removed
+       and the rule checked again. Report in `problem` too an entry for a rule that also has an exception.
 
    Partly met is unmet: say which part is missing. Don't guess: when the source doesn't settle a `code` or `test`
    rule, say what you searched for and treat it as unmet, with "not found" in the evidence.
@@ -156,13 +176,14 @@ Then, in this order:
    pending entry with no `link`, an `app-only` entry outside a template, and a `level` or `url` that differs from the
    edition's.
 5. **Unmet, and not listed:** **`fail`**, for a MUST or SHOULD. A rule whose subject this app doesn't have at all
-   (no tabs, no toolbar) is still `fail` when the rule reads as applying to every app: the fix is a `not-applicable`
-   entry, so say so in the evidence. A missing part that a rule *requires* (the Command Palette, a status bar,
-   About) fails that rule and every rule about how it behaves. An unmet MAY is `fail` with no consequence and needs no
-   entry.
+   (no password or token it asks for, no files to give icons to) is still `fail` when the rule reads as applying
+   to every app: the fix is a `not-applicable` entry, so say so in the evidence. A missing part that a rule
+   *requires* (the Command Palette, a status bar, About) fails that rule and every rule about how it behaves. An
+   unmet MAY is `fail` with no consequence and needs no entry.
 
 `pauta.json` entries that name an ID the edition does not have go in the report's `problems`: for one in the
-edition's `retired` list, name the rule in its `see`.
+edition's `retired` list, name the rule in its `see`. So does a `checked` entry for a rule that is not checked by
+hand.
 
 Cite rules as "KBD-07 (Pauta <edition>)". Paths in evidence are relative to the repository root, as
 `path/File.java:123`, so they are clickable.
@@ -189,8 +210,10 @@ Replace any earlier report: it is a snapshot, regenerated rather than edited by 
   "rules": "https://pauta-project.dev/<edition>/rules.json",
   "results": [
     { "id": "KBD-07", "level": "MUST", "status": "pass", "evidence": "src/main/java/com/example/app/ui/CommandPalette.java:57" },
-    { "id": "TRAY-01", "level": "MUST", "status": "limited", "evidence": "no tray: no SystemTray or TrayIcon in src/" },
-    { "id": "MENU-14", "level": "MUST", "status": "pending", "evidence": "Some menu rows have no icon yet." }
+    { "id": "KBD-15", "level": "MUST", "status": "manual", "evidence": "Tab through every window: src/main/java/com/example/app/ui/MainWindow.java:120", "checked": { "edition": "<edition>", "date": "2026-11-02" } },
+    { "id": "MENU-14", "level": "MUST", "status": "pending", "evidence": "Some menu rows have no icon yet." },
+    { "id": "MENU-08", "level": "MUST", "status": "manual", "evidence": "Press Escape on a right-click menu: src/main/java/com/example/app/ui/RowMenus.java:44; not recorded" },
+    { "id": "TRAY-01", "level": "MUST", "status": "limited", "evidence": "no tray: no SystemTray or TrayIcon in src/" }
   ],
   "problems": []
 }
@@ -229,7 +252,8 @@ A failed MUST blocks a release.
 
 ## Manual checks
 
-(Each with the edition and date it was last recorded as checked, or "not recorded".)
+(Each with the edition and date it was recorded as checked, or "not recorded"; a stale entry says so. A rule not
+recorded is not a failure.)
 
 ## Exceptions
 

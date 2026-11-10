@@ -61,12 +61,16 @@ keymap, a theme, a language), not when the developer could not decide.
 
 - **SET-07 · MUST.** Config lives in `~/.<app>`, unless `<APP>_CONFIG_DIR` or a command-line flag
   ([CLI-02](../command-line/#cli-02)) names another folder.
-  - *Check (code):* one resolver picks the folder, in the order `--config-dir`, the environment variable, the
-    default, and the default is `<user.home>/.<app>` on Windows, macOS and Linux alike: the resolver doesn't branch
-    on the OS, or a test resolves the default as each OS and finds the same folder.
+  - *Check (code):* one resolver picks the folder from `--config-dir`, `--dev`, the environment variable and the
+    default, with `--config-dir` first and the default last, and the default is `<user.home>/.<app>` on Windows,
+    macOS and Linux alike: the resolver doesn't branch on the OS, or a test resolves the default as each OS and
+    finds the same folder.
   - *Reference:* Editora [`App`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java) and [`ConfigManager.configDirFor`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/ConfigManager.java), [`ConfigDirTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/config/ConfigDirTest.java). Mirada's resolver
     ([`settings/Settings.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/settings/Settings.java), `defaultFile` and `folder`) has the order but a default that depends on the OS:
-    `~/Library/Application Support/Mirada` on macOS, `%APPDATA%\Mirada` on Windows, `~/.mirada` elsewhere.
+    `~/Library/Application Support/Mirada` on macOS, `%APPDATA%\Mirada` on Windows, `~/.mirada` elsewhere. Between
+    `--dev` and the environment variable the apps differ: in Editora, Termina ([`config/Settings.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/config/Settings.java),
+    `defaultFile`) and the app template ([`config/ConfigDir.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/ConfigDir.java)) the variable wins and `--dev` only changes the
+    default; in Mirada `--dev` wins ([`Launch.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/Launch.java)).
 - **SET-08 · SHOULD.** Preferences live in one file and session state (where the window was, what was open) in
   another, and every other store has a file of its own. Editora's are `settings.json` and `workspace-state.json`.
   - *Check (code):* preferences and session state are separate files: the file that holds what the user chose in
@@ -76,16 +80,30 @@ keymap, a theme, a language), not when the developer could not decide.
     Torrenta and Mirada keep the window's bounds in their preferences file (`ui.window.bounds` and `window.bounds`
     in `settings.properties`), and the app template keeps them in `settings.json`
     ([`config/Settings.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/Settings.java), `window`).
-- **SET-09 · MUST.** Every versioned file has a schema version, and each version has a `v → v+1` migration
-  step. A purely additive field uses an identity step.
-  - *Check (code):* each versioned file's store declares its schema version (`SCHEMA_VERSION` in Editora) and the
-    file carries it, and the migrations hold one step for every version below the current one, an identity step
-    where the version only added a field.
-  - *Reference:* Editora [`config/migration/ConfigMigrations.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/migration/ConfigMigrations.java), [`ConfigSchema.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/migration/ConfigSchema.java), [`ConfigMigrationsTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/config/migration/ConfigMigrationsTest.java).
-- **SET-10 · MUST.** A file newer than the running build is backed up to `<name>.v<n>.bak` and defaults load.
+- **SET-09 · MUST.** Every config file the app writes and reads back carries a schema version, and each version has
+  a `v → v+1` migration step. A purely additive field uses an identity step. Which files are config files is in
+  [SET-22](#set-22).
+  - *Check (code):* the store of every config file ([SET-22](#set-22) says which files those are) declares a schema
+    version (`SCHEMA_VERSION` in Editora), writes it into the file and reads it back, and the migrations hold one
+    step for every version below the current one, an identity step where the version only added a field.
+  - *Reference:* Editora [`config/migration/ConfigMigrations.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/migration/ConfigMigrations.java), [`ConfigSchema.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/migration/ConfigSchema.java) (one entry for each
+    store), [`ConfigMigrationsTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/config/migration/ConfigMigrationsTest.java); its `dictionary.txt`, one word to a line, carries
+    no version. Termina ([`config/ConfigJson.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/config/ConfigJson.java), for `settings.json` and
+    `workspace-state.json`) and Mirada ([`settings/Migrations.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/settings/Migrations.java), for `settings.properties` and
+    `bookmarks.properties`) do it too, and so does the app template for `settings.json`
+    ([`config/Migrations.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/Migrations.java)), though not for its `sync/base.json`. Torrenta's files ([`store/Settings.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/store/Settings.java) and
+    the other stores beside it) and Modula's ([`config/ConfigStore.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/config/ConfigStore.java): `settings.properties`, `presets.txt`,
+    `schedules.txt`) carry no version, and nux writes `schema=1` into its file and never reads it
+    ([`config/ConfigStore.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/config/ConfigStore.java), `format` and `parse`).
+- **SET-10 · MUST.** A config file whose schema version ([SET-09](#set-09)) is higher than the running build's is
+  kept as a backup beside it (Editora names it `<name>.v<n>.bak`) and defaults load.
   - *Why:* an older build never clobbers a newer config.
-  - *Check (test):* a test loads a too-new `settings.json` and finds the backup and the defaults.
-  - *Reference:* Editora [`ConfigVersioningTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/config/ConfigVersioningTest.java) (`tooNewSettingsAreBackedUpAndDefaultsLoaded`).
+  - *Check (test):* a test loads a config file whose schema version is higher than the build's and finds the backup
+    beside it and the defaults loaded.
+  - *Reference:* Editora [`ConfigVersioningTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/config/ConfigVersioningTest.java) (`tooNewSettingsAreBackedUpAndDefaultsLoaded`). Termina
+    ([`config/Settings.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/config/Settings.java)), Mirada ([`settings/ConfigFile.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/settings/ConfigFile.java), `newerBackupOf`) and the app template
+    ([`config/ConfigStore.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/ConfigStore.java)) do the same, under the same name. Torrenta, Modula and nux read no version
+    ([SET-09](#set-09)), so they cannot tell a newer file.
 - **SET-11 · MUST.** Never trust a config file. Clamp every value to its valid range when it is **read**, not only
   when it is written; an unknown value falls back to its default; a file that cannot be decoded is kept as a backup
   (Editora names it `<name>.corrupt.bak`) and defaults load. A bad file never stops the app from starting.
@@ -100,18 +118,27 @@ keymap, a theme, a language), not when the developer could not decide.
     ([`ConfigFileTest`](https://github.com/adriandeleon/Mirada/blob/main/src/test/java/com/mirada/settings/ConfigFileTest.java), `aFileThatWillNotDecodeIsKeptAsABackup`). Torrenta, Modula and nux keep no backup, and in
     Torrenta and nux a malformed escape stops the app from starting.
 - **SET-22 · MUST.** A config file is written whole or not at all: the app writes a temporary file beside it and
-  moves that into place, so a crash mid-write never leaves a half-written file.
+  moves that into place, so a crash mid-write never leaves a half-written file. A config file is any file the app
+  writes as a whole and reads back as its state: the settings, the session state, a store of bookmarks or presets,
+  what a sync engine keeps beside its clone. A file the app only appends to (a log, a ledger, a word list) is not
+  one, and neither is a file in the working tree of a sync repository's clone, which Git holds a committed copy of
+  and the next sync writes again.
   - *Why:* without it, a crash or a full disk in the middle of a save leaves a file that will not decode, and the
     corrupt-file path of [SET-11](#set-11), a backup and then defaults, is what the person gets for it.
-  - *Check (code):* every write of a config file as a whole (a store's save, an import) goes to a temporary file in
-    the same folder and ends in a move onto the target (`Files.move` with `ATOMIC_MOVE`, and a plain replace only
-    where the file system has no atomic move). A log or a ledger the app appends to is not such a write.
+  - *Check (code):* every write of a config file as a whole (a store's save, an import, a sync engine's own state
+    outside its clone) goes to a temporary file in the same folder and ends in a move onto the target (`Files.move`
+    with `ATOMIC_MOVE`, and a plain replace only where the file system has no atomic move). An append to a log, a
+    ledger or a list is not such a write, and neither is a write into a sync clone's working tree.
   - *Reference:* Editora [`config/ConfigWriter.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/ConfigWriter.java) (`writeAtomicOrThrow`: a temporary file of its own beside the target,
     forced to disk, then moved; [`ConfigWriterTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/config/ConfigWriterTest.java), `atomicReplacementFailuresKeepThePreviousConfiguration`). Every other
     app's settings store does it too: Torrenta [`store/Settings.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/store/Settings.java) (`save`), Termina [`config/Settings.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/config/Settings.java) (`writeOne`,
     `moveIntoPlace`), Mirada [`settings/Settings.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/settings/Settings.java) (`write`), Modula [`config/ConfigStore.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/config/ConfigStore.java) (`writeAtomically`), nux
     [`config/ConfigStore.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/config/ConfigStore.java) (`save`) and the app template's [`config/ConfigStore.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/ConfigStore.java) (`writePending`). The template's
     [`config/ConfigImport.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/ConfigImport.java) (`apply`) doesn't yet: an import writes `settings.json` and the zip's other files in place.
+    Nor does its
+    [`sync/SyncEngine.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/sync/SyncEngine.java) (`write`) for `sync/base.json`, the merge base it keeps beside the clone and reads back at
+    the next sync. Termina's [`sync/SyncEngine.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/sync/SyncEngine.java) and Torrenta's [`sync/SyncEngine.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/sync/SyncEngine.java) write in place only inside
+    the clone, and keep their merge base as a Git ref (`refs/termina/base`, `refs/torrenta/base`).
 - **SET-12 · MUST.** Export configuration writes a timestamped `.zip` of the config folder; Import restores from
   one.
   - *Check (test):* a test finds the time of the export in the zip's name and the config folder's files among its
@@ -127,7 +154,8 @@ keymap, a theme, a language), not when the developer could not decide.
   macOS Keychain, Windows Credential Manager, the Secret Service on Linux. Calls may block on a prompt, so they run
   off the FX thread. Where no keychain answers, as in a Linux session with no Secret Service, the secret is kept in
   memory for the session only and its row in Settings says so: it is never written to a file instead.
-  - *Check (code):* no key or token field in the settings model; reads and writes go through the secret store, and
+  - *Check (code):* no secret (a password, an API key, a token) is a field of the settings model; reads and writes
+    go through the secret store, and
     every caller reaches it from a background thread, never from a handler on the FX thread; the store's fallback,
     for when no keychain answers, holds the secret in memory and writes no file, and the secret's row in Settings
     says when it is kept for the session only.
@@ -141,7 +169,7 @@ keymap, a theme, a language), not when the developer could not decide.
   - *Check (code):* the credential is a field of a runtime object, absent from every config class.
   - *Reference:* nux's UPS login ([`app/CommandRunner.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/app/CommandRunner.java)).
 - **SET-15 · MUST.** An app with Settings Sync refuses a repository URL with a password or token in it, with the fix
-  ([Settings Sync](../templates/settings-sync/)). A problem report's redaction is [DIAG-06](../diagnostics/#diag-06).
+  ([Settings Sync](../templates/settings-sync/)). A problem report's redaction is [DIAG-11](../diagnostics/#diag-11).
   - *Check (by hand):* paste `https://user:token@host/repo.git` as the sync repository.
   - *Reference:* Editora [`ui/SettingsSyncPage.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsSyncPage.java) (`settings.sync.repo.credentials`), [`sync/SyncEngine.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/sync/SyncEngine.java)
     (`hasCredentials`, checked again at sync time).

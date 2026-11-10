@@ -5,9 +5,11 @@
 //   - every page is in pages.json, and the two that are not (the overview and the changelog) hold no rule;
 //   - a relative link leads somewhere: to a page, to a section or a rule that page has (`../keyboard/#kbd-07` points
 //     at a rule that exists, on that page, and reads as that rule), to a screenshot that is there;
-//   - a retired ID is not named anywhere in the pages or the audit skill;
+//   - a retired ID is not named anywhere in the pages or the audit skill, and retired-rules.json loses no entry,
+//     repeats none and lists only IDs an edition had (src/lib/rules.mjs, against rule-changes.json);
 //   - every line of the New app checklist names its rules, every MUST is on a line, and a line's level is its rules'
-//     level: a line marked "(SHOULD)" names only SHOULDs, any other line only MUSTs.
+//     level: a line marked "(SHOULD)" names only SHOULDs, any other line only MUSTs. A line is the item as the page
+//     shows it: with the lines it wraps onto, and not one inside a code block or a comment.
 // `npm run check`; scripts/build-site.mjs runs it before building, so CI catches it.
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
@@ -134,8 +136,19 @@ for (const { slug, text } of [...docs, ...skill]) {
 const checklist = docs.find((d) => d.slug === "checklist");
 const listed = new Set();
 const RULE_ANCHOR = /\]\(\s*<?[^)\s>]*#([a-z]{2,6}-\d{2,3})>?(?:\s+(?:"[^"]*"|'[^']*'))?\s*\)/gi;
-checklist.text.split("\n").forEach((line, i) => {
-  if (!/^\s*[-*+] \[[ xX]\] /.test(line)) return; // a task item, however it is bulleted, nested or ticked
+// The page as it is shown: code blocks, comments and code spans blanked, so an item that is commented out or given
+// as an example names no rule. An item runs on through the lines it wraps onto, up to a blank line or the next
+// item, heading, table or quote, so a rule linked on a continuation line is on that item and held to its level.
+const shown = blankCode(checklist.text, true).split("\n");
+const TASK = /^\s*[-*+] \[[ xX]\] /; // a task item, however it is bulleted, nested or ticked
+const ENDS_ITEM = /^\s*(?:$|[-*+] |\d+[.)] |#{1,6} |[|>])/;
+shown.forEach((first, i) => {
+  if (!TASK.test(first)) return;
+  // Four spaces in, with no item above to be nested under, is an indented code block.
+  if (/^ {4}/.test(first) && !/^\s*[-*+] /.test(shown.slice(0, i).findLast((l) => l.trim() && !/^ {2}/.test(l)) ?? "")) return;
+  let end = i + 1;
+  while (end < shown.length && !ENDS_ITEM.test(shown[end])) end++;
+  const line = shown.slice(i, end).join(" ");
   const at = `checklist:${i + 1}`;
   const ids = [...line.matchAll(RULE_ANCHOR)].map((m) => m[1].toUpperCase());
   if (!ids.length) return problems.push(`${at}: names no rule; end the line with links to the rules it sums up`);

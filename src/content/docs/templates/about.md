@@ -9,11 +9,18 @@ Torrenta ([`AboutDialog`](https://github.com/adriandeleon/torrenta/blob/master/s
 ## Rules
 
 - **ABOUT-01 · MUST.** Every app has an About window, reached by Help → About, the `help.about` command, and on
-  macOS the application menu's About item.
-  - *Check (code):* `help.about` is registered and listed in the Help menu, and the macOS application menu's About
-    item runs it.
-  - *Reference:* Editora [`ui/AboutDialog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/AboutDialog.java), [`ui/MenuBarModel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java) (`help.about` in the Help menu); it has no About
-    item in the macOS application menu yet. Termina ([`ui/MacAppMenu.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MacAppMenu.java)) and Mirada ([`os/MacAppMenu.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/os/MacAppMenu.java)) add one.
+  macOS the About item of the application menu, the one macOS names after the app. The app adds that item itself:
+  JavaFX builds the menu with Hide and Quit and no About.
+  - *Why:* on macOS that menu is where every app keeps About, so it is one of the places
+    [the OS's way wins](../../same-on-every-os/#where-the-oss-way-wins).
+  - *Check (code):* `help.about` is registered and opens the About window, the Help menu lists it, and on macOS the
+    app inserts an About item into the application menu that opens the same window.
+  - *Reference:* Editora [`ui/AboutDialog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/AboutDialog.java) and [`ui/MenuBarModel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java) (`help.about` ends the Help menu), and the
+    app template's [`ui/Commands.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Commands.java) and [`ui/AppMenus.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AppMenus.java), do the Help row and the command. Neither adds the macOS item
+    yet, and nor do Torrenta, Modula and nux. Termina ([`ui/MacAppMenu.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MacAppMenu.java)) and Mirada ([`os/MacAppMenu.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/os/MacAppMenu.java)) do: JavaFX has no
+    public API for that menu, so both insert the item into the one Glass keeps (`MacApplication.getAppleMenu`).
+    Neither is the whole rule: Termina's command is `about`, not `help.about`, and Mirada's About row is beside its
+    Help menu, not in it.
 - **ABOUT-02 · MUST.** About shows the version and build, the runtime, the license, links, and the result of the last
   update check. The Pauta edition is [ABOUT-05](#about-05).
   - *Check (code):* the window reads the version and build from `AppInfo`, the same text as `--version`, and shows
@@ -45,10 +52,10 @@ Torrenta ([`AboutDialog`](https://github.com/adriandeleon/torrenta/blob/master/s
 <div class="m-about-head"><img src="../../icons/editora.svg" alt="" /><div><div class="m-row"><span class="m-about-name">Editora</span><span class="pin">1</span></div><div class="m-about-version">Version 0.27.0 <span class="pin">2</span></div><div class="m-about-tagline">A keyboard-driven, cross-platform programmer's text editor.</div></div></div>
 <div><div class="m-row"><span class="m-link" style="font-weight:700;color:var(--m-amber)">Update available: 0.28.0</span><span class="pin">3</span></div><div class="m-subtle" style="font-size:12px">Last checked 5 minutes ago. <span class="m-link">Check now</span></div></div>
 <div class="m-muted">© 2026 Adrián Arturo De León Saldivar <span class="pin">4</span></div>
-<div style="display:flex;flex-direction:column;gap:2px"><span class="m-row"><span class="m-link">MIT License</span><span class="pin">5</span></span><span class="m-link">Homepage</span><span class="m-link">Source code and releases</span><span class="m-link">Built to Pauta 4.2.0</span><span class="m-link">Pauta conformance: Core</span><span class="m-link">Settings: ~/.editora/settings.json</span></div>
+<div style="display:flex;flex-direction:column;gap:2px"><span class="m-row"><span class="m-link">MIT License</span><span class="pin">5</span></span><span class="m-link">Homepage</span><span class="m-link">Source code and releases</span><span class="m-link">Built to Pauta x.y.z</span><span class="m-link">Pauta conformance: Core</span><span class="m-link">Settings: ~/.editora/settings.json</span></div>
 <div class="m-row" style="align-items:flex-start"><div class="m-env">Editora 0.27.0 (Built 2026-11-05 17:02:11 UTC)
 Commit 1dab6d8fd
-Pauta: 4.2.0
+Pauta: x.y.z
 Pauta conformance: Core (2 exceptions)
 Java: 25.0.4 (Eclipse Adoptium)
 JavaFX: 27+30

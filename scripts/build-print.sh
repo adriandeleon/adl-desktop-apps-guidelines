@@ -28,6 +28,10 @@ if [ "${PAUTA_PATH:-}" = next ]; then
   today=$(date -u +%F)
 fi
 export PAUTA_PRINT_FOLDER=$folder
+# The tree as a file: URL, for the screenshots, the fonts and the page Chrome prints. Percent-encoded: with a space
+# (or a #, a ?, a %) in the path as it is, the image links end at it and the PDF comes out without its screenshots.
+# Everything but letters, digits and _ . - ~ / is encoded, so the URL is also safe inside the sed expression below.
+here=$(python3 -I -c 'import pathlib, sys; print(pathlib.Path(sys.argv[1]).as_uri())' "$PWD")
 
 # 1. One Markdown file, pages in pages.json order: each page's title becomes an H2, its headings move down a level.
 python3 -I "$tools/combine.py" pages.json src/content/docs "$today" "$version" "$site" "$folder" "$label" > "$out/adl-desktop-apps-guidelines.md"
@@ -40,9 +44,9 @@ node "$tools/print-shots.mjs" src/assets/shots "$work/shots"
 # 3. HTML for print (the masthead carries the title and intro, so the combined file's preamble is dropped). Fonts come
 #    from the site's own npm packages (node_modules), never the network.
 sed -n '/^## /,$p' "$out/adl-desktop-apps-guidelines.md" \
-  | sed -E "s#https://raw.githubusercontent.com/adriandeleon/adl-desktop-apps-guidelines/[^/]+/src/assets/shots/([^)\" ]+)\.png#file://$PWD/$work/shots/\1.jpg#g" \
+  | sed -E "s#https://raw.githubusercontent.com/adriandeleon/adl-desktop-apps-guidelines/[^/]+/src/assets/shots/([^)\" ]+)\.png#$here/$work/shots/\1.jpg#g" \
   | pandoc -f gfm -t html5 --toc --toc-depth=2 --template="$tools/print-template.html" \
-      --variable fonts="file://$PWD/node_modules" \
+      --variable fonts="$here/node_modules" \
       --metadata date="$today" --metadata version="$label" --metadata site="$site" --metadata title="Pauta" --no-highlight -o "$work/raw.html"
 python3 -I "$tools/print-markup.py" "$work/raw.html" "$work/guide.html" src/styles/templates.css
 
@@ -54,7 +58,7 @@ chrome=$(command -v google-chrome || command -v google-chrome-stable || command 
 pdf="$out/adl-desktop-apps-guidelines.pdf"
 rm -f "$pdf"
 "$chrome" --headless=new --disable-gpu --no-sandbox --no-pdf-header-footer --generate-pdf-document-outline --virtual-time-budget=10000 \
-  --print-to-pdf="$pdf" "file://$PWD/$work/guide.html" 2>"$work/chrome.log" || true
+  --print-to-pdf="$pdf" "$here/$work/guide.html" 2>"$work/chrome.log" || true
 # Chrome logs noise and can exit 0 without a file, so the file decides.
 [ -s "$pdf" ] || { echo "Chrome wrote no PDF:" >&2; cat "$work/chrome.log" >&2; exit 1; }
 [ -s "$out/adl-desktop-apps-guidelines.md" ] || { echo "the Markdown download is empty" >&2; exit 1; }

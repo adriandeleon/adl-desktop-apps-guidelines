@@ -31,9 +31,11 @@ NullAway runs as an error on every package, each `@NullMarked` in its own `packa
     [`config/PathKeys`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/PathKeys.java), each with a plain unit test.
 - **QUAL-06 · MUST.** FX tests are tagged `@Tag("fx")`, so the pure suite runs alone with
   `-DexcludedGroups=fx`.
-  - *Check (code):* every test class that boots the toolkit (`FxTestSupport`, `FxToolkit`) carries `@Tag("fx")`.
-  - *Reference:* Editora [`docs/testing.md`](https://github.com/adriandeleon/Editora/blob/master/docs/testing.md). Editora does not hold it fully yet: about twenty `*FxTest` classes,
-    most of them `ProjectMap*FxTest`, carry no tag.
+  - *Check (code):* every test class that boots the toolkit (`Platform.startup`, `FxToolkit`, or a helper that
+    calls one, such as Editora's `FxTestSupport`) carries `@Tag("fx")`.
+  - *Reference:* Termina holds it by test: [`FxTestTagsTest`](https://github.com/adriandeleon/Termina/blob/master/src/test/java/com/termina/FxTestTagsTest.java) fails when a test source that names
+    `Platform.startup(` or `FxToolkit.` has no `@Tag("fx")`. Editora states it in [`docs/testing.md`](https://github.com/adriandeleon/Editora/blob/master/docs/testing.md) and does not
+    hold it fully yet: 31 of its `*FxTest` classes, 18 of them `ProjectMap*FxTest`, carry no tag.
 - **QUAL-07 · SHOULD.** Tests do not sleep. A scope owns the workers and FX callbacks (Editora's
   `AsyncTestScope`), and tests wait on latches.
   - *Check (code):* `grep -rn 'Thread.sleep' src/test` finds nothing.
@@ -42,10 +44,12 @@ NullAway runs as an error on every package, each `@NullMarked` in its own `packa
 - **QUAL-08 · SHOULD.** A test window writes only inside its temp folders, never in the real home directory.
   - *Check (test):* the command sweep checks the home directory after running every command.
   - *Reference:* Editora [`CommandSweepFxTest.leftInTheHomeDirectory`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/CommandSweepFxTest.java).
-- **QUAL-09 · MUST.** UI work is verified in the running app
-  ([principle 13](../principles/#for-the-people-building-them)): a capture hook or headless screenshot of the real
-  window, with real key and mouse events, before a UI change is called done.
-  - *Check (code):* the app has a capture hook (`DevCapture`) or a headless fixture that builds the real window.
+- **QUAL-09 · MUST.** The app has a way to show its real window with nobody at the screen: a capture hook that
+  saves a screenshot of it, or a headless fixture that builds it as the app does. That is what verifies UI work in
+  the running app ([principle 13](../principles/#for-the-people-building-them)), with real key and mouse events,
+  before a UI change is called done.
+  - *Check (code):* the app has a capture hook (Termina's `DevCapture`) or a headless fixture (Editora's
+    `FxWindowFixture`) that builds the real window through the code the app itself starts with.
   - *Reference:* Editora [`FxWindowFixture`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/FxWindowFixture.java) (the real [`MainController`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java) window, headless); Torrenta and Termina
     `DevCapture.java`.
 - **QUAL-10 · SHOULD.** A guard that cannot fail is decoration. When you add a drift or parity test, break the

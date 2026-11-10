@@ -22,7 +22,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 - [ ] A template repository says so in its `pauta.json` and records the rules only an app made from it can meet as `app-only` · [PAUTA-16](../conformance/#pauta-16)
 - [ ] The conformance is computed from the exceptions by one tested helper, never stored · [PAUTA-02](../conformance/#pauta-02)
 - [ ] `PautaConformanceTest` checks `pauta.json` and the README against the edition's `rules.json` · [PAUTA-10](../conformance/#pauta-10), [PAUTA-15](../conformance/#pauta-15)
-- [ ] Every rule checked by hand recorded in `pauta.json`'s `checked` list once a person has checked it · [PAUTA-18](../conformance/#pauta-18)
+- [ ] `pauta.json`'s `checked` list records each by-hand rule a person checked and found met, with no stale entry · [PAUTA-18](../conformance/#pauta-18)
 - [ ] `AGENTS.md` has a `## Pauta` section that names the edition and links its numbered `llms.txt` · [PAUTA-17](../conformance/#pauta-17)
 - [ ] About links the edition, *Built to Pauta x.y.z*, read from `pauta.version`, and shows the conformance · [ABOUT-05](../templates/about/#about-05), [ABOUT-06](../templates/about/#about-06), [ABOUT-07](../templates/about/#about-07), [ABOUT-08](../templates/about/#about-08), [ABOUT-09](../templates/about/#about-09)
 - [ ] A Pauta window, `help.pauta`, in the palette, the Help menu and About's link, listing every exception with fixed links · [PWIN-01](../templates/pauta-window/#pwin-01), [PWIN-02](../templates/pauta-window/#pwin-02), [PWIN-03](../templates/pauta-window/#pwin-03), [PWIN-04](../templates/pauta-window/#pwin-04)
@@ -35,7 +35,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 
 - [ ] JDK 25 or newer (`release` 25 is the floor) and JavaFX 27 or newer · [PLAT-01](../platform/#plat-01), [PLAT-03](../platform/#plat-03)
 - [ ] A jlinked runtime in every installer, so users never install Java (SHOULD) · [PLAT-02](../platform/#plat-02)
-- [ ] One JPMS module, `com.<app>` · [PLAT-04](../platform/#plat-04)
+- [ ] One named JPMS module · [PLAT-04](../platform/#plat-04)
 - [ ] Maven Wrapper committed (`mvnw`, `mvnw.cmd`, `.mvn/wrapper/`) · [PLAT-08](../platform/#plat-08)
 - [ ] AtlantaFX 3 controls, and app stylesheets that take their colors from its `-color-*` tokens · [PLAT-05](../platform/#plat-05), [ICON-08](../icons-and-color/#icon-08)
 
@@ -46,6 +46,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 - [ ] Every command, setting and window on Windows, macOS and Linux, with the same defaults; one the OS can't serve is disabled and says why · [OS-01](../same-on-every-os/#os-01)
 - [ ] One `Os` class reads `os.name`, and no other class does or tells the OS apart another way · [OS-02](../same-on-every-os/#os-02)
 - [ ] A test runs as each OS and finds the same commands, menu rows and settings pages (SHOULD) · [OS-03](../same-on-every-os/#os-03)
+- [ ] Nothing behaves or is laid out differently by OS, except as the table "Where the OS's way wins" says · [OS-04](../same-on-every-os/#os-04)
 
 ## Code quality
 
@@ -62,9 +63,10 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 
 [Performance](../performance/)
 
-- [ ] No I/O, process, parsing or waiting on the JavaFX application thread; results return through `Platform.runLater` · [PERF-01](../performance/#perf-01), [PERF-02](../performance/#perf-02)
+- [ ] No I/O, process, parsing or waiting on the JavaFX application thread, but for one wait at start-up for the config read; results return through `Platform.runLater` · [PERF-01](../performance/#perf-01), [PERF-02](../performance/#perf-02)
 - [ ] Background results applied under a generation guard; blocking work kept off the common pool · [PERF-03](../performance/#perf-03), [PERF-05](../performance/#perf-05)
 - [ ] Redraws coalesced to one per pulse; streams delivered in batches; work only on what is visible and changed · [PERF-06](../performance/#perf-06), [PERF-07](../performance/#perf-07), [PERF-08](../performance/#perf-08)
+- [ ] Text-driven work that leaves the FX thread or outlasts a frame waits for typing to pause; filtering an in-memory list is exempt · [PERF-23](../performance/#perf-23)
 - [ ] Logs, histories and caches bounded; large inputs guarded; a closed window releases what it held · [PERF-11](../performance/#perf-11), [PERF-12](../performance/#perf-12), [PERF-13](../performance/#perf-13)
 - [ ] Only the first frame built before it paints; update check and extras deferred · [PERF-14](../performance/#perf-14), [PERF-15](../performance/#perf-15)
 - [ ] Every thread named and a daemon (SHOULD) · [PERF-04](../performance/#perf-04)
@@ -84,8 +86,8 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 [Accessibility](../accessibility/)
 
 - [ ] Every control reachable with Tab and operable with Space or Enter, except controls whose command the keyboard reaches another way, and showing the focus ring when it has focus · [KBD-15](../keyboard/#kbd-15), [KBD-16](../keyboard/#kbd-16)
-- [ ] The focus ring 2 px wide, just outside the control, taking no room in the layout (SHOULD) · [KBD-22](../keyboard/#kbd-22)
-- [ ] A find-bar or filter control out of the Tab order only where a command does what it does · [FIND-16](../templates/find-bar/#find-16)
+- [ ] The focus ring 2 px wide at the default zoom, just outside the control, taking no room in the layout (SHOULD) · [KBD-22](../keyboard/#kbd-22)
+- [ ] A find-bar or filter control out of the Tab order only where a command does its work, or a key the bar's field handles does · [FIND-16](../templates/find-bar/#find-16)
 - [ ] Every control a person can reach has an accessible name, rows drawn from graphics included · [ACC-01](../accessibility/#acc-01)
 - [ ] Custom controls state their role and state; canvas content is exposed to the screen reader (SHOULD) · [ACC-02](../accessibility/#acc-02), [ACC-03](../accessibility/#acc-03)
 - [ ] Animations follow the OS's reduced motion; color is never the only signal (SHOULD) · [ACC-04](../accessibility/#acc-04), [ACC-05](../accessibility/#acc-05)
@@ -99,10 +101,10 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 - [ ] Every destructive action asks first: the question names the thing, the button names the action in the `danger` style, both buttons are worded from the catalog and never JavaFX's stock OK, Yes or Cancel, Escape cancels; or the action can be taken back instead · [CONF-01](../templates/confirm-dialog/#conf-01), [CONF-02](../templates/confirm-dialog/#conf-02), [CONF-03](../templates/confirm-dialog/#conf-03), [CONF-04](../templates/confirm-dialog/#conf-04)
 - [ ] Every question has one default button, never the red one: Cancel, or Save where saving is an option, so Enter destroys nothing · [CONF-13](../templates/confirm-dialog/#conf-13)
 - [ ] Dialog buttons in one order on every OS, Cancel to the left of every action · [WIN-11](../window-shell/#win-11)
-- [ ] A UI zoom that scales the whole chrome, menus included, applied at once and kept across launches · [WIN-12](../window-shell/#win-12)
+- [ ] A UI zoom that scales the whole chrome, menus included, applied at once and kept across launches, with commands to zoom in, out and back · [WIN-12](../window-shell/#win-12)
 - [ ] One quit method for File → Quit, the quit command and the system's own Quit · [WIN-13](../window-shell/#win-13)
-- [ ] A Quit in every app: the `app.quit` command and a Quit row that ends the File menu, or the main menu · [WIN-14](../window-shell/#win-14)
-- [ ] On macOS, About, Settings and Quit in the application menu (SHOULD) · [WIN-15](../window-shell/#win-15)
+- [ ] A Quit in every app: the `app.quit` command and, where the app has a File menu or a main menu, a Quit row that ends it · [WIN-14](../window-shell/#win-14)
+- [ ] On macOS, Settings in the application menu, showing the active keymap's chord (SHOULD) · [WIN-15](../window-shell/#win-15)
 - [ ] About from Help, `help.about` and the macOS application menu: version and build, runtime, license, links and the last update check · [ABOUT-01](../templates/about/#about-01), [ABOUT-02](../templates/about/#about-02)
 - [ ] A Welcome page when there is nothing to restore, or an empty state that names the ways in with their chords (SHOULD) · [WELC-01](../templates/welcome/#welc-01), [WELC-02](../templates/welcome/#welc-02)
 
@@ -132,17 +134,17 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 
 [Tabs and tool panels](../tabs-and-panels/)
 
-- [ ] Every tab operation is a command · [TABS-01](../tabs-and-panels/#tabs-01)
-- [ ] One tab header carries the title and the states: `•` and amber italic for unsaved, a pin and bold for pinned, muted italic for read-only (`TabHeaders`) · [TABS-02](../tabs-and-panels/#tabs-02), [TABS-03](../tabs-and-panels/#tabs-03)
+- [ ] Every tab operation is a command; a terminal's tabs have no close unmodified · [TABS-01](../tabs-and-panels/#tabs-01)
+- [ ] One tab header carries the title and the states: `•` and amber italic for unsaved, a pin and bold for pinned, muted italic for read-only (`TabHeaders`); in a terminal, the running program as the title and a mark for a notification, bell or activity · [TABS-02](../tabs-and-panels/#tabs-02), [TABS-03](../tabs-and-panels/#tabs-03)
 - [ ] Bulk close skips pinned tabs, pinning moves a tab to the end of the pinned group, and Reopen Closed Tab brings the last one back (`ClosedTabs`) · [TABS-04](../tabs-and-panels/#tabs-04), [TABS-05](../tabs-and-panels/#tabs-05), [TABS-06](../tabs-and-panels/#tabs-06)
 - [ ] A command toggles each panel, and a panel's content is built on first use (`ToolWindowManager`) · [TABS-13](../tabs-and-panels/#tabs-13), [PERF-14](../performance/#perf-14)
-- [ ] Panel side, order and divider positions restored on the next launch (SHOULD) · [TABS-15](../tabs-and-panels/#tabs-15)
+- [ ] Each panel's place and size restored on the next launch (SHOULD) · [TABS-15](../tabs-and-panels/#tabs-15)
 
 ## Menus
 
 [Menus](../menus/)
 
-- [ ] Menu rows are commands: icon, title and chord from the registry and the active keymap, no `KeyCombination` accelerators · [MENU-01](../menus/#menu-01), [MENU-02](../menus/#menu-02)
+- [ ] In an app with a menu bar, its rows are commands: icon, title and chord from the registry and the active keymap, no `KeyCombination` accelerators · [MENU-01](../menus/#menu-01), [MENU-02](../menus/#menu-02)
 - [ ] Every row of every menu, right-click menus and drop-downs included, has an icon that depicts it and its chord when bound · [MENU-14](../menus/#menu-14), [MENU-15](../menus/#menu-15)
 - [ ] Menus draw in Inter 14 px at the default zoom whatever they were opened from, and follow the UI zoom (`.context-menu` sets the size from the zoom's one value) · [MENU-16](../menus/#menu-16)
 - [ ] Every row, tab and editor has a right-click menu with its own actions · [MENU-05](../menus/#menu-05)
@@ -155,7 +157,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 
 - [ ] The tray is a StatusNotifierItem on Linux, with no AWT fallback, and AWT's `SystemTray` on Windows and macOS, and the app is fully usable without an icon · [TRAY-01](../tray-and-background/#tray-01), [TRAY-02](../tray-and-background/#tray-02)
 - [ ] Closing the window hides it only while an icon is up and the setting says so; the tray's Quit runs the app's one quit method and ends the program with the window hidden · [TRAY-03](../tray-and-background/#tray-03), [TRAY-04](../tray-and-background/#tray-04)
-- [ ] Start at login writes the OS's own entry (XDG autostart, LaunchAgent, `HKCU` Run), and `--minimized` comes up behind the icon, or minimized with the tray off (SHOULD) · [TRAY-05](../tray-and-background/#tray-05), [TRAY-06](../tray-and-background/#tray-06)
+- [ ] Start at login writes the OS's own entry (XDG autostart, LaunchAgent, `HKCU` Run), and `--minimized` comes up behind the icon, minimized when the tray setting is off, and shown when an icon was asked for and none came (SHOULD) · [TRAY-05](../tray-and-background/#tray-05), [TRAY-06](../tray-and-background/#tray-06)
 
 [Notifications](../tray-and-background/#notifications) (for an app that sends desktop notifications, with a tray or without one)
 
@@ -172,7 +174,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 - [ ] A config file written whole or not at all: to a temporary file beside it, then moved into place · [SET-22](../settings/#set-22)
 - [ ] Export and import of the config folder · [SET-12](../settings/#set-12)
 - [ ] No secret in a config file: keys and tokens in the OS keychain, or in memory for the session where no keychain answers; a credential the app can ask for again in memory only · [SET-13](../settings/#set-13), [SET-14](../settings/#set-14)
-- [ ] A secret in the wrong place refused (a sync URL with a password, an unredacted problem report), and an option that weakens security only a config key · [SET-15](../settings/#set-15), [SET-16](../settings/#set-16)
+- [ ] A secret in the wrong place refused (a sync URL with a password), and an option that weakens security only a config key · [SET-15](../settings/#set-15), [SET-16](../settings/#set-16)
 - [ ] Settings sync through a Git repository the user owns (SHOULD) · [SYNC-01](../templates/settings-sync/#sync-01), [SYNC-02](../templates/settings-sync/#sync-02)
 
 ## Diagnostics
@@ -182,14 +184,17 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 - [ ] Message Log of the session's echo-area messages · [DIAG-01](../diagnostics/#diag-01)
 - [ ] Debug Log with a session file in its own window, and an uncaught exception handler installed at the start of `main` that posts an echo message · [DIAG-02](../diagnostics/#diag-02), [DIAG-03](../diagnostics/#diag-03), [DIAG-04](../diagnostics/#diag-04)
 - [ ] Daily update check after the first frame, a status-bar notice of a newer version, Check for Updates and an off switch · [DIAG-05](../diagnostics/#diag-05), [DIAG-09](../diagnostics/#diag-09), [DIAG-10](../diagnostics/#diag-10)
-- [ ] Report a Problem: a redacted, prefilled GitHub issue · [DIAG-06](../diagnostics/#diag-06)
+- [ ] Report a Problem builds a report with the version, the OS, the runtime, a settings summary and the recent Debug Log · [DIAG-06](../diagnostics/#diag-06)
+- [ ] A problem report redacted before it is shown: home paths, user names, e-mail addresses, credentials, tokens · [DIAG-11](../diagnostics/#diag-11)
+- [ ] Report a Problem shows the report editable, copies it and opens a prefilled GitHub issue; nothing is uploaded · [DIAG-12](../diagnostics/#diag-12)
+- [ ] A report too long for the issue link (about 7,500 characters) is pasted from the clipboard · [DIAG-13](../diagnostics/#diag-13)
 
 ## Command line and languages
 
 [Command line](../command-line/) · [Internationalization](../i18n/)
 
 - [ ] `--help`, `--version`, `--config-dir`, `--dev` and `--report`, which writes its file in the current folder · [CLI-01](../command-line/#cli-01), [CLI-02](../command-line/#cli-02), [CLI-05](../command-line/#cli-05)
-- [ ] An unknown option stops the launch with a message and exit status 2 · [CLI-12](../command-line/#cli-12)
+- [ ] An unknown option stops the launch with a message and exit status 2; `-` and what follows `--` are files, and a launcher's own JVM options are skipped · [CLI-12](../command-line/#cli-12)
 - [ ] `-h` for help, `-v` and `-V` for the version (SHOULD) · [CLI-13](../command-line/#cli-13)
 - [ ] On Windows, a console launcher (or an attached console) so the flags print · [CLI-11](../command-line/#cli-11)
 - [ ] Single instance per config folder · [CLI-07](../command-line/#cli-07)
@@ -199,7 +204,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 
 [Repository documents](../repository/)
 
-- [ ] `README.md` as a landing page of about 200 lines, with the badge row and the hero screenshot · [REPO-01](../repository/#repo-01)
+- [ ] `README.md` as a landing page, with the badge row and the hero screenshot · [REPO-01](../repository/#repo-01)
 - [ ] `CHANGELOG.md` in Keep a Changelog format · [REPO-02](../repository/#repo-02)
 - [ ] MIT `LICENSE`, and `NOTICE` with every third-party license · [REPO-03](../repository/#repo-03), [REPO-04](../repository/#repo-04)
 - [ ] `AGENTS.md`, with a one-line `CLAUDE.md` pointing to it · [REPO-05](../repository/#repo-05), [DOCS-14](../documentation/#docs-14)
@@ -216,7 +221,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 - [ ] Release notes written for users, and the Welcome page's *What's New* opens this build's release · [DOCS-05](../documentation/#docs-05)
 - [ ] `docs/README.md` indexes the contributor guides · [DOCS-12](../documentation/#docs-12)
 - [ ] Docs change with the code, the website's in a pull request opened with it; when they disagree with the code, the code wins and the docs are fixed · [DOCS-16](../documentation/#docs-16), [DOCS-17](../documentation/#docs-17)
-- [ ] The Help menu in the family's order, Documentation first after the Command Palette (SHOULD) · [DOCS-07](../documentation/#docs-07)
+- [ ] The Help menu in the family's order, Documentation first after the Command Palette, then the keyboard reference (SHOULD) · [DOCS-07](../documentation/#docs-07)
 - [ ] Deep links from the app open the running version's docs, `/docs/v-<version>/` (SHOULD) · [DOCS-03](../documentation/#docs-03)
 - [ ] Command and keybinding references generated from the source, with a check that quoted ids and chords exist (SHOULD) · [DOCS-04](../documentation/#docs-04)
 
@@ -240,9 +245,9 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 - [ ] The release workflow on a version tag that matches the pom, with a `workflow_dispatch` dry run · [REL-21](../release/#rel-21)
 - [ ] A release cut only from a commit whose tests passed: the release workflow runs them, or its preflight reads CI's result · [REL-30](../release/#rel-30)
 - [ ] Every third-party action pinned to a commit SHA, with its version in a comment · [REL-22](../release/#rel-22)
-- [ ] Dependabot for `github-actions` and `maven` · [REL-23](../release/#rel-23)
-- [ ] `permissions: contents: read` by default; write only in publishing jobs · [REL-24](../release/#rel-24)
-- [ ] `timeout-minutes` on every job that runs steps; superseded pull-request runs canceled · [REL-26](../release/#rel-26)
+- [ ] Dependabot for `github-actions` and `maven`, weekly · [REL-23](../release/#rel-23)
+- [ ] `permissions: contents: read` by default, or none at all; write only in the jobs that need it · [REL-24](../release/#rel-24)
+- [ ] `timeout-minutes` on every job that runs steps; a `concurrency` group on every pull-request workflow that cancels superseded runs · [REL-26](../release/#rel-26)
 - [ ] Test and coverage reports uploaded; coverage totals in the job summary · [REL-27](../release/#rel-27)
 - [ ] Signing skipped without secrets, but a tag without them fails · [REL-28](../release/#rel-28)
 - [ ] A smoke launch of the packaged app on each OS before release · [REL-29](../release/#rel-29)

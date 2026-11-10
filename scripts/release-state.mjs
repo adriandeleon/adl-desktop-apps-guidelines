@@ -5,6 +5,12 @@
 //   pending=<bool>    CHANGELOG.md's [Unreleased] holds changes, so HEAD is not the edition its number names
 //   publish=<sha>     the commit whose edition to tag and archive before the deploy, or empty for none:
 //                       - HEAD, when nothing is pending;
+//                       - the commit that released <version>, when nothing is pending, that commit is not HEAD and the
+//                         edition has no tag on origin: its own run was canceled, and the pushes since changed only
+//                         the site. The site is still built from HEAD, but the commit that is checked (against its
+//                         first parent, as a release) and tagged is the one that released the edition; checked
+//                         against the push before, HEAD is no release at all, and the edition would be tagged
+//                         without ever having been compared with what came before it;
 //                       - the commit that released <version>, when something is pending and that edition has no tag
 //                         on origin, or the site says another edition is live (its run was canceled while it waited,
 //                         or failed): the release is published from its own commit, and the batch after it waits;
@@ -17,6 +23,9 @@
 //                     $BEFORE (a push's previous master), or HEAD's first parent (a manual run)
 //
 //   node scripts/release-state.mjs             prints the outputs; CI appends them to $GITHUB_OUTPUT
+//   node scripts/release-state.mjs --site      prints only the commit `site` would be, asking neither origin for its
+//                                              tags nor the site what is live: a pull request uses it to build what
+//                                              master will build once it is merged (pages.yml, "Rehearse")
 //
 // "Live" is the `latest` of the site's versions.json, asked only when the answer decides something (an untagged
 // edition is published whatever the site serves) and up to four times, since one failed request says nothing about
@@ -43,6 +52,15 @@ const pkg = JSON.parse(readFileSync("package.json", "utf8"));
 const version = pkg.version;
 const pending = unreleased(readFileSync("CHANGELOG.md", "utf8")) !== "";
 const head = git("rev-parse", "HEAD");
+if (process.argv.includes("--site")) {
+  const release = pending ? releaseCommits("HEAD").get(version) : head;
+  if (!release) {
+    console.error(`no commit on HEAD's first-parent history carries ${version}`);
+    process.exit(1);
+  }
+  console.log(release);
+  process.exit(0);
+}
 
 // The edition the site serves at latest/, or null when the site could not be asked. Only a versions.json that names
 // an edition is an answer. A 404 is not: Pages answers that for a site whose domain or deployment is broken too, and a
@@ -96,6 +114,13 @@ if (pending) {
     publish = release;
     base = `${release}^1`;
     why = `${version} is ${tagged ? `tagged but not live (live: ${live})` : "untagged"}: publishing it from ${release.slice(0, 7)}`;
+  }
+} else {
+  const release = releaseCommits("HEAD").get(version);
+  if (release && release !== head && !originTags().has(version)) {
+    publish = release;
+    base = `${release}^1`;
+    why = `nothing pending, and ${version} is untagged: checking and tagging it at ${release.slice(0, 7)}, the commit that released it, and building the site from HEAD`;
   }
 }
 if (publish) base = git("rev-parse", base);

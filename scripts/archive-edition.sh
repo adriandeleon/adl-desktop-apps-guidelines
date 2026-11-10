@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # Keeps a built edition on the `versions` branch, which holds one folder per published edition (1.3.2/, 1.3.1/, ...)
-# and nothing else; scripts/build-site.mjs serves every folder on it beside the current edition. CI runs it after each
-# push to master with --push; without the flag the branch is only updated locally.
+# and nothing else; scripts/build-site.mjs serves every folder on it beside the current edition. CI runs it with --push
+# in a run that publishes an edition (.github/workflows/pages.yml, the publish job), not in every run that deploys: a
+# push while a batch waits under [Unreleased] deploys the edition again without archiving it. Without the flag the
+# branch is only updated locally.
 #
 #   scripts/archive-edition.sh [--push] [dir...]    each dir is named by its version; default dist/<package.json version>
 #

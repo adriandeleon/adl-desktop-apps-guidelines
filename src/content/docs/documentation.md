@@ -55,14 +55,22 @@ repository's [`docs/README.md`](https://github.com/adriandeleon/Editora/blob/mas
     (`npm run check:docs`), which exits non-zero on a missing id or a chord bound to another command. Nothing runs it
     yet: neither the `build` script in [`package.json`](https://github.com/adriandeleon/editora-website/blob/master/package.json) nor [`pages.yml`](https://github.com/adriandeleon/editora-website/blob/master/.github/workflows/pages.yml) calls it, so it fails the site only when
     someone runs it by hand.
-- **DOCS-05 · MUST.** Release notes are written for users, and in an app with a Welcome page its *What's New*
-  opens this build's release. The bold one-line summary that opens each `CHANGELOG.md` entry is
-  [REPO-02](../repository/#repo-02); the website's What's new is [DOCS-04](#docs-04); the GitHub release carrying
-  the section is [REL-04](../release/#rel-04).
-  - *Check (code):* the release notes say what changed for the person using the app, not what the commits were; a
-    Welcome page's *What's New* opens `AppInfo.releaseNotesUrl()`.
-  - *Reference:* Editora [`AppInfo.releaseNotesUrl()`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/AppInfo.java), [`WelcomePane`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WelcomePane.java) (`welcome.whatsNew`); editora-website
-    [`GenRoadmap.java`](https://github.com/adriandeleon/editora-website/blob/master/scripts/GenRoadmap.java).
+- **DOCS-05 · MUST.** The notes of a GitHub release, the text under its title, are written for the person using the
+  app: they say what changed for them, and are not a list of commits or pull requests. In an app with a Welcome
+  page, its *What's New* opens this build's release, so those notes are what it shows. The bold one-line summary
+  that opens each `CHANGELOG.md` entry is [REPO-02](../repository/#repo-02); the website's What's new is
+  [DOCS-04](#docs-04); taking the notes from the version's `CHANGELOG.md` section is
+  [REL-04](../release/#rel-04).
+  - *Check (code):* the release's notes are not generated from the history: the JReleaser configuration's
+    `changelog` is not a `format` of commit hashes and titles, and no release step sets `generate_release_notes`.
+    They come from text someone wrote, the version's `CHANGELOG.md` section or a notes file. And a Welcome page's
+    *What's New* opens the build's own release page (`AppInfo.releaseNotesUrl()` in Editora).
+  - *Reference:* Termina's [`jreleaser.yml`](https://github.com/adriandeleon/Termina/blob/master/jreleaser.yml) takes the notes from a file (`changelog.external`) that
+    [`scripts/release-notes.sh`](https://github.com/adriandeleon/Termina/blob/master/scripts/release-notes.sh) writes from the version's `CHANGELOG.md` section; the app template, Torrenta and Mirada
+    do the same. Editora doesn't yet: its [`jreleaser.yml`](https://github.com/adriandeleon/Editora/blob/master/jreleaser.yml) builds the notes from the commits
+    (`format: '- {{commitShortHash}} {{commitTitle}}'`), and that list is what its *What's New* opens
+    ([`AppInfo.releaseNotesUrl()`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/AppInfo.java), [`WelcomePane`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WelcomePane.java), `welcome.whatsNew`). Modula's [`release.yml`](https://github.com/adriandeleon/Modula/blob/master/.github/workflows/release.yml) and nux's
+    [`release.yml`](https://github.com/adriandeleon/nux/blob/master/.github/workflows/release.yml) have GitHub generate them (`generate_release_notes: true`).
 
 ## Reachable from the app
 
@@ -76,12 +84,17 @@ The documentation is one command away, so nobody has to know the website's addre
     runs it through the registry.
   - *Reference:* Editora [`WindowCommandRegistrar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowCommandRegistrar.java) (`help.documentation` → [`MainController.openDocumentation()`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java)),
     [`MenuBarModel`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java) (`menubar.help`), [`WelcomePane`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WelcomePane.java) (`welcome.documentation`).
-- **DOCS-07 · SHOULD.** The Help menu runs in this order: Command Palette · Documentation · Welcome Page · Check for
-  Updates · Message Log · Debug Log · Report a Problem · Pauta Conformance · About. Simple mode keeps Command
-  Palette, Documentation, Welcome Page and About. An app without a feature drops its row; nothing moves.
-  - *Check (code):* both `menubar.help` menu specs list those command ids in that order.
-  - *Reference:* Editora [`MenuBarModel`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java), both `MenuSpec("menubar.help", …)`, for every row but Welcome Page: its
-    `view.welcome` row is still in the View menu ([WELC-03](../templates/welcome/#welc-03)).
+- **DOCS-07 · SHOULD.** The Help menu runs in this order: Command Palette · Documentation · the keyboard reference
+  ([DOCS-08](#docs-08)) · Welcome Page · Check for Updates · Message Log · Debug Log · Report a Problem · Pauta
+  Conformance · About. Simple mode keeps Command Palette, Documentation, Welcome Page and About. An app without a
+  feature drops its row; nothing moves.
+  - *Check (code):* the rows of the Help menu the app has are in that order, in the full menu and in Simple mode's
+    where the app has one (both `menubar.help` menu specs in Editora).
+  - *Reference:* Editora [`MenuBarModel`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java), both `MenuSpec("menubar.help", …)`, for the rows its Help menu has. It has
+    no Welcome Page row, since `view.welcome` is still in the View menu ([WELC-03](../templates/welcome/#welc-03)),
+    and no keyboard-reference row. Termina's [`MenuBarModel`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MenuBarModel.java) (`documentation`, `whatsNew`, `keyboardShortcuts`,
+    then `checkForUpdates`) and Mirada's macOS menu bar, [`MacMenus`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MacMenus.java) (`PALETTE`, `DOCUMENTATION`, `SHORTCUTS`, then
+    `CHECK_FOR_UPDATES`) put the keyboard reference there; Termina's What's New row, between the two, is its own.
 - **DOCS-08 · SHOULD.** Help has a keyboard reference: a searchable window of every key, grouped as the menus are,
   or the keybinding editor.
   - *Check (by hand):* open it from Help, search for a command, and find its key.

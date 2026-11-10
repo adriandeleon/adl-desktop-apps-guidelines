@@ -90,20 +90,27 @@ The palette is an in-scene overlay in the window's root `StackPane`, over a fain
 - **PAL-05 · SHOULD.** Typing filters the list, and the first *enabled* match is selected.
   - *Check (test):* a test with a disabled command at the top finds the cursor on the first enabled row.
   - *Reference:* Editora [`CommandPalette.selectFirstEnabled`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java), [`CommandPaletteDisabledFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/CommandPaletteDisabledFxTest.java).
-- **PAL-06 · SHOULD.** The active keymap's line chords (`nav.lineDown`, `nav.lineUp`) and page chords
-  (`nav.pageDown`, `nav.pageUp`) move the selection, as do ↑ ↓ and Page Up/Down, which always work; `C-n` and `C-p`
-  are what the Emacs keymap gives. Enter, or a click on an enabled row, runs the command. The palette closes first,
-  then the command runs.
-  - *Check (code):* the palette's key handler looks a press up in the active keymap and moves on those commands, not
-    on fixed letters; the run path hides the card before it calls the registry, and does nothing on a disabled row.
-  - *Reference:* Editora [`CommandPalette.runSelected`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java), [`PickerKeys.resolve`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java). The app template hardcodes
-    the Emacs keys: its [`ui/Picker.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Picker.java) moves on `Ctrl+N` and `Ctrl+P` whatever the keymap.
-- **PAL-07 · SHOULD.** The active keymap's cancel chord (`edit.cancel`), Esc or a click on the scrim cancels, and
-  focus returns to where it was; `C-g` is what the Emacs keymap gives.
+- **PAL-06 · SHOULD.** The active keymap's line and page chords move the selection, as do ↑ ↓ and Page Up/Down,
+  which always work. In Editora they are the chords of its `nav.lineDown`, `nav.lineUp`, `nav.pageDown` and
+  `nav.pageUp` commands, `C-n` and `C-p` among them in the Emacs keymap. Enter, or a click on an enabled row, runs
+  the command. The palette closes first, then the command runs.
+  - *Check (code):* the palette's key handler looks a press up in the active keymap and moves on the commands it
+    binds for a line and a page up and down, not on fixed letters, and on ↑ ↓ and Page Up/Down whatever the keymap;
+    the run path hides the card before it calls the registry, and does nothing on a disabled row.
+  - *Reference:* Editora [`CommandPalette.runSelected`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java), [`PickerKeys.resolve`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java), the only palette that asks the
+    keymap. The others move on fixed keys: the app template's [`ui/Picker.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Picker.java) on the arrows, the page keys and
+    `Ctrl+N` and `Ctrl+P` whatever the keymap; Termina's [`ui/PaletteKeys.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/PaletteKeys.java) and Mirada's [`ui/PaletteKeys.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/PaletteKeys.java) on a
+    fixed table of Emacs chords beside them (`EMACS`: `C-n`, `C-p`, `C-v`, `M-v`); Torrenta's
+    [`ui/CommandPalette.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/CommandPalette.java) (`onKey`) on the arrows and `Ctrl+N` and `Ctrl+P`, with no page keys; Modula's
+    [`ui/CommandPalette.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/CommandPalette.java) and nux's [`ui/CommandPalette.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/CommandPalette.java) on the arrows alone.
+- **PAL-07 · SHOULD.** The active keymap's cancel chord, Esc or a click on the scrim cancels, and focus returns to
+  where it was. In Editora the chord is that of its `edit.cancel` command, `C-g` in the Emacs keymap.
   - *Check (code):* Esc, the chord the active keymap binds to the cancel command, and a press on the backdrop all
     hide the overlay, and hiding focuses the node that had focus before it opened.
-  - *Reference:* Editora [`PickerKeys`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java) (`isCancel`), [`OverlayHost`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java) (`previousFocus`). The app template
-    hardcodes `Ctrl+G` in its [`ui/OverlayHost.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/OverlayHost.java).
+  - *Reference:* Editora [`PickerKeys`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java) (`isCancel`), [`OverlayHost`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java) (`previousFocus`), the only one that asks the
+    keymap for the chord. `Ctrl+G` is fixed in the app template's [`ui/OverlayHost.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/OverlayHost.java) and in the `EMACS` table
+    of Termina's [`ui/PaletteKeys.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/PaletteKeys.java) and Mirada's [`ui/PaletteKeys.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/PaletteKeys.java); Torrenta's, Modula's and nux's palettes
+    cancel on Esc alone.
 - **PAL-08 · SHOULD.** `C-h`, or the first of `C-h`, `F1`, `Shift+F1` the active keymap leaves free, opens the selected
   command's page on the website, for the running version.
   - *Check (code):* the docs chord is the first free one of the three, and the URL is built from the app's versioned

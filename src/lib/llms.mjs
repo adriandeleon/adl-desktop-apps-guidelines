@@ -114,17 +114,20 @@ to write the report; an edition supplies only its rules. In short:
    check says. *Check (test)*: find the named test, or the app's equivalent, and confirm the build runs it.
    *Check (by hand)*: source can't settle it; report it as manual. Some names in a rule's statement are required as
    written: a command id, a catalog key, a chord, a command-line flag, an environment variable, a property in
-   pom.xml or pauta.json, and a file the repository must carry. Any other name (a Java class, method or constant, a
-   CSS file or style class, a branch or workflow file, a config file's name), and every name only a Check or
-   Reference gives, is Editora's spelling, and the app's equivalent meets it.
+   pom.xml or pauta.json, and a file the repository must carry. A platform API the rule names (javafx.stage.Popup,
+   SystemTray, Future.get()) is the requirement itself. Any other name (a class, method or constant of the app's
+   own code, a CSS file or style class, a branch or workflow file, a config file's name), and every name only a
+   Check or Reference gives, is Editora's spelling, and the app's equivalent meets it.
 3. A rule applies to every app unless it is limited: its text names the apps it covers ("An app with user
    documents…"), its page or section opens with an **Applies to** line (\`appliesTo\` in rules.json), or it details a
    rule that is limited. A limited rule the app is outside of is \`limited\` and needs no exception.
 4. Read the app's \`src/main/resources/com/<app>/pauta.json\`, its recorded exceptions. An unmet rule it lists gets the
    entry's kind as its status (not-applicable, deviation, pending, or in a template app-only); MAYs need no entry.
-   An unmet MUST or SHOULD it doesn't list is \`fail\`. An entry for a rule that passes or is limited, and a deviation
-   or pending entry with no link, are problems to report. Its \`checked\` list records the by-hand rules a person
-   has checked and found met: give a \`manual\` result its entry, or report that it has none (PAUTA-18).
+   An unmet MUST or SHOULD it doesn't list is \`fail\`; so is an unmet MAY, which has no consequence. An entry for a
+   rule that passes or is limited, and a deviation or pending entry with no link, are problems to report. A by-hand
+   rule it lists as an exception gets that kind, not \`manual\`. Its \`checked\` list records the by-hand rules a
+   person checked and found met (PAUTA-18): a \`manual\` result carries its entry, one with none is reported as not
+   recorded, which is not a failure, and an entry older than the rule's \`changed\` is stale, a problem.
 5. Report one result per rule: ID, level, status and evidence as \`file:line\`. The statuses: ${Object.keys(STATUSES)
     .map((s) => `\`${s}\``)
     .join(", ")}. As JSON, the report follows ${base}audit.schema.json. A failed MUST blocks a release.
@@ -161,7 +164,7 @@ ${howTo(base, v)}
 ## Rules
 
 - [Every rule, as Markdown](${base}llms-full.txt): all ${rules.length} rules of this edition in one file, grouped by page.
-- [Every rule, as JSON](${base}rules.json): id, level, page, pageTitle, section, appliesTo, url, text, why, check and reference, with every page and every retired ID.
+- [Every rule, as JSON](${base}rules.json): id, level, changed, page, pageTitle, section, appliesTo, url, text, why, check and reference, with every page and every retired ID.
 - [Audit skill](${base}${SKILL}): how to audit an app against an edition, step by step, and write the report.
 - [Audit report schema](${base}audit.schema.json): the JSON Schema of an audit's report.
 

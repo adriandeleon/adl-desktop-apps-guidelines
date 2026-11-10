@@ -34,8 +34,8 @@ NullAway runs as an error on every package, each `@NullMarked` in its own `packa
   - *Check (code):* every test class that boots the toolkit (`FxTestSupport`, `FxToolkit`) carries `@Tag("fx")`.
   - *Reference:* Editora [`docs/testing.md`](https://github.com/adriandeleon/Editora/blob/master/docs/testing.md). Editora does not hold it fully yet: about twenty `*FxTest` classes,
     most of them `ProjectMap*FxTest`, carry no tag.
-- **QUAL-07 · SHOULD.** Tests do not sleep. Workers and FX callbacks are owned by a scope (`AsyncTestScope`), and
-  tests wait on latches.
+- **QUAL-07 · SHOULD.** Tests do not sleep. A scope owns the workers and FX callbacks (Editora's
+  `AsyncTestScope`), and tests wait on latches.
   - *Check (code):* `grep -rn 'Thread.sleep' src/test` finds nothing.
   - *Reference:* Editora [`AsyncTestScope`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/AsyncTestScope.java), [`docs/testing.md`](https://github.com/adriandeleon/Editora/blob/master/docs/testing.md). Many older Editora tests still poll with
     `Thread.sleep`.
@@ -67,5 +67,5 @@ Guard tests that pay for themselves across the family:
   - *Reference:* Editora [`ReleaseSupplyChainTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/packaging/ReleaseSupplyChainTest.java).
 
 Two more guard tests are rules on the pages they guard: the message parity test is
-[INTL-08](../i18n/#intl-08) (every key in every catalog) and [DOCS-09](../documentation/#docs-09) (every command has a
-description), and the contrast test is [ICON-14](../icons-and-color/#icon-14).
+[INTL-08](../i18n/#intl-08) (every key in every catalog) and [KBD-03](../keyboard/#kbd-03) (every command has a
+title and a description), and the contrast test is [ICON-14](../icons-and-color/#icon-14).

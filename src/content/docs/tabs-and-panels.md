@@ -44,7 +44,16 @@ rules in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/mai
 <li><span class="pin">9</span><span><strong>Bottom stripe.</strong> Its buttons carry a 14 px label beside the glyph, side by side; the open one is accent and bold.</span></li>
 </ol>
 
+## Window title
+
+- **TABS-10 · SHOULD.** The window title names the file, the project and the app, with a `●` prefix for an unsaved
+  file.
+  - *Check (code):* the code that sets the stage title adds all three and the marker.
+  - *Reference:* Editora [`MainController.updateWindowTitle`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java).
+
 ## Tabs
+
+**Applies to:** an app with a tab strip.
 
 - **TABS-01 · MUST.** Every tab operation is a command, so it can be bound to a chord, is in the palette and has a
   menu row: close, close others, close all, close unmodified, close to the left and right, pin, reopen closed, next
@@ -54,7 +63,8 @@ rules in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/mai
     `buffer.closeUnmodified`, `buffer.closeLeft`, `buffer.closeRight`, `buffer.togglePin`, `buffer.reopenClosed`,
     `buffer.next`), [`ui/TabContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabContextMenu.java). Editora has no previous-tab command yet.
 - **TABS-02 · MUST.** The header is the title: the Tab's own text stays empty, and a graphic header carries the
-  file-type glyph, the markers and the title in a `.tab-title` label. The tooltip is the full path.
+  file-type glyph, the markers and the title in a label of its own (Editora's style class for it is `tab-title`).
+  The tooltip is the full path.
   - *Why:* the graphic is what makes the header a drag handle and lets each state set its own color.
   - *Check (code):* every editor tab gets `setText("")` and a graphic with a `.tab-title` label; its tooltip is the
     file's path.
@@ -63,8 +73,8 @@ rules in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/mai
   pinned, muted italic for read-only.
   - *Check (code):* `app.css` styles `.tab-header.dirty`, `.tab-header.pinned` and `.tab-header.read-only`
     `.tab-title`, and the header sets those classes.
-  - *Reference:* Editora [`ui/TabHeaders.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabHeaders.java), [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css); the Unsaved, Pinned and Read-only rows of the Spec table
-    below.
+  - *Reference:* Editora [`ui/TabHeaders.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabHeaders.java), [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css); the Unsaved, Pinned and Read-only rows of the
+    [Spec](#spec) table.
 - **TABS-04 · MUST.** Bulk close skips pinned tabs: close others, close all, close unmodified and close to the left
   or right never close a pinned tab.
   - *Check (code):* `closeOtherTabs`, `closeAllTabs`, `closeUnmodifiedTabs` and `eligibleToLeft` /
@@ -98,29 +108,28 @@ rules in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/mai
   highlighted file. Its width is fixed to the longest path on each open, so it never resizes while you move.
   - *Check (by hand):* open it with several tabs and move through it; the list keeps its width.
   - *Reference:* Editora [`ui/Switcher.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Switcher.java), [`SwitcherFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/SwitcherFxTest.java).
-- **TABS-10 · SHOULD.** The window title names the file, the project and the app, with a `●` prefix for an unsaved
-  file.
-  - *Check (code):* the code that sets the stage title adds all three and the marker.
-  - *Reference:* Editora [`MainController.updateWindowTitle`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java).
-- **TABS-11 · SHOULD.** Tabs sit in the title bar through JavaFX 27's `HeaderBar`; see
-  [Window shell](../window-shell/).
-  - *Check (by hand):* the tab strip shares the title bar's row.
-  - *Reference:* Termina [`ui/TerminalWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalWindow.java).
 - **TABS-12 · SHOULD.** A command hides the tab bar.
   - *Check (code):* a registered command toggles the tab header.
   - *Reference:* Editora `view.toggleTabBar`, `.tab-pane.no-tab-header` in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css).
 
-![Termina window with tabs in the title bar and a tab context menu](../../assets/shots/termina-tabs.png "Termina's tabs in the title bar, with a tab's right-click menu.")
+Termina's `HeaderBar` holds the menu bar and the window title
+([`ui/TerminalWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalWindow.java), `buildHeaderBar`), and its tab strip is the row under it.
+
+![Termina window with a menu bar, a tab strip under it and a tab context menu](../../assets/shots/termina-tabs.png "Termina's tab strip, the row under the menu bar, with a tab's right-click menu.")
 
 ## Tool panels
 
+**Applies to:** an app with tool panels.
+
 - **TABS-13 · MUST.** A command toggles each panel (`tool.<id>`: `M-1` … `M-0` in the Emacs keymap for ten of
-  them), and the stripe button is the same command with a glyph.
-  - *Check (code):* every tool window registers a `tool.<id>` command, and its stripe button runs it.
+  them), and where the app has a stripe, its button runs the same command.
+  - *Check (code):* every tool window registers a `tool.<id>` command, and its stripe button, where there is one,
+    runs it.
   - *Reference:* Editora [`ui/ToolWindowManager.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolWindowManager.java), [`keymaps/emacs.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/emacs.json).
 - A panel's content is built on first use: [PERF-14](../performance/#perf-14).
 - **TABS-15 · SHOULD.** Panel state is restored: which windows are open, on which side, in what order, hidden or shown,
-  floating, and every divider position go to `workspace-state.json` and come back on the next launch.
+  floating, and every divider position go to the session-state file ([SET-08](../settings/#set-08); Editora's is
+  `workspace-state.json`) and come back on the next launch.
   - *Check (code):* the workspace state holds each of those, and the manager reads them back at startup.
   - *Reference:* Editora [`ui/ToolWindowManager.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolWindowManager.java), [`config/WorkspaceState.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/WorkspaceState.java).
 - **TABS-16 · SHOULD.** Panels dock on three sides, left, right and bottom, and a side holds at most two windows

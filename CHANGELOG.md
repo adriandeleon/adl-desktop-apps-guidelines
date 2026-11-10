@@ -8,14 +8,169 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 
 ## [Unreleased]
 
+### Added
+
+- **CONF-13 · MUST.** Every question has one default button, and it is never the red one: Cancel where the only
+  action is destructive, Save where saving is an option. The dialog opens with focus on it, so Enter destroys
+  nothing, on every OS. The apps did three different things: Enter runs the red action in Editora's Git
+  confirmations, Torrenta's Remove, Mirada's `Confirm` and Termina's removals, answers Cancel in Termina's
+  close-running-program question and nux's risky command, and has no default button to press in Editora's
+  unsaved-changes and Quit questions. The checklist has the line and *Gaps per app* the four apps.
+- **WIN-12 · MUST.** The app has a UI zoom: one setting scales the whole chrome, menus included, applies at once and
+  is kept across launches, with commands to zoom in, out and back. Where the app has content of its own to zoom,
+  `Ctrl/Cmd +`, `-` and `0` stay with the content zoom and the UI zoom's commands carry no fixed chord; elsewhere
+  those chords are the UI zoom. No app has one yet. **WIN-09** keeps the content zoom, still a SHOULD, and
+  **MENU-16** follows WIN-12, which it could not do while the zoom it scales with was optional and nowhere built.
+  The lines that still called menu fonts "pinned in absolute pixels" say 14 px at the default zoom.
+- **WIN-13 · MUST.** Every quit entry point runs one quit method: File → Quit, the quit command and the system's own
+  Quit, which on macOS is the application menu's and the Dock's. The rule was TRAY-04's and reached tray apps only;
+  **TRAY-04** keeps the tray's part. Only the app template meets it: Editora's macOS Quit still goes to each window.
+- **SET-22 · MUST.** A config file is written whole or not at all: to a temporary file beside it, then moved into
+  place. Every app's settings store already does it.
+- **REL-30 · MUST.** A release is cut only from a commit whose tests passed: the release workflow runs the suite, or
+  a preflight reads CI's result for the tagged commit. Every app's release already does one or the other.
+- **MENU-18 · SHOULD.** The menu row's metrics, which lived in a table: 34 px rows, a 22 px icon column, the chord
+  at least 18 px after the title, and a popup shadow whose offset is at least its radius. The template and Modula
+  differ.
+- *Same on every OS* gains the rows its "whole list" lacked: the macOS application menu, files opened from the OS,
+  file associations, the Trash and high contrast. "Primary modifier" is "Keymap chords", for what KBD-21 allows.
+
 ### Changed
 
+- **CONF-05** draws the unsaved-changes question's answers Cancel, Save, Discard, not Save, Discard, Cancel.
+  **WIN-11**, a MUST, already put Cancel to the left of the action on every OS, and the two disagreed; WIN-11 wins
+  and names the three-answer order too. Editora still draws the old order.
+- **CONF-06** leaves the default button of the close-running-program question to CONF-13, and keeps the red Close.
+- **PLAT-02 is a SHOULD**: a jlinked runtime in every installer is expected, not required. Mirada ships a GraalVM
+  native image on four of its five targets, with no Java runtime at all, and users still install nothing.
+- **DOCS-07**'s Help menu has a Welcome Page row, after Documentation, and Simple mode keeps it: **WELC-03** already
+  put the page under Help → Welcome Page, and the Help order had no such row. Editora's row is still in its View
+  menu.
+- **REL-26** asks for `timeout-minutes` on every job that runs steps: GitHub accepts none on a job that calls a
+  reusable workflow, so the rule could not be met. Its Check follows the statement, "never a run on the default branch".
+- **PLAT-10 requires a Format job of its own**, as REL-19 always did: Spotless's check bound to a build phase is no
+  longer enough, and the Command looks for `spotless:check` in a workflow that runs on pull requests. Torrenta and
+  Modula, which passed PLAT-10 while failing REL-19, now fail both.
+- **Which names in a statement are required.** A command id, a catalog key, a chord, a command-line flag, an
+  environment variable, a property in `pom.xml` or `pauta.json`, and a file the repository must carry are required
+  as spelled, because a user, the docs or another tool finds the thing by that name. Every other name is Editora's
+  spelling and an app's equivalent meets the rule: a Java class, method or constant, a CSS file or style class, a
+  branch or workflow file, a config file's name. 5.0.0 listed a style class and any file as required, and its
+  statements named `master`, `app.css` and `icon-line` as if they were. The statements are reworded to match:
+  "the default branch" in REL-06, REL-19 and REL-26, "the app stylesheet" in KBD-16 and ICON-12, and Editora's
+  names marked as Editora's in ICON-19, TABS-02, MENU-12, SET-09, PERF-06, QUAL-07, INTL-07, QOPEN-03, ABOUT-08,
+  PWIN-03 and PAUTA-10. The Coding agents page, `llms.txt` and the audit skill state the list.
+- **Rules for a feature apply to the apps that have it.** Tabs (an app with a tab strip), tool panels, the toolbar,
+  tool window stripes and Settings Sync's rules on the Settings page each open with an *Applies to*, so an app
+  without one records nothing, where the template recorded 44 `not-applicable` entries. TABS-10, the window title,
+  moves out from under Tabs and still covers every app; SET-15 and MENU-04 say in their own words which apps they
+  cover, as do the find bar's filter rules (FIND-03, FIND-13 to FIND-15) and replace rules (FIND-11, FIND-12).
+- **FIND-01 names the Debug Log**: a log window is text to search, so every app's Debug Log has a find bar. Only the
+  template's does.
+- **WIN-03 is for an app with a menu bar**, and on macOS allows an extended window whose header holds no menus, as
+  Mirada's is. Modula and nux, with no menu bar, are outside it.
+- **ICON-01 and ICON-02 cover Modula**: the page called it "the stated exception" while *Gaps per app* listed the
+  gap. Its readings may stay monospace as content; Inter on its menus, settings and dialogs is the gap.
+- **One rule per requirement.** Four IDs are retired: **TABS-11** (tabs in the title bar: no app does it, and it
+  cannot hold on macOS; nothing replaces it), **DOCS-09** into **KBD-03**, which now says "one-line", **PAUTA-12**
+  into **PWIN-01** with ABOUT-09 and PWIN-02, and **TBAR-10** into **MENU-06** with MENU-07. **DOCS-05** leaves the
+  bold one-line summary to REPO-02, and **PERF-17** leaves the AOT cache to REL-10 and keeps the `.bss` stylesheets.
+- **TRAY-01** asks for a StatusNotifierItem on Linux with no AWT fallback, in place of "the shared `tray/`
+  package", which was three diverged copies; Modula's and nux's fall back. **TRAY-09** asks that the text reach the
+  notifier as data, an argument or an environment variable a fixed script reads, never as part of a script, so
+  Editora and Termina meet it.
+- **TRAY-14** and **CLI-09** name AWT's other allowed uses on macOS beside the tray: the dock badge, open-file
+  handlers and Move to Trash.
+- **CLI-11** no longer names the console launcher `<app>-cli`: any console launcher that runs the same entry point
+  passes, and Torrenta's `torrenta-nox` does.
+- **CONF-03** adds that a question's buttons are named from the catalog, never JavaFX's stock OK, Yes or Cancel,
+  which are worded in the JVM's locale. It was a line in the spec table. Editora still has more than twenty.
+- **KBD-06** matches over the title and the id's words or keywords; the description is shown, not matched, which is
+  what the apps do.
+- **PAL-06**, **PAL-07** and **QOPEN-07** take the active keymap's line, page and cancel chords, as QOPEN-06 does;
+  `C-n`, `C-p` and `C-g` are what the Emacs keymap gives, and other things in CUA.
+- **SET-08** and **TABS-15** require preferences and session state in separate files; `settings.json` and
+  `workspace-state.json` are Editora's names. **SET-04** adds that a setting which waits for a restart says so on
+  its row.
+- **PERF-11** drops "with a note of what was cut", which no app did where it kept the newest. **REL-03** says
+  JReleaser also runs the Homebrew and winget packagers. **DOCS-16** asks for the website's docs in a pull request
+  opened with the code's, since they live in another repository, and for `TODO.md` only where the app keeps one.
 - **PLAT-11** no longer requires TestFX: FX tests run on JUnit over the Headless glass platform, and TestFX MAY
   drive them. Torrenta, Termina, Modula and nux test that way without it, and failed the MUST only for the
   dependency ([#19](https://github.com/adriandeleon/adl-desktop-apps-guidelines/issues/19)).
 - **KBD-09**'s terminal keymap binds no app command to a plain `Ctrl` or `Alt` with a letter off macOS, since those
   belong to the shell, and **KBD-10**'s extra keymaps don't apply to a terminal
   ([#18](https://github.com/adriandeleon/adl-desktop-apps-guidelines/issues/18)).
+
+### Fixed
+
+- **The Confirm dialog's mockups** draw what the rules ask: Close in red in the close-running-program question
+  (CONF-06 made it red in 5.0.0 and the drawing stayed plain), and Cancel as the default button of each question.
+  The spec's Default button row states the rule instead of listing what each app does.
+- **Checks that test what their rules already ask.**
+  - **PLAT-01**'s Check and Command no longer demand an enforcer rule the statement never asked for, so Modula and
+    nux pass; where the build has one, its range is the open-ended `[25,)`, so Torrenta's `[25,26)` still fails and
+    a floor of 26 no longer passes.
+  - **PLAT-09** and **PLAT-13**'s Commands fail in a folder with a `pom.xml` and no sources, where they passed.
+  - **SET-07**'s Check tests the default folder on each OS, not only the resolver's order, which Mirada has while
+    keeping its settings in the OS's own folder.
+  - **DIAG-04**'s Check tests the echo message. Termina, Mirada and the template post it; Editora and Torrenta
+    don't yet, and the Reference said Termina didn't.
+  - **INTL-07**'s Check fails a string literal handed to a control, as Torrenta's `UiStringSweepTest` does; the test
+    it named only checks that keys exist.
+  - **INTL-12**'s Check fails a value with a placeholder and "(s)", not every "(s)". No app has the test, and
+    Editora has 22 such values, not a few.
+  - **INTL-13**'s Check covers the catalogs too: Editora writes chords untranslated and still says "Strg" and
+    "Mayús" in translated text.
+  - **MENU-14**'s Check reads the glyph in a menu-bar row's icon column, since a `CustomMenuItem`'s `getGraphic()`
+    is always null.
+  - **WIN-11**'s Check asks for an order string with Cancel before every action; "one constant" passed
+    `BUTTON_ORDER_WINDOWS`, which puts the action on the left.
+  - **DOCS-04**'s Check asks that the site's build or deploy runs the docs check. Nothing in editora-website runs
+    `check:docs`, so it never failed the site.
+  - **REL-29**'s Check says "on each OS", as its statement does.
+- **ACC-02** lists `FIRE`, `EXPAND` and `COLLAPSE`: JavaFX has no `TOGGLE` action.
+- **References the code contradicted:**
+  - **CLI-11**: Torrenta ships a console launcher on Windows, `torrenta-nox`; "no app prints" was not true.
+  - **ABOUT-01**: Editora has no About item in the macOS application menu; Termina and Mirada do.
+  - **ABOUT-10**: the app template implements it; it said "no app yet".
+  - **ABOUT-05**, **ABOUT-06**, **ABOUT-08** and **PAUTA-17**: Mirada names its edition and has the `## Pauta`
+    section too.
+  - **ICON-16**: Termina follows the system. **ICON-05**: only Torrenta's `editora-light.css` is stale.
+  - **KBD-06** and the palette's spec: Editora scores the title, the id's namespace word and other IDEs' names,
+    and shows the description without matching it.
+  - **TBAR-01** and **TBAR-03**: Mirada and Termina have naming helpers and read the chord from the keymap.
+  - Termina's tabs are not in its title bar: its `HeaderBar` holds the menu bar and the title, and four captions
+    said otherwise.
+  - **SET-11**: Mirada keeps the backup of a file it cannot decode.
+  - **TRAY-01** and the tray page: Modula's and nux's tray code are earlier copies that fall back to AWT on Linux.
+  - **TRAY-09**: Editora and Termina pass the text to PowerShell in environment variables, and nux has no toast.
+  - **MENU-05** and **MENU-15**: Editora's right-click menus are built by hand; the template's come from the
+    registry.
+  - **REL-15**: Torrenta launches the app before notarizing it, not after. **REL-16**: Mirada signs its Linux
+    downloads in full. **REL-22**: the `v2` in the example is a branch.
+  - **PERF-06**: `FxThrottle` is a throttle with no `pending` flag. **DOCS-04**: `WindowCommandRegistrar` holds the
+    `Command.of` calls. **WIN-08**: the test named does not touch window geometry.
+  - **DIAG-06**: Editora's and Torrenta's reports have no settings summary. **PAL-10**: Mirada matches the sizes
+    and reads its prompt from the catalog. **PWIN-05**: the template sorts three kinds and has no `app-only` yet.
+  - **FIND-06** says which key goes which way in a terminal, and the find bar's spec says which values are
+    Editora's and which Termina's.
+- **References that leaned on their page** link the section instead of "the table below": PERF-04, TABS-03,
+  MENU-08, TRAY-01, PAL-02, QOPEN-02, WELC-02, ABOUT-04 and SYNC-02.
+- **The family pages**, from the code at the commits 5.0.0 pins:
+  - **The matrix**: nineteen cells, most in Termina's and Mirada's columns (keymaps, configuration export,
+    `--config-dir`, accessible names, AtlantaFX, Keep a Changelog), with Editora's keymap count, its
+    confirmations that still say OK, and Modula's notifications.
+  - **Gaps per app** adds the open MUSTs it left out: OS-02 and WIN-11 for the whole family, WIN-03, CLI-11 and
+    ABOUT-01 where they are missing, and each app's own. It drops two that were not gaps: Mirada's config backup
+    and Termina's uncaught-error message.
+  - **Shared features**: eleven per-app claims and three rows that pointed at rules that don't hold the feature.
+  - **Same on every OS** lists six more differences found in the apps, each with the rule it breaks.
+- The platform page's everyday commands say which repos have each: the fat jar is Editora's and the template's,
+  and `-Pdist package` builds the app image alone in five repos.
+- The overview says nearly every rule names code to copy; eighteen say no app does yet.
+- The Markdown download and the PDF show the block to copy into an app's `AGENTS.md` with `## Pauta`, as the page
+  and PAUTA-17 do; they had `### Pauta`.
 
 ## [5.0.0] - 2026-11-09
 

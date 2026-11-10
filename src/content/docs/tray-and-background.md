@@ -6,7 +6,9 @@ description: "An app that keeps working behind a tray icon: the icon and its men
 An app whose work goes on without its window (Torrenta's transfers, Modula's radio, nux's monitoring) lives behind a
 tray icon. Reference: Torrenta's [`tray/`](https://github.com/adriandeleon/torrenta/tree/master/src/main/java/com/torrenta/tray) package ([`Trays`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/tray/Trays.java), [`TorrentaTray`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/tray/TorrentaTray.java), [`SniTray`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/tray/SniTray.java), [`AwtTray`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/tray/AwtTray.java), [`TrayIconRenderer`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/tray/TrayIconRenderer.java),
 [`SniMenuModel`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/tray/SniMenuModel.java)), [`os/Autostart`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/os/Autostart.java) with [`os/AutostartSpec`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/os/AutostartSpec.java), and [`automation/Notifiers`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/automation/Notifiers.java). Modula's and nux's [`tray/`](https://github.com/adriandeleon/nux/tree/master/src/main/java/com/nux/tray) packages
-are the same code with their own menus; nux's [`TrayController`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/app/TrayController.java) holds the close policy.
+are earlier copies of it with their own menus: on Linux both fall back to the AWT tray when the StatusNotifierItem
+fails, and `Trays.create` returns a tray or nothing, with no reason (nux [`tray/Trays.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/tray/Trays.java), Modula [`tray/Trays.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/tray/Trays.java)).
+Only Torrenta has `Trays.Attempt`, the reason and no fallback. nux's [`TrayController`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/app/TrayController.java) holds the close policy.
 
 **Applies to:** an app whose work goes on without its window, as Torrenta's, Modula's and nux's does. For the others
 (Editora, Termina, Mirada) a tray is MAY, none has one, and only [Notifications](#notifications) applies, to an app
@@ -40,20 +42,23 @@ that sends them.
 Tray menus are text only: AWT's `PopupMenu` and dbusmenu show no item icons, so the [menu rules](../menus/) about
 icons and chords do not apply here. The order does.
 
-- **TRAY-01 · MUST.** The tray comes from the shared `tray/` package: a StatusNotifierItem on Linux, AWT's
-  `SystemTray` on Windows and macOS, created off the FX thread after the first frame.
-  - *Why:* D-Bus and AWT can block, and neither is worth a stalled first frame.
-  - *Check (code):* `Trays.create` picks `SniTray` on Linux and `AwtTray` elsewhere, and the window calls it from a
-    background thread.
-  - *Reference:* Torrenta [`tray/Trays.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/tray/Trays.java), [`MainWindow.installTray`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java); the Spec table below.
+- **TRAY-01 · MUST.** The tray is a StatusNotifierItem on Linux, with no AWT fallback, and AWT's `SystemTray` on
+  Windows and macOS, created off the FX thread after the first frame.
+  - *Why:* D-Bus and AWT can block, and neither is worth a stalled first frame. On Linux AWT's tray is the XEmbed
+    one, which GNOME dropped in 3.26 and Wayland never had, so there is nothing worth falling back to.
+  - *Check (code):* on Linux the tray factory makes the StatusNotifierItem or reports that there is no tray, with no
+    `AwtTray` fallback; on Windows and macOS it makes the AWT tray; the window calls it from a background thread.
+  - *Reference:* Torrenta [`tray/Trays.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/tray/Trays.java) (`create`), [`MainWindow.installTray`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java); the [Spec](#spec) table.
+    Modula and nux don't pass yet: on Linux their `Trays.create` falls back to `AwtTray` when `SniTray` fails (Modula
+    [`tray/Trays.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/tray/Trays.java), nux [`tray/Trays.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/tray/Trays.java)).
 
 ### Spec
 
 | Property | Value | Reference |
 |---|---|---|
-| Linux backend | A StatusNotifierItem on the session bus, found through `org.kde.StatusNotifierWatcher`: KDE natively, GNOME with the AppIndicator extension, X11 and Wayland alike. No AWT fallback: the XEmbed tray GNOME dropped in 3.26 and Wayland never had | `SniTray`, `StatusNotifierWatcher`, `Trays.create` |
+| Linux backend | A StatusNotifierItem on the session bus, found through `org.kde.StatusNotifierWatcher`: KDE natively, GNOME with the AppIndicator extension, X11 and Wayland alike. No AWT fallback in Torrenta: the XEmbed tray GNOME dropped in 3.26 and Wayland never had. Modula and nux still fall back to it | `SniTray`, `StatusNotifierWatcher`, `Trays.create` |
 | Windows and macOS | AWT `SystemTray`, every mutation on the EDT, a multi-resolution image so a HiDPI tray picks a crisp variant | `AwtTray` |
-| Created | Off the FX thread, after the first frame (D-Bus and AWT can block); the outcome is a tray or the one-line reason there is none | `Trays.Attempt`, `MainWindow.installTray` |
+| Created | Off the FX thread, after the first frame (D-Bus and AWT can block); in Torrenta the outcome is a tray or the one-line reason there is none, in Modula and nux a tray or nothing | `Trays.Attempt`, `MainWindow.installTray` |
 | Icon | Pure Java2D from the branding SVG's geometry, at each size the backend asks for, so the panel entry and the dock entry are one mark | `TrayIconRenderer`, `TrayDisplay` |
 | Attention | A state that needs a person sets the SNI status `NeedsAttention`; otherwise `Active` | `SniTray.update` |
 | Left click | Shows the window: SNI `Activate` and `SecondaryActivate`, a single primary click on the AWT icon | `SniTray.Item`, `AwtTray` |
@@ -78,15 +83,23 @@ icons and chords do not apply here. The order does.
     sits after the tray is created.
   - *Reference:* Torrenta [`MainWindow.setOnCloseRequest`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java), Modula's `installCloseBehaviour`, nux's
     [`TrayController.closeHidesWindow`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/app/TrayController.java) and `updateImplicitExit`.
-- **TRAY-04 · MUST.** Quit is explicit and one path: the tray's Quit, File → Quit and the system's Quit all run the
-  same method, which closes open dialogs first and saves the window geometry.
-  - *Why:* quitting from inside a nested event loop aborted the JVM.
-  - *Check (code):* every quit entry point calls the one quit method. On macOS that includes the app menu's and the
-    Dock's Quit, which JavaFX turns into a close request on every window (`GlassStage.requestClosingAllWindows`)
-    unless the app catches Glass's quit action; a tray app that doesn't would hide to the tray instead of quitting.
-  - *Reference:* Torrenta [`MainWindow.quit`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java) for the tray and File → Quit; it doesn't catch macOS's Quit
-    yet, so there Quit hides the window. Editora's [`MacOpenFiles`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/MacOpenFiles.java) wraps Glass's handler (`handleQuitAction`), the
-    place to call the quit method from.
+- **TRAY-04 · MUST.** The tray's Quit runs the app's one quit method ([WIN-13](../window-shell/#win-13)), and a quit
+  ends the program with the window showing or hidden to the tray: the close handler never takes a quit for a close
+  and hides the window, and the method exits outright, since closing the last window no longer does
+  ([TRAY-03](#tray-03)).
+  - *Why:* a close hides a tray app's window, so a quit that goes through a close leaves the program running behind
+    its icon. The tray's Quit also arrives while a dialog may be open, and quitting from inside a nested event loop
+    aborted the JVM, which is why the quit method closes dialogs first.
+  - *Check (code):* the tray's Quit callback runs the quit method on the FX thread; the method marks the quit, so the
+    close handler doesn't hide the window, tears down when the window is already hidden, and calls `Platform.exit`.
+    On macOS the app menu's and the Dock's Quit reach the method too ([WIN-13](../window-shell/#win-13)): JavaFX
+    turns them into a close request on every window (`GlassStage.requestClosingAllWindows`), and a tray app that
+    doesn't catch Glass's quit action hides to the tray instead of quitting.
+  - *Reference:* Torrenta [`MainWindow.quit`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java) for the tray and File → Quit: it sets `quitting`, which the close
+    handler reads, closes open dialogs and waits for their loops, then closes the window or, when it is hidden,
+    shuts down directly. It doesn't catch macOS's Quit yet, so there Quit hides the window. Modula's tray Quit runs
+    [`ModulaApp.quit`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ModulaApp.java) and nux's calls `Platform.exit` ([`App`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/App.java)), as its `app.quit` command does; neither closes open dialogs
+    first or catches macOS's Quit.
 - **TRAY-05 · SHOULD.** `--minimized` comes up behind the icon. The window is never shown until the tray attempt
   has answered; if no icon comes, the window is shown after all. With the tray setting off, Torrenta starts
   minimized instead and nux ignores the flag.
@@ -121,27 +134,39 @@ icons and chords do not apply here. The order does.
   [single-instance hand-off](../command-line/) shows a window hidden to the tray before it opens what it was given.
   - *Check (by hand):* close to the tray, then launch the app again with a file.
   - *Reference:* Torrenta [`MainWindow.showFromTray`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java).
-- **TRAY-14 · SHOULD.** AWT stays headless unless the tray needs it. Linux never needs it; Windows and macOS lift the
-  guard only when the tray setting is on, decided in `main`. A tray turned on later says "restart to show the tray
-  icon" rather than "unsupported".
-  - *Check (test):* a test holds that AWT is headful only where the tray is AWT's and wanted.
-  - *Reference:* Torrenta [`Trays.usesAwt`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/tray/Trays.java), `os.AwtUse`, [`TraysTest`](https://github.com/adriandeleon/torrenta/blob/master/src/test/java/com/torrenta/tray/TraysTest.java).
+- **TRAY-14 · SHOULD.** AWT stays headless unless something AWT is wanted: the tray on Windows and macOS, and on
+  macOS the dock badge ([TRAY-12](#tray-12)), the open-file handlers and Move to Trash. Linux never needs it. `main`
+  decides once, from the settings, before any AWT class loads ([CLI-09](../command-line/#cli-09)), so a tray turned
+  on later says "restart to show the tray icon" rather than "unsupported".
+  - *Check (test):* a test holds that AWT is headful only where one of those uses is wanted on this OS: never on
+    Linux, for the tray alone on Windows, and for the tray, the badge or a handler on macOS.
+  - *Reference:* Torrenta [`os/AwtUse.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/os/AwtUse.java) (`headful`, which `App.main` asks once with the tray, badge and handler
+    settings), [`AwtUseTest`](https://github.com/adriandeleon/torrenta/blob/master/src/test/java/com/torrenta/os/AwtUseTest.java) (`awtIsHeadfulOnlyWhereSomethingAwtIsWanted`); [`Trays.usesAwt`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/tray/Trays.java) and [`TraysTest`](https://github.com/adriandeleon/torrenta/blob/master/src/test/java/com/torrenta/tray/TraysTest.java) for the tray
+    alone, and `Trays.create`, which gives the restart reason (`tray.reason.restart`) when AWT was left headless.
+    Modula and nux never set `java.awt.headless`, so AWT is headful on every OS.
 
 ## Notifications
 
 **Applies to:** every app that sends desktop notifications, with a tray or without one: Torrenta and nux
 for their own events, Editora and Termina for a program's OSC 9 and OSC 777.
 
-- **TRAY-09 · MUST.** Desktop notifications go through one `Notifier`: `notify-send` on Linux (nux and Termina fall
-  back to `gdbus` against the freedesktop service), `osascript` with `display notification` on macOS, a PowerShell
-  toast on Windows. Each is a short program run with the title and message as arguments, never as part of a script,
-  off the FX thread and bounded to a few seconds; a failure is logged and never breaks the app.
+- **TRAY-09 · MUST.** Desktop notifications go through one notifier: `notify-send` on Linux (with `gdbus` against
+  the freedesktop service where it is missing), `osascript` with `display notification` on macOS, a PowerShell
+  toast on Windows. Each is a short program, and the text reaches the program as data (an argument, or an
+  environment variable a fixed script reads), never as part of a script. It runs off the FX thread, bounded to a few
+  seconds; a failure is logged and never breaks the app.
   - *Why:* text from a torrent name or a remote shell then cannot run anything.
-  - *Check (test):* a test holds that each platform's command line passes the text as arguments and that a missing
-    program is a problem, not an exception.
-  - *Reference:* Torrenta [`automation/Notifiers.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/automation/Notifiers.java), [`ProcessNotifier`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/automation/ProcessNotifier.java), [`NotifierTest`](https://github.com/adriandeleon/torrenta/blob/master/src/test/java/com/torrenta/automation/NotifierTest.java) (it ships [`toast.ps1`](https://github.com/adriandeleon/torrenta/blob/master/src/main/resources/com/torrenta/automation/toast.ps1));
-    Termina's [`DesktopNotifier`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/DesktopNotifier.java). nux's [`service/Notifier`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/service/Notifier.java) doesn't meet it yet: on macOS it
-    escapes the message into an AppleScript string instead of passing it as an argument.
+  - *Check (test):* a test holds that each platform's command line carries the title and the message as arguments
+    or environment variables of their own, that the script it runs is fixed and never has the text concatenated
+    into it, and that a missing program is a problem, not an exception.
+  - *Reference:* Torrenta [`automation/Notifiers.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/automation/Notifiers.java), [`ProcessNotifier`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/automation/ProcessNotifier.java), [`NotifierTest`](https://github.com/adriandeleon/torrenta/blob/master/src/test/java/com/torrenta/automation/NotifierTest.java) (it ships [`toast.ps1`](https://github.com/adriandeleon/torrenta/blob/master/src/main/resources/com/torrenta/automation/toast.ps1),
+    which takes the title and message as parameters). Editora's [`terminal/DesktopNotifier.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/terminal/DesktopNotifier.java) and Termina's
+    [`ui/DesktopNotifier.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/DesktopNotifier.java) meet it on every OS: the text is an argument of `notify-send` and of `osascript` (a fixed
+    `on run argv` script), a GVariant string for `gdbus`, and on Windows two environment variables that a fixed
+    PowerShell script (`-EncodedCommand`) reads. nux's [`service/Notifier`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/service/Notifier.java) has no PowerShell toast: on Windows it hands the
+    notification to the tray, which shows AWT's balloon ([`tray/AwtTray.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/tray/AwtTray.java), `displayMessage`). nux doesn't meet the rule
+    on macOS yet: it escapes the title and the message into an AppleScript string (`appleScriptEscape`) and passes
+    the whole script to `osascript -e`.
 - **TRAY-10 · MUST.** Notifications are for what happened while the window was away, with one switch per event and
   few on by default.
   - *Check (code):* each notified event has its own setting, and most default to off.

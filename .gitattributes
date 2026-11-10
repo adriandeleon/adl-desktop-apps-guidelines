@@ -1,0 +1,4 @@
+# Every text file is checked out with LF endings, on Windows too: the scripts read the pages, the changelog and their
+# own front matter line by line ("---\n"), and the shell scripts must stay runnable.
+* text=auto eol=lf
+*.png binary

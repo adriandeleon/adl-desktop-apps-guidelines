@@ -5,8 +5,8 @@ description: "The family's list picker: the palette card with a title and a prom
 
 The picker for every "choose one from a list" moment: recent files, themes, keymaps, a setting's values, a branch to
 compare with. It is the [Command Palette](../command-palette/) card with a title over the field and a prompt in it, so
-a list choice is made the way a command is run: type a few letters, Enter. The [keyboard page](../../keyboard/)
-states the rule; this page is the shape.
+a list choice is made the way a command is run: type a few letters, Enter. The rule is [QOPEN-01](#qopen-01), on
+this page; the rest is the shape.
 
 ## Rules
 
@@ -21,7 +21,7 @@ states the rule; this page is the shape.
 - **QOPEN-02 · SHOULD.** The picker is the palette's card in the shared in-scene overlay host, with a title naming the
   command over the field and a prompt in the field; never a `javafx.stage.Popup`.
   - *Check (code):* the picker shows its card through the overlay host and sets a title and a prompt text.
-  - *Reference:* Editora [`QuickOpen.setOverlayHost`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java), [`ui/OverlayHost.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java); the Spec table below.
+  - *Reference:* Editora [`QuickOpen.setOverlayHost`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java), [`ui/OverlayHost.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java); the page's [Spec](#spec).
 
 ## Anatomy
 
@@ -45,7 +45,7 @@ states the rule; this page is the shape.
 <li><span class="pin">2</span><span><strong>Query field</strong> with a prompt per picker: "Type to filter recent files…", "Type to filter themes…". The Emacs caret keys work in it (<code>TextInputKeymap.installShared</code>).</span></li>
 <li><span class="pin">3</span><span><strong>Match highlight.</strong> The characters the fuzzy matcher scored, bold in the accent color; the same <code>MatchText.runs</code> as the palette, so the highlight and the rank never disagree.</span></li>
 <li><span class="pin">4</span><span><strong>Selected row.</strong> The first match, or with nothing typed the value in force when the picker knows it (<code>setCurrentItem</code>), so a settings picker opens on the current value.</span></li>
-<li><span class="pin">5</span><span><strong>Detail</strong>, right-aligned and muted: the file's folder, a branch's upstream, "current". It gives way with an ellipsis; the title keeps its width and never wraps.</span></li>
+<li><span class="pin">5</span><span><strong>Detail</strong>, right-aligned, in the palette's key-chip style (the keyboard color, <code>-state-key</code>, in Editora): the file's folder, a branch's upstream, "current". It gives way with an ellipsis; the title keeps its width and never wraps.</span></li>
 <li><span class="pin">6</span><span><strong>Icon</strong> (optional, <code>setItemIcon</code>): a file-type glyph from <code>FileIcons</code>. A per-row class marks state (an unsaved buffer in amber).</span></li>
 <li><span class="pin">7</span><span><strong>Key legend.</strong> "↵ select" plus any row action's key, rebuilt from the active keymap on every showing.</span></li>
 </ol>
@@ -58,7 +58,7 @@ states the rule; this page is the shape.
 | Width | 620 px; a picker may ask for its own width and a minimum number of rows (a registry browser with one entry still gets a roomy box) | `DEFAULT_WIDTH`, `setPreferredSize` |
 | Rows | 26 px fixed cells; the list hugs its match count, at least 1 row, 12 before it scrolls | `CELL_HEIGHT`, `MAX_VISIBLE`, `resizeList` |
 | Title | Bold 12 px, `-color-fg-muted`, over the field | `.command-palette .palette-title` |
-| Row | Title as matched runs, an optional icon before it, the detail in the palette's muted right-detail style | `ItemCell`, `.keybinding` |
+| Row | Title as matched runs, an optional icon before it, the detail in the palette's key-chip style, `-state-key` in Editora | `ItemCell`, `.keybinding` |
 | Legend | 11 px muted under the list | `.command-palette .palette-hint` |
 | Card | `-color-bg-overlay`, radius 12, 1 px `-color-border-default`, padding 6: the palette's | `.command-palette` |
 | Ranking | `FuzzyMatch` over the search key (the label unless the picker names another, a note's body for instance); equal scores keep the supplier's order | `filter` |
@@ -66,7 +66,8 @@ states the rule; this page is the shape.
 ## Behavior
 
 - **QOPEN-03 · SHOULD.** The items are read fresh on every showing and snapshotted, so typing filters a stable list. A
-  source that answers late (an outline the language server has not returned yet) calls `reload()`.
+  source that answers late (an outline the language server has not returned yet) has the picker read its items again
+  and keep the query (`reload()` in Editora).
   - *Check (code):* `show` calls the items supplier; `reload` re-reads it and keeps the query.
   - *Reference:* Editora [`QuickOpen.show`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java), [`QuickOpen.reload`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java).
 - **QOPEN-04 · SHOULD.** With nothing typed the list keeps the supplier's own order (recency for recent files, document
@@ -83,11 +84,12 @@ states the rule; this page is the shape.
   already back where it belongs.
   - *Check (code):* the accept path hides the card before it calls the choice handler.
   - *Reference:* Editora [`QuickOpen`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java) (`hide()` then `onChoose`), [`PickerKeys.resolve`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java).
-- **QOPEN-07 · SHOULD.** Esc, `C-g` or a click on the scrim cancels, and the host restores focus. A picker that
-  previewed something undoes it.
+- **QOPEN-07 · SHOULD.** The active keymap's cancel chord (`edit.cancel`), Esc or a click on the scrim cancels, and
+  the host restores focus; `C-g` is what the Emacs keymap gives. A picker that previewed something undoes it.
   - *Check (test):* a test previews a row, dismisses the picker and finds the preview undone.
-  - *Reference:* Editora [`OverlayHost`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java) (`previousFocus`), [`QuickOpenPreviewFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/QuickOpenPreviewFxTest.java)
-    (`dismissingRestoresWhatWasPreviewed`).
+  - *Reference:* Editora [`OverlayHost`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java) (`previousFocus`; it cancels on [`PickerKeys.isCancel`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java)),
+    [`QuickOpenPreviewFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/QuickOpenPreviewFxTest.java) (`dismissingRestoresWhatWasPreviewed`). The app template hardcodes `Ctrl+G` in its
+    [`ui/OverlayHost.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/OverlayHost.java).
 - **QOPEN-08 · MAY.** A picker previews the highlighted row as the selection moves and undoes the preview on cancel
   (Recent Locations shows each place and returns to the origin on Esc). A preview without an undo is worse than none,
   and nothing is previewed for the row the picker opens on, only for one the user moved to. The theme and keymap
@@ -138,7 +140,8 @@ own actions.
 | `switcher.header` | Open Files |
 
 A title names the command; a prompt starts with "Type to filter" and ends with an ellipsis. A placeholder says what is
-missing and what to do ("No breakpoints set. Click a line number to add one.").
+missing and what to do ("There are no breakpoints. Click left of a line number to set one.",
+`status.debug.noBreakpoints`).
 
 ## In the apps
 

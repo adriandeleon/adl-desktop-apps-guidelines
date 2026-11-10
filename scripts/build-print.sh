@@ -30,7 +30,10 @@ sed -n '/^## /,$p' "$out/adl-desktop-apps-guidelines.md" \
 python3 -I scripts/print-markup.py "$work/raw.html" "$work/guide.html" src/styles/templates.css
 
 # 4. PDF, with bookmarks from the headings.
-chrome=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)
+chrome=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser) || {
+  echo "build-print: no Chrome on the PATH (google-chrome, google-chrome-stable, chromium or chromium-browser); the PDF is printed with it" >&2
+  exit 1
+}
 pdf="$out/adl-desktop-apps-guidelines.pdf"
 rm -f "$pdf"
 "$chrome" --headless=new --disable-gpu --no-sandbox --no-pdf-header-footer --generate-pdf-document-outline --virtual-time-budget=10000 \

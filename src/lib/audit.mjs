@@ -159,7 +159,11 @@ export function rulesSchema(base) {
           required: ["id", "edition", "see", "seeUrl"],
           properties: {
             id: { type: "string", pattern: ID },
-            edition: { type: "string", pattern: VERSION, description: "The edition that retired it." },
+            edition: {
+              type: "string",
+              pattern: `${VERSION}|^Unreleased$`,
+              description: 'The edition that retired it; "Unreleased" in a build of the batch after the newest edition.',
+            },
             see: { ...text, description: "The rule that holds its requirement now." },
             seeUrl: text,
           },

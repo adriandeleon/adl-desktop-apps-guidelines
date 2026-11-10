@@ -20,10 +20,14 @@ description: "The Settings window with search, live apply, versioned config and 
   - *Check (test):* a unit test ranks a title hit above a keyword hit and a whole word above part of one.
   - *Reference:* Editora [`ui/SettingsSearch.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsSearch.java), [`SettingsSearchTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/SettingsSearchTest.java).
 - **SET-04 · MUST.** Settings apply live, with no Save button. Text fields commit on Enter or focus loss; invalid
-  values are marked and never committed.
-  - *Check (code):* no Save or Apply button in the window; text fields commit through `commitOnEnterOrBlur`.
+  values are marked and never committed. A setting that cannot apply until a restart says so on its own row.
+  - *Check (code):* no Save or Apply button in the window; text fields commit through `commitOnEnterOrBlur`; and
+    every setting the app reads only at startup (the language, the window's style) names the restart in its own
+    row's text.
   - *Reference:* Editora [`SettingsWindow.commitOnEnterOrBlur`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsWindow.java); [`SettingsSyncPage`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsSyncPage.java)'s branch field marks an invalid
-    branch.
+    branch. Rows that wait for a restart say so: Editora's interface language ("Applies after restarting Editora.",
+    `settings.uiLanguage.note`), and Torrenta's tray icon, which on Windows and macOS "applies after restarting
+    Torrenta" (`settings.general.trayIcon.desc`, in [`ui/SettingsWindow.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/SettingsWindow.java)).
 - **SET-05 · SHOULD.** A change made in one window reaches every other open window.
   - *Check (test):* an FX test changes a setting in one window and finds it applied in the other.
   - *Reference:* Editora: every window holds the same [`config/SharedConfig.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/SharedConfig.java), which announces each change
@@ -57,14 +61,22 @@ keymap, a theme, a language), not when the developer could not decide.
 - **SET-07 · MUST.** Config lives in `~/.<app>`, unless `<APP>_CONFIG_DIR` or a command-line flag
   ([CLI-02](../command-line/#cli-02)) names another folder.
   - *Check (code):* one resolver picks the folder, in the order `--config-dir`, the environment variable, the
-    default.
-  - *Reference:* Editora [`App`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java) and [`ConfigManager.configDirFor`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/ConfigManager.java), [`ConfigDirTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/config/ConfigDirTest.java).
-- **SET-08 · SHOULD.** `settings.json` holds preferences, `workspace-state.json` session state, and other stores
-  their own JSON files.
-  - *Check (code):* the config folder's file names are constants in the config package.
-  - *Reference:* Editora [`config/ConfigManager.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/ConfigManager.java), [`config/WorkspaceState.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/WorkspaceState.java).
-- **SET-09 · MUST.** Every versioned file has a `SCHEMA_VERSION` and a `v → v+1` migration step. A purely additive
-  field uses an identity step.
+    default, and the default is `<user.home>/.<app>` on Windows, macOS and Linux alike: the resolver doesn't branch
+    on the OS, or a test resolves the default as each OS and finds the same folder.
+  - *Reference:* Editora [`App`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java) and [`ConfigManager.configDirFor`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/ConfigManager.java), [`ConfigDirTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/config/ConfigDirTest.java). Mirada's resolver
+    ([`settings/Settings.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/settings/Settings.java), `defaultFile` and `folder`) has the order but a default that depends on the OS:
+    `~/Library/Application Support/Mirada` on macOS, `%APPDATA%\Mirada` on Windows, `~/.mirada` elsewhere.
+- **SET-08 · SHOULD.** Preferences live in one file and session state (where the window was, what was open) in
+  another, and every other store has a file of its own. Editora's are `settings.json` and `workspace-state.json`.
+  - *Check (code):* preferences and session state are separate files: the file that holds what the user chose in
+    Settings holds no window geometry and no list of open items.
+  - *Reference:* Editora [`config/ConfigManager.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/ConfigManager.java) (`SETTINGS_FILE_NAME`, `WORKSPACE_FILE_NAME`), [`config/WorkspaceState.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/WorkspaceState.java);
+    Termina [`config/Settings.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/config/Settings.java), which writes the same two names and sorts each key into one of them (`isStateKey`).
+    Torrenta and Mirada keep the window's bounds in their preferences file (`ui.window.bounds` and `window.bounds`
+    in `settings.properties`), and the app template keeps them in `settings.json`
+    ([`config/Settings.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/Settings.java), `window`).
+- **SET-09 · MUST.** Every versioned file has a schema version, and each version has a `v → v+1` migration
+  step. A purely additive field uses an identity step.
   - *Check (code):* each store declares `SCHEMA_VERSION`, and the migrations have one step per version.
   - *Reference:* Editora [`config/migration/ConfigMigrations.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/migration/ConfigMigrations.java), [`ConfigSchema.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/migration/ConfigSchema.java), [`ConfigMigrationsTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/config/migration/ConfigMigrationsTest.java).
 - **SET-10 · MUST.** A file newer than the running build is backed up to `<name>.v<n>.bak` and defaults load.
@@ -80,8 +92,23 @@ keymap, a theme, a language), not when the developer could not decide.
     throw something other than an `IOException` (a malformed `\uXXXX` escape in a `.properties` file).
   - *Reference:* Editora [`config/migration/ConfigMigrations.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/migration/ConfigMigrations.java) (`keepCorrupt`), [`ConfigLoadProblemsTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/config/ConfigLoadProblemsTest.java)
     (`outOfRangeNumbersAreClampedOnLoad`, `anUnparseableFileIsReportedWithItsBackup`); Termina
-    [`config/Settings.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/config/Settings.java), [`SettingsTest`](https://github.com/adriandeleon/Termina/blob/master/src/test/java/com/termina/config/SettingsTest.java) (`aMalformedEscapeNoLongerStopsTheAppStarting`). Torrenta, Modula, Mirada
-    and nux keep no backup, and in Torrenta and nux a malformed escape stops the app from starting.
+    [`config/Settings.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/config/Settings.java), [`SettingsTest`](https://github.com/adriandeleon/Termina/blob/master/src/test/java/com/termina/config/SettingsTest.java) (`aMalformedEscapeNoLongerStopsTheAppStarting`); Mirada
+    [`settings/ConfigFile.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/settings/ConfigFile.java), which moves a file that will not decode to `<name>.corrupt.bak`
+    ([`ConfigFileTest`](https://github.com/adriandeleon/Mirada/blob/main/src/test/java/com/mirada/settings/ConfigFileTest.java), `aFileThatWillNotDecodeIsKeptAsABackup`). Torrenta, Modula and nux keep no backup, and in
+    Torrenta and nux a malformed escape stops the app from starting.
+- **SET-22 · MUST.** A config file is written whole or not at all: the app writes a temporary file beside it and
+  moves that into place, so a crash mid-write never leaves a half-written file.
+  - *Why:* without it, a crash or a full disk in the middle of a save leaves a file that will not decode, and the
+    corrupt-file path of [SET-11](#set-11), a backup and then defaults, is what the person gets for it.
+  - *Check (code):* every write of a config file as a whole (a store's save, an import) goes to a temporary file in
+    the same folder and ends in a move onto the target (`Files.move` with `ATOMIC_MOVE`, and a plain replace only
+    where the file system has no atomic move). A log or a ledger the app appends to is not such a write.
+  - *Reference:* Editora [`config/ConfigWriter.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/ConfigWriter.java) (`writeAtomicOrThrow`: a temporary file of its own beside the target,
+    forced to disk, then moved; [`ConfigWriterTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/config/ConfigWriterTest.java), `atomicReplacementFailuresKeepThePreviousConfiguration`). Every other
+    app's settings store does it too: Torrenta [`store/Settings.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/store/Settings.java) (`save`), Termina [`config/Settings.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/config/Settings.java) (`writeOne`,
+    `moveIntoPlace`), Mirada [`settings/Settings.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/settings/Settings.java) (`write`), Modula [`config/ConfigStore.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/config/ConfigStore.java) (`writeAtomically`), nux
+    [`config/ConfigStore.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/config/ConfigStore.java) (`save`) and the app template's [`config/ConfigStore.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/ConfigStore.java) (`writePending`). The template's
+    [`config/ConfigImport.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/ConfigImport.java) (`apply`) doesn't yet: an import writes `settings.json` and the zip's other files in place.
 - **SET-12 · MUST.** Export configuration writes a timestamped `.zip` of the config folder; Import restores from
   one.
   - *Check (test):* tests over the zip's name and contents, and an import that replaces only the ticked parts.
@@ -102,7 +129,7 @@ keymap, a theme, a language), not when the developer could not decide.
   password.
   - *Check (code):* the credential is a field of a runtime object, absent from every config class.
   - *Reference:* nux's UPS login ([`app/CommandRunner.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/app/CommandRunner.java)).
-- **SET-15 · MUST.** A repository URL with a password or token in it is refused, with the fix
+- **SET-15 · MUST.** An app with Settings Sync refuses a repository URL with a password or token in it, with the fix
   ([Settings Sync](../templates/settings-sync/)). A problem report's redaction is [DIAG-06](../diagnostics/#diag-06).
   - *Check (by hand):* paste `https://user:token@host/repo.git` as the sync repository.
   - *Reference:* Editora [`ui/SettingsSyncPage.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsSyncPage.java) (`settings.sync.repo.credentials`), [`sync/SyncEngine.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/sync/SyncEngine.java)
@@ -115,9 +142,11 @@ keymap, a theme, a language), not when the developer could not decide.
 
 ## Settings Sync (Git / GitHub)
 
-An app with user data worth carrying between computers offers sync, on its own Settings page
-([SYNC-01](../templates/settings-sync/#sync-01)), into a Git repository the user owns
-([SYNC-02](../templates/settings-sync/#sync-02)). The rules below are how it behaves.
+**Applies to:** an app with user data worth carrying between computers
+([SYNC-01](../templates/settings-sync/#sync-01)).
+
+Such an app offers sync, on its own Settings page, into a Git repository the user owns
+([SYNC-02](../templates/settings-sync/#sync-02)). The rules of this section are how it behaves.
 
 - **SET-18 · SHOULD.** Setup is by pasting a repo URL, or **Create on GitHub** through the `gh` CLI. The account
   that can read the repo is pinned per clone, so machines with two GitHub accounts work.

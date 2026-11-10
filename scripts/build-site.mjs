@@ -14,9 +14,10 @@
 import { spawnSync } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
+import { fileURLToPath } from "node:url";
 import { compareVersions, isVersion, parseEditions, released, unreleased } from "../src/lib/editions.mjs";
 
-process.chdir(new URL("..", import.meta.url).pathname);
+process.chdir(fileURLToPath(new URL("..", import.meta.url))); // not .pathname, which keeps a space as %20
 const pkg = JSON.parse(readFileSync("package.json", "utf8"));
 const { version } = pkg;
 const url = new URL(pkg.guidelines.url);

@@ -8,7 +8,9 @@
 // "Editions"). A change is one of two kinds:
 //   - an unreleased change keeps package.json's version. If it touches what readers take as guidance (a page,
 //     pages.json, a screenshot), it adds to [Unreleased], unless the commits that change those files carry an
-//     `Edition: none` trailer (a format change: typos, links, markup); a trailer waives only its own commit's files. A rule it retires is listed in retired-rules.json with the edition "Unreleased".
+//     `Edition: none` trailer (a format change: typos, links, markup); a trailer waives only its own commit's files,
+//     and never a rule added, retired or re-leveled: that is guidance whatever the commit says. A rule it retires is
+//     listed in retired-rules.json with the edition "Unreleased".
 //   - a release raises the version, moves everything under [Unreleased] into "## [<version>] - <date>" and leaves
 //     [Unreleased] empty. Its number is judged against the edition before it (that edition's tag), so it covers the
 //     whole batch: rules gained, lost or re-leveled make at least a minor (AGENTS.md, "Version numbers"), and every ID
@@ -131,19 +133,29 @@ if (release) {
 if (!release) {
   const paths = ["src/content/docs", "pages.json", "src/assets/shots", "skills"];
   const changed = new Set(git("diff", "--name-only", base, "HEAD", "--", ...paths).split("\n").filter(Boolean));
+  // A rule added, retired or re-leveled is what an edition is made of: no trailer says otherwise.
+  if (ruleChanges.length && pending === basePending) {
+    errors.push(
+      `the rules changed, but ## [Unreleased] in CHANGELOG.md says nothing new; describe the change there (an` +
+        ` "Edition: none" trailer covers format only, never a rule):\n    ${ruleChanges.join("\n    ")}`,
+    );
+  }
   // An "Edition: none" trailer waives only the files its own commits change: a file another commit changes too still
-  // needs a changelog entry, so one format-only commit can't carry a whole branch past this check.
+  // needs a changelog entry, so one format-only commit can't carry a whole branch past this check. It is read as git
+  // reads trailers (the message's last paragraph, beside Co-Authored-By), so the words in a message's prose waive
+  // nothing.
+  const waived = (c) => git("log", "-1", "--format=%(trailers:key=Edition,valueonly)", c).split("\n").some((v) => /^none$/i.test(v.trim()));
   const unwaived = new Set();
   for (const c of git("rev-list", "--no-merges", `${base}..HEAD`).split("\n").filter(Boolean)) {
-    if (/^Edition: none\s*$/im.test(git("log", "-1", "--format=%B", c))) continue;
+    if (waived(c)) continue;
     for (const f of git("diff-tree", "--no-commit-id", "--name-only", "-r", c, "--", ...paths).split("\n")) if (changed.has(f)) unwaived.add(f);
   }
   const content = [...unwaived].join("\n");
   if (content && pending === basePending) {
     errors.push(
       `these change what readers take as guidance, but ## [Unreleased] in CHANGELOG.md says nothing new; describe the` +
-        ` change there, or, if it only changes format (typos, links, markup), add an "Edition: none" trailer to` +
-        ` each commit that changes these:\n    ${content.split("\n").join("\n    ")}`,
+        ` change there, or, if it only changes format (typos, links, markup), add an "Edition: none" trailer (in the` +
+        ` message's last paragraph, with its other trailers) to each commit that changes these:\n    ${content.split("\n").join("\n    ")}`,
     );
   }
 } else {

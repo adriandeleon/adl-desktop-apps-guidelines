@@ -14,16 +14,18 @@ description: "Message Log, Debug Log, update notification, Report a Problem, Doc
   - *Check (test):* tests bound the buffer and find the session file written and the previous one kept.
   - *Reference:* Editora [`ui/DebugLog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/DebugLog.java) ([`DebugLogTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/DebugLogTest.java), [`DebugLogSessionFileTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/DebugLogSessionFileTest.java)).
 - **DIAG-03 · MUST.** The Debug Log opens in a modeless window with Refresh, Copy, Clear, Export and Report a
-  Problem.
+  Problem. The window's find bar is [FIND-01](../templates/find-bar/#find-01).
   - *Why:* it is the only way to see logs in a packaged build.
   - *Check (by hand):* open the Debug Log and keep working in the main window while it is open.
   - *Reference:* Editora [`ui/DebugLogWindow.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/DebugLogWindow.java).
 - **DIAG-04 · MUST.** An **uncaught exception handler** is installed at the start of `main`, before the toolkit
   starts, and routes to the Debug Log and an echo message. Never a stack trace dialog.
   - *Check (code):* `main` calls the install method before any argument handling or `launch`, and the handler
-    shows no dialog.
-  - *Reference:* Editora [`DebugLog.install()`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/DebugLog.java). Editora, Torrenta and Termina log the exception but do not yet post
-    an echo message.
+    posts an error to the echo area, and opens no dialog.
+  - *Reference:* Editora [`DebugLog.install()`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/DebugLog.java) for the install and the log. The echo message is posted by Termina
+    ([`ui/WindowManager.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/WindowManager.java), through `DebugLog.onUncaught`), the app template ([`ui/Startup.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Startup.java)) and Mirada
+    ([`App.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/App.java), `uncaught`). Editora's handler and Torrenta's ([`ui/DebugLog.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/DebugLog.java)) log the exception
+    but do not yet post one.
 - **DIAG-05 · MUST.** The **update check** reads GitHub `/releases/latest` once per app session (not per window), at
   most once a day, a few seconds after the first frame ([PERF-15](../performance/#perf-15)). It never downloads or
   installs anything by itself.
@@ -50,6 +52,8 @@ description: "Message Log, Debug Log, update notification, Report a Problem, Doc
     tokens; a report test puts a short report in the link and leaves the paste hint for a long one.
   - *Reference:* Editora [`report/ProblemReport.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/report/ProblemReport.java), [`report/Redactor.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/report/Redactor.java), [`report/ReportCommand.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/report/ReportCommand.java),
     [`ui/ReportProblemWindow.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ReportProblemWindow.java) ([`RedactorTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/report/RedactorTest.java), [`ProblemReportTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/report/ProblemReportTest.java)).
+    Editora's report and Torrenta's ([`report/ProblemReport.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/report/ProblemReport.java)) carry no settings summary yet; the app template's
+    ([`report/ProblemReport.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/report/ProblemReport.java)), Mirada's ([`report/ProblemReport.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/report/ProblemReport.java)) and Termina's ([`report/ProblemReport.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/report/ProblemReport.java)) do.
 - **DIAG-07 · SHOULD.** A **Doctor** page checks the environment (external tools, versions, permissions, paths),
   with a status per row and a fix or link for each failure.
   - *Check (by hand):* open the Doctor with a tool missing and find its row failed, with what to install.

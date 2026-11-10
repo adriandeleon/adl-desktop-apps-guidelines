@@ -160,7 +160,8 @@ a test keeps the copies honest.
   names a rule the edition does not have, when its `level` or `url` differs from the edition's, when a rule appears
   twice, when a deviation names a MUST, or when a deviation or pending entry has no `link`. Outside a template, it
   reports each `app-only` entry and each `pending` link that is not an issue in the app's own repository (the one
-  `AppInfo` names), and fails on them in the release build ([PAUTA-16](#pauta-16)).
+  the app's own code names; `AppInfo.GITHUB_REPO` in the template), and fails on them in the release build
+  ([PAUTA-16](#pauta-16)).
   - *Why:* moving to a newer edition changes levels and retires IDs; the test turns each stale entry into a failure.
   - *Check (test):* `PautaConformanceTest`, or the app's equivalent, runs in the build.
   - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java) and its copy of the edition's rules, [`pauta-rules.json`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/resources/pauta-rules.json). The template parts (`app-only`, inherited links) aren't built yet.
@@ -175,11 +176,11 @@ a test keeps the copies honest.
 The same list reaches three readers: the person using the app, the person reading its docs, and whoever reviews
 the repository.
 
-- **PAUTA-12 · MUST.** In the app: About names the edition and the conformance ([ABOUT-09](../templates/about/#about-09)),
-  and the Pauta window, opened from About, the Help menu and the Command Palette, lists every exception
-  ([Pauta window](../templates/pauta-window/)).
-  - *Check (code):* `help.pauta` is registered and About's *Pauta conformance* link runs it.
-  - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`ui/Commands.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Commands.java) (`help.pauta`) and [`ui/AboutDialog.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AboutDialog.java) (the link that runs it).
+In the app, the edition and the conformance are in About ([ABOUT-05](../templates/about/#about-05),
+[ABOUT-09](../templates/about/#about-09)) and the exceptions in the Pauta window, which opens from About, the Help
+menu and the Command Palette ([PWIN-01](../templates/pauta-window/#pwin-01)) and lists every one
+([PWIN-02](../templates/pauta-window/#pwin-02)).
+
 - **PAUTA-13 · MUST.** In the user docs: the app's website has a *Pauta conformance* page under `/docs/`
   ([DOCS-02](../documentation/#docs-02)) with the edition, the conformance and every exception, grouped by kind, each with
   its rule ID linked to the edition's rule, its reason and its link. The Pauta window links to it.
@@ -203,6 +204,7 @@ the repository.
     edition the app hasn't moved to.
   - *Check (test):* a test fails when `AGENTS.md`'s Pauta section names another edition than `pauta.version`, or
     doesn't link `https://pauta-project.dev/<edition>/llms.txt`.
-  - *Reference:* the app template's [`AGENTS.md`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/AGENTS.md) and Termina's [`AGENTS.md`](https://github.com/adriandeleon/Termina/blob/master/AGENTS.md) have the section.
+  - *Reference:* the app template's [`AGENTS.md`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/AGENTS.md), Termina's [`AGENTS.md`](https://github.com/adriandeleon/Termina/blob/master/AGENTS.md) and Mirada's [`AGENTS.md`](https://github.com/adriandeleon/Mirada/blob/main/AGENTS.md) have the
+    section.
     The template's [`EditionTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/EditionTest.java) (`theReadmeAndAgentsNameTheSameEdition`) checks the edition the file names, but
     not the section's `llms.txt` link yet.

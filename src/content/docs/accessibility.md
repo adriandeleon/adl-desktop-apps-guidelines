@@ -34,8 +34,9 @@ reaches every menu command through the Command Palette, which lists them all ([K
 - **Contrast.** Readable text at 4.5:1 ([ICON-09](../icons-and-color/#icon-09),
   [ICON-10](../icons-and-color/#icon-10), [ICON-11](../icons-and-color/#icon-11)), held by a test
   ([ICON-14](../icons-and-color/#icon-14)).
-- **Size and theme.** UI and content zoom from the keyboard ([WIN-09](../window-shell/#win-09)); the light or dark
-  theme can follow the system ([ICON-16](../icons-and-color/#icon-16)).
+- **Size and theme.** A UI zoom scales the whole chrome ([WIN-12](../window-shell/#win-12)) and the content zooms
+  from the keyboard ([WIN-09](../window-shell/#win-09)); the light or dark theme can follow the system
+  ([ICON-16](../icons-and-color/#icon-16)).
 
 ## Rules
 
@@ -48,21 +49,21 @@ reaches every menu command through the Command Palette, which lists them all ([K
     names a `CustomMenuItem` row from its content's accessible text, and a cell from its text or its graphic's, so a
     row that lays out its own nodes sets `setAccessibleText` on them.
   - *Reference:* Editora names its controls area by area
-    ([`NamedControlsFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/NamedControlsFxTest.java)), and
+    ([`NamedControlsFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/NamedControlsFxTest.java)),
     and sets each row's text on the macOS system menu bar. Its in-window rows, a `CustomMenuItem` that draws an icon,
     a title and a chord ([`ui/MainMenuBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java)), carry no text yet, so a screen reader on Windows
     reads nothing for them. No app has the test that sweeps every window yet.
 - **ACC-02 · SHOULD.** A control the app builds from panes or draws itself says what it is and does what its role
   offers: `setAccessibleRole` with the role it acts as (`BUTTON`, `TOGGLE_BUTTON`, `LIST_VIEW`, `TREE_ITEM`), its
   state answered from `queryAccessibleAttribute` (selected, expanded, checked), `notifyAccessibleAttributeChanged`
-  when the state changes, and the role's actions (`FIRE`, `TOGGLE`, `EXPAND`) handled in `executeAccessibleAction`.
+  when the state changes, and the role's actions (`FIRE`, `EXPAND`, `COLLAPSE`) handled in `executeAccessibleAction`.
   - *Why:* without a role, a screen reader can't tell a status-bar segment that opens a picker from a label; and it
     presses a control through its action, not a mouse click, so a `BUTTON` that ignores `FIRE` can be found but not
     used.
   - *Check (code):* every `Pane`, `Region`, `Label` or `Canvas` that handles a click or a key sets an accessible
     role and overrides `executeAccessibleAction` for that role's actions.
-  - *Reference:* Editora [`ui/SettingSwitch.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingSwitch.java) (`TOGGLE_BUTTON`, `TOGGLE` and `FIRE`) and
-    [`ui/MapAccessibleRows.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MapAccessibleRows.java). Its status-bar segments ([`ui/StatusBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusBar.java)) take the
+  - *Reference:* Editora [`ui/SettingSwitch.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingSwitch.java) (the `TOGGLE_BUTTON` role; it handles `FIRE`
+    only) and [`ui/MapAccessibleRows.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MapAccessibleRows.java) (`FIRE`, `EXPAND` and `COLLAPSE` on each row). Its status-bar segments ([`ui/StatusBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusBar.java)) take the
     `BUTTON` role but don't handle `FIRE` yet.
 - **ACC-03 · SHOULD.** An app that paints content on a `Canvas` (a map, a strip of images, a terminal grid) gives it
   to the screen reader: an accessible text that sums it up and, where a person moves through items in it, one

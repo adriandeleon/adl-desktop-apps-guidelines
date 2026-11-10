@@ -47,7 +47,7 @@ rule is:
   "pageTitle": "Keyboard first",
   "section": "Command Palette",
   "appliesTo": null,
-  "url": "https://pauta-project.dev/4.3.1/keyboard/#kbd-07",
+  "url": "https://pauta-project.dev/<edition>/keyboard/#kbd-07",
   "text": "The palette is an in-scene overlay in the window's root `StackPane`, not a `javafx.stage.Popup`.",
   "why": "on Windows a Popup does not reliably take OS keyboard focus, and the whole app can stop receiving keystrokes.",
   "check": {
@@ -76,9 +76,12 @@ rule is:
   edition released after 4.5.0, its links point at the commit each app was at when the edition came out, so they show
   the code as it was then; `blob/master` in a page's source becomes that commit in what the edition serves. Editions
   up to 4.5.0 link the apps' default branches.
-- **Names in a rule.** A command id, catalog key, file, property or style class that `text` names is required: every
-  app spells it that way (`help.about`, `palette.show`, `pauta.json`), so keymaps, docs and agents find it under one
-  name. A name that only `check` or `reference` gives is how Editora spells it, and the app's equivalent meets it.
+- **Names in a rule.** Some names in a rule's `text` are required as spelled, because a user, the docs or another
+  tool finds the thing by that name: a command id, a catalog key, a chord, a command-line flag, an environment
+  variable, a property in `pom.xml` or `pauta.json`, and a file the repository must carry (`help.about`,
+  `palette.show`, `--config-dir`, `pauta.version`, `AGENTS.md`). Every other name is how Editora spells it, wherever
+  it appears, and the app's equivalent meets the rule: a Java class, method or constant, a CSS file or style class, a
+  branch or workflow file, a config file's name.
 - **`why`** is `null` when the rule has no reason worth stating.
 - **`appliesTo`** is `null` for a rule that covers every app, unless its own text says otherwise. Otherwise it is the
   **Applies to** line its page or section opens with: "an app whose work goes on without its window" for the
@@ -108,7 +111,7 @@ This app is built to Pauta <edition>. Its rules: https://pauta-project.dev/<edit
 ```
 
 Use the same number everywhere the app names its edition: `pom.xml`, `AGENTS.md`, the README and the About window.
-An app whose conformance is Partial writes "is working toward Pauta <edition>" instead of "is built to", as its
+An app whose conformance is Partial writes `is working toward Pauta <edition>` instead of `is built to`, as its
 README and About do ([Conformance](../conformance/#complete-core-and-partial)).
 
 ## Build a feature to the rules
@@ -178,7 +181,7 @@ Each result reads like this:
 ```text
 KBD-07   MUST    pass     src/main/java/com/example/app/ui/CommandPalette.java:57
 TBAR-01  MUST    fail     src/main/java/com/example/app/ui/MainToolbar.java:88 builds an icon button by hand
-KBD-15   SHOULD  manual   Tab order needs the running app
+KBD-15   MUST    manual   Tab order needs the running app
 TRAY-01  MUST    limited  no tray: no SystemTray or TrayIcon in src/
 TABS-06  MUST    not-applicable  pauta.json: the app has no tabs
 MENU-14  MUST    pending  pauta.json: issue #212

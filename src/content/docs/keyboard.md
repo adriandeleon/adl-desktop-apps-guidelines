@@ -14,12 +14,13 @@ description: "Commands, the Command Palette, keymaps, focus and accessibility."
   and `help.reportProblem`. A rule that names a command's id requires that id; these three are examples.
   - *Check (code):* every registered id matches `<area>.<camelCaseName>`.
   - *Reference:* Editora [`ui/MenuBarModel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java).
-- **KBD-03 · MUST.** A command's title comes from `command.<id>` and its palette description from
+- **KBD-03 · MUST.** A command's title comes from `command.<id>` and its one-line palette description from
   `command.<id>.desc` in the message catalogs.
   - *Why:* a registered command is then localized and discoverable without extra work.
   - *Check (test):* a catalog parity test fails when a registered command has no `command.<id>` or
     `command.<id>.desc` key.
-  - *Reference:* Editora [`i18n/messages.properties`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/i18n/messages.properties), [`MessagesTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/i18n/MessagesTest.java).
+  - *Reference:* Editora [`i18n/messages.properties`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/i18n/messages.properties), [`MessagesTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/i18n/MessagesTest.java)
+    (`everyCommandTitleHasAMatchingDescription`).
 - **KBD-04 · SHOULD.** A command that cannot run in the current context is shown grayed, with a tooltip that says
   why, not hidden.
   - *Check (code):* the palette and menus list a disabled command with a reason, rather than filtering it out.
@@ -33,11 +34,17 @@ description: "Commands, the Command Palette, keymaps, focus and accessibility."
   - *Check (code):* each bundled keymap binds that chord to the palette command.
   - *Reference:* Editora [`keymaps/emacs.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/emacs.json) (`M-x`), [`cua.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/cua.json) and [`vscode.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/vscode.json) (`C-S-p`), [`cua.mac.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/cua.mac.json)
     (`Cmd-S-p`), all to `palette.show`; [`intellij.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/intellij.json) binds `C-S-a`.
-- **KBD-06 · SHOULD.** The palette matches fuzzily over title, id and description; a query that names a command's
-  title outranks a fuzzy hit. Each row shows the command's binding in the active keymap. See the
+- **KBD-06 · SHOULD.** The palette matches fuzzily over the command's title and over the words of its id or its
+  keywords; the description is shown, not matched. A query that names a command's title outranks a fuzzy hit. Each
+  row shows the command's binding in the active keymap. See the
   [Command Palette template](../templates/command-palette/).
-  - *Check (test):* a ranking test puts the title match first.
-  - *Reference:* Editora [`ui/CommandPalette.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java), [`search/FuzzyMatch.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/search/FuzzyMatch.java).
+  - *Check (test):* a ranking test puts the title match first, finds a command by a word of its id that its title
+    doesn't carry, and ranks that hit below every title match.
+  - *Reference:* Editora [`ui/CommandPalette.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java) (`orderedMatches`), [`search/FuzzyMatch.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/search/FuzzyMatch.java). It scores the
+    title first; when the title doesn't match, the id's namespace word as a keyword ([`Command.keywords`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/Command.java)); then the names
+    IntelliJ and VS Code give the command ([`command/OtherIdeNames.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/OtherIdeNames.java)). It doesn't match the rest of the id or the
+    description, which is shown under the list. [`CommandPaletteRankTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/CommandPaletteRankTest.java) holds the order
+    (`aCommandIsFoundByItsNamespaceWhenItsTitleDoesNotCarryIt`, `aKeywordMatchRanksBelowEveryTitleMatch`).
 - **KBD-07 · MUST.** The palette is an in-scene overlay in the window's root `StackPane`, not a
   `javafx.stage.Popup`.
   - *Why:* on Windows a Popup does not reliably take OS keyboard focus, and the whole app can stop receiving
@@ -116,8 +123,9 @@ Every other list choice (recent files, themes, keymaps, a setting's values) uses
   - *Reference:* Editora; [`FocusRingFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/FocusRingFxTest.java) holds that every control family draws the focus ring when Tab
     reaches it.
 - **KBD-16 · MUST.** Every control shows the focus ring when the keyboard focuses it. The ring is one layer of
-  `:focus-visible` rules in `app.css`, after every rule that sets a border or background on the same controls,
-  since rules of equal specificity are decided by order. Its color and contrast are [ICON-12](../icons-and-color/#icon-12).
+  `:focus-visible` rules in the app stylesheet, after every rule that sets a border or background on the same
+  controls, since rules of equal specificity are decided by order. Its color and contrast are
+  [ICON-12](../icons-and-color/#icon-12).
   - *Why:* a keyboard user who can't see where focus is can't use the window; the ring's color is a MUST, and so is
     drawing it.
   - *Check (test):* an FX test tabs to each control family and asserts the ring.

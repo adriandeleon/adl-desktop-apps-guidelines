@@ -111,11 +111,13 @@ def icon(app):
     return f'<img class="app-icon" src="{ICONS}/{APPS[app]}.svg" alt="" />'
 s = re.sub(r"<th([^>]*)>(" + "|".join(APPS) + r")</th>", lambda m: f"<th{m.group(1)}>{icon(m.group(2))}{m.group(2)}</th>", s)
 s = re.sub(r"<td([^>]*)><strong>(" + "|".join(APPS) + r")</strong></td>", lambda m: f"<td{m.group(1)}><strong>{icon(m.group(2))}{m.group(2)}</strong></td>", s)
-# Paths into public/ (site-absolute under the base, or relative such as ../../icons/) point at the files for the
-# file:// print.
+# Paths into public/ (site-absolute under the base, or relative such as ../../icons/editora.svg and
+# ../../pauta-128.png, which a mockup writes from its page's folder) point at the files for the file:// print. A
+# relative path that names no file there is left as written.
 PUBLIC = (ROOT / "public").as_uri()
 s = s.replace('src="/adl-desktop-apps-guidelines/', f'src="{PUBLIC}/')
-s = re.sub(r'src="(?:\.\./)+icons/', f'src="{PUBLIC}/icons/', s)
+s = re.sub(r'src="(?:\.\./)+([^"]+)"',
+           lambda m: f'src="{PUBLIC}/{m.group(1)}"' if (ROOT / "public" / m.group(1)).is_file() else m.group(0), s)
 # The template mockups' stylesheet.
 s = s.replace("</style>", extra_css + "\n.mock-stage { break-inside: avoid; }\n</style>", 1)
 open(dst, "w", encoding="utf-8").write(s)

@@ -26,7 +26,9 @@ Editora is the reference; each principle names where else it is written down.
    feature loses or waits until it can be made cheap. *(Mirada's "Priorities" and its "fast first".)*
 5. **The UI never waits.** The JavaFX application thread only touches the scene graph. Disk, network,
    processes, parsing and searching run on other threads and hand their result back; a keystroke, a scroll or a
-   window opening never waits for them. See [Performance](../performance/).
+   window opening never waits for them. See [Performance](../performance/), which names the only two exceptions:
+   at start-up, before the first window is shown, the wait for the config read and the registering of that
+   window's fonts, and the last save as the app quits ([PERF-01](../performance/#perf-01)).
 6. **Changes apply as they are made.** Settings have no Save button. A change reaches every open window.
 7. **Nothing fails silently.** Every failure reaches the status bar, the Message Log or the Debug Log, and
    the user can turn any of it into a GitHub issue.

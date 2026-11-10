@@ -51,7 +51,7 @@ Editora (`../Editora`) is the reference implementation.
   it fails outside an app's root, and it only reads: `npm run check` reads it as the shell does and fails on any
   command that is not on `src/lib/command.mjs`'s list of readers (`grep`, `test`, `head`, `tr`, `wc`, `echo` and the
   like; `sed -n`, `sort`, `uniq`, `find` and `xargs` only in the forms that cannot write or run another program,
-  `find` with the tests on its list and `cd` only inside a subshell), on a command named through a variable, a quote
+  `sort` with the ordering options on its list, `find` with the tests on its list and `cd` only inside a subshell), on a command named through a variable, a quote
   or a path, on a redirect other than `< file`, `>/dev/null`, `>>/dev/null`, `2>/dev/null`, `2>&1` and `>&2`, and on
   what a shell could turn into one of those: a variable it cannot follow (name them in lowercase, quote them, set
   them to written-out values), `printf -v`, `case`. The lint refuses when unsure, so a harmless command it does not
@@ -65,7 +65,7 @@ Editora (`../Editora`) is the reference implementation.
   rules for `npm run check` and for what coding agents read, which every edition serves: `rules.json`, `llms.txt`
   and `llms-full.txt` (all three also at the site root), each page as Markdown at `<slug>.md` (`src/pages/*.js`,
   `src/lib/llms.mjs`), the audit report's statuses and JSON Schemas (`src/lib/audit.mjs`) and the audit skill
-  (`skills/pauta-audit/SKILL.md`, served as it is), which the *Coding agents and LLMs* page (`coding-agents.md`)
+  (`skills/pauta-audit/SKILL.md`, served as it is in an edition and with Pauta Next's notice under `next/`), which the *Coding agents and LLMs* page (`coding-agents.md`)
   explains. Change all of them if the syntax or the report changes. An app that keeps a copy of the skill (the
   template repository does) replaces it with the edition's when it moves to that edition (PAUTA-11).
   **Applies to.** A rule covers every app unless its text names the apps it covers, or it sits under an
@@ -73,6 +73,20 @@ Editora (`../Editora`) is the reference implementation.
   page; right under a `## ` heading, for that section (PAUTA-05). `rules.mjs` carries it to each rule's `appliesTo`;
   `npm run check` fails on one anywhere else. Write it as a phrase that finishes "Applies to", never a rule of its
   own.
+  **A rule is read alone, and audited from an app unlike Editora.** Coding agents get one rule from `rules.json`
+  with no page around it, so a statement opens with its subject ("The Pauta window reads…", never "It reads…"). A
+  rule about something not every app has says which apps it covers, in its own words ("An app that stores a
+  secret…") or by an Applies to, so an app without it is `limited` and owes no exception: test the scope against nux
+  and Modula, the apps least like Editora, and if either would have to guess, the scope is not written yet. A rule
+  that leans on a Help menu says "where the app has a Help menu (the Help menu of a menu bar, or a Help submenu of
+  the app's main menu)". `Check (test)` is only for a rule whose statement requires a test ("A test holds it.");
+  any other Check describes the behavior to find, Editora's member in parentheses after it, and may end "A test that
+  asserts it is the surest evidence." A Check that needs another repository or what the repository's host keeps
+  ends "An audit run from the app's checkout alone reports the rule as `not-checked` and says what would settle
+  it." A search that only lists candidates for a person to judge goes inside the Check's own sentence as a code
+  span, as OS-02's does, never in a `*Command:*`, whose exit code is the verdict. A Reference credits an app only
+  after its code was swept for the rule, not because a file has the right name; where the app it would name fails
+  the rule, it says so ("Editora doesn't yet: …") and *Gaps per app* gains the gap.
   On the site, a page with five or more rules opens with an index of them (ID, level, statement) that
   `rehype-status.mjs` builds from the rules themselves; never write one by hand. The PDF has none: its contents
   list does that job.
@@ -111,7 +125,10 @@ Editora (`../Editora`) is the reference implementation.
   number, runs `node scripts/rule-changes.mjs`, which records in `rule-changes.json` the edition each rule's level,
   scope or statement last changed in (`changed` in `rules.json`; no network, and never edited by hand or outside a
   release), and runs `node scripts/pin-references.mjs`, which records in `pins.json` the commit at the head of every
-  repository the pages link into. What the edition serves (pages, agent files, downloads) links those commits
+  repository the pages link into. The next release also switches `ruleHash` (`src/lib/rules.mjs`) to a hash of the
+  statement's words alone (no emphasis marks, no link brackets), and for that one release
+  `scripts/rule-changes.mjs` and `scripts/check-edition.mjs` accept a stored hash that matches either function, so
+  the switch re-dates no rule. What the edition serves (pages, agent files, downloads) links those commits
   instead of `blob/master`, and this repository's own links its tag (`src/lib/pins.mjs`), so an edition's References
   keep showing the code as it was at the release; the script fails when a linked path
   isn't there. Pages keep writing `blob/master`. **Version numbers** below says which part to raise, for the whole batch.

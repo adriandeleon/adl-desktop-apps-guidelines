@@ -17,39 +17,48 @@ repository's [`docs/README.md`](https://github.com/adriandeleon/Editora/blob/mas
 
 - **DOCS-01 · MUST.** Every app has user documentation: a *Getting started* page (install, first launch, the first
   thing to do), one page per feature area, the keyboard reference, the Settings, and an FAQ. It is written for the
-  person using the app, in their words, with screenshots from the real window. The README's 200 lines are not it.
+  person using the app, in their words, with screenshots from the real window. The README, a landing page of at
+  most 250 lines ([REPO-01](../repository/#repo-01)), is not it.
   - *Check (code):* the website repository's `src/content/docs/` has a getting-started page, a keymaps page, a
-    settings or configuration page, an FAQ and a page per feature area.
+    settings or configuration page, an FAQ and a page per feature area. The website is a repository of its own
+    ([DOCS-02](#docs-02)), which the app's checkout does not hold. An audit run from the app's checkout alone
+    reports the rule as `not-checked` and says what would settle it.
   - *Reference:* editora-website [`src/content/docs/`](https://github.com/adriandeleon/editora-website/tree/master/src/content/docs) (43 pages in nine categories, from *Getting started* to
     *Help*); torrenta-website (19), termina-website (16), mirada-website (11).
 - **DOCS-02 · MUST.** The user docs live on the app's website, under `/docs/`, in the app's `<app>-website`
   repository, beside the feature pages, the screenshots, the news posts and the blog. Each docs page is a Markdown
-  file whose frontmatter gives its `category` and `order`; the sidebar, the sitemap and the RSS feed follow. The
-  app's repository never carries a second copy.
-  - *Check (code):* every file in the website's `src/content/docs/` has `category` and `order` in its frontmatter;
-    the app's `docs/` holds no user guide.
+  file whose frontmatter gives the page's category and its place in it (editora-website's keys are `category` and
+  `order`); the sidebar, the sitemap and the RSS feed follow. The app's repository never carries a second copy.
+  - *Check (code):* the app's `docs/` holds no user guide: one found there fails the rule from the app's checkout.
+    The rest is in the website's repository: every file in its `src/content/docs/` gives its category and its
+    order in its frontmatter. An audit run from the app's checkout alone reports the rule as `not-checked` and says
+    what would settle it.
   - *Reference:* editora-website [`README.md`](https://github.com/adriandeleon/editora-website/blob/master/README.md) (*Content*); Editora's [`AGENTS.md`](https://github.com/adriandeleon/Editora/blob/master/AGENTS.md): "User-facing feature
     documentation goes to the separate website repository".
 - **DOCS-03 · SHOULD.** Deep links from the app open the running version's docs. Pages live under
   `/docs/v-<version>/…`; bare `/docs` and every unversioned slug redirect to the current version, so a link in a
-  page never carries a version and a bump just regenerates `src/lib/version.ts`. The app builds the base from its
-  own version with `-SNAPSHOT` dropped, so a development build points at the release it is working toward instead
-  of a path that would always 404.
+  page never carries a version and a bump just regenerates one file (editora-website's `src/lib/version.ts`). The
+  app builds the base from its own version with `-SNAPSHOT` dropped, so a development build points at the release
+  it is working toward instead of a path that would always 404.
   - *Why:* a release that pointed at another release's docs would claim what is not true
-    ([*Never claim what is not true*](../principles/#for-the-people-using-the-apps)), so this becomes a must the day
-    the app links to a specific page.
-  - *Check (code):* the app's docs URL is `<homepage>/docs/v-` plus its version without `-SNAPSHOT`; the site's
-    `astro.config.mjs` serves `/docs/v-<version>/` and redirects the unversioned paths.
+    ([*Never claim what is not true*](../principles/#for-the-people-using-the-apps)).
+  - *Check (code):* the app's docs URL is `<homepage>/docs/v-` plus its version without `-SNAPSHOT`: another
+    address fails the rule from the app's checkout. The rest is in the website's repository: its
+    `astro.config.mjs` serves `/docs/v-<version>/` and redirects the unversioned paths. An audit run from the app's
+    checkout alone reports the rule as `not-checked` and says what would settle it.
   - *Reference:* Editora [`AppInfo.docsUrl()`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/AppInfo.java), `releaseVersion()`; editora-website [`astro.config.mjs`](https://github.com/adriandeleon/editora-website/blob/master/astro.config.mjs), [`README.md`](https://github.com/adriandeleon/editora-website/blob/master/README.md)
     (*Versioned docs*). The other three sites carry a comment to port these routes when their app first deep-links.
-- **DOCS-04 · SHOULD.** Docs are generated where the app is the source. The Commands and Keybindings pages are
-  generated from the app's command registrations, `messages.properties` and keymaps; the Roadmap and What's new
-  from `TODO.md` and `CHANGELOG.md`; the version from `pom.xml`. The output is committed, so the site builds
-  without the app checked out. A check fails the site when a docs page quotes a command id that does not exist or a
-  chord that is bound to a different command.
+- **DOCS-04 · SHOULD.** The website's docs are generated where the app is the source. The Commands and Keybindings
+  pages are generated from the app's command registrations, `messages.properties` and keymaps; What's new from
+  `CHANGELOG.md`, and the Roadmap from `TODO.md` where the app keeps one ([REPO-08](../repository/#repo-08)); the
+  version from `pom.xml`. The output is committed, so the site builds without the app checked out. A check fails
+  the site when a docs page quotes a command id that does not exist or a chord that is bound to a different
+  command.
   - *Why:* one fact, one source ([*One source of truth for each fact*](../principles/#for-the-people-building-them)).
   - *Check (code):* the website's `scripts/` holds the generators, their output under `src/lib/` is committed,
     `npm run check:docs` runs the id and chord check, and the site's build or its deploy workflow runs that check.
+    All of it is in the website's repository. An audit run from the app's checkout alone reports the rule as
+    `not-checked` and says what would settle it.
   - *Reference:* editora-website [`scripts/GenCommands.java`](https://github.com/adriandeleon/editora-website/blob/master/scripts/GenCommands.java) (every `Command.of` in Editora's `com.editora.ui`,
     [`WindowCommandRegistrar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowCommandRegistrar.java) holding most), [`GenRoadmap.java`](https://github.com/adriandeleon/editora-website/blob/master/scripts/GenRoadmap.java), [`GenFeatures.java`](https://github.com/adriandeleon/editora-website/blob/master/scripts/GenFeatures.java); [`scripts/check-doc-commands.mjs`](https://github.com/adriandeleon/editora-website/blob/master/scripts/check-doc-commands.mjs)
     (`npm run check:docs`), which exits non-zero on a missing id or a chord bound to another command. Nothing runs it
@@ -57,14 +66,15 @@ repository's [`docs/README.md`](https://github.com/adriandeleon/Editora/blob/mas
     someone runs it by hand.
 - **DOCS-05 · MUST.** The notes of a GitHub release, the text under its title, are written for the person using the
   app: they say what changed for them, and are not a list of commits or pull requests. In an app with a Welcome
-  page, its *What's New* opens this build's release, so those notes are what it shows. The bold one-line summary
-  that opens each `CHANGELOG.md` entry is [REPO-02](../repository/#repo-02); the website's What's new is
-  [DOCS-04](#docs-04); taking the notes from the version's `CHANGELOG.md` section is
+  page, the page's *What's New* link opens this build's release, so those notes are what it shows. The bold
+  one-line summary that opens each `CHANGELOG.md` entry is [REPO-02](../repository/#repo-02); the website's What's
+  new is [DOCS-04](#docs-04); taking the notes from the version's `CHANGELOG.md` section is
   [REL-04](../release/#rel-04).
   - *Check (code):* the release's notes are not generated from the history: the JReleaser configuration's
     `changelog` is not a `format` of commit hashes and titles, and no release step sets `generate_release_notes`.
-    They come from text someone wrote, the version's `CHANGELOG.md` section or a notes file. And a Welcome page's
-    *What's New* opens the build's own release page (`AppInfo.releaseNotesUrl()` in Editora).
+    They come from text someone wrote, the version's `CHANGELOG.md` section or a notes file. And in an app with a
+    Welcome page, the page's *What's New* link opens the build's own release page (`AppInfo.releaseNotesUrl()` in
+    Editora).
   - *Reference:* Termina's [`jreleaser.yml`](https://github.com/adriandeleon/Termina/blob/master/jreleaser.yml) takes the notes from a file (`changelog.external`) that
     [`scripts/release-notes.sh`](https://github.com/adriandeleon/Termina/blob/master/scripts/release-notes.sh) writes from the version's `CHANGELOG.md` section; the app template, Torrenta and Mirada
     do the same. Editora doesn't yet: its [`jreleaser.yml`](https://github.com/adriandeleon/Editora/blob/master/jreleaser.yml) builds the notes from the commits
@@ -76,40 +86,57 @@ repository's [`docs/README.md`](https://github.com/adriandeleon/Editora/blob/mas
 
 The documentation is one command away, so nobody has to know the website's address.
 
-- **DOCS-06 · MUST.** **Help → Documentation** opens the user docs in the browser. It is a command
-  (`help.documentation`), so it is in the palette, bindable and in the menu through the registry like every other
-  row, and an app with a Welcome page repeats it in the Help row. Its place in the Help menu is
-  [DOCS-07](#docs-07).
-  - *Check (code):* `help.documentation` is registered and in the Help `MenuSpec`, and a Welcome page's Help row
-    runs it through the registry.
+- **DOCS-06 · MUST.** The `help.documentation` command opens the user docs in the browser. It is a command like
+  any other, so it is in the palette and bindable, and where the app has a Help menu (the Help menu of a menu bar,
+  or a Help submenu of the app's main menu) a **Documentation** row of that menu runs it through the registry like
+  every other row. An app with a Welcome page repeats the command in the page's Help row. The row's place in the
+  Help menu is [DOCS-07](#docs-07).
+  - *Check (code):* the command `help.documentation` is registered and opens the user docs' address in the
+    browser; where the app has a Help menu, a row of that menu runs the command (the Help `MenuSpec` of Editora's
+    `MenuBarModel` lists it), and a row beside a Help submenu is not in it; and in an app with a Welcome page, the
+    page's Help row runs the same command through the registry (`welcome.documentation` in Editora's
+    `WelcomePane`).
   - *Reference:* Editora [`WindowCommandRegistrar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowCommandRegistrar.java) (`help.documentation` → [`MainController.openDocumentation()`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java)),
-    [`MenuBarModel`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java) (`menubar.help`), [`WelcomePane`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WelcomePane.java) (`welcome.documentation`).
-- **DOCS-07 · SHOULD.** The Help menu runs in this order: Command Palette · Documentation · the keyboard reference
+    [`MenuBarModel`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java) (`menubar.help`), [`WelcomePane`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WelcomePane.java) (`welcome.documentation`). Mirada's macOS Help menu has
+    the row ([`MacMenus`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MacMenus.java)); its main menu doesn't yet: there the Documentation row sits beside the Help submenu,
+    not in it ([`ui/TitleBar.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/TitleBar.java)).
+- **DOCS-07 · SHOULD.** Where the app has a Help menu (the Help menu of a menu bar, or a Help submenu of the app's
+  main menu), its rows run in this order: Command Palette · Documentation · the keyboard reference
   ([DOCS-08](#docs-08)) · Welcome Page · Check for Updates · Message Log · Debug Log · Report a Problem · Pauta
-  Conformance · About. Simple mode keeps Command Palette, Documentation, Welcome Page and About. An app without a
-  feature drops its row; nothing moves.
+  Conformance · About. In an app with a Simple mode, that mode's Help menu keeps Command Palette, Documentation,
+  Welcome Page and About. An app without a feature drops its row; nothing moves.
   - *Check (code):* the rows of the Help menu the app has are in that order, in the full menu and in Simple mode's
-    where the app has one (both `menubar.help` menu specs in Editora).
+    where the app has one (both `menubar.help` menu specs in Editora). An app with a Help menu in a menu bar on one
+    OS and a Help submenu in its main menu is judged on both.
   - *Reference:* Editora [`MenuBarModel`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java), both `MenuSpec("menubar.help", …)`, for the rows its Help menu has. It has
     no Welcome Page row, since `view.welcome` is still in the View menu ([WELC-03](../templates/welcome/#welc-03)),
     and no keyboard-reference row. Termina's [`MenuBarModel`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MenuBarModel.java) (`documentation`, `whatsNew`, `keyboardShortcuts`,
     then `checkForUpdates`) and Mirada's macOS menu bar, [`MacMenus`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MacMenus.java) (`PALETTE`, `DOCUMENTATION`, `SHORTCUTS`, then
     `CHECK_FOR_UPDATES`) put the keyboard reference there; Termina's What's New row, between the two, is its own.
-- **DOCS-08 · SHOULD.** Help has a keyboard reference: a searchable window of every key, grouped as the menus are,
+    The Help submenu of Mirada's main menu doesn't follow the order yet: it holds Message Log, Debug Log, Report a
+    Problem, then Check for Updates, and Documentation, the keyboard reference and About are rows of the main menu
+    beside it ([`ui/TitleBar.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/TitleBar.java)).
+- **DOCS-08 · SHOULD.** Where the app has a Help menu (the Help menu of a menu bar, or a Help submenu of the app's
+  main menu), a row of it opens a keyboard reference: a searchable window of every key, grouped as the menus are,
   or the keybinding editor.
   - *Check (by hand):* open it from Help, search for a command, and find its key.
-  - *Reference:* Termina's and Mirada's [`ShortcutsWindow`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/ShortcutsWindow.java); Editora's keybinding editor
-    ([Keyboard first](../keyboard/)).
+  - *Reference:* Termina's [`ShortcutsWindow`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/ShortcutsWindow.java), a row of its Help menu, and Mirada's [`ShortcutsWindow`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/ShortcutsWindow.java), a row of its
+    macOS Help menu; in Mirada's main menu the row sits beside the Help submenu. Editora doesn't yet: its
+    keybinding editor is a page of Settings ([Keyboard first](../keyboard/)), and no row of its Help menu opens it
+    ([`MenuBarModel`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java)).
 
 A command's one-line description, shown under its title in the palette, is its in-app documentation: every command's
 title and description come from the message catalogs, and the parity test holds it
 ([KBD-03](../keyboard/#kbd-03)).
 
-- **DOCS-10 · MAY.** The palette opens per-command help. With a command highlighted, `C-h` opens its page,
-  `/docs/v-<version>/commands/<id>`; where the keymap binds `C-h`, the first free of `F1` and `Shift+F1` does.
-  Search Everywhere shares the URL builder so the two pickers can never disagree.
-  - *Check (code):* the palette and Search Everywhere both build the URL with `CommandPalette.docsUrl`.
-  - *Reference:* Editora [`CommandPalette.docsUrl`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java), `setDocsOpener`; [`PickerKeys.freeChord`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java).
+- **DOCS-10 · MAY.** An app with a Search Everywhere picker opens per-command help from it as the Command Palette
+  does: with a command highlighted, the palette's help chord ([PAL-08](../templates/command-palette/#pal-08)) opens
+  the command's page, `/docs/v-<version>/commands/<id>`. The two pickers share the chord and the URL builder, so
+  they can never disagree.
+  - *Check (code):* Search Everywhere takes its help chord the way the palette does and builds the page's address
+    with the palette's own method (Editora's `CommandPalette.docsUrl`).
+  - *Reference:* Editora [`SearchEverywhereHost`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SearchEverywhereHost.java) (`CommandPalette.docsUrl`) and [`SearchEverywherePopup`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SearchEverywherePopup.java) (`docsChord`, from
+    [`PickerKeys.freeChord`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java) as the palette's); [`CommandPalette.docsUrl`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java).
 - **DOCS-11 · MAY.** Each page of the Settings window has a link to its docs page, *Help for* and the page's name,
   from one map of page to slug.
   - *Check (code):* one map from Settings page to docs slug feeds every page's help link.
@@ -127,9 +154,8 @@ title and description come from the message catalogs, and the parity test holds 
 ## Developer documentation
 
 - **DOCS-12 · MUST.** `docs/` has an index. `docs/README.md` says who the folder is for (contributors; user docs
-  live on the website) and lists every guide with one line; that the code wins is [DOCS-17](#docs-17). The
-  set is the one [Repository documents](../repository/) names: `architecture.md`, `conventions.md`, `testing.md`,
-  `gotchas.md`, `release.md`, `building-and-packaging.md` and `decisions/`.
+  live on the website) and lists every guide with one line; that the code wins is [DOCS-17](#docs-17). Which
+  guides the folder holds is [REPO-07](../repository/#repo-07).
   - *Check (code):* `docs/README.md` exists, says who it is for, and links each guide in `docs/`.
   - *Reference:* Editora's [`docs/README.md`](https://github.com/adriandeleon/Editora/blob/master/docs/README.md); the template's [`docs/`](https://github.com/adriandeleon/adl-desktop-app-template/tree/master/docs).
 - **DOCS-13 · SHOULD.** Every choice a newcomer would question has a decision record: a fork, a rejected
@@ -137,8 +163,8 @@ title and description come from the message catalogs, and the parity test holds 
   with the context, the decision and what it costs.
   - *Check (code):* `docs/decisions/` holds `NNNN-slug.md` files, each with context, decision and consequences.
   - *Reference:* Editora's [`docs/decisions/`](https://github.com/adriandeleon/Editora/tree/master/docs/decisions) (18 records, from [`0001-richtextfx-fork.md`](https://github.com/adriandeleon/Editora/blob/master/docs/decisions/0001-richtextfx-fork.md)).
-- **DOCS-14 · MUST.** Three files have three jobs. `AGENTS.md` is the operational guide, kept short (what it holds
-  is [REPO-05](../repository/#repo-05)). `CONTRIBUTING.md` is the short version for a person, pointing into
+- **DOCS-14 · MUST.** Three files have three jobs. `AGENTS.md` is the operational guide (what it holds is
+  [REPO-05](../repository/#repo-05)). `CONTRIBUTING.md` is the short version for a person, pointing into
   `docs/`. `docs/` holds the durable explanations. Exhaustive history goes to `docs/reference/`, not into any of
   the three.
   - *Check (code):* `AGENTS.md` and `CONTRIBUTING.md` link into `docs/`; long catalogs sit under
@@ -146,8 +172,9 @@ title and description come from the message catalogs, and the parity test holds 
   - *Reference:* Editora's [`AGENTS.md`](https://github.com/adriandeleon/Editora/blob/master/AGENTS.md) (*Documentation map*), [`CONTRIBUTING.md`](https://github.com/adriandeleon/Editora/blob/master/CONTRIBUTING.md), [`docs/reference/README.md`](https://github.com/adriandeleon/Editora/blob/master/docs/reference/README.md).
 - **DOCS-15 · SHOULD.** Javadoc sits on its member: a doc comment above another doc comment documents nothing.
   Comments say why, not what.
-  - *Check (test):* a test fails the build on a Javadoc comment followed by another.
-  - *Reference:* Editora [`StackedJavadocTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/StackedJavadocTest.java).
+  - *Check (code):* no Javadoc comment in the main or the test sources is followed by another with only blank
+    lines or `//` comments between them. A test that asserts it is the surest evidence.
+  - *Reference:* Editora [`StackedJavadocTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/StackedJavadocTest.java), which fails the build on one.
 
 ## Kept in step
 
@@ -155,21 +182,29 @@ title and description come from the message catalogs, and the parity test holds 
   contributor guides it touches in the same pull request, the website's user docs in a pull request on the
   website's repository opened with it, and `TODO.md` where the app keeps one ([REPO-08](../repository/#repo-08));
   never as a follow-up. A reviewer treats a feature PR with no docs change as incomplete.
-  - *Check (code):* `docs/conventions.md`, `CONTRIBUTING.md` and `AGENTS.md` state the rule; in review, a feature
-    PR's diff touches `CHANGELOG.md`, and one that changes what a user sees names the website's pull request.
+  - *Check (by hand):* read the app's last merged feature pull requests on GitHub: each one's diff touches
+    `CHANGELOG.md` and the guides it concerns, and one that changes what a user sees names the website's pull
+    request. That `docs/conventions.md`, `CONTRIBUTING.md` and `AGENTS.md` state the rule shows it is asked, not
+    that it is kept.
   - *Reference:* Editora [`docs/conventions.md#docs-in-the-same-pr`](https://github.com/adriandeleon/Editora/blob/master/docs/conventions.md#docs-in-the-same-pr), [`CONTRIBUTING.md`](https://github.com/adriandeleon/Editora/blob/master/CONTRIBUTING.md) (step 4, which names the
     website repository), [`AGENTS.md`](https://github.com/adriandeleon/Editora/blob/master/AGENTS.md); the template's [`docs/conventions.md`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/docs/conventions.md). Editora, the template, Mirada and nux
     keep a `TODO.md`; Termina, Torrenta and Modula keep none.
 - **DOCS-17 · MUST.** When documentation and code disagree, the code wins, and the documentation is fixed in the
-  same change. The same rule this guide applies to itself.
+  same change. `AGENTS.md` and `docs/README.md` say so, where a coding agent and a contributor start reading.
+  Pauta applies the same rule to itself.
   - *Check (code):* `AGENTS.md` and `docs/README.md` say so.
   - *Reference:* Editora's [`AGENTS.md`](https://github.com/adriandeleon/Editora/blob/master/AGENTS.md), [`docs/README.md`](https://github.com/adriandeleon/Editora/blob/master/docs/README.md).
-- **DOCS-18 · SHOULD.** Screenshots are retaken, not described. The capture hook renders the real window at 2×
-  after any UI change, for the README (its hero in light and dark), the website and bug reports.
+- **DOCS-18 · SHOULD.** An app's screenshots are retaken, not described: its capture hook
+  ([QUAL-09](../quality/#qual-09)) renders the real window at 2× after any UI change, for the README (its hero in
+  light and dark), the website and bug reports.
   - *Why:* a stale screenshot claims what is not true.
   - *Check (by hand):* the README's hero and the website's screenshots show the current UI; they are rendered with
     the capture hook [QUAL-09](../quality/#qual-09) asks for, not drawn or described.
-  - *Reference:* `DevCapture` ([Shared features](../family/shared-features/)); Editora's headless harness.
+  - *Reference:* Termina's [`DevCapture.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/DevCapture.java) and Torrenta's [`DevCapture.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/DevCapture.java), and nux's
+    [`ui/Screenshot.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/Screenshot.java) ([Shared features](../family/shared-features/)). None of the three renders at 2× yet: each writes what
+    `scene.snapshot(null)` returns, the scene at its own size. Editora doesn't yet: it has no capture hook, and three
+    of its FX tests write a screenshot only when `-Deditora.test.shots=<dir>` is set
+    ([`SplitViewFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/SplitViewFxTest.java)).
 
-The README's own shape, about 200 lines that leave the detail to the website's docs, is
+The README's own shape, at most 250 lines that leave the detail to the website's docs, is
 [REPO-01](../repository/#repo-01).

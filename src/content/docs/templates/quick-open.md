@@ -5,8 +5,9 @@ description: "The family's list picker: the palette card with a title and a prom
 
 The picker for every "choose one from a list" moment: recent files, themes, keymaps, a setting's values, a branch to
 compare with. It is the [Command Palette](../command-palette/) card with a title over the field and a prompt in it, so
-a list choice is made the way a command is run: type a few letters, Enter. The rule is [QOPEN-01](#qopen-01), on
-this page; the rest is the shape.
+a list choice is made the way a command is run: type a few letters, Enter. [QOPEN-01](#qopen-01) asks for the one
+picker; every other rule on this page is the picker's shape and applies to an app that has one. Four of the apps
+have none ([Uses](#uses)).
 
 ## Rules
 
@@ -18,10 +19,13 @@ this page; the rest is the shape.
     [`PickerKeys`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java). Editora still asks with a `ChoiceDialog` in three places: the Git reset mode and the
     merge parent to revert against ([`ui/GitWindowCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/GitWindowCoordinator.java)), and the settings backup to restore
     ([`ui/SettingsResetFlow.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsResetFlow.java)).
-- **QOPEN-02 · SHOULD.** The picker is the palette's card in the shared in-scene overlay host, with a title naming the
+- **QOPEN-02 · SHOULD.** In an app with a picker (a card, opened by a command, for choosing one thing from a list
+  by typing; a Command Palette that lists only commands is not one, and nor is a menu, a combo box or a field's
+  completion list), the picker is the palette's card in the shared in-scene overlay host, with a title naming the
   command over the field and a prompt in the field. That it is never a `javafx.stage.Popup` is
   [KBD-07](../../keyboard/#kbd-07).
-  - *Check (code):* the picker shows its card through the overlay host and sets a title and a prompt text.
+  - *Check (code):* each picker shows its card through the overlay host the palette uses and sets a title and a
+    prompt text.
   - *Reference:* Editora [`QuickOpen.setOverlayHost`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java), [`ui/OverlayHost.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java); the page's [Spec](#spec).
 
 ## Anatomy
@@ -66,21 +70,25 @@ this page; the rest is the shape.
 
 ## Behavior
 
-- **QOPEN-03 · SHOULD.** The items are read fresh on every showing and snapshotted, so typing filters a stable list. A
-  source that answers late (an outline the language server has not returned yet) has the picker read its items again
-  and keep the query (`reload()` in Editora).
-  - *Check (code):* `show` calls the items supplier; `reload` re-reads it and keeps the query.
+**Applies to:** an app with a picker: a card, opened by a command, for choosing one thing from a list by typing (a Command Palette that lists only commands is not one, and nor is a menu, a combo box or a field's completion list).
+
+- **QOPEN-03 · SHOULD.** A picker reads its items fresh on every showing and snapshots them, so typing filters a
+  stable list. A source that answers late (an outline the language server has not returned yet) has the picker read
+  its items again and keep the query (`reload()` in Editora).
+  - *Check (code):* showing a picker calls its items supplier, and a late source makes the picker read the items
+    again while it keeps the query (Editora's `show` and `reload`).
   - *Reference:* Editora [`QuickOpen.show`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java), [`QuickOpen.reload`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java).
-- **QOPEN-04 · SHOULD.** With nothing typed the list keeps the supplier's own order (recency for recent files, document
-  order for symbols), with the current value pre-selected when there is one.
-  - *Check (code):* the empty query passes the items through unsorted and selects the `setCurrentItem` value.
+- **QOPEN-04 · SHOULD.** With nothing typed, a picker's list keeps the supplier's own order (recency for recent
+  files, document order for symbols), with the current value pre-selected when there is one.
+  - *Check (code):* a picker's empty query passes the items through unsorted and selects the value in force when
+    the picker was given one (Editora's `setCurrentItem`).
   - *Reference:* Editora [`QuickOpen.filter`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java), `setCurrentItem`.
-- **QOPEN-05 · SHOULD.** Typing ranks by fuzzy score, and ties keep the supplier's order, so rows do not shuffle under
-  the cursor between keystrokes.
-  - *Check (code):* the sort's last tiebreak is the supplier's index.
+- **QOPEN-05 · SHOULD.** Typing in a picker ranks its rows by fuzzy score, and ties keep the supplier's order, so
+  rows do not shuffle under the cursor between keystrokes.
+  - *Check (code):* the last tiebreak of the picker's sort is the supplier's index.
   - *Reference:* Editora [`QuickOpen.filter`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java).
-- **QOPEN-06 · SHOULD.** The active keymap's line and page chords move the selection (in Editora, the chords of
-  its `nav.lineDown`, `nav.lineUp`, `nav.pageDown` and `nav.pageUp` commands), as do ↑ ↓, Page Up/Down and
+- **QOPEN-06 · SHOULD.** In a picker, the active keymap's line and page chords move the selection (in Editora, the
+  chords of its `nav.lineDown`, `nav.lineUp`, `nav.pageDown` and `nav.pageUp` commands), as do ↑ ↓, Page Up/Down and
   `Ctrl+Home`/`Ctrl+End` (`Cmd` on macOS), which always work; plain Home and End stay with the field's caret. Enter
   or a click on a row chooses; the card hides first, then the choice runs, so focus is already back where it
   belongs.
@@ -92,10 +100,13 @@ this page; the rest is the shape.
     `Ctrl+P`, and has no `Ctrl+Home` or `Ctrl+End`; Mirada's picker is its palette, whose [`ui/PaletteKeys.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/PaletteKeys.java)
     carries a fixed table of Emacs chords (`EMACS`) beside the fixed keys. Termina, Torrenta, Modula and nux have
     no picker ([Uses](#uses)).
-- **QOPEN-07 · SHOULD.** The active keymap's cancel chord, Esc or a click on the scrim cancels, and the host
-  restores focus. In Editora the chord is that of its `edit.cancel` command, `C-g` in the Emacs keymap. A picker
-  that previewed something undoes it.
-  - *Check (test):* a test previews a row, dismisses the picker and finds the preview undone.
+- **QOPEN-07 · SHOULD.** The active keymap's cancel chord, Esc or a click on the scrim cancels a picker, and the
+  overlay host restores focus. In Editora the chord is that of its `edit.cancel` command, `C-g` in the Emacs
+  keymap. A picker that previewed something undoes it.
+  - *Check (code):* Esc, the chord the active keymap binds to the cancel command, and a press on the backdrop each
+    hide the picker; hiding gives the focus back to the node that had it before the picker opened; and a picker
+    that previewed a row runs its undo when it is dismissed without a choice. A test that asserts the undo is the
+    surest evidence.
   - *Reference:* Editora [`OverlayHost`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java) (`previousFocus`; it cancels on [`PickerKeys.isCancel`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java)),
     [`QuickOpenPreviewFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/QuickOpenPreviewFxTest.java) (`dismissingRestoresWhatWasPreviewed`). `Ctrl+G` is fixed in the app
     template's [`ui/OverlayHost.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/OverlayHost.java) and in the `EMACS` table of Mirada's [`ui/PaletteKeys.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/PaletteKeys.java).
@@ -103,11 +114,15 @@ this page; the rest is the shape.
   (Recent Locations shows each place and returns to the origin on Esc). A preview without an undo is worse than none,
   and nothing is previewed for the row the picker opens on, only for one the user moved to. The theme and keymap
   pickers do not preview; they apply on Enter.
-  - *Check (test):* opening previews nothing, moving previews, choosing does not restore.
+  - *Check (code):* a previewing picker previews from its selection listener once it is showing, never for the row
+    it opens on, restores what it previewed when dismissed, and does not restore after a choice. A test that
+    asserts it is the surest evidence.
   - *Reference:* Editora [`QuickOpen.setPreview(onPreview, onCancelled)`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java), [`QuickOpenPreviewFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/QuickOpenPreviewFxTest.java).
 - **QOPEN-09 · MAY.** A row action acts on the highlighted row and keeps the picker open (the breakpoints picker
   enables or removes one), re-reading the list afterwards and keeping the cursor in place.
-  - *Check (test):* a row action runs on the highlighted row and the picker stays up.
+  - *Check (code):* a row action's key runs the action on the highlighted row without hiding the card, and the
+    picker then reads its items again and keeps the cursor on that row. A test that asserts it is the surest
+    evidence.
   - *Reference:* Editora [`QuickOpen.addRowAction(key, legend, action)`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java), [`QuickOpenPreviewFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/QuickOpenPreviewFxTest.java)
     (`aRowActionActsOnTheHighlightedRowAndKeepsThePickerOpen`).
 - **QOPEN-10 · SHOULD.** A picker that can open on an empty list shows a placeholder sentence in it, never a blank
@@ -116,12 +131,16 @@ this page; the rest is the shape.
     a status message.
   - *Reference:* Editora [`QuickOpen.setPlaceholder`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java) ([`BreakpointsPicker`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/BreakpointsPicker.java)); [`NavigationCoordinator`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/NavigationCoordinator.java)
     (`status.nav.noRecentLocations`).
-- **QOPEN-11 · SHOULD.** The host shows one card at a time; opening a picker replaces whatever card was up.
-  - *Check (code):* the host's `show` removes the previous card before it adds the new one, and keeps the original
-    focus owner.
+- **QOPEN-11 · SHOULD.** The overlay host a picker shows in holds one card at a time; opening a picker replaces
+  whatever card was up.
+  - *Check (code):* showing a card in the overlay host removes the previous card before it adds the new one, and
+    keeps the original focus owner (Editora's `OverlayHost.show`).
   - *Reference:* Editora [`OverlayHost.show`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java).
-- **QOPEN-12 · SHOULD.** The picker's relatives move, accept and cancel with the same keys as the picker.
-  - *Check (code):* each relative maps its keys through `PickerKeys`.
+- **QOPEN-12 · SHOULD.** A picker's relatives, the other list overlays an app has (in Editora the open-files
+  switcher, the find-file field, the multi-select picker, and the branch and stash popups), move, accept and
+  cancel with the same keys as the picker.
+  - *Check (code):* each of those overlays maps its keys through the helper the picker uses (Editora's
+    `PickerKeys`).
   - *Reference:* Editora [`Switcher`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Switcher.java), [`FileFinder`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/FileFinder.java), [`MultiSelectPicker`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MultiSelectPicker.java), [`BranchPopup`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/BranchPopup.java), [`GitStashPopup`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/GitStashPopup.java).
 
 The relatives: the Open Files `Switcher` lists tabs in tab order, opens on the current one and closes a file with

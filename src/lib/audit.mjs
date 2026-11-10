@@ -2,10 +2,14 @@
 // Schema of the report, served per edition as audit.schema.json and rules.schema.json (src/pages/), named in rules.json
 // and llms.txt, and used by the pauta-audit skill (skills/pauta-audit/SKILL.md).
 
-/** Every status a rule can get, in report order. The four exception kinds are pauta.json's (Conformance, PAUTA-09). */
+/** Every status a rule can get, in report order. The four exception kinds are pauta.json's (Conformance, PAUTA-09).
+ *  Only `fail` is a finding: `manual` and `not-checked` are reported and block nothing (the skill, step 4). */
 export const STATUSES = {
   fail: "Not met, and pauta.json records no exception for it. A finding; a failed MUST blocks a release.",
-  manual: "Checked by hand: source can't settle it, so a person checks it in the running app and records it in pauta.json's `checked` list.",
+  manual:
+    "Checked by hand: the source leaves it open, so a person checks it in the running app, and may record a rule found met in pauta.json's `checked` list. Not a finding, recorded or not: the result carries the entry, or its evidence ends \"not recorded\".",
+  "not-checked":
+    "The Check needs something an audit of the app's checkout cannot see: another repository (the website's), or what the repository's host keeps and no file shows (a repository setting, an issue's state). Not a finding and not a pass; the evidence says what would settle it.",
   pending: "Not met; pauta.json records it as pending, with an issue.",
   deviation: "A SHOULD the app does differently on purpose; pauta.json records it, with a decision record.",
   "not-applicable": "The rule reads as applying to every app, but its subject does not exist in this one; pauta.json records it.",
@@ -59,13 +63,14 @@ export function auditSchema(base) {
               type: "string",
               minLength: 1,
               description:
-                "Where the verdict comes from, as path/File.java:123 from the repository root, and what is missing for a fail. For an exception, its pauta.json reason; for limited, the feature the app lacks.",
+                "Where the verdict comes from, as path/File.java:123 from the repository root, and what is missing for a fail. For an exception, its pauta.json reason; for limited, the feature the app lacks; for manual, what to look at in the running app, ending \"not recorded\" when pauta.json has no `checked` entry for the rule; for not-checked, what would settle it.",
             },
             checked: {
               type: "object",
               required: ["edition", "date"],
               additionalProperties: false,
-              description: "For a manual result: the app's pauta.json `checked` entry for this rule (Conformance, PAUTA-18), when it has one.",
+              description:
+                "For a manual result: the app's pauta.json `checked` entry for this rule (Conformance, PAUTA-18), when it has one. A result without it is not recorded, which is not a finding and not a problem.",
               properties: {
                 edition: { type: "string", pattern: VERSION, description: "The edition the rule was checked against." },
                 version: { type: "string", description: "The app's own version at the check, where the entry records it." },
@@ -75,7 +80,7 @@ export function auditSchema(base) {
             problem: {
               type: "string",
               description:
-                "What is wrong with the app's pauta.json about this rule: an entry for a rule that passes or is limited, a deviation on a MUST, a deviation or pending entry with no link, a level or url that differs from the edition's, a manual result with no `checked` entry (not recorded), or one whose `checked` entry is stale: its edition is older than the rule's `changed` in rules.json.",
+                "What is wrong with the app's pauta.json about this rule: an entry for a rule that passes or is limited, a deviation on a MUST, a deviation or pending entry with no link, a level or url that differs from the edition's, a `checked` entry that is stale (its edition is older than the rule's `changed` in rules.json), or a `checked` entry for a rule that also has an exception. A rule with no `checked` entry is not one: an app records the entries it chooses to (PAUTA-18).",
             },
           },
         },

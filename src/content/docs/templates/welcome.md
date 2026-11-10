@@ -12,9 +12,11 @@ Editora's [`ui/WelcomeText.java`](https://github.com/adriandeleon/Editora/blob/m
   to restore.
   - *Check (code):* startup with nothing restored opens the Welcome page.
   - *Reference:* Editora [`ui/WelcomePane.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WelcomePane.java), [`MainController.addWelcomeTab`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java).
-- **WELC-02 · SHOULD.** An app whose window *is* its content shows its own empty state instead, with the same
-  ingredients: the ways in, each with its chord.
-  - *Check (by hand):* start the app with nothing in it and read the empty state's keys.
+- **WELC-02 · SHOULD.** An app whose window *is* its content, and can start with nothing in it (a list with no
+  items, a viewer with nothing open), shows its own empty state in place of a Welcome page ([WELC-01](#welc-01)),
+  with the same ingredients: the ways in, each with its chord.
+  - *Check (by hand):* start the app with nothing in it and read the empty state's keys. An app that always opens
+    into content (a terminal with its shell, a radio, a monitor) has no empty state to judge.
   - *Reference:* Torrenta [`ui/Welcome.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/Welcome.java); Mirada [`ui/ViewerWindow.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/ViewerWindow.java) (`offerToOpen`,
     `viewer.emptyHint`); both are described under [In the apps](#in-the-apps).
 
@@ -88,19 +90,20 @@ Editora's [`ui/WelcomeText.java`](https://github.com/adriandeleon/Editora/blob/m
 
 **Applies to:** an app with a Welcome page ([WELC-01](#welc-01)).
 
-- **WELC-03 · SHOULD.** The page is shown at startup when there is no session to restore (so always with
-  `--no-session`), by the `view.welcome` command (Help → Welcome Page, in the place
+- **WELC-03 · SHOULD.** The Welcome page is shown at startup when there is no session to restore (so always with
+  `--no-session`), by the `view.welcome` command (Help → Welcome Page where the app has a Help menu, in the place
   [DOCS-07](../../documentation/#docs-07) gives it), and when the tab strip is empty after a
   project swap. In an app that can start straight into one view, as Editora does for a standalone diff, that
   startup suppresses the page while its worker reads the files.
-  - *Check (code):* those three paths open the one Welcome tab, and the Help `MenuSpec` lists `view.welcome`; a
-    startup that goes straight to a view holds a flag that skips it.
+  - *Check (code):* those three paths open the one Welcome tab, and where the app has a Help menu, a row inside it
+    runs `view.welcome`; a startup that goes straight to a view holds a flag that skips the page.
   - *Reference:* Editora [`MainController.addWelcomeTab`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java), `showWelcomeIfNoTabs`; [`WindowSessionCoordinator`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowSessionCoordinator.java)
     (`suppressWelcome`). Editora's menu row is in View, not in Help yet ([`MenuBarModel`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java)).
 - **WELC-04 · SHOULD.** Closing the last tab does not bring the page back. The empty content area shows its own
   quiet hint instead: the app's ways in, each with its chord (in Editora: Open File, Open Folder, Command Palette
   and Welcome Page), and takes focus so chords still reach the window.
-  - *Check (test):* closing the last tab shows the hint and opening a tab hides it.
+  - *Check (code):* closing the last tab shows the hint in the empty content area, not the Welcome page, and gives
+    it the focus; opening a tab hides it. A test that asserts it is the surest evidence.
   - *Reference:* Editora [`ui/EditorEmptyState.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/EditorEmptyState.java), [`EditorEmptyStateFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/EditorEmptyStateFxTest.java).
 - **WELC-05 · SHOULD.** The page is rebuilt on every show, so the recents, the Projects and Git toggles, the keymap and
   the theme are current. A refresh keeps the focus where it was.
@@ -122,10 +125,12 @@ Editora's [`ui/WelcomeText.java`](https://github.com/adriandeleon/Editora/blob/m
   connection form prefilled. The section is hidden when there are none.
   - *Check (code):* the page adds a Remote Sites section only when the saved-sites list is not empty.
   - *Reference:* Editora [`WelcomePane`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WelcomePane.java) (`remoteSites`, `welcome.remote`).
-- **WELC-10 · SHOULD.** Customize runs `keymap.select` and `theme.setAppTheme`; a change made there re-renders the page,
-  chords included.
-  - *Check (code):* the Customize links run those two commands.
-  - *Reference:* Editora [`WelcomePane`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WelcomePane.java) (`customizeRow`).
+- **WELC-10 · SHOULD.** The Welcome page's Customize links run the commands that pick the keymap and the app
+  theme (Editora's are `keymap.select` and `theme.setAppTheme`); a change made there re-renders the page, chords
+  included.
+  - *Check (code):* the two Customize links run the app's keymap and theme picker commands through the registry,
+    and applying a keymap or a theme refreshes the Welcome page.
+  - *Reference:* Editora [`WelcomePane`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WelcomePane.java) (`customizeRow`), refreshed by [`SettingsReapply`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsReapply.java).
 - **WELC-11 · SHOULD.** The Welcome tab is not a document: its menu is Close only, with no Save, Rename or Pin, and the
   title bar shows the app or project name, not a file.
   - *Check (code):* the Welcome tab's context menu holds one Close item.

@@ -4,21 +4,35 @@ description: "JDK, JavaFX, AtlantaFX, NullAway, Maven Wrapper, tests and coverag
 ---
 
 - **PLAT-01 · MUST.** The app builds on **JDK 25 or newer**. `maven.compiler.release` 25 is the floor, not the
-  ceiling: a newer JDK builds the app too. CI builds every app on JDK 25, the current LTS: every workflow step that
-  sets up a JDK sets up release 25, and the runtime an installer carries ([PLAT-02](#plat-02)) is that JDK's. A leg
-  that builds a native image carries no JDK: it sets up a GraalVM 25 release instead. The family moves to the next
-  LTS together, in an edition of Pauta.
-  - *Check (code):* `pom.xml` sets `maven.compiler.release` to 25 or later. Where the build has an enforcer
-    `requireJavaVersion` rule, its range is the open-ended `[25,)`: it starts at 25 and has no upper bound. An app with
-    no such rule passes, and a rule inside a profile is not counted. In the workflows, every step that uses a
-    `setup-java` or `setup-graalvm` action (`actions/setup-java`, `graalvm/setup-graalvm`) names 25 or a 25.x release
-    in its `java-version`, or in the `version` a GraalVM step may give instead. The Command reads a workflow line by
-    line, not as YAML: a step ends at the next line that opens a list item. A version it cannot read as a number (an
-    expression such as `${{ matrix.java }}`, a `java-version-file`) it prints as not judged and does not fail: read
-    the matrix or the file it names.
-  - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; r=$(sed -n 's:.*<maven.compiler.release>\([0-9]*\)<.*:\1:p' pom.xml | head -n 1); j=$(sed -n '/<profiles>/,/<\/profiles>/!p' pom.xml | tr -d ' \t\r\n' | tr '<' '\n' | sed -n '/^requireJavaVersion>/,/^\/requireJavaVersion>/s/^version>//p'); w=$(for f in .github/workflows/*.yml .github/workflows/*.yaml; do [ -f "$f" ] || continue; for n in $(grep -nE '^[^#]*uses:[^#]*/setup-(java|graalvm)@' "$f" | cut -d: -f1); do v=$(tail -n +"$n" "$f" | sed -n '1d;/^ *- /q;p' | grep -E '^ *(java-)?version:' | head -n 1 | cut -d: -f2- | cut -d'#' -f1 | tr -d " '\"\r"); if printf '%s\n' "$v" | grep -qE '^25([.+-].*)?$'; then :; elif printf '%s\n' "$v" | grep -q '^[0-9]'; then echo "$f:$n sets up JDK $v"; else echo "not judged: $f:$n version ${v:-not given}" >&2; fi; done; done); [ "${r:-0}" -ge 25 ] && ! echo "$j" | grep -vxF '[25,)' | grep -q . && [ -z "$w" ] || { echo "maven.compiler.release ${r:-none}; requireJavaVersion outside profiles:" ${j:-none}; [ -z "$w" ] || echo "$w"; false; }`
-  - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml) and [`.github/workflows/ci.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/ci.yml) (`java-version: '25'`). Mirada's native legs set up Oracle
-    GraalVM with `version: '25.4'` ([`.github/workflows/release.yml`](https://github.com/adriandeleon/Mirada/blob/main/.github/workflows/release.yml)); its jlink leg sets up JDK 25.
+  ceiling: a newer JDK builds the app too, so no enforcer rule refuses one, in the main build or in any profile
+  that turns itself on (an `<activation>` by JDK version, OS, property or file; a profile turned on only by name,
+  with `-P`, is not counted). CI builds every app on JDK 25, the current LTS: every workflow step that sets up a
+  JDK sets up release 25, and the runtime an installer carries ([PLAT-02](#plat-02)) is that JDK's. A leg that
+  builds a native image carries no JDK: it sets up a GraalVM 25 release instead, 25.0 or any later 25.x. The
+  family moves to the next LTS together, in an edition of Pauta.
+  - *Check (code):* `pom.xml` sets `maven.compiler.release` to 25 or later. Every enforcer `requireJavaVersion`
+    rule that counts has the open-ended range `[25,)`: it starts at 25 and has no upper bound. The rules that count
+    are those of the main build and those inside a profile that turns itself on, one whose `<activation>` holds a
+    `<jdk>`, an `<os>`, a `<property>` or a `<file>`: such a profile is on without being asked for, so its rule is
+    the build's rule wherever it activates. A rule in a profile turned on only by name with `-P` is not counted,
+    and an app with no rule that counts passes. In the workflows, every step that uses a `setup-java` or `setup-graalvm`
+    action (`actions/setup-java`, `graalvm/setup-graalvm`) names 25 or a 25.x release in its `java-version`, or in
+    the `version` a GraalVM step may give instead. The Command reads a workflow line by line, not as YAML: a step
+    ends at the next line that opens a list item. A version it cannot read as a number (an expression such as
+    `${{ matrix.java }}`, a `java-version-file`) it prints as not judged and does not fail: read the matrix or the
+    file it names.
+  - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; r=$(sed -n 's:.*<maven.compiler.release>\([0-9]*\)<.*:\1:p' pom.xml | head -n 1); p=$(tr -d ' \t\r\n' < pom.xml | tr '<' '\n'); j=$({ printf '%s\n' "$p" | sed -n '/^profiles>/,/^\/profiles>/!p'; printf '%s\n' "$p" | sed -n '/^profile>/,/^\/profile>/{/^profile>/h;/^profile>/!H;/^\/profile>/{x;/\nactivation>.*\njdk>.*\n\/activation>/{p;d;};/\nactivation>.*\nos>.*\n\/activation>/{p;d;};/\nactivation>.*\nproperty>.*\n\/activation>/{p;d;};/\nactivation>.*\nfile>.*\n\/activation>/{p;d;};};}'; } | sed -n '/^requireJavaVersion>/,/^\/requireJavaVersion>/s/^version>//p'); w=$(for f in .github/workflows/*.yml .github/workflows/*.yaml; do [ -f "$f" ] || continue; for n in $(grep -nE '^[^#]*uses:[^#]*/setup-(java|graalvm)@' "$f" | cut -d: -f1); do v=$(tail -n +"$n" "$f" | sed -n '1d;/^ *- /q;p' | grep -E '^ *(java-)?version:' | head -n 1 | cut -d: -f2- | cut -d'#' -f1 | tr -d " '\"\r"); if printf '%s\n' "$v" | grep -qE '^25([.+-].*)?$'; then :; elif printf '%s\n' "$v" | grep -q '^[0-9]'; then echo "$f:$n sets up JDK $v"; else echo "not judged: $f:$n version ${v:-not given}" >&2; fi; done; done); [ "${r:-0}" -ge 25 ] && ! echo "$j" | grep -vxF '[25,)' | grep -q . && [ -z "$w" ] || { echo "maven.compiler.release ${r:-none}; requireJavaVersion in the main build and in profiles that turn themselves on:" ${j:-none}; [ -z "$w" ] || echo "$w"; false; }`
+  - *Reference:* the app template's [`pom.xml`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/pom.xml) (one enforcer rule, `[25,)`) and [`.github/workflows/ci.yml`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/.github/workflows/ci.yml)
+    (`java-version: '25'`); Termina's and Mirada's rules have the same range, and Modula and nux have no enforcer
+    rule. Editora doesn't yet: beside the `[25,)` rule of its main build, its [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml) has a profile,
+    `formatter-needs-jdk25`, that activates on JDK `[26,)` and holds an enforcer rule with the range `[25,26)`, so
+    a plain build on JDK 26 or newer stops unless it is told to skip the format check. Torrenta doesn't either: the
+    rule in its main build has the range `[25,26)`. Mirada's profile of the same name skips the format check on
+    those JDKs, says so, and refuses nothing ([`pom.xml`](https://github.com/adriandeleon/Mirada/blob/main/pom.xml)). No app's profile that activates by OS, property or
+    file holds an enforcer rule (Termina's `os-windows` and `git-commit` and Modula's `app-image` among them).
+    Every app's workflows set up 25. Mirada's native legs
+    set up Oracle GraalVM with `version: '25.4'`, a GraalVM 25 release
+    ([`.github/workflows/release.yml`](https://github.com/adriandeleon/Mirada/blob/main/.github/workflows/release.yml)); its jlink leg sets up JDK 25.
 - **PLAT-02 · SHOULD.** The installers carry a jlinked runtime; users never install Java.
   - *Check (code):* the `dist` profile's jpackage step builds a jlinked app image (`jLinkOptions`) and wraps the
     installer around it, and that image is what the release ships.
@@ -54,7 +68,8 @@ description: "JDK, JavaFX, AtlantaFX, NullAway, Maven Wrapper, tests and coverag
   - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; [ -d src/main/java ] || { echo 'no src/main/java'; exit 1; }; { grep -q 'NullAway:ERROR' pom.xml || { echo 'no -Xep:NullAway:ERROR in pom.xml'; false; }; } && ! find src/main/java -name '*.java' ! -name package-info.java ! -name module-info.java -exec dirname {} \; | sort -u | while read -r d; do grep -qs '@NullMarked' "$d/package-info.java" || echo "not @NullMarked: $d"; done | grep .`
   - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml), [`docs/conventions.md#null-annotations-jspecify-checked-by-nullaway`](https://github.com/adriandeleon/Editora/blob/master/docs/conventions.md#null-annotations-jspecify-checked-by-nullaway).
 - **PLAT-10 · MUST.** Code is formatted by **Spotless** with Palantir Java Format, and CI fails an unformatted
-  change in a Format job of its own ([REL-19](../release/#rel-19)).
+  change in a Format job of its own: a job that runs `spotless:check` and neither builds nor tests. When CI runs
+  and which of its jobs the default branch requires are [REL-19](../release/#rel-19).
   - *Why:* a check bound to a build phase fails in the same job as the tests, so the failed job does not say which
     of the two is wrong.
   - *Check (code):* the spotless plugin configures `palantirJavaFormat`, and in a workflow that runs on pull
@@ -63,10 +78,11 @@ description: "JDK, JavaFX, AtlantaFX, NullAway, Maven Wrapper, tests and coverag
     to a phase (`./mvnw verify`) does not meet it alone.
     The Command reads a workflow line by line, not as YAML: a job is what lies between two keys at the indentation
     of the first key under `jobs:`, and a Maven run counts when its goal is on the line that names `mvn` or `mvnw`
-    (a `name:` line is not a run). What it does not see, so read the workflow where one applies: a goal on a
-    continuation line; a build started from a script; a job's `if:`; and a Format job in a workflow of its own that
-    the pull-request workflow calls (`workflow_call`), which meets the rule and which the Command fails.
-  - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; grep -q palantirJavaFormat pom.xml || { echo 'pom.xml configures no palantirJavaFormat'; exit 1; }; for f in .github/workflows/*.yml .github/workflows/*.yaml; do grep -qE '^( *-? *|on:.*[^A-Za-z0-9_-])pull_request(_target)?([^A-Za-z0-9_-]|$)' "$f" 2>/dev/null || continue; i=$(sed -n '/^jobs:/,$p' < "$f" | grep -E '^ +[A-Za-z0-9_-]+:' | head -n 1 | sed -n 's/^\( *\).*/\1/p'); for s in $(grep -nE '^[^#]*mvnw?(\.cmd)?[[:space:]]([^#]*[[:space:]])?spotless:check' "$f" | grep -vE '^[0-9]+: *-? *name:' | cut -d: -f1); do a=0; b=999999; for h in $(grep -nE "^$i[A-Za-z0-9_-]+:" "$f" | cut -d: -f1); do if [ "$h" -le "$s" ]; then a=$h; elif [ "$b" -eq 999999 ]; then b=$h; fi; done; m=; for t in $(grep -nE '^[^#]*mvnw?(\.cmd)?[[:space:]]([^#]*[[:space:]])?(compile|test-compile|test|package|verify|integration-test|install|deploy)([^A-Za-z0-9:_.=/-]|$)' "$f" | grep -vE '^[0-9]+: *-? *name:' | cut -d: -f1); do [ "$t" -ge "$a" ] && [ "$t" -lt "$b" ] && m="$m $f:$t"; done; [ -z "$m" ] && exit 0; echo "spotless:check at $f:$s shares its job with a build or test run:$m"; done; done; w=$(grep -lE '^[^#]*spotless:check' .github/workflows/* 2>/dev/null); echo "no job of its own runs spotless:check in a workflow with a pull_request trigger (named in: ${w:-no workflow})"; exit 1`
+    (a `name:` line is not a run). A Format job in a workflow of its own that a pull-request workflow calls
+    (`workflow_call`, `uses: ./.github/workflows/<file>`) meets the rule, and the Command follows that call. What
+    it does not see, so read the workflow where one applies: a goal on a continuation line; a build started from a
+    script; a job's `if:`.
+  - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; grep -q palantirJavaFormat pom.xml || { echo 'pom.xml configures no palantirJavaFormat'; exit 1; }; for f in .github/workflows/*.yml .github/workflows/*.yaml; do grep -qE '^( *-? *|on:.*[^A-Za-z0-9_-])pull_request(_target)?([^A-Za-z0-9_-]|$)' "$f" 2>/dev/null || { grep -qE '^( *-? *|on:.*[^A-Za-z0-9_-])workflow_call([^A-Za-z0-9_-]|$)' "$f" 2>/dev/null && grep -lE "^[^#]*uses:[^#]*\./$f" .github/workflows/* 2>/dev/null | xargs grep -lE '^( *-? *|on:.*[^A-Za-z0-9_-])pull_request(_target)?([^A-Za-z0-9_-]|$)' 2>/dev/null | grep -q .; } || continue; i=$(sed -n '/^jobs:/,$p' < "$f" | grep -E '^ +[A-Za-z0-9_-]+:' | head -n 1 | sed -n 's/^\( *\).*/\1/p'); for s in $(grep -nE '^[^#]*mvnw?(\.cmd)?[[:space:]]([^#]*[[:space:]])?spotless:check' "$f" | grep -vE '^[0-9]+: *-? *name:' | cut -d: -f1); do a=0; b=999999; for h in $(grep -nE "^$i[A-Za-z0-9_-]+:" "$f" | cut -d: -f1); do if [ "$h" -le "$s" ]; then a=$h; elif [ "$b" -eq 999999 ]; then b=$h; fi; done; m=; for t in $(grep -nE '^[^#]*mvnw?(\.cmd)?[[:space:]]([^#]*[[:space:]])?(compile|test-compile|test|package|verify|integration-test|install|deploy)([^A-Za-z0-9:_.=/-]|$)' "$f" | grep -vE '^[0-9]+: *-? *name:' | cut -d: -f1); do [ "$t" -ge "$a" ] && [ "$t" -lt "$b" ] && m="$m $f:$t"; done; [ -z "$m" ] && exit 0; echo "spotless:check at $f:$s shares its job with a build or test run:$m"; done; done; w=$(grep -lE '^[^#]*spotless:check' .github/workflows/* 2>/dev/null); echo "no job of its own runs spotless:check in a workflow that runs on pull requests (named in: ${w:-no workflow})"; exit 1`
   - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml) (spotless plugin), [`.github/workflows/ci.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/ci.yml) (the `format` job, *Format*); the
     template, Termina and Mirada have the same job in their `ci.yml`. Torrenta and Modula do not yet: their `test`
     job runs `./mvnw verify`, the phase the check is bound to, and no job runs `spotless:check`. nux has no Spotless.
@@ -78,10 +94,20 @@ description: "JDK, JavaFX, AtlantaFX, NullAway, Maven Wrapper, tests and coverag
   - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml) (surefire), [`docs/testing.md`](https://github.com/adriandeleon/Editora/blob/master/docs/testing.md), [`FxTestSupport`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/FxTestSupport.java), with TestFX;
     Termina [`pom.xml`](https://github.com/adriandeleon/Termina/blob/master/pom.xml) (surefire) and [`DialogAnswers`](https://github.com/adriandeleon/Termina/blob/master/src/test/java/com/termina/ui/DialogAnswers.java), without it.
 - **PLAT-12 · MUST.** A **JaCoCo** `check` runs at `mvn verify` with build-wide floors of **≥ 0.90 lines and
-  ≥ 0.90 methods**. The branch floor and each package's own floor are [QUAL-03](../quality/#qual-03).
+  ≥ 0.90 methods**, and no profile that activates by OS or by JDK version lowers a floor or skips the check. The
+  rule is about the pom's profiles, not about where CI runs the gate: a workflow that runs the tests on some of
+  its runners with JaCoCo skipped is the workflow's choice and passes. The branch floor and each package's own
+  floor are [QUAL-03](../quality/#qual-03).
   - *Check (code):* the `jacoco-check` execution is bound to `verify` with `BUNDLE` limits of 0.90 `LINE` and
-    0.90 `METHOD`.
-  - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml) `jacoco-check`.
+    0.90 `METHOD`. Where a limit is a property (`${coverage.bundle.line}` in Termina), its value is 0.90 or more
+    in the main `<properties>` and in every profile that sets it and activates by OS or by JDK version (an
+    `<activation>` with an `<os>` or a `<jdk>`), and no such profile sets `jacoco.skip` or the check's `<skip>`.
+    A `-Djacoco.skip` on a workflow's command line is not judged.
+  - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml) `jacoco-check`, with no profile that touches it; the template's and Mirada's are the
+    same. Editora's [`full-tests.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/full-tests.yml) runs its tests on the other OSes with `-Djacoco.skip=true`, which the rule
+    leaves to the workflow. Termina doesn't yet: its `os-windows` profile lowers the two floors to 0.45 and 0.47 on Windows
+    ([`pom.xml`](https://github.com/adriandeleon/Termina/blob/master/pom.xml)). Torrenta's check has a line floor and no method floor, and Modula and nux have no JaCoCo
+    check.
 - **PLAT-13 · SHOULD.** The app logs through `java.util.logging` and no other logging API. The Debug Log captures
   it: [DIAG-02](../diagnostics/#diag-02).
   - *Check (code):* the app's own code imports no logging API other than `java.util.logging`.

@@ -7,12 +7,13 @@ description: "Status bar, themes, title bar, dialogs, Welcome, About, window sta
 
 - **WIN-01 · MUST.** The main window has a status bar, shown by default; the user may hide it. Its left side is the
   *echo area*: one line of feedback for the last action, errors in red and warnings in amber. Clicking it opens the
-  Message Log.
+  Message Log ([DIAG-01](../diagnostics/#diag-01)).
   - *Check (code):* the main window builds a status bar that is visible unless the user hid it; the echo label
     switches between an error and a warning style class, and its click handler runs the Message Log command.
   - *Reference:* Editora [`ui/StatusBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusBar.java) (`status-echo-error`, `status-echo-warn`; a click runs
     `view.messageLog`) and the [Message Log template](../templates/message-log/). Editora hides and shows the bar
-    with `view.toggleStatusBar` and a setting, and Zen mode hides it ([`ui/Chrome.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Chrome.java), `statusBar`).
+    with `view.toggleStatusBar` and a setting, and Zen mode hides it ([`ui/Chrome.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Chrome.java), `statusBar`). Termina doesn't
+    meet the rule yet: its status bar is a setting that starts off ([`config/Settings.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/config/Settings.java), `showStatusBar`).
 - **WIN-03 · MUST.** In an app with a menu bar, the menu bar sits in the title bar by default on Windows and Linux:
   JavaFX 27's `HeaderBar` with `StageStyle.EXTENDED` carries the menu, and a setting that starts on lets the user
   fall back to a decorated window. On macOS the menus are in the system menu bar (`useSystemMenuBar`), and the window
@@ -47,9 +48,12 @@ description: "Status bar, themes, title bar, dialogs, Welcome, About, window sta
     `BUTTON_ORDER_WINDOWS` on every OS fails: it puts `Y`, `N` and `O` before `C`.
   - *Reference:* no app yet. Editora's Git confirmations give their buttons the `OK_DONE` and `CANCEL_CLOSE` roles
     and leave the order to JavaFX.
-- **WIN-08 · SHOULD.** Window size, position, maximized state and open items are restored on the next launch.
-  `--no-session` skipping the restore is [CLI-04](../command-line/#cli-04).
-  - *Check (test):* a round-trip test of the saved workspace state.
+- **WIN-08 · SHOULD.** The main window's size, position and maximized state are restored on the next launch, and
+  in an app that opens documents or sessions, so are the items that were open. `--no-session` skipping the restore
+  is [CLI-04](../command-line/#cli-04).
+  - *Check (code):* closing the window saves its size, position and maximized flag, and the open items in an app
+    that has them, and the next launch reads them back and applies them. A test that saves the state and reads it
+    back is the surest evidence.
   - *Reference:* Editora [`config/WorkspaceState.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/WorkspaceState.java) (`windowX` … `windowMaximized`),
     [`ui/WindowSessionCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowSessionCoordinator.java), [`App.noSessionFlag`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java); tests [`AppArgsTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/AppArgsTest.java),
     [`NoSessionStartupFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/NoSessionStartupFxTest.java) and, for the window's geometry, [`WindowManagerLaunchFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/WindowManagerLaunchFxTest.java)
@@ -81,44 +85,54 @@ description: "Status bar, themes, title bar, dialogs, Welcome, About, window sta
   - *Reference:* no app yet. Editora, Termina and Mirada zoom their content only (`view.textZoomIn`, `zoomIn`,
     `view.zoomIn`), and Editora writes its menu font as absolute pixels ([`MainMenuBar.UI_FONT_SIZE`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java), `.context-menu`
     in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css)). Torrenta, Modula, nux and the app template have no zoom command.
-- **WIN-13 · MUST.** Every quit entry point runs one quit method: File → Quit, the quit command, and the system's own
-  Quit, which on macOS is the application menu's and the Dock's. That method asks what the
-  [Confirm dialog](../templates/confirm-dialog/) rules require ([CONF-01](../templates/confirm-dialog/#conf-01)),
-  closes open dialogs and saves the window state ([WIN-08](#win-08)). Which of those entry points an app must have
-  is [WIN-14](#win-14), and a tray's Quit is [TRAY-04](../tray-and-background/#tray-04).
+- **WIN-13 · MUST.** Every quit entry point an app has runs one quit method: the Quit row and the `app.quit` command
+  ([WIN-14](#win-14) says which of them an app must have), and the system's own Quit, which on macOS is the
+  application menu's and the Dock's. That method asks what the [Confirm dialog](../templates/confirm-dialog/) rules
+  require ([CONF-01](../templates/confirm-dialog/#conf-01)), closes open dialogs and runs the save the app runs
+  when its window closes, so quitting loses nothing a close would have kept; what an app keeps across launches is
+  [WIN-08](#win-08). A tray's Quit is [TRAY-04](../tray-and-background/#tray-04).
   - *Why:* a second way out skips what the first one does: the question about unsaved work, the saved window, or,
     in a tray app, the quit itself. Quitting from inside a dialog's nested event loop has aborted the JVM.
-  - *Check (code):* one quit method; the File → Quit row and the quit command run it, and on macOS the system's Quit
-    reaches it. JavaFX turns the application menu's and the Dock's Quit into a close request on every window
+  - *Check (code):* one quit method. The Quit row and the quit command run it, where the app has them (an app with
+    neither fails [WIN-14](#win-14), not this rule), and on macOS the system's Quit reaches it. JavaFX turns the
+    application menu's and the Dock's Quit into a close request on every window
     (`GlassStage.requestClosingAllWindows`) unless the app catches Glass's quit action (`handleQuitAction`), so the
-    quit handler calls the quit method, or, in an app with one window, that window's close request does. The
+    quit handler calls the quit method, or, in an app with one main window, that window's close request does. In an
+    app with one main window and no quit command, what the close request runs is the quit method, and it is judged
+    as one; an app with several main windows whose close requests each ask for themselves has no quit method. The
     method itself asks before it discards anything [CONF-01](../templates/confirm-dialog/#conf-01) covers (unsaved
     work; an app with nothing to lose asks nothing), closes the app's other windows and its open dialogs before it
-    exits, and saves the window state.
+    exits, and runs the same save a close of the window runs (the window state of [WIN-08](#win-08), in an app
+    that keeps it).
   - *Reference:* the app template's [`MainWindow.quit`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MainWindow.java): the `app.quit` command, which File → Quit runs, and the
     window's close request both call it, so macOS's Quit reaches it as a close request; it hides the other windows
-    and dialogs, saves the window state and waits for the last settings write, and has nothing unsaved to ask
-    about. Editora's File → Quit and `app.quit` run [`MainController.onQuit`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java), which asks about the quit once and then about each window's unsaved files; macOS's Quit doesn't reach it yet:
+    and dialogs, saves the window state and waits for the last settings write before it exits, and has nothing
+    unsaved to ask about. That wait is the last save [PERF-01](../performance/#perf-01) allows as the app quits; the
+    template makes it on a background thread all the same.
+    Editora's File → Quit and `app.quit` run [`MainController.onQuit`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java), which asks about the quit once and then about each window's unsaved files; macOS's Quit doesn't reach it yet:
     [`MacOpenFiles`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/MacOpenFiles.java) wraps Glass's handler and passes `handleQuitAction` on to JavaFX's own, so each window gets a close
     request and asks for itself. Torrenta ([`MainWindow.quit`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java)), Modula ([`ModulaApp.quit`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ModulaApp.java)) and nux (`Platform.exit`, from
-    `app.quit` and from the tray, in [`App`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/App.java)) don't catch macOS's Quit either. Termina and Mirada have no quit command ([WIN-14](#win-14)):
-    the last window to close ends the app, and macOS's Quit arrives at each window as a close request, which asks
-    ([`TerminalWindow.close`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalWindow.java), [`ViewerWindow.mayClose`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/ViewerWindow.java)).
+    `app.quit` and from the tray, in [`App`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/App.java)) don't catch macOS's Quit either. Termina and Mirada have no quit command
+    ([WIN-14](#win-14)). Mirada has one main window, and what its close request runs is its quit method: it asks
+    about an unsaved edit, closes its tool windows and saves the window's place ([`ui/ViewerWindow.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/ViewerWindow.java), `mayClose`,
+    `release`, `rememberPlace`), and macOS's Quit arrives there as a close request. Termina doesn't meet the rule
+    yet: it has several windows and no quit method, so macOS's Quit arrives at each window as a close request and
+    each asks for itself ([`TerminalWindow.close`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalWindow.java)).
 - **WIN-14 · MUST.** Every app has a Quit, on every OS: the `app.quit` command, in the Command Palette, and, where
-  the app has a File menu or a main menu, a Quit row that ends it. A main menu is the menu button that stands in
-  for the menu bar in an app with none (Mirada's ☰ on Windows and Linux). A menu button that lists one kind of
-  thing is not a main menu (nux's Profiles and Commands), and neither is a right-click menu (the only menu Modula
-  has): an app with no File menu and no main menu meets the rule with the command alone. What Quit does is
-  [WIN-13](#win-13). Closing the last window may end the app as well, but it is never the only way out.
+  the app has a File menu or a main menu, a Quit row that ends it. A main menu is a menu button in the window that
+  holds the app's commands as a menu bar would (Mirada's ☰, which it shows on every OS). A menu button that lists
+  one kind of thing is not a main menu (nux's Profiles and Commands), and neither is a right-click menu (the only
+  menu Modula has): an app with no File menu and no main menu meets the rule with the command alone. What Quit does
+  is [WIN-13](#win-13). Closing the last window may end the app as well, but it is never the only way out.
   - *Why:* someone who quits one app of the family from the palette or the File menu looks for the same in the
     next. An app that ends only with its last window has no answer once it has a tray or a second window.
-  - *Check (code):* `app.quit` is registered and the palette lists it. Where the app builds a File menu, the menu's
-    last row runs `app.quit`; where it has no menu bar and a main menu instead, that menu's last row does. An app
-    with neither menu passes on the command.
+  - *Check (code):* `app.quit` is registered and the palette lists it. Where the app builds a File menu, a row of
+    it runs `app.quit`; where it has no menu bar and a main menu instead, a row of that menu does. An app with
+    neither menu passes on the command.
   - *Reference:* the app template's [`Commands.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Commands.java) (`app.quit`) and [`AppMenus.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AppMenus.java) (Quit, the File menu's last row); Editora's `app.quit`, the
     last row of its File menu ([`ui/MenuBarModel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java)). Torrenta's File menu ends with Quit, and it registers the command as `quit`.
     Termina and Mirada have no Quit. Termina's File menu has Close Window and ends with Settings, Sync Now and
-    Configure Profiles ([`ui/MenuBarModel.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MenuBarModel.java)); Mirada's ☰ menu ([`ui/TitleBar.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/TitleBar.java)) and, on macOS, its File menu
+    Configure Profiles ([`ui/MenuBarModel.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MenuBarModel.java)); Mirada's ☰ menu, on every OS ([`ui/TitleBar.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/TitleBar.java)), and, on macOS, its File menu
     ([`ui/MacMenus.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MacMenus.java)) end with Close (`window.close`). nux has neither menu and meets the rule with `app.quit`
     ([`App`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/App.java)). Modula has neither menu and no quit command: it quits from its tray and its window's close button
     ([`ModulaApp.quit`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ModulaApp.java)).
@@ -156,4 +170,4 @@ and what the state colors mean are [ICON-15](../icons-and-color/#icon-15), [ICON
 
 ![Mirada with its file name and folder in a HeaderBar title bar, an info panel and a thumbnail strip](../../assets/shots/mirada-main.png "Mirada's HeaderBar title bar carries the file name and folder; the info panel and thumbnails are commands too.")
 ![Termina window with a menu bar, a tab strip under it and a tab context menu](../../assets/shots/termina-tabs.png "Termina's tab strip is the row under the menu bar; its HeaderBar holds the menu bar and the window title, not the tabs.")
-![Editora's View menu open with toggle commands and their chords](../../assets/shots/editora-menu-bar.png "Every menu item is a command and shows its chord.")
+![Editora's View menu open with toggle commands and their chords](../../assets/shots/editora-menu-bar.png "Editora's View menu in an earlier build: every row is a command, and a row whose command is bound shows its chord.")

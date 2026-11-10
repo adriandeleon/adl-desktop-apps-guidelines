@@ -16,13 +16,43 @@ const LEVELS = {
 
 const SKILL = "skills/pauta-audit/SKILL.md";
 
-// In next/ (scripts/build-next.mjs) the files describe the batch waiting under [Unreleased], not an edition.
+// In next/ (scripts/build-next.mjs) the files describe the batch waiting under [Unreleased], not an edition, and every
+// one of them says so (AGENTS.md, "Pauta Next"): llms.txt, llms-full.txt, each page's Markdown and the changelog's
+// with nextWarning, rules.json in its `next` field, the two schemas in a `$comment` (nextSchema), the audit skill
+// under its front matter (skillMarkdown). scripts/combine.py says it in the Markdown download, scripts/build-print.sh
+// on the PDF's cover and src/components/Banner.astro on every page.
 const isNext = () => process.env.PAUTA_PATH === "next";
 const stamp = (pkg) =>
   isNext() ? `Pauta Next, the unreleased changes after ${pkg.version}` : `Pauta ${pkg.version} (${pkg.guidelines.date})`;
 const nextWarning = (pkg) =>
   `**Not an edition.** This is Pauta Next: the changes waiting for the edition after ${pkg.version}, which may still
 change before it is released. Never cite a rule from it or audit an app against it; use ${editionUrl(pkg, "latest")}llms.txt.`;
+
+/** A JSON Schema as it is served: an edition's as it is, next/'s with a `$comment` after its `$id` saying it is not an
+ *  edition's. `file` is its name, for the address of the latest edition's. */
+export function nextSchema(schema, file, root = process.cwd()) {
+  if (!isNext()) return schema;
+  const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
+  const note =
+    `Not an edition: this is Pauta Next's, the changes waiting for the edition after ${pkg.version}, which may still ` +
+    `change before it is released. Never validate a file against it; use ${editionUrl(pkg, "latest")}${file}.`;
+  const { $schema, $id, ...rest } = schema;
+  return { $schema, $id, $comment: note, ...rest };
+}
+
+/** The audit skill as it is served: an edition's as the repository has it (skills/pauta-audit/SKILL.md), next/'s with
+ *  the notice as the first thing under its front matter, so the file is still a skill. */
+export function skillMarkdown(root = process.cwd()) {
+  const skill = readFileSync(join(root, SKILL), "utf8");
+  if (!isNext()) return skill;
+  const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
+  const note =
+    `> **Not an edition.** This copy of the skill is Pauta Next's: it goes with the changes waiting for the edition after\n` +
+    `> ${pkg.version}, and may still change before it is released. Never audit an app with it, or against the rules of\n` +
+    `> \`next/\`; use the latest edition's, ${editionUrl(pkg, "latest")}${SKILL}.`;
+  const front = skill.match(/^---\n[\s\S]*?\n---\n/)?.[0] ?? "";
+  return `${front}\n${note}\n${skill.slice(front.length)}`;
+}
 
 function load(root = process.cwd()) {
   const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
@@ -54,8 +84,8 @@ export function rulesJson(root) {
     levels: LEVELS,
     checks: {
       code: "Verify by reading or searching the app's source, as the check says.",
-      test: "A named test holds the rule; confirm the app has it, or its equivalent, and that it runs in the build.",
-      "by hand": "Needs the running app; source alone can't settle it.",
+      test: "The statement requires a test; confirm the app has it, or its equivalent, and that it runs in the build.",
+      "by hand": "Needs the running app: the source alone can't confirm it, though it can show the rule unmet.",
     },
     statuses: STATUSES,
     audit: `${base}audit.schema.json`,
@@ -94,7 +124,7 @@ const howTo = (base, version) => {
   return `**Starting a new app:** create it from the GitHub template repository
 https://github.com/adriandeleon/adl-desktop-app-template (\`gh repo create <name> --template
 adriandeleon/adl-desktop-app-template\`, or **Use this template** on GitHub), then run \`scripts/rename.sh <AppName>
-<package>\`. It is built to the edition its README and AGENTS.md name; audit it against this edition and add what is
+<package>\`. It is built to the edition its README and AGENTS.md name; audit it against ${isNext() ? "the latest edition" : "this edition"} and add what is
 missing.
 
 **Building a feature:** read its page first (\`<page>.md\`, below, has the prose, the rules and the spec tables), then
@@ -111,8 +141,12 @@ to write the report; an edition supplies only its rules. In short:
 2. Take each rule in turn. *Check (code)*: when it has a *Command* (\`check.command\`), run it with \`sh -c\` from the
    app's repository root. Exit 0: the check passes; still read the rest of the rule and cite the file:line that meets
    it. Any other exit: the check fails, and what it printed is the evidence. Otherwise read or search the source as the
-   check says. *Check (test)*: find the named test, or the app's equivalent, and confirm the build runs it.
-   *Check (by hand)*: source can't settle it; report it as manual. Some names in a rule's statement are required as
+   check says: a search written inside the check's text lists lines to judge, and its exit code is no verdict; a
+   check that names a test as "the surest evidence" passes on the behavior without it. *Check (test)*: the
+   statement requires a test; find it, or the app's equivalent, and confirm the build runs it.
+   *Check (by hand)*: the source can't confirm it; report it as manual, unless the source plainly shows it unmet,
+   which is \`fail\`. A check that needs the website's repository or a repository setting says so: read it if you
+   can reach it, and report \`not-checked\` if you can't. Some names in a rule's statement are required as
    written: a command id, a catalog key, a chord, a command-line flag, an environment variable, a property in
    pom.xml or pauta.json, and a file the repository must carry (a document at its root, or a resource or tool
    configuration the rule names: emacs.json, jreleaser.yml). A platform API the rule names (javafx.stage.Popup,
@@ -126,12 +160,14 @@ to write the report; an edition supplies only its rules. In short:
    entry's kind as its status (not-applicable, deviation, pending, or in a template app-only); MAYs need no entry.
    An unmet MUST or SHOULD it doesn't list is \`fail\`; so is an unmet MAY, which has no consequence. An entry for a
    rule that passes or is limited, and a deviation or pending entry with no link, are problems to report. A by-hand
-   rule it lists as an exception gets that kind, not \`manual\`. Its \`checked\` list records the by-hand rules a
-   person checked and found met (PAUTA-18): a \`manual\` result carries its entry, one with none is reported as not
-   recorded, which is not a failure, and an entry older than the rule's \`changed\` is stale, a problem.
+   rule it lists as an exception gets that kind, not \`manual\`. Its \`checked\` list, which an app may keep or
+   not, records the by-hand rules a person checked and found met (PAUTA-18): a \`manual\` result carries its entry,
+   one with none is reported as not recorded, which is not a failure, and an entry older than the rule's
+   \`changed\` is stale, a problem.
 5. Report one result per rule: ID, level, status and evidence as \`file:line\`. The statuses: ${Object.keys(STATUSES)
     .map((s) => `\`${s}\``)
-    .join(", ")}. As JSON, the report follows ${base}audit.schema.json. A failed MUST blocks a release.
+    .join(", ")}. As JSON, the report follows ${base}audit.schema.json. A failed MUST blocks a release; a
+   \`manual\` or \`not-checked\` one does not.
 
 Cite a rule by its ID and edition, for example "KBD-07 (Pauta ${version})". Each rule's address is the page's plus
 \`#\` and the ID in lowercase: \`${base}keyboard/#kbd-07\`.
@@ -164,7 +200,7 @@ ${howTo(base, v)}
 
 ## Rules
 
-- [Every rule, as Markdown](${base}llms-full.txt): all ${rules.length} rules of this edition in one file, grouped by page.
+- [Every rule, as Markdown](${base}llms-full.txt): all ${rules.length} rules of ${isNext() ? "Pauta Next" : "this edition"} in one file, grouped by page.
 - [Every rule, as JSON](${base}rules.json): id, level, changed, page, pageTitle, section, appliesTo, url, text, why, check and reference, with every page and every retired ID.
 - [Audit skill](${base}${SKILL}): how to audit an app against an edition, step by step, and write the report.
 - [Audit report schema](${base}audit.schema.json): the JSON Schema of an audit's report.
@@ -280,16 +316,18 @@ export function changelogMarkdown(root = process.cwd()) {
 > ${get("description")}
 
 ${stamp(pkg)}. The page: ${url}.
-
+${isNext() ? `\n${nextWarning(pkg)}\n` : ""}
 ${body}
 `;
 }
 
-export function pageMarkdown(slug, root) {
-  const { pkg, base, pages } = load(root);
-  const p = pages.find((q) => q.slug === slug);
+/** `markdown` with every block of HTML drawn for the eye made text (htmlBlock): a mockup its accessible name, its
+ *  numbered anatomy list a Markdown list, the icon definitions gone. A block starts at a line that opens with "<"
+ *  after a blank line and runs to the next blank line; a fenced code block is left as written. Each page's Markdown
+ *  and the Markdown download (scripts/download-markdown.mjs) are made with it, so the two read the same. */
+export function mockupsAsText(markdown) {
   const out = [];
-  const lines = p.body.split("\n");
+  const lines = markdown.split("\n");
   let fenced = false;
   for (let i = 0; i < lines.length; i++) {
     if (/^ *```/.test(lines[i])) fenced = !fenced;
@@ -303,17 +341,23 @@ export function pageMarkdown(slug, root) {
     }
     out.push(lines[i]);
   }
+  return out.join("\n");
+}
+
+export function pageMarkdown(slug, root) {
+  const { pkg, base, pages } = load(root);
+  const p = pages.find((q) => q.slug === slug);
   // A screenshot is its caption: the image is on the page.
   const shots = (s) =>
     s.replace(/!\[([^\]]*)\]\((?!https?:)[^)\s]*assets\/[^)\s]+(?:\s+"([^"]*)")?\)/g, (_, alt, caption) => `*Screenshot: ${(caption || alt).replace(/\.$/, "")}.*`);
-  const body = absoluteLinks(outsideCode(out.join("\n"), shots).replace(/\n{3,}/g, "\n\n"), p.url).trim();
+  const body = absoluteLinks(outsideCode(mockupsAsText(p.body), shots).replace(/\n{3,}/g, "\n\n"), p.url).trim();
   return `# ${p.title}
 
 > ${p.description}
 
 ${stamp(pkg)}. The page with its screenshots and mockups: ${p.url}.
-Every rule of the edition: ${base}llms-full.txt.
-
+Every rule of ${isNext() ? "Pauta Next" : "the edition"}: ${base}llms-full.txt.
+${isNext() ? `\n${nextWarning(pkg)}\n` : ""}
 ${body}
 `;
 }

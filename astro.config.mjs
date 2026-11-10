@@ -41,8 +41,9 @@ export default defineConfig({
           tag: "script",
           attrs: { src: at("versions.js"), defer: true, "data-root": root, "data-version": pkg.version, "data-edition": edition || "latest" },
         },
-        // Search engines index /latest/ only; a numbered folder is the same pages at a permanent address.
-        ...(/^\d/.test(edition) ? [{ tag: "meta", attrs: { name: "robots", content: "noindex" } }] : []),
+        // Search engines index /latest/ only; a numbered folder is the same pages at a permanent address, and next/ is
+        // the batch waiting for the next edition (scripts/build-next.mjs).
+        ...(edition && edition !== "latest" ? [{ tag: "meta", attrs: { name: "robots", content: "noindex" } }] : []),
         { tag: "meta", attrs: { property: "og:image", content: absolute("og.png") } },
         { tag: "meta", attrs: { property: "og:image:width", content: "1280" } },
         { tag: "meta", attrs: { property: "og:image:height", content: "640" } },

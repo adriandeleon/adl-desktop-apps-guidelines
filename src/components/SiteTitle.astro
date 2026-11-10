@@ -4,12 +4,15 @@
 import Default from "@astrojs/starlight/components/SiteTitle.astro";
 import EditionSelect from "./EditionSelect.astro";
 import pkg from "../../package.json";
+import { siteRoot, editionOf, NEXT } from "../lib/site.mjs";
 
-const changelog = `${import.meta.env.BASE_URL.replace(/\/?$/, "/")}changelog/`;
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const changelog = `${base}changelog/`;
+const next = editionOf(base, siteRoot(pkg)) === NEXT;
 ---
 
 <Default />
-<a class="edition-mini md:sl-hidden print:hidden" href={changelog} title="This edition of the guidelines">{pkg.version}</a>
+<a class="edition-mini md:sl-hidden print:hidden" href={changelog} title={next ? "Unreleased changes, not an edition yet" : "This edition of the guidelines"}>{next ? NEXT : pkg.version}</a>
 <EditionSelect class="sl-hidden md:sl-flex" />
 
 <style>

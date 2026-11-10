@@ -26,6 +26,7 @@ jobs:
       version: ${{ steps.version.outputs.version }}
       publish: ${{ steps.state.outputs.publish }}
       base: ${{ steps.state.outputs.base }}
+      site: ${{ steps.state.outputs.site }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -38,9 +39,10 @@ jobs:
           node-version: 24
           cache: npm
       - name: Decide what to publish
-        # HEAD when [Unreleased] is empty. While it holds the next batch, the current edition from its release commit if
-        # that edition isn't tagged and live yet, else nothing (scripts/release-state.mjs). A pull request publishes
-        # nothing.
+        # The site: latest/ and <version>/ from HEAD when [Unreleased] is empty, else from the commit that released the
+        # current edition, with next/ from HEAD. What to tag and archive: HEAD when [Unreleased] is empty, else the
+        # current edition if it isn't tagged and live yet, else nothing (scripts/release-state.mjs). A pull request
+        # publishes nothing.
         id: state
         if: github.event_name != 'pull_request'
         env:
@@ -50,21 +52,19 @@ jobs:
           cat "$RUNNER_TEMP/state"
           grep -Eq '^pending=(true|false)$' "$RUNNER_TEMP/state" || { echo "release-state printed no pending=true|false" >&2; exit 1; }
           cat "$RUNNER_TEMP/state" >> "$GITHUB_OUTPUT"
-          publish=$(sed -n 's/^publish=//p' "$RUNNER_TEMP/state")
-          if [ -n "$publish" ] && [ "$publish" != "$(git rev-parse HEAD)" ]; then git checkout --quiet --detach "$publish"; fi
       - name: Check the edition
         # Guidance under [Unreleased], or a release numbered above master's and every tag (scripts/check-edition.mjs),
-        # for what this run builds. A release commit that already carries its own v<version> tag passed this check when
-        # it was merged and tagged; it is only being published again (its deploy failed), and its own copy of the
-        # script, which this checkout now runs, would see its tag as taken.
+        # for this commit. A release commit that already carries its own v<version> tag passed this check when it was
+        # merged and tagged; it is only being published again (its deploy failed).
         env:
           EVENT: ${{ github.event_name }}
           PR_BASE: ${{ github.base_ref }}
+          PUBLISH: ${{ steps.state.outputs.publish }}
           PUBLISH_BASE: ${{ steps.state.outputs.base }}
           BEFORE: ${{ github.event.before }}
         run: |
           if [ "$EVENT" = pull_request ]; then base="origin/$PR_BASE"
-          elif [ -n "$PUBLISH_BASE" ]; then base="$PUBLISH_BASE"
+          elif [ -n "$PUBLISH" ] && [ "$PUBLISH" = "$(git rev-parse HEAD)" ]; then base="$PUBLISH_BASE"
           elif [ -n "$BEFORE" ] && [ -n "${BEFORE//0/}" ]; then base="$BEFORE"
           else base="HEAD^1"; fi
           version=$(node -p 'require("./package.json").version')
@@ -73,9 +73,6 @@ jobs:
             exit 0
           fi
           node scripts/check-edition.mjs "$base"
-      - name: Read the version
-        id: version
-        run: echo "version=$(node -p 'require("./package.json").version')" >> "$GITHUB_OUTPUT"
       - name: Install dependencies
         run: npm ci
       - name: Install pandoc
@@ -91,12 +88,45 @@ jobs:
           echo "${PANDOC_SHA256}  $RUNNER_TEMP/pandoc.deb" | sha256sum --check --strict
           sudo dpkg -i "$RUNNER_TEMP/pandoc.deb"
           pandoc --version | head -1
+      - name: Build next/ from this commit
+        # The batch under [Unreleased], before the checkout moves to the commit that released the current edition
+        # (scripts/build-next.mjs). Without a batch, or on a pull request, scripts/build-site.mjs handles next/ itself.
+        if: steps.state.outputs.next != ''
+        run: |
+          node scripts/check-rules.mjs
+          node scripts/build-next.mjs --build "$RUNNER_TEMP/next"
+      - name: Switch to the released edition
+        # latest/ and <version>/ are the edition as released, with that commit's own packages.
+        if: steps.state.outputs.site != '' && steps.state.outputs.site != github.sha
+        env:
+          SITE: ${{ steps.state.outputs.site }}
+        run: |
+          rm -rf dist build public/downloads
+          git checkout --quiet --detach "$SITE"
+          npm ci
+      - name: Check the edition published again
+        # The current edition, published from its release commit because its own run was canceled or failed: checked
+        # against the commit before it, as when it was released, unless it already carries its tag.
+        if: steps.state.outputs.publish != '' && steps.state.outputs.publish != github.sha
+        env:
+          PUBLISH_BASE: ${{ steps.state.outputs.base }}
+        run: |
+          version=$(node -p 'require("./package.json").version')
+          if [ "$(git rev-parse -q --verify "refs/tags/v$version^{commit}")" = "$(git rev-parse HEAD)" ]; then
+            echo "v$version is tagged at this commit: it passed the edition check when it was released"
+            exit 0
+          fi
+          node scripts/check-edition.mjs "$PUBLISH_BASE"
+      - name: Read the version
+        id: version
+        run: echo "version=$(node -p 'require("./package.json").version')" >> "$GITHUB_OUTPUT"
       - name: Build the PDF and Markdown downloads
         run: ./scripts/build-print.sh
       - name: Rebuild editions a canceled run never archived
         # Usually none. Each one is built from the commit that released it, served with this deploy, and archived by
-        # the publish job.
+        # the publish job, so only a run that publishes (or a pull request, as a check) rebuilds them.
         # The list stays in build/editions/ so the artifact below always keeps its dist/ and build/ paths.
+        if: github.event_name == 'pull_request' || steps.state.outputs.publish != ''
         run: |
           mkdir -p build/editions
           node scripts/missing-editions.mjs > build/editions/missing.txt
@@ -114,8 +144,17 @@ jobs:
         run: |
           git show "$RUN_SHA:scripts/trim-pdfs.mjs" > "$RUNNER_TEMP/trim-pdfs.mjs"
           node "$RUNNER_TEMP/trim-pdfs.mjs" dist
+      - name: Add next/
+        # The batch built above, with master's copy of scripts/build-next.mjs: the release commit's build predates it
+        # or holds redirects at next/.
+        if: steps.state.outputs.next != ''
+        env:
+          RUN_SHA: ${{ github.sha }}
+        run: |
+          git show "$RUN_SHA:scripts/build-next.mjs" > "$RUNNER_TEMP/build-next.mjs"
+          node "$RUNNER_TEMP/build-next.mjs" --add "$RUNNER_TEMP/next" dist
       - name: Upload the site for Pages
-        if: steps.state.outputs.publish != ''
+        if: steps.state.outputs.site != ''
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: dist
@@ -183,8 +222,9 @@ jobs:
           ./scripts/archive-edition.sh --push "$EDITIONS/dist/${VERSION}" "$EDITIONS"/build/editions/[0-9]*
 
   deploy:
-    # Only after the publish job succeeded, so an edition is tagged and archived before it goes live.
-    if: ${{ !cancelled() && needs.build.result == 'success' && needs.build.outputs.publish != '' && needs.publish.result == 'success' }}
+    # Every run on master deploys: the current edition, and next/ while a batch waits. When the run publishes an
+    # edition, only after the publish job succeeded, so the edition is tagged and archived before it goes live.
+    if: ${{ !cancelled() && needs.build.result == 'success' && needs.build.outputs.site != '' && (needs.publish.result == 'success' || (needs.build.outputs.publish == '' && needs.publish.result == 'skipped')) }}
     needs: [build, publish]
     runs-on: ubuntu-latest
     timeout-minutes: 25

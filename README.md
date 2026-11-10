@@ -62,7 +62,8 @@ The pages are Markdown in [`src/content/docs/`](src/content/docs/); their order 
 npm ci
 npm run dev        # http://localhost:4321/
 npm run print      # PDF + single Markdown into public/downloads (needs pandoc and Chrome)
-npm run build      # the whole site into dist/: this edition at latest/ and <version>/, earlier editions beside them
+npm run build      # the whole site into dist/: this edition at latest/ and <version>/, earlier editions beside them,
+                   # and next/ while CHANGELOG.md's Unreleased holds changes
 npm run preview    # serves dist/ as deployed
 npm run check      # fails on a malformed rule; the build runs it first
 ```
@@ -73,10 +74,12 @@ renders as a status dot, the rest of the cell being its note; elsewhere a `—` 
 A rule is a list item that opens with its ID and level, `**KBD-07 · MUST.**`, followed by *Why*, *Check* and
 *Reference* lines; [AGENTS.md](AGENTS.md) has the details and each page's prefix.
 
-Guidance collects under *Unreleased* in `CHANGELOG.md` and is published in batches, as editions. Every push to
-`master` is checked and built; it is deployed to GitHub Pages only when nothing waits under *Unreleased*, and while
-something does, CI still publishes the current edition from its release commit if that edition isn't live yet
-(`scripts/release-state.mjs`). The site carries every edition: the current one at `/latest/` and `/<version>/`, the
+Guidance collects under *Unreleased* in `CHANGELOG.md` and is published in batches, as editions. Until then the batch
+can be read at [`/next/`](https://pauta-project.dev/next/), Pauta Next: not an edition, never cited, never archived.
+Every push to `master` is checked, built and deployed to GitHub Pages. When nothing waits under *Unreleased*, `master`
+is the current edition; while something does, the current edition is built from its release commit, `master` is
+built into `/next/`, and CI tags and archives the current edition then if its own run didn't
+(`scripts/release-state.mjs`, `scripts/build-next.mjs`). The site carries every edition: the current one at `/latest/` and `/<version>/`, the
 earlier ones from the `versions` branch, where CI archives each edition it deploys, and CI tags each `v<version>`.
 While nothing waits under *Unreleased*, a push that changes only how the site looks (styles, scripts, a typo fixed
 with an `Edition: none` trailer) deploys the current edition again and re-archives its folder: the current edition's

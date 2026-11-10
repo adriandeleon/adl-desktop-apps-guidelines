@@ -5,7 +5,10 @@
 //   dist/<earlier version>/   every edition published before, from the `versions` branch (scripts/archive-edition.sh),
 //                             without its PDF unless it is one of the two newest (the link goes to GitHub instead)
 //                             or from build/editions/ for one a canceled run never archived (scripts/build-edition.sh)
-//   dist/versions.json        every edition and which one is latest; public/versions.js reads it on every page
+//   dist/next/                while [Unreleased] holds changes, this checkout again as next/, the batch waiting for the
+//                             next edition (scripts/build-next.mjs); while it doesn't, a redirect to latest/ per page
+//   dist/versions.json        every edition, which one is latest, and next/ when it is built; public/versions.js reads
+//                             it on every page
 //   dist/<page>/index.html    a redirect to latest/<page>/ for every page, so links from before editions had folders work
 //   dist/downloads/, CNAME, 404.html, versions.js   copies of the latest edition's: GitHub Pages reads them at the root
 //   dist/llms.txt, llms-full.txt, rules.json   the latest edition's, where coding agents look for them (src/lib/llms.mjs)
@@ -35,10 +38,11 @@ const run = (cmd, args, options = {}) => {
 step("rules");
 run("node", ["scripts/check-rules.mjs"]);
 
-// While CHANGELOG.md's [Unreleased] holds changes, this checkout is not the edition its number names; CI builds it as a
-// check and deploys nothing (.github/workflows/pages.yml).
-if (unreleased(readFileSync("CHANGELOG.md", "utf8"))) {
-  console.warn(`Note: [Unreleased] holds changes, so dist/${version}/ shows them under ${version}; CI won't deploy this build.`);
+// While CHANGELOG.md's [Unreleased] holds changes, this checkout is not the edition its number names. CI builds latest/
+// and <version>/ from the commit that released it instead, and next/ from this one (.github/workflows/pages.yml).
+const pending = unreleased(readFileSync("CHANGELOG.md", "utf8")) !== "";
+if (pending) {
+  console.warn(`Note: [Unreleased] holds changes, so dist/${version}/ and latest/ show them under ${version} here; next/ is what CI deploys of them.`);
 }
 
 // 1. This edition, twice: at latest/ and at its own number.
@@ -124,6 +128,11 @@ writeFileSync(
     2,
   ) + "\n",
 );
+// 3b. next/: this checkout as the batch waiting for its release, or redirects to latest/ when nothing waits.
+step("next/");
+if (pending) run("node", ["scripts/build-next.mjs", "--build", "dist/next"]);
+run("node", ["scripts/build-next.mjs", "--add", "dist/next", "dist"]);
+
 // The PDF of the two newest editions only (scripts/trim-pdfs.mjs, which CI runs again with master's copy).
 run("node", ["scripts/trim-pdfs.mjs", "dist"]);
 
@@ -154,4 +163,4 @@ const walk = (dir) => {
 walk(latest);
 console.log(`${redirects} redirects`);
 
-console.log(`\nPauta ${version} built: latest/ and ${versions.join(", ")} in dist/`);
+console.log(`\nPauta ${version} built: latest/${pending ? ", next/" : ""} and ${versions.join(", ")} in dist/`);

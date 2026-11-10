@@ -1,5 +1,5 @@
 """Applies the guide's table conventions to pandoc's HTML for print: status dots, level pills, matrix tables."""
-import json, re, sys
+import json, os, re, sys
 from pathlib import Path
 
 src, dst = sys.argv[1], sys.argv[2]
@@ -36,7 +36,7 @@ s = re.sub(r"<strong>([A-Z]{2,6}-\d{2,3}) · (MUST|SHOULD|MAY)\.</strong>",
 # the rule or section when it is on that page, else the page's heading. Each page is an <h2>, in pages.json order.
 ROOT = Path(__file__).resolve().parent.parent
 pkg = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
-EDITION = pkg["guidelines"]["url"].rstrip("/") + "/" + pkg["version"] + "/"
+EDITION = pkg["guidelines"]["url"].rstrip("/") + "/" + (os.environ.get("PAUTA_PRINT_FOLDER") or pkg["version"]) + "/"
 slugs = [slug for g in json.loads((ROOT / "pages.json").read_text(encoding="utf-8"))["groups"] for slug in g["items"]]
 heads = list(re.finditer(r'<h2 id="([^"]+)"', s))
 if len(heads) != len(slugs):

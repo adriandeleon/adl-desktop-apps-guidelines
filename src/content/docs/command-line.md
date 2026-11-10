@@ -18,10 +18,16 @@ description: "The flags every app accepts and the single-instance hand-off."
 - **CLI-04 · SHOULD.** `--no-session` does not restore the last session.
   - *Check (by hand):* launch with `--no-session` and find only the items given on the command line.
   - *Reference:* Editora [`App.helpText`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java).
-- **CLI-05 · MUST.** `--report` writes a redacted problem report and opens the GitHub issue, without starting the
-  GUI.
-  - *Check (test):* a test runs the report command and finds the redacted report written.
-  - *Reference:* Editora [`report/ReportCommand.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/report/ReportCommand.java) ([`ReportCommandTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/report/ReportCommandTest.java)).
+- **CLI-05 · MUST.** `--report` writes a redacted problem report to a file in the current folder, prints the file's
+  path and opens the GitHub issue, without starting the GUI. Where the current folder can't be written, the file
+  goes to the temp folder.
+  - *Why:* the person who ran the command is looking at that folder, and has to attach the file. A report in the
+    config folder is hidden from them, and one printed to the terminal is cut by its scrollback.
+  - *Check (test):* a test runs the report command in a folder and finds the redacted report there, with its path
+    printed.
+  - *Reference:* Editora [`report/ReportCommand.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/report/ReportCommand.java) ([`ReportCommandTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/report/ReportCommandTest.java)); Torrenta's
+    [`ReportCommand.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/report/ReportCommand.java) does the same. The app template and Mirada write theirs beside the settings, and Termina
+    prints its report without writing a file ([`ReportCommand.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/report/ReportCommand.java)).
 - **CLI-11 · MUST.** On Windows, `--help`, `--version` and `--report` print in the console they were typed in. A GUI
   launcher has no console, so the installer also carries a console launcher (jpackage's `win-console`) that runs the
   same entry point, or `main` attaches to the parent's console before it prints.

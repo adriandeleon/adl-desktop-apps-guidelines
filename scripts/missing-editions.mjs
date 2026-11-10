@@ -13,10 +13,11 @@
 // that released it. "Released" is CHANGELOG.md's word: a section headed by a version and a date.
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { releaseCommits } from "../src/lib/releases.mjs";
 import { compareVersions, parseEditions, released } from "../src/lib/editions.mjs";
 
-process.chdir(new URL("..", import.meta.url).pathname);
+process.chdir(fileURLToPath(new URL("..", import.meta.url))); // not .pathname, which keeps a space as %20
 const tag = process.argv.includes("--tag");
 const git = (...a) => execFileSync("git", a, { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }).trim();
 const current = JSON.parse(readFileSync("package.json", "utf8")).version;

@@ -163,7 +163,7 @@ Every report uses the same statuses, which `rules.json` also lists:
 |---|---|---|
 | `pass` | Met. | No; an entry for it is stale. |
 | `fail` | Not met, and `pauta.json` doesn't list it. A failed MUST blocks a release. | Yes: this is what the audit is for. |
-| `manual` | Checked by hand: a person checks it in the running app. | Only if it fails then. |
+| `manual` | Checked by hand: a person checks it in the running app, and records it in `pauta.json`'s `checked` list once it is met. | If it fails then, or until someone has looked. |
 | `pending`, `deviation`, `not-applicable`, `app-only` | Not met, and `pauta.json` lists it as that kind. | It has one. |
 | `limited` | The rule covers apps with a feature this one lacks. | No; an entry for it is wrong. |
 
@@ -193,7 +193,8 @@ MENU-14  MUST    pending  pauta.json: issue #212
 - **Check the evidence.** A verdict without `file:line` is a guess. Open a sample of the passes as well as the
   failures before you act on the report.
 - **Manual means a person.** A *by hand* check needs the running app, often on a particular OS. The agent lists
-  them; someone runs them.
+  them; someone runs them and records each one met in `pauta.json`'s `checked` list
+  ([PAUTA-18](../conformance/#pauta-18)), which the next audit reads back.
 - **Gaps per app** on this site is the same audit, done by hand for the six apps. An agent's report for one of them
   should agree with [Gaps per app](../family/gaps/); where it doesn't, one of them is wrong.
 

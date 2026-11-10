@@ -142,7 +142,11 @@ Then, in this order:
      `pom.xml` (`excludes`, `excludedGroups`, `groups`). Evidence is the test's `file:line`.
    - **`by hand`.** Source alone can't settle it: **`manual`**, and the evidence says what to look at in the running
      app (from `check.text`) and the `file:line` of the code involved, if any. When the source shows the feature
-     isn't there at all, it is unmet, not manual.
+     isn't there at all, it is unmet, not manual. Then look the rule up in `pauta.json`'s `checked` list
+     (Conformance, PAUTA-18), where the app records the by-hand rules a person has checked and found met: an entry
+     gives the result its `checked` field, the entry's `edition` and `date`. With no entry, the result's `problem`
+     says that nobody has recorded checking it. An edition older than PAUTA-18 has no such list; leave both out
+     there.
 
    Partly met is unmet: say which part is missing. Don't guess: when the source doesn't settle a `code` or `test`
    rule, say what you searched for and treat it as unmet, with "not found" in the evidence.
@@ -224,6 +228,8 @@ A failed MUST blocks a release.
 (SHOULD, then MAY.)
 
 ## Manual checks
+
+(Each with the edition and date it was last recorded as checked, or "not recorded".)
 
 ## Exceptions
 

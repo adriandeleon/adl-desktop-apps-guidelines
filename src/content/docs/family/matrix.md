@@ -34,7 +34,7 @@ differently, — not found.
 | Headless FX tests | ● | ● | ● | — | ● | ● |
 | Six or more message catalogs | ● | ● | ● | — | ● | ● |
 | README badges + screenshot | ● | ● | ● | ● | ● | ● |
-| Keep a Changelog format | ● | ◐ | ● | ● | ● | ● |
+| Keep a Changelog format | ◐ older entries not in bold | ◐ | ● | ◐ some entries not in bold | ● | ◐ few entries in bold |
 | MIT `LICENSE` + `NOTICE` | ● | ● | ● | ● | ● | ● |
 | `AGENTS.md` canonical, `CLAUDE.md` a pointer | ● | ◐ `CLAUDE.md` only | ● | ◐ `CLAUDE.md` only | ● | ◐ copy |
 | `CONTRIBUTING.md` | ● | — | ● | — | ● | — |

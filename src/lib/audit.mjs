@@ -5,7 +5,7 @@
 /** Every status a rule can get, in report order. The four exception kinds are pauta.json's (Conformance, PAUTA-09). */
 export const STATUSES = {
   fail: "Not met, and pauta.json records no exception for it. A finding; a failed MUST blocks a release.",
-  manual: "Checked by hand: source can't settle it, so a person checks it in the running app.",
+  manual: "Checked by hand: source can't settle it, so a person checks it in the running app and records it in pauta.json's `checked` list.",
   pending: "Not met; pauta.json records it as pending, with an issue.",
   deviation: "A SHOULD the app does differently on purpose; pauta.json records it, with a decision record.",
   "not-applicable": "The rule reads as applying to every app, but its subject does not exist in this one; pauta.json records it.",
@@ -61,10 +61,20 @@ export function auditSchema(base) {
               description:
                 "Where the verdict comes from, as path/File.java:123 from the repository root, and what is missing for a fail. For an exception, its pauta.json reason; for limited, the feature the app lacks.",
             },
+            checked: {
+              type: "object",
+              required: ["edition", "date"],
+              additionalProperties: false,
+              description: "For a manual result: the app's pauta.json `checked` entry for this rule (Conformance, PAUTA-18), when it has one.",
+              properties: {
+                edition: { type: "string", pattern: VERSION, description: "The edition the rule was checked against." },
+                date: { type: "string", format: "date" },
+              },
+            },
             problem: {
               type: "string",
               description:
-                "What is wrong with the app's pauta.json about this rule: an entry for a rule that passes or is limited, a deviation on a MUST, a deviation or pending entry with no link, or a level or url that differs from the edition's.",
+                "What is wrong with the app's pauta.json about this rule: an entry for a rule that passes or is limited, a deviation on a MUST, a deviation or pending entry with no link, a level or url that differs from the edition's, or a manual result with no `checked` entry.",
             },
           },
         },

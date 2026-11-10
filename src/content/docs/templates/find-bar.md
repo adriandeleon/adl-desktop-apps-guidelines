@@ -97,7 +97,7 @@ read as one family: a lens, the field as the card's own text, the count, a regex
 | Threading | A document up to 512 K characters is searched where the request is made; larger ones on one shared daemon thread, latest query only, the result applied on the FX thread. A scrollback is always scanned off the FX thread | `SYNC_SEARCH_CHARS`, `SEARCH_POOL`, `LatestOnly`, `TerminalView.searchAsync` |
 | Bounds | A page of matches around the active one, not every match of a query that matches millions of times; a regular expression has a time budget. Termina keeps the newest 1,000 matches | `SearchMatcher.DEFAULT_PAGE`, `find.tooComplex`, [`ScrollbackSearch.MAX_MATCHES`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/ScrollbackSearch.java) |
 | Bad regex | Said in place, never by a dialog: the status line ("Bad regex: …") or, in Termina, the field in `-state-red` and the count "Invalid" | `find.badRegex`, `.search-field:invalid` |
-| Focus | The bar and its buttons are out of the Tab order; in a terminal Tab belongs to the shell | `setFocusTraversable(false)` |
+| Focus | The buttons may leave the Tab order where a command reaches each; the fields and the option toggles stay in it ([FIND-16](#find-16)). In a terminal the whole bar is out: Tab belongs to the shell | `setFocusTraversable(false)` |
 
 ## Behavior
 
@@ -165,6 +165,21 @@ read as one family: a lens, the field as the card's own text, the count, a regex
   - *Check (code):* the box is not focus-traversable, and the window's chord handlers return early when the focus
     owner is a `TextInputControl`.
   - *Reference:* Torrenta [`MainWindow.buildFilterBar`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java), [`MainWindow`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java) window chords.
+- **FIND-16 · MUST.** A control of the find bar or of a filter box leaves the Tab order only when a command does
+  what it does. The Next, Previous and Close buttons may leave it, since Enter, Shift+Enter and Escape do the same from
+  the field ([FIND-06](#find-06), [FIND-07](#find-07)). An option's toggle (match case, whole word, regular expression) stays in it unless a
+  command toggles that option. A list app's filter box leaves it ([FIND-15](#find-15)) because its command puts the
+  focus there ([FIND-13](#find-13)). In a terminal the whole bar is out, since Tab belongs to the shell, so every
+  control on it has a command.
+  - *Why:* [KBD-15](../../keyboard/#kbd-15) lets a control out of the Tab order only when the keyboard reaches it
+    another way. A toggle that is out of it with no command can be changed with the mouse alone.
+  - *Check (code):* every control of a find bar or filter box that is set not focus-traversable runs a registered
+    command, or has one that does the same.
+  - *Reference:* the app template's [`DebugLogFindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DebugLogFindBar.java), whose Previous, Next and Close buttons are out of the Tab order and run
+    `debugLog.findPrevious` and `debugLog.findNext`, with the Match Case box left in it; Torrenta's filter box,
+    reached by its `filter` command; Mirada's [`BookmarksWindow.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/BookmarksWindow.java), whose three kind toggles are out of it and
+    have a command each. Editora's [`FindReplaceBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/FindReplaceBar.java) keeps every button and box in the Tab order. Termina's
+    regex toggle doesn't meet it yet: it is out of the Tab order and no command reaches it ([`SearchBar.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/SearchBar.java)).
 
 ## Copy
 

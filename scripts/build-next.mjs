@@ -14,6 +14,7 @@
 import { spawnSync } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const NEXT = "next";
 const [mode, ...args] = process.argv.slice(2);
@@ -28,7 +29,7 @@ const run = (cmd, argv, env = {}) => {
 async function build(out) {
   if (!out) throw new Error("--build <dir>");
   out = resolve(out);
-  process.chdir(new URL("..", import.meta.url).pathname);
+  process.chdir(fileURLToPath(new URL("..", import.meta.url))); // not .pathname, which keeps a space as %20
   const { unreleased } = await import("../src/lib/editions.mjs");
   if (!unreleased(readFileSync("CHANGELOG.md", "utf8"))) {
     rmSync(out, { recursive: true, force: true });

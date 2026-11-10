@@ -20,13 +20,13 @@ bug: an app records it in `pauta.json` as `pending`, with an issue, until it is 
 | Keymap chords | The keymap as written, with `Ctrl` | Each keymap's `.mac.json` variant: `Cmd` where the other has `Ctrl`, the macOS keymap of the editor it copies, and another chord where macOS keeps one for itself | The keymap as written, with `Ctrl` | [KBD-09](../keyboard/#kbd-09), [KBD-10](../keyboard/#kbd-10), [KBD-21](../keyboard/#kbd-21) |
 | How a chord is written | `Ctrl+Shift+P` | `⇧⌘P`, in Apple's modifier order | `Ctrl+Shift+P` | |
 | Quit | File → Quit, the tray's Quit | The same, plus the app menu's and the Dock's Quit, caught as the app's own | File → Quit, the tray's Quit | [WIN-13](../window-shell/#win-13), [TRAY-04](../tray-and-background/#tray-04) |
-| Application menu | None | About and Quit, in the menu macOS names after the app | None | [ABOUT-01](../templates/about/#about-01), [WIN-13](../window-shell/#win-13) |
+| Application menu | None | About, Settings and Quit, in the menu macOS names after the app | None | [ABOUT-01](../templates/about/#about-01), [WIN-15](../window-shell/#win-15), [WIN-13](../window-shell/#win-13) |
 | Menu bar | In the title bar, by default | The system menu bar | In the title bar, by default | [WIN-03](../window-shell/#win-03) |
 | Open and save dialogs | The OS's own (`FileChooser`) | The OS's own | The OS's own | |
 | Opening a file or link, showing it in the file manager | Explorer | Finder (`open`) | `xdg-open` | |
 | Files opened from the OS | Arguments, handed to the running instance | `openFiles` Apple Events, sent to the running app | Arguments, handed to the running instance | [CLI-07](../command-line/#cli-07) |
-| File associations | The `.msi` registers the app's file types; a URL scheme goes under `HKCU\Software\Classes` | The bundle's `Info.plist` declares its document types and URL schemes; the user picks the default in Finder | The desktop entry's `MimeType`; `xdg-mime` or the package sets the default | |
-| Trash | The Recycle Bin | The Trash, the one Finder empties | The freedesktop.org trash | |
+| File associations | The `.msi` registers the app's file types; a URL scheme goes under `HKCU\Software\Classes` | The bundle's `Info.plist` declares its document types and URL schemes; the user picks the default in Finder | The desktop entry's `MimeType`; `xdg-mime` or the package sets the default | No rule yet |
+| Trash | The Recycle Bin | The Trash, the one Finder empties | The freedesktop.org trash | No rule yet |
 | Tray icon | AWT `SystemTray` | AWT `SystemTray` | StatusNotifierItem | [TRAY-01](../tray-and-background/#tray-01) |
 | Notifications | A PowerShell toast, shown as Windows PowerShell's | `osascript`, shown as Script Editor's | `notify-send`, shown as the app's | [TRAY-09](../tray-and-background/#tray-09) |
 | Dock or taskbar badge | None | The dock icon | A launcher that honors `LauncherEntry` | [TRAY-12](../tray-and-background/#tray-12) |
@@ -57,6 +57,9 @@ fixed:
 - Editora, Torrenta, Modula and nux don't run their quit method from macOS's own Quit: the application menu's and
   the Dock's Quit ask each window to close, which in Torrenta, Modula and nux, closing to the tray, hides the window
   ([WIN-13](../window-shell/#win-13)).
+- Only Mirada puts Settings in the macOS application menu; Termina adds About there and the others nothing
+  ([WIN-15](../window-shell/#win-15)).
+- Mirada has a menu bar on macOS only: on Windows and Linux its menus are one ☰ button ([OS-01](#os-01)).
 - Editora, Termina, Modula and nux ship no console launcher on Windows, and none attaches to the parent's console;
   Torrenta's `torrenta-nox` is one ([CLI-11](../command-line/#cli-11)).
 

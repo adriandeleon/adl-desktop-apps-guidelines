@@ -8,11 +8,13 @@ import { execFileSync } from "node:child_process";
 import { mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { linkedRepos, OWNER } from "../src/lib/pins.mjs";
 
-process.chdir(new URL("..", import.meta.url).pathname);
+process.chdir(fileURLToPath(new URL("..", import.meta.url))); // not .pathname, which keeps a space as %20
 const pkg = JSON.parse(readFileSync("package.json", "utf8"));
 
+// scripts/check-edition.mjs reads the same folders and file types to check pins.json; change both together.
 const files = (dir) =>
   readdirSync(dir).flatMap((name) => {
     const path = join(dir, name);

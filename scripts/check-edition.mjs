@@ -2,7 +2,8 @@
 // Keeps editions in order when several people or sessions work at once. Compares HEAD with a base commit:
 //
 //   node scripts/check-edition.mjs [base]          base defaults to origin/master; run it before you push
-//   node scripts/check-edition.mjs --tag <base>    CI, on a push to master: the checks, then tag v<version> and push it
+//   node scripts/check-edition.mjs --tag <base>    CI, on a push to master: the checks, then tag v<version> at the
+//                                                  commit that released it, and push the tag
 //
 // Guidance collects on master under CHANGELOG.md's "## [Unreleased]" and is published in batches (AGENTS.md,
 // "Editions"). A change is one of two kinds:
@@ -15,12 +16,15 @@
 //     [Unreleased] empty. Its number is judged against the edition before it (that edition's tag), so it covers the
 //     whole batch: rules gained, lost or re-leveled make at least a minor (AGENTS.md, "Version numbers"), and every ID
 //     retired since is listed with this version. The number must be above the base's and every tag on origin, and
-//     pins.json must pin it (scripts/pin-references.mjs).
+//     pins.json must pin it (scripts/pin-references.mjs): a full commit SHA for every repository the pages link into,
+//     and for no other.
 // Either way CHANGELOG.md's newest numbered section is package.json's version and date, and a change adds at most one.
 // Tags are CI's: nothing else creates or pushes them.
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync, statSync } from "node:fs";
+import { join } from "node:path";
 import { unreleased } from "../src/lib/editions.mjs";
+import { linkedRepos } from "../src/lib/pins.mjs";
 import { originTags, releaseCommits } from "../src/lib/releases.mjs";
 import { pageOrder, parsePage, readRetired } from "../src/lib/rules.mjs";
 
@@ -165,11 +169,38 @@ if (!release) {
     errors.push(`version ${version} must be above the newest tag on origin, v${newest}; another change took that number, so fetch, rebase and renumber`);
   }
   if (added.length === 1 && added[0] !== version) errors.push(`the edition added is ${added[0]}, but package.json says ${version}`);
-  let pinned = null;
+  let pins = null;
   try {
-    pinned = JSON.parse(readFileSync("pins.json", "utf8")).edition;
+    pins = JSON.parse(readFileSync("pins.json", "utf8"));
   } catch {}
-  if (pinned !== version) errors.push(`pins.json pins ${pinned ?? "nothing"}; a release pins its References: run node scripts/pin-references.mjs`);
+  const again = "run node scripts/pin-references.mjs";
+  if (pins?.edition !== version) {
+    errors.push(`pins.json pins ${pins?.edition ?? "nothing"}; a release pins its References: ${again}`);
+  } else if (!pins.repos || typeof pins.repos !== "object" || Array.isArray(pins.repos)) {
+    errors.push(`pins.json has no "repos" (repository -> commit); ${again}`);
+  } else {
+    // pins.json is whole: a commit for every repository the pages link into, each a full SHA, and none left for a
+    // repository nothing links to any more. The pages are read as scripts/pin-references.mjs reads them (the same
+    // folders and file types; change both together). Shape and completeness only: nothing here asks GitHub, so
+    // whether each commit exists in its repository is not checked. pin-references.mjs took each one from the
+    // repository when it wrote the file; a value edited by hand afterwards would pass here and link to a 404.
+    const files = (dir) =>
+      readdirSync(dir).flatMap((name) => {
+        const path = join(dir, name);
+        return statSync(path).isDirectory() ? files(path) : /\.(md|mdx|mjs|astro)$/.test(name) ? [path] : [];
+      });
+    const linked = linkedRepos(["src", "skills"].flatMap(files).map((f) => readFileSync(f, "utf8")).join("\n"));
+    const missing = [...linked.keys()].filter((repo) => !Object.hasOwn(pins.repos, repo)).sort();
+    const malformed = Object.entries(pins.repos).filter(([, sha]) => typeof sha !== "string" || !/^[0-9a-f]{40}$/.test(sha));
+    const unlinked = Object.keys(pins.repos).filter((repo) => !linked.has(repo)).sort();
+    if (missing.length) errors.push(`pins.json pins no commit for ${missing.join(", ")}, which the pages link into; ${again}`);
+    if (malformed.length) {
+      errors.push(
+        `pins.json must pin each repository at a full commit SHA (40 hex digits, lower case); these are not:\n    ${malformed.map(([repo, sha]) => `${repo}: ${JSON.stringify(sha)}`).join("\n    ")}`,
+      );
+    }
+    if (unlinked.length) errors.push(`pins.json pins ${unlinked.join(", ")}, which no page links into; ${again}`);
+  }
 }
 
 if (errors.length) {
@@ -180,10 +211,33 @@ if (errors.length) {
 if (!tag) {
   if (release) console.log(`edition ${version} (${base} has ${baseVersion})`);
   else console.log(`no new edition; ${version} as on ${base}${pending ? ", with changes under [Unreleased]" : ""}`);
-} else if (tags.has(version)) {
-  console.log(`v${version} is already tagged`);
 } else {
-  git("tag", "-a", `v${version}`, "-m", `Pauta ${version}`);
-  git("push", "origin", `refs/tags/v${version}`);
-  console.log(`tagged v${version}`);
+  // The tag goes on the commit that released the edition, whichever commit this run is on. After a release's own run
+  // is canceled, the run that tags it may be on a later, site-only commit, and v<version> there would name files the
+  // edition never had (its pinned links into this repository point at the tag). The release commit is found as
+  // scripts/release-state.mjs and scripts/missing-editions.mjs find it: the first on HEAD's first-parent history whose
+  // package.json carries the version. It must also look like a release (the version's section in CHANGELOG.md, and
+  // nothing under [Unreleased]), or nothing is tagged: a tag is never moved, so a wrong one stays wrong.
+  const at = releaseCommits("HEAD").get(version);
+  const here = git("rev-parse", "HEAD");
+  const refuse = (why) => {
+    console.error(`v${version} is not tagged: ${why}`);
+    process.exit(1);
+  };
+  if (tags.has(version)) {
+    const elsewhere = at && tagCommit(version) !== at;
+    console.log(`v${version} is already tagged${elsewhere ? ` (at ${tagCommit(version).slice(0, 7)}, not at ${at.slice(0, 7)}, the commit that released it; a tag is never moved)` : ""}`);
+  } else if (git("rev-parse", "--is-shallow-repository") === "true") {
+    // With history cut short, the oldest commit in it would pass for the one that released the edition.
+    refuse(`this clone is shallow, so the commit that released ${version} can't be told from a later one (CI fetches with fetch-depth: 0)`);
+  } else if (!at) {
+    refuse(`no commit on HEAD's first-parent history carries ${version}`);
+  } else {
+    const then = show(at, "CHANGELOG.md") ?? "";
+    if (sections(then)[0] !== version) refuse(`${at.slice(0, 7)} is the first commit to carry ${version}, but its CHANGELOG.md has no section for it on top`);
+    if (unreleased(then)) refuse(`${at.slice(0, 7)} is the first commit to carry ${version}, but it left changes under [Unreleased]`);
+    git("tag", "-a", `v${version}`, "-m", `Pauta ${version}`, at);
+    git("push", "origin", `refs/tags/v${version}`);
+    console.log(`tagged v${version} at ${at.slice(0, 7)}${at === here ? "" : `, the commit that released it (this run is on ${here.slice(0, 7)})`}`);
+  }
 }

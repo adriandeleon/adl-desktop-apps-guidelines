@@ -119,7 +119,7 @@ Termina's `HeaderBar` holds the menu bar and the window title
 
 ## Tool panels
 
-**Applies to:** an app with tool panels.
+**Applies to:** an app with tool panels: any panel the user shows and hides beside the content, such as a sidebar, a detail pane or an info panel, whether or not it sits on a stripe.
 
 - **TABS-13 · MUST.** A command toggles each panel (`tool.<id>`: `M-1` … `M-0` in the Emacs keymap for ten of
   them), and where the app has a stripe, its button runs the same command.

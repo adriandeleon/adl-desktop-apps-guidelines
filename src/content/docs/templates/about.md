@@ -8,12 +8,12 @@ Torrenta ([`AboutDialog`](https://github.com/adriandeleon/torrenta/blob/master/s
 
 ## Rules
 
-- **ABOUT-01 · MUST.** Every app has an About window, reached by Help → About, the `help.about` command, and on
-  macOS the About item of the application menu, the one macOS names after the app. The app adds that item itself:
+- **ABOUT-01 · MUST.** Every app has an About window, reached by the `help.about` command, by Help → About where
+  the app has a Help menu, and on macOS by the About item of the application menu, the one macOS names after the app. The app adds that item itself:
   JavaFX builds the menu with Hide and Quit and no About.
   - *Why:* on macOS that menu is where every app keeps About, so it is one of the places
     [the OS's way wins](../../same-on-every-os/#where-the-oss-way-wins).
-  - *Check (code):* `help.about` is registered and opens the About window, the Help menu lists it, and on macOS the
+  - *Check (code):* `help.about` is registered and opens the About window, the Help menu lists it where the app has one, and on macOS the
     app inserts an About item into the application menu that opens the same window.
   - *Reference:* Editora [`ui/AboutDialog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/AboutDialog.java) and [`ui/MenuBarModel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java) (`help.about` ends the Help menu), and the
     app template's [`ui/Commands.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Commands.java) and [`ui/AppMenus.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AppMenus.java), do the Help row and the command. Neither adds the macOS item

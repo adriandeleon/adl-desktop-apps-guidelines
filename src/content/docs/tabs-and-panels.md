@@ -62,15 +62,16 @@ rules in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/mai
 - **TABS-01 · MUST.** Every tab operation is a command, so it can be bound to a chord, is in the palette and has a
   menu row: close, close others, close all, close unmodified, close to the left and right, pin, reopen closed, next
   and previous. The tab's [right-click menu](../menus/) lists the ones that act on a tab. A terminal's tabs are
-  never saved or unsaved, so a terminal has no close unmodified; the other operations are its commands too.
+  never saved or unsaved, so a terminal has no close unmodified, and closing its window closes all its tabs, so it
+  needs no close all; the other operations are its commands too.
   - *Check (code):* each operation has a registered command id, and `TabContextMenu` lists the per-tab ones; in a
-    terminal, each operation but close unmodified.
+    terminal, each operation but close unmodified and close all.
   - *Reference:* Editora [`ui/WindowCommandRegistrar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowCommandRegistrar.java) (`buffer.close`, `buffer.closeOthers`, `buffer.closeAll`,
     `buffer.closeUnmodified`, `buffer.closeLeft`, `buffer.closeRight`, `buffer.togglePin`, `buffer.reopenClosed`,
     `buffer.next`), [`ui/TabContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabContextMenu.java). Editora has no previous-tab command yet. Termina
     [`ui/TerminalWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalWindow.java) (`closeTab`, `closeOtherTabs`, `closeTabsToTheLeft`, `closeTabsToTheRight`, `pinTab`,
-    `reopenClosedTab`, `nextTab` and `previousTab` in `menuCommands`; the tab's menu in `buildTabMenu`). Termina has
-    no close-all command yet: its File menu closes the tab, the others, the ones to either side, or the window
+    `reopenClosedTab`, `nextTab` and `previousTab` in `menuCommands`; the tab's menu in `buildTabMenu`). Its File
+    menu closes the tab, the others, the ones to either side, or the window, which is its close all
     ([`ui/MenuBarModel.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MenuBarModel.java)).
 - **TABS-02 · MUST.** The header is the title: the Tab's own text stays empty, and a graphic header carries the
   file-type glyph, the markers and the title in a label of its own (Editora's style class for it is `tab-title`).

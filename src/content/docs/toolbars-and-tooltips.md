@@ -69,13 +69,15 @@ title and chord come from the registry and the active keymap. Reference: Editora
 ## Rules
 
 - **TBAR-01 · MUST.** Every icon-only button has a name: one helper sets its tooltip and its accessible text from
-  the same string.
+  the same string, the chord included where the tooltip carries one ([TBAR-03](#tbar-03)), so a screen reader says
+  what a sighted user reads.
   - *Why:* a hand-rolled button gets the tooltip and forgets the name, which is how Editora once had seven copies
     of the helper drifting apart, and how a screen reader comes to announce "button".
   - *Check (code):* every icon-only `Button` is built by `Icons.button` or `Icons.toolbarButton`, or passed to
-    `Icons.name`; none calls `setTooltip` without `setAccessibleText`.
+    `Icons.name`; none calls `setTooltip` without `setAccessibleText`, and the two get one string.
   - *Reference:* Editora [`ui/Icons.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Icons.java) (`button`, `toolbarButton`, `name`); Torrenta's copy of all three; Mirada's
-    [`ui/Icons.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Icons.java) (`button`, `name`), which sets the tooltip and the accessible text from the command's title;
+    [`ui/Icons.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Icons.java) (`button`, `name`), which doesn't meet it yet: the accessible text is the command's title and the
+    chord goes in the tooltip only;
     Termina's [`ui/IconNames.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/IconNames.java) (`name`), which binds both to one string. nux sets both by hand on its "?" button
     for the same reason. Editora doesn't yet on its main toolbar:
     [`WindowToolbar.setupButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowToolbar.java) and [`ToolbarCoordinator.buildExtraButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolbarCoordinator.java) set the tooltip only.
@@ -214,11 +216,12 @@ always reach from the bar, or the way back out of a mode, goes in the tail.
 **Applies to:** an app with tool window stripes.
 
 - **TBAR-12 · SHOULD.** Tool window stripes are toolbars: a stripe button is built like a toolbar button, with the
-  chord in its tooltip, accessible text bound to the window's title, and a right-click menu with *Open in Split* and
-  *Hide*.
-  - *Check (code):* the stripe button's tooltip comes from the same title-and-chord format, and its
-    `accessibleTextProperty` is bound to the tool window's title.
-  - *Reference:* Editora [`ToolWindowManager.register`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolWindowManager.java), `tooltipFor`.
+  window's title and its chord as both its tooltip and its accessible text ([TBAR-01](#tbar-01)), following the
+  title when it changes, and a right-click menu with *Open in Split* and *Hide*.
+  - *Check (code):* the stripe button's tooltip comes from the same title-and-chord format, its accessible text is
+    that same string, and both follow the tool window's title.
+  - *Reference:* Editora [`ToolWindowManager.register`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolWindowManager.java), `tooltipFor`. Its accessible text doesn't carry the chord yet: it
+    is bound to the title alone.
 - **TBAR-13 · SHOULD.** The right stripe's first icon lines up with the editor's first line of text, not with the
   tab strip.
   - *Check (test):* an FX test compares the first stripe button's top with the editor's first line.

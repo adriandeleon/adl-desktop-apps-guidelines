@@ -54,8 +54,9 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
   `manual` from every audit, and nothing told one a person had checked from one nobody had looked at. A rule with
   no entry needs no exception and does not change the conformance; the audit reports it as not recorded. An entry
   is stale when its edition is older than the rule's `changed`, and the app's test then fails it. **PAUTA-04**,
-  **PAUTA-09**, **PAUTA-10** and **PAUTA-11** follow, as do the audit skill and `audit.schema.json`. No app has the
-  list yet.
+  **PAUTA-09**, **PAUTA-10** and **PAUTA-11** follow, as do the audit skill and `audit.schema.json`. An entry may
+  also carry the app's `version`, for a rule checked again with each release; nothing expires by it. No app has
+  the list yet.
 - **`changed` in `rules.json`.** Every rule carries the edition in which its level, scope or statement last
   changed, from a new `rule-changes.json` that a release rewrites (`scripts/rule-changes.mjs`). It is what makes a
   `checked` entry stale, and it tells an app moving to a newer edition which rules to read again.
@@ -90,6 +91,10 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 - **DIAG-11, DIAG-12, DIAG-13 · MUST.** DIAG-06 held seven requirements and its Check tested two. It keeps the
   report's contents; DIAG-11 is the redaction, DIAG-12 the window's flow (editable, copied, a prefilled issue,
   nothing uploaded) and DIAG-13 the fallback for a report too long for the link. Nothing new is asked.
+- **INTL-14 · MUST.** The app starts in the language the user chose, else the system's when it ships a catalog for
+  it, else English, and the locale that formats dates and numbers keeps the system's region. Termina and Torrenta
+  do, with a test for each case. Editora and Mirada set the bare language, so `de-AT` formats as `de`; nux does the
+  same when it has no catalog for the system's language.
 
 ### Changed
 
@@ -210,19 +215,20 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 - **A terminal's tabs have terminal equivalents.** The Tabs rules apply to any app with a tab strip, and TABS-01 to
   TABS-03 were written for files: a terminal has no close unmodified, shows the working folder as the tooltip, and
   carries the running program as its title with a mark for a notification, a bell or activity in place of unsaved
-  and read-only. Termina's one gap is a close-all command.
+  and read-only; closing its window is its close all. Termina meets all three.
 - **The Tool panels rules are in two sections.** A toggle command, a remembered place and focus (TABS-13, TABS-15,
   TABS-19) are for any panel shown and hidden beside the content; docking, dragging, floating and maximizing
   (TABS-16 to TABS-18, TABS-20 to TABS-23) are for an app with tool window stripes. The wider definition of a panel
   had put Torrenta's sidebar and Mirada's info panel under all of them.
 - **A log window's find bar does what the main one does.** FIND-04: a command opens every find bar and, run again,
   finds the next match; `find.show` and its keymap chords are the main window's bar's, and any other bar has an id
-  of its own. FIND-05 applies to every bar, with a terminal's order said. FIND-01 covers a log shown as text, and
+  of its own. FIND-05 applies to every bar, with a terminal's order said; a view that can draw one selection only, such as a
+  log in a plain text area, shows the active match alone. FIND-01 covers a log shown as text, and
   FIND-03 a log shown as a list, which its filter serves.
 - **PERF-01** names its one exception: at start-up `start()` may wait once for the config read **PERF-16** began
   before the toolkit. PERF-16 says that plainly; loading settings inside `start()` is its gap, not PERF-01's.
 - **SET-09** asks a schema version of every config file the app writes and reads back, where "every versioned
-  file" let an app with none pass. **SET-22** says what a config file is, and **SET-13**'s Check says "secret".
+  file" let an app with none pass; a plain list with one item to a line is exempt. **SET-22** says what a config file is, and **SET-13**'s Check says "secret".
 - **REL-26** asks for a `concurrency` group on every pull-request workflow; its Check accepted a workflow with none.
 - **PLAT-01** says CI sets up JDK 25 in every step that sets up a JDK, a GraalVM 25 release for a native-image leg,
   and its Command reads the workflows. **PLAT-04** asks for one named module, not `com.<app>`.
@@ -235,6 +241,15 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
   cancel keys from the active keymap; the reworded rules had named Editora's command ids as if required.
 - **The names policy** says a platform API a rule names (`javafx.stage.Popup`, `SystemTray`) is the requirement
   itself, and that the names which are Editora's spelling are those of the app's own code.
+- **TBAR-01** says the tooltip and the accessible name are one string, the chord included, and **TBAR-12** asks the
+  same of a stripe button, where it had asked for the title alone. Termina and Torrenta do; Mirada's buttons and
+  Editora's stripe buttons put the chord in the tooltip only.
+- **QUAL-05 is a SHOULD**: "prefer a pure decision helper" is a preference, and could not fail as a MUST.
+- **ABOUT-01** asks for the `help.about` command in every app and for Help → About where the app has a Help menu,
+  which Modula and nux do not. Mirada's About row sits beside its Help menu, not in it.
+- **SET-07** says which wins: `--config-dir`, then `--dev`, then the environment variable, since a flag is the more
+  specific instruction. Mirada has that order; in Editora, Termina and the template the variable beats `--dev`.
+- **SET-13** says a run with no window reports a session-only secret on standard error.
 
 ### Fixed
 

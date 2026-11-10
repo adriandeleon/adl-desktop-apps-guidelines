@@ -124,7 +124,9 @@ an app, and a fourth for a template repository; each one asks for something diff
   - *Reference:* the [app template](https://github.com/adriandeleon/adl-desktop-app-template) (in progress).
 - **PAUTA-18 · MUST.** `pauta.json`'s `checked` list is the record of the rules checked by hand. An entry is there
   only because a person checked the rule in the running app and found it met, and it holds the `rule`, the `edition`
-  it was checked against and the `date`. It says the rule was met when it was checked, not that the app still meets
+  it was checked against and the `date`, and may hold the app's `version`, for a rule that is checked again with
+  each release (the screen-reader pass of [ACC-07](../accessibility/#acc-07)): the audit reports it, and nothing
+  expires by it. It says the rule was met when it was checked, not that the app still meets
   it. A rule found unmet gets an exception instead ([PAUTA-04](#pauta-04)), never both. A by-hand rule with no entry
   has not been recorded as checked: it needs no exception and no issue, it does not change the computed conformance
   ([PAUTA-02](#pauta-02)), and the audit reports it as not recorded. An entry is stale when its `edition` is older
@@ -184,7 +186,7 @@ a test keeps the copies honest.
 - **PAUTA-09 · MUST.** The exceptions and the record of by-hand checks have one source, `pauta.json` laid out as
   [The file](#the-file) shows. Its `exceptions` list has `rule`, `level`, `url`, `kind` and `reason` on every entry,
   `link` on every deviation and pending entry, and one entry per rule. Its `checked` list
-  ([PAUTA-18](#pauta-18)), left out or empty while nothing is recorded, has `rule`, `edition` and `date` on every
+  ([PAUTA-18](#pauta-18)), left out or empty while nothing is recorded, has `rule`, `edition` and `date`, and `version` where the app records it, on every
   entry and one entry per rule. `"template": true` stands beside them only in a template repository (PAUTA-16).
   - *Check (code):* the file exists at that path, each exception has the fields its kind needs, and each `checked`
     entry has its three.

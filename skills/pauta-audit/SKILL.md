@@ -158,8 +158,8 @@ Then, in this order:
      - When the source shows the feature isn't there at all, it is unmet, not manual: step 4 or 5.
      - Otherwise the status is **`manual`**, and the evidence says what to look at in the running app (from
        `check.text`) and the `file:line` of the code involved, if any. Then look the rule up in `pauta.json`'s
-       `checked` list (Conformance, PAUTA-18). An entry gives the result its `checked` field, the entry's `edition`
-       and `date`. With no entry, leave the field out and end the evidence with "not recorded": nobody has
+       `checked` list (Conformance, PAUTA-18). An entry gives the result its `checked` field: the entry's `edition`
+       and `date`, and its `version` when it has one. With no entry, leave the field out and end the evidence with "not recorded": nobody has
        recorded checking the rule. That is not a failure of the app and not a `problem`, it needs no exception,
        and it does not change the conformance. Never write a `checked` entry yourself, and don't offer an
        exception for the rule: the entry is for the person who checks it in the running app.

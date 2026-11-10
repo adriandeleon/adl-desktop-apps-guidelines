@@ -56,7 +56,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 - [ ] Spotless with Palantir Java Format; CI fails an unformatted change in a Format job of its own · [PLAT-10](../platform/#plat-10)
 - [ ] JUnit 5 and headless FX tests (`-Dglass.platform=Headless`), FX tests tagged `fx` · [PLAT-11](../platform/#plat-11), [QUAL-06](../quality/#qual-06)
 - [ ] JaCoCo check at 0.90 lines and 0.90 methods · [PLAT-12](../platform/#plat-12)
-- [ ] Rules live in pure, unit-tested helpers; UI classes stay thin · [QUAL-05](../quality/#qual-05)
+- [ ] Rules live in pure, unit-tested helpers; UI classes stay thin (SHOULD) · [QUAL-05](../quality/#qual-05)
 - [ ] A capture hook or headless screenshot drives the real window for UI checks · [QUAL-09](../quality/#qual-09)
 
 ## Performance
@@ -105,7 +105,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 - [ ] One quit method for File → Quit, the quit command and the system's own Quit · [WIN-13](../window-shell/#win-13)
 - [ ] A Quit in every app: the `app.quit` command and, where the app has a File menu or a main menu, a Quit row that ends it · [WIN-14](../window-shell/#win-14)
 - [ ] On macOS, Settings in the application menu, showing the active keymap's chord (SHOULD) · [WIN-15](../window-shell/#win-15)
-- [ ] About from Help, `help.about` and the macOS application menu: version and build, runtime, license, links and the last update check · [ABOUT-01](../templates/about/#about-01), [ABOUT-02](../templates/about/#about-02)
+- [ ] About from the `help.about` command, the Help menu where the app has one, and the macOS application menu: version and build, runtime, license, links and the last update check · [ABOUT-01](../templates/about/#about-01), [ABOUT-02](../templates/about/#about-02)
 - [ ] A Welcome page when there is nothing to restore, or an empty state that names the ways in with their chords (SHOULD) · [WELC-01](../templates/welcome/#welc-01), [WELC-02](../templates/welcome/#welc-02)
 
 ## Icons and color
@@ -124,7 +124,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 
 [Toolbars and tooltips](../toolbars-and-tooltips/)
 
-- [ ] Icon-only buttons built by one helper that sets the tooltip and the accessible name (`Icons.button`, `Icons.name`) · [TBAR-01](../toolbars-and-tooltips/#tbar-01)
+- [ ] Icon-only buttons built by one helper that sets the tooltip and the accessible name from one string, chord included (`Icons.button`, `Icons.name`) · [TBAR-01](../toolbars-and-tooltips/#tbar-01)
 - [ ] Toolbar buttons out of the Tab order; every tooltip names the command and its chord from the active keymap · [TBAR-02](../toolbars-and-tooltips/#tbar-02), [TBAR-03](../toolbars-and-tooltips/#tbar-03)
 - [ ] Every tooltip shown after the same 400 ms delay (SHOULD) · [TBAR-14](../toolbars-and-tooltips/#tbar-14)
 - [ ] The toolbar never holds the only way to an action · [TBAR-08](../toolbars-and-tooltips/#tbar-08)
@@ -135,7 +135,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 
 [Tabs and tool panels](../tabs-and-panels/)
 
-- [ ] Every tab operation is a command; a terminal's tabs have no close unmodified · [TABS-01](../tabs-and-panels/#tabs-01)
+- [ ] Every tab operation is a command; a terminal's tabs have no close unmodified and no close all · [TABS-01](../tabs-and-panels/#tabs-01)
 - [ ] One tab header carries the title and the states: `•` and amber italic for unsaved, a pin and bold for pinned, muted italic for read-only (`TabHeaders`); in a terminal, the running program as the title and a mark for a notification, bell or activity · [TABS-02](../tabs-and-panels/#tabs-02), [TABS-03](../tabs-and-panels/#tabs-03)
 - [ ] Bulk close skips pinned tabs, pinning moves a tab to the end of the pinned group, and Reopen Closed Tab brings the last one back (`ClosedTabs`) · [TABS-04](../tabs-and-panels/#tabs-04), [TABS-05](../tabs-and-panels/#tabs-05), [TABS-06](../tabs-and-panels/#tabs-06)
 - [ ] A command toggles each panel, and a panel's content is built on first use (`ToolWindowManager`) · [TABS-13](../tabs-and-panels/#tabs-13), [PERF-14](../performance/#perf-14)
@@ -170,7 +170,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 
 - [ ] Settings window from a palette command (`Ctrl+,`), with a page sidebar and search · [SET-01](../settings/#set-01), [SET-02](../settings/#set-02), [SET-03](../settings/#set-03)
 - [ ] Live apply with no Save button, a setting that waits for a restart saying so on its row, and a palette command for every setting · [SET-04](../settings/#set-04), [SET-06](../settings/#set-06)
-- [ ] Config in `~/.<app>`, versioned with migrations, a file newer than the build backed up and defaults loaded · [SET-07](../settings/#set-07), [SET-09](../settings/#set-09), [SET-10](../settings/#set-10)
+- [ ] Config in `~/.<app>`, unless a flag or, after it, the environment variable names another folder; versioned with migrations, a file newer than the build backed up and defaults loaded · [SET-07](../settings/#set-07), [SET-09](../settings/#set-09), [SET-10](../settings/#set-10)
 - [ ] Config read with suspicion: values clamped on load, an unreadable file kept as a backup and defaults loaded · [SET-11](../settings/#set-11)
 - [ ] A config file written whole or not at all: to a temporary file beside it, then moved into place · [SET-22](../settings/#set-22)
 - [ ] Export and import of the config folder · [SET-12](../settings/#set-12)
@@ -200,6 +200,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 - [ ] On Windows, a console launcher (or an attached console) so the flags print · [CLI-11](../command-line/#cli-11)
 - [ ] Single instance per config folder · [CLI-07](../command-line/#cli-07)
 - [ ] Six message catalogs, each with every key, held by a parity test · [INTL-01](../i18n/#intl-01), [INTL-08](../i18n/#intl-08)
+- [ ] The language chosen, else the system's, else English; dates and numbers keep the system's region · [INTL-14](../i18n/#intl-14)
 
 ## Repository
 

@@ -60,17 +60,18 @@ keymap, a theme, a language), not when the developer could not decide.
 ## Config folder and schema
 
 - **SET-07 · MUST.** Config lives in `~/.<app>`, unless `<APP>_CONFIG_DIR` or a command-line flag
-  ([CLI-02](../command-line/#cli-02)) names another folder.
+  ([CLI-02](../command-line/#cli-02)) names another folder. A flag wins over the variable, since what is typed on
+  the command line is the more specific instruction: `--config-dir` first, then `--dev`, then the variable.
   - *Check (code):* one resolver picks the folder from `--config-dir`, `--dev`, the environment variable and the
-    default, with `--config-dir` first and the default last, and the default is `<user.home>/.<app>` on Windows,
+    default, with `--config-dir` first, `--dev` next, the variable after it and the default last, and the default is `<user.home>/.<app>` on Windows,
     macOS and Linux alike: the resolver doesn't branch on the OS, or a test resolves the default as each OS and
     finds the same folder.
   - *Reference:* Editora [`App`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java) and [`ConfigManager.configDirFor`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/ConfigManager.java), [`ConfigDirTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/config/ConfigDirTest.java). Mirada's resolver
     ([`settings/Settings.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/settings/Settings.java), `defaultFile` and `folder`) has the order but a default that depends on the OS:
     `~/Library/Application Support/Mirada` on macOS, `%APPDATA%\Mirada` on Windows, `~/.mirada` elsewhere. Between
-    `--dev` and the environment variable the apps differ: in Editora, Termina ([`config/Settings.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/config/Settings.java),
+    `--dev` and the environment variable only Mirada has the order: in Editora, Termina ([`config/Settings.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/config/Settings.java),
     `defaultFile`) and the app template ([`config/ConfigDir.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/ConfigDir.java)) the variable wins and `--dev` only changes the
-    default; in Mirada `--dev` wins ([`Launch.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/Launch.java)).
+    default, so they don't meet this yet; in Mirada `--dev` wins ([`Launch.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/Launch.java)).
 - **SET-08 · SHOULD.** Preferences live in one file and session state (where the window was, what was open) in
   another, and every other store has a file of its own. Editora's are `settings.json` and `workspace-state.json`.
   - *Check (code):* preferences and session state are separate files: the file that holds what the user chose in
@@ -82,18 +83,19 @@ keymap, a theme, a language), not when the developer could not decide.
     ([`config/Settings.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/Settings.java), `window`).
 - **SET-09 · MUST.** Every config file the app writes and reads back carries a schema version, and each version has
   a `v → v+1` migration step. A purely additive field uses an identity step. Which files are config files is in
-  [SET-22](#set-22).
+  [SET-22](#set-22); a plain list with one item to a line, such as a word list, has no shape to version and is
+  exempt.
   - *Check (code):* the store of every config file ([SET-22](#set-22) says which files those are) declares a schema
     version (`SCHEMA_VERSION` in Editora), writes it into the file and reads it back, and the migrations hold one
     step for every version below the current one, an identity step where the version only added a field.
   - *Reference:* Editora [`config/migration/ConfigMigrations.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/migration/ConfigMigrations.java), [`ConfigSchema.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/migration/ConfigSchema.java) (one entry for each
-    store), [`ConfigMigrationsTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/config/migration/ConfigMigrationsTest.java); its `dictionary.txt`, one word to a line, carries
-    no version. Termina ([`config/ConfigJson.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/config/ConfigJson.java), for `settings.json` and
+    store), [`ConfigMigrationsTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/config/migration/ConfigMigrationsTest.java); its `dictionary.txt`, one word to a line, is the
+    kind of list the rule exempts. Termina ([`config/ConfigJson.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/config/ConfigJson.java), for `settings.json` and
     `workspace-state.json`) and Mirada ([`settings/Migrations.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/settings/Migrations.java), for `settings.properties` and
     `bookmarks.properties`) do it too, and so does the app template for `settings.json`
     ([`config/Migrations.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/Migrations.java)), though not for its `sync/base.json`. Torrenta's files ([`store/Settings.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/store/Settings.java) and
     the other stores beside it) and Modula's ([`config/ConfigStore.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/config/ConfigStore.java): `settings.properties`, `presets.txt`,
-    `schedules.txt`) carry no version, and nux writes `schema=1` into its file and never reads it
+    `schedules.txt`, each line a record with fields) carry no version, and nux writes `schema=1` into its file and never reads it
     ([`config/ConfigStore.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/config/ConfigStore.java), `format` and `parse`).
 - **SET-10 · MUST.** A config file whose schema version ([SET-09](#set-09)) is higher than the running build's is
   kept as a backup beside it (Editora names it `<name>.v<n>.bak`) and defaults load.
@@ -153,12 +155,13 @@ keymap, a theme, a language), not when the developer could not decide.
 - **SET-13 · MUST.** No secret goes in a config file. API keys and tokens go to the operating system's keychain:
   macOS Keychain, Windows Credential Manager, the Secret Service on Linux. Calls may block on a prompt, so they run
   off the FX thread. Where no keychain answers, as in a Linux session with no Secret Service, the secret is kept in
-  memory for the session only and its row in Settings says so: it is never written to a file instead.
+  memory for the session only and its row in Settings says so: it is never written to a file instead. A run with no
+  window says so on standard error.
   - *Check (code):* no secret (a password, an API key, a token) is a field of the settings model; reads and writes
     go through the secret store, and
     every caller reaches it from a background thread, never from a handler on the FX thread; the store's fallback,
     for when no keychain answers, holds the secret in memory and writes no file, and the secret's row in Settings
-    says when it is kept for the session only.
+    says when it is kept for the session only, as a line on standard error does in a run with no window.
   - *Reference:* Editora [`secrets/SecretStore.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/secrets/SecretStore.java), [`config/ApiKeyVault.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/ApiKeyVault.java). Editora doesn't yet: [`Settings`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/Settings.java)
     keeps the AI keys as a fallback for when no keychain answers, and saving a key from Settings writes the keychain
     on the FX thread. Its Settings row does say which of the two holds the key. Torrenta uses no keychain: its proxy password, Torznab

@@ -127,6 +127,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 - [ ] Every tooltip shown after the same 400 ms delay (SHOULD) · [TBAR-14](../toolbars-and-tooltips/#tbar-14)
 - [ ] The toolbar never holds the only way to an action · [TBAR-08](../toolbars-and-tooltips/#tbar-08)
 - [ ] Groups separated by spacing on one chrome band, no hairlines; a toggle wears `:open` while it is on (SHOULD) · [TBAR-04](../toolbars-and-tooltips/#tbar-04), [TBAR-06](../toolbars-and-tooltips/#tbar-06), [TBAR-07](../toolbars-and-tooltips/#tbar-07)
+- [ ] The main toolbar: its icons overflow and its pinned tail never does, Settings last with Simple mode before it, buttons disabled while their command can't act, a command hides the bar, and the bar keeps its height (SHOULD) · [TBAR-15](../toolbars-and-tooltips/#tbar-15), [TBAR-16](../toolbars-and-tooltips/#tbar-16), [TBAR-17](../toolbars-and-tooltips/#tbar-17), [TBAR-18](../toolbars-and-tooltips/#tbar-18), [TBAR-19](../toolbars-and-tooltips/#tbar-19)
 
 ## Tabs and panels
 

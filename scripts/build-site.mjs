@@ -14,13 +14,23 @@
 //   dist/llms.txt, llms-full.txt, rules.json   the latest edition's, where coding agents look for them (src/lib/llms.mjs)
 //   dist/robots.txt   written here: everything allowed, latest/'s sitemap
 // In latest/ and <version>/, links into the apps' code point at the commits pins.json recorded for this edition.
+//
+// "This checkout" is this script's own, or $PAUTA_ROOT: while a batch waits under [Unreleased], CI builds the current
+// edition from its release commit with master's copy of this script, so a fix to the build made after the release
+// applies (.github/workflows/pages.yml, "Keep this run's scripts"). What the tree owns stays the tree's: its pages
+// and src/ as `astro build` reads them there, with its own node_modules, so rules.json, llms.txt and every page are
+// what that edition generates; its package.json, CHANGELOG.md and pins.json; and its own scripts/check-rules.mjs,
+// which checks its pages with the parser that builds its rules.json (master's might ask more of them than the
+// edition's did). The steps around them are the scripts beside this one, with the src/lib they import.
 import { spawnSync } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { compareVersions, isVersion, parseEditions, released, unreleased } from "../src/lib/editions.mjs";
 
-process.chdir(fileURLToPath(new URL("..", import.meta.url))); // not .pathname, which keeps a space as %20
+const scripts = dirname(fileURLToPath(import.meta.url));
+process.chdir(process.env.PAUTA_ROOT || fileURLToPath(new URL("..", import.meta.url))); // not .pathname, which keeps a space as %20
+if (process.env.PAUTA_ROOT) process.env.PAUTA_ROOT = process.cwd(); // absolute, for the scripts started below
 const pkg = JSON.parse(readFileSync("package.json", "utf8"));
 const { version } = pkg;
 const url = new URL(pkg.guidelines.url);
@@ -35,7 +45,8 @@ const run = (cmd, args, options = {}) => {
   }
 };
 
-// 0. Every rule well formed (scripts/check-rules.mjs): rules.json and llms-full.txt are built from them.
+// 0. Every rule well formed (scripts/check-rules.mjs): rules.json and llms-full.txt are built from them. The tree's
+// own copy, never the one beside this script (see the top).
 step("rules");
 run("node", ["scripts/check-rules.mjs"]);
 
@@ -55,7 +66,7 @@ for (const edition of ["latest", version]) {
 
 // 1b. The References this edition links, pinned to the commits pins.json recorded at its release (src/lib/pins.mjs).
 step("references");
-run("node", ["scripts/pin-dist.mjs", ".", join("dist", "latest"), join("dist", version)]);
+run("node", [join(scripts, "pin-dist.mjs"), ".", join("dist", "latest"), join("dist", version)]);
 
 // 2. The earlier editions, archived on the `versions` branch: origin's if reachable, else a local one. In CI (where
 // GitHub sets CI=true) a deploy without them would take every earlier address off the site, so anything less than
@@ -131,11 +142,11 @@ writeFileSync(
 );
 // 3b. next/: this checkout as the batch waiting for its release, or redirects to latest/ when nothing waits.
 step("next/");
-if (pending) run("node", ["scripts/build-next.mjs", "--build", "dist/next"]);
-run("node", ["scripts/build-next.mjs", "--add", "dist/next", "dist"]);
+if (pending) run("node", [join(scripts, "build-next.mjs"), "--build", "dist/next"]);
+run("node", [join(scripts, "build-next.mjs"), "--add", "dist/next", "dist"]);
 
-// The PDF of the two newest editions only (scripts/trim-pdfs.mjs, which CI runs again with master's copy).
-run("node", ["scripts/trim-pdfs.mjs", "dist"]);
+// The PDF of the two newest editions only (scripts/trim-pdfs.mjs).
+run("node", [join(scripts, "trim-pdfs.mjs"), "dist"]);
 
 // 4. A redirect for every page at its old, unnumbered address. The script keeps the fragment; the meta tag is the fallback.
 step("redirects from the unnumbered addresses");

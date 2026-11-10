@@ -37,12 +37,13 @@ description: "Message Log, Debug Log, update notification, Report a Problem, Doc
   its release. About's line for the last check is [ABOUT-02](../templates/about/#about-02).
   - *Check (code):* the update coordinator posts a status-bar message with the newer version and its release link.
   - *Reference:* Editora [`ui/UpdateCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/UpdateCoordinator.java).
-- **DIAG-10 · MUST.** **Check for Updates** runs the check by hand, as a command in the palette and the Help menu, and
-  Settings has an off switch for the automatic check.
-  - *Check (code):* the command (`help.checkForUpdates` in Editora) is registered, and the scheduler skips the
-    automatic check while the setting is off.
+- **DIAG-10 · MUST.** **Check for Updates** runs the check by hand, as a command in the palette and in the Help menu,
+  where the app has one, and Settings has an off switch for the automatic check.
+  - *Check (code):* the command (`help.checkForUpdates` in Editora) is registered and, in an app with a Help menu,
+    listed there, and the scheduler skips the automatic check while the setting is off.
   - *Reference:* Editora [`ui/MenuBarModel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java) (`help.checkForUpdates`),
     [`ui/SettingsWindow.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsWindow.java) (`settings.checkForUpdates`), [`ui/UpdateCheckScheduler.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/UpdateCheckScheduler.java).
+    nux, which has no menu bar, registers the command for its palette (`app.checkUpdates` in [`App.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/App.java)).
 - **DIAG-06 · MUST.** Help → **Report a Problem** builds a report (version, OS, runtime, settings summary, recent
   Debug Log), **redacts** it (home paths, user names, e-mail addresses, credentials, tokens), shows it editable,
   copies it to the clipboard and opens a prefilled GitHub issue from `bug_report.yml`. Over about 7,500 characters

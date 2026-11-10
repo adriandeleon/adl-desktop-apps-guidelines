@@ -28,6 +28,12 @@ import { linkedRepos } from "../src/lib/pins.mjs";
 import { originTags, releaseCommits } from "../src/lib/releases.mjs";
 import { pageOrder, parsePage, readRetired } from "../src/lib/rules.mjs";
 
+// The tree to check is the current directory, or $PAUTA_ROOT when CI runs master's copy of this script on the checkout
+// of a released edition (.github/workflows/pages.yml, "Keep this run's scripts"). package.json, CHANGELOG.md,
+// pins.json, retired-rules.json and the pages are that tree's, at HEAD and at the base. The libraries imported above
+// are the ones beside this script, src/lib/rules.mjs among them: the check and the parser it calls are one tool, and
+// the same parser reads both commits it compares, so an older edition's rules are never read two ways.
+if (process.env.PAUTA_ROOT) process.chdir(process.env.PAUTA_ROOT);
 const args = process.argv.slice(2);
 const tag = args[0] === "--tag";
 const base = (tag ? args[1] : args[0]) || "origin/master";

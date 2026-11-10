@@ -12,6 +12,11 @@ export function editionOf(base, root) {
   return slot || "latest";
 }
 
+/** An edition's date written out, American style as the rest of the guide is: "2026-11-09" → "November 9, 2026".
+ *  The one place the site spells a date; Starlight's own "Last updated" line uses the same order. */
+export const longDate = (iso) =>
+  new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+
 /** The folder of the batch waiting under CHANGELOG.md's [Unreleased], built from master by scripts/build-next.mjs. It
  *  is not an edition: no number, no date, never archived, never cited; the site has it only while a batch waits. */
 export const NEXT = "next";

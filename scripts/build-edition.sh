@@ -7,7 +7,12 @@
 #
 #   scripts/build-edition.sh <version> <commit>
 set -euo pipefail
-cd "$(dirname "$0")/.."
+# Works in this script's own checkout, or in $PAUTA_ROOT when CI runs master's copy of the script on the checkout of
+# a released edition (.github/workflows/pages.yml, "Keep this run's scripts"). The variable ends here: the edition
+# below is built in its own worktree by its own scripts, which must never be pointed at this tree instead.
+tools=$(cd "$(dirname "$0")" && pwd)
+cd "${PAUTA_ROOT:-$tools/..}"
+unset PAUTA_ROOT
 v=${1:?version}
 commit=${2:?commit}
 [[ "$v" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "$v is not a version" >&2; exit 1; }
@@ -31,8 +36,8 @@ trap 'rm -rf "$wt/node_modules"; git worktree remove --force "$wt" 2>/dev/null |
 (cd "$wt" && npm ci --no-audit --no-fund >/dev/null)
 
 (cd "$wt" && bash scripts/build-print.sh >/dev/null && PAUTA_PATH="$v" npx astro build >/dev/null)
-# This checkout's pin pass, with the edition's own pins.json: an edition from before pins keeps its branch links.
-node scripts/pin-dist.mjs "$wt" "$wt/dist/$v"
+# The pin pass beside this script, with the edition's own pins.json: an edition from before pins keeps its branch links.
+node "$tools/pin-dist.mjs" "$wt" "$wt/dist/$v"
 [ -f "$wt/dist/$v/index.html" ] || { echo "the build of $v made no pages" >&2; exit 1; }
 [ -s "$wt/dist/$v/downloads/adl-desktop-apps-guidelines.pdf" ] || { echo "the build of $v made no PDF" >&2; exit 1; }
 

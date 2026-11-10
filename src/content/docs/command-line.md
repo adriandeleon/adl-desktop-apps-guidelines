@@ -28,6 +28,22 @@ description: "The flags every app accepts and the single-instance hand-off."
   - *Reference:* Editora [`report/ReportCommand.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/report/ReportCommand.java) ([`ReportCommandTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/report/ReportCommandTest.java)); Torrenta's
     [`ReportCommand.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/report/ReportCommand.java) does the same. The app template and Mirada write theirs beside the settings, and Termina
     prints its report without writing a file ([`ReportCommand.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/report/ReportCommand.java)).
+- **CLI-12 · MUST.** An option the app does not know stops the launch: it names the option on standard error, says
+  how to get help, and exits with status 2 before the GUI starts. It is never ignored, and an argument that starts
+  with `-` is never taken for a file.
+  - *Why:* a mistyped `--config-dir` that is ignored starts the app on the real settings, which is the one thing
+    the flag was typed to avoid. Status 2 is what a script tests for a usage error.
+  - *Check (test):* a test hands the command-line parser an unknown option and finds the message and exit status
+    2.
+  - *Reference:* the app template's [`cli/CommandLine.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/cli/CommandLine.java), Termina's [`cli/CommandLine.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/cli/CommandLine.java) and Torrenta's [`cli/CommandLine.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/cli/CommandLine.java).
+    Mirada's [`Launch.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/Launch.java) exits 2 on an unknown `--` option and takes anything else for a file, a single-dash option
+    included. Editora skips an unknown option without a word ([`App.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java)); Modula and nux read no options they could
+    refuse.
+- **CLI-13 · SHOULD.** The short flags are the same in every app: `-h` for `--help`, and both `-v` and `-V` for
+  `--version`.
+  - *Check (code):* the command-line parser takes `-h`, `-v` and `-V`, and `--help` lists them.
+  - *Reference:* Termina's [`cli/CommandLine.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/cli/CommandLine.java) and Torrenta's [`cli/CommandLine.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/cli/CommandLine.java). Editora takes `-h` and `-V` but not
+    `-v`, the app template `-h` and `-v` but not `-V`, and Mirada has no short flags.
 - **CLI-11 · MUST.** On Windows, `--help`, `--version` and `--report` print in the console they were typed in. A GUI
   launcher has no console, so the installer also carries a console launcher (jpackage's `win-console`) that runs the
   same entry point, or `main` attaches to the parent's console before it prints.
@@ -47,8 +63,9 @@ description: "The flags every app accepts and the single-instance hand-off."
 
 ## Launch
 
-- **CLI-07 · MUST.** One instance runs per config folder. A second launch hands its arguments to the running app
-  over a local endpoint and exits; on macOS, `openFiles` Apple Events reach the running app.
+- **CLI-07 · MUST.** One instance runs per config folder, unless a launch asks for another with `--new-instance`
+  ([CLI-03](#cli-03)). Any other second launch hands its arguments to the running app over a local endpoint and
+  exits; on macOS, `openFiles` Apple Events reach the running app.
   - *Check (test):* a test makes the first launch primary and delivers a second launch's arguments to it.
   - *Reference:* Editora [`ipc/SingleInstance.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ipc/SingleInstance.java) ([`SingleInstanceTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ipc/SingleInstanceTest.java)), [`MacOpenFiles.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/MacOpenFiles.java).
 - **CLI-08 · SHOULD.** An advisory lock tells two processes on one config folder about each other.

@@ -103,7 +103,7 @@ copy from the code each rule's *Reference* names. Editora is the reference imple
 **Auditing an app:** the full procedure is the pauta-audit skill, ${base}${SKILL}. It decides how to audit and how
 to write the report; an edition supplies only its rules. In short:
 
-1. Find the edition the app implements: \`pauta.version\` in its \`pom.xml\`, the About window, or its README. Read that
+1. Find the edition the app implements: \`pauta.version\` in its \`pom.xml\`, or failing that its README. Read that
    edition's rules at \`${edition}rules.json\`. If the app names none, ask which edition to audit against and offer
    the newest; with no one to ask, use the newest and say so in the report. Editions before 2.0.0 serve no
    rules.json: audit against 2.0.0 or newer, and report a failed rule that the app's own edition didn't have as

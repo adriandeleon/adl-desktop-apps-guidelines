@@ -26,8 +26,9 @@ see the [QuickOpen template](../quick-open/).
     app template's [`ui/DebugLogFindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DebugLogFindBar.java) (`searching`, `find.count`).
 - **FIND-03 · MUST.** In an app whose main content is a list, a filter box over the list takes the place of a find
   bar there, with the same field and the same Escape.
-  - *Check (code):* the list's filter field filters as it is typed, and Escape in it empties it or gives focus back
-    to the list.
+  - *Check (code):* a filter field sits over the list and filters it as it is typed, and Escape pressed in it leads
+    back to the list, as it leads back to the text from a find bar ([FIND-07](#find-07)). Whether the first Escape
+    empties the box before the next one leaves it is [FIND-14](#find-14)'s.
   - *Reference:* Torrenta [`Omnibox`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/Omnibox.java), [`FilterQuery`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/FilterQuery.java), [`MainWindow.onOmniboxKey`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java).
 
 ## Anatomy
@@ -103,13 +104,13 @@ read as one family: a lens, the field as the card's own text, the count, a regex
 
 - **FIND-04 · SHOULD.** The find command (`find.show`) opens the bar: `C-s` in the Emacs keymap and `Ctrl/Cmd+F` in
   CUA, Sublime, VS Code and IntelliJ, with `F3` as well in CUA and Sublime (`Cmd+G` in place of `F3` in CUA on
-  macOS). A terminal uses `Ctrl+Shift+F`, `Cmd+F` on macOS, since a plain `Ctrl+letter` belongs to the shell. The
-  command while the bar is already open finds the next match (Editora) or puts the caret back in the field
-  (Termina).
-  - *Check (code):* each bundled keymap binds that chord to the find command; the command steps when the bar is
-    shown.
-  - *Reference:* Editora `keymaps/*.json`, [`MainController.findShowOrNext`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java); Termina [`TerminalWindow`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalWindow.java) (`menu.find`,
-    [`MenuAction.appChord`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MenuAction.java)).
+  macOS). A terminal uses `Ctrl+Shift+F`, `Cmd+F` on macOS, since a plain `Ctrl+letter` belongs to the shell. Run
+  while the bar is already open, the command finds the next match.
+  - *Check (code):* each bundled keymap binds that chord to the find command; run while the bar is shown, the
+    command steps to the next match.
+  - *Reference:* Editora `keymaps/*.json` and [`MainController.findShowOrNext`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java), which finds the next match while the bar is
+    open; Termina [`TerminalWindow`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalWindow.java) (`menu.find`, [`MenuAction.appChord`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MenuAction.java)) and [`TerminalView.showSearch`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalView.java), which doesn't
+    yet: it puts the caret back in the field instead.
 - **FIND-05 · SHOULD.** Typing highlights every match and selects and scrolls to the first one at or after the caret.
   The anchor is the caret at open time, so refining the query does not run away down the document.
   - *Check (code):* the search starts from an anchor saved when the bar opens, not from the current selection.
@@ -151,8 +152,8 @@ read as one family: a lens, the field as the card's own text, the count, a regex
   - *Reference:* Editora `find.replaceTimeout`, [`FindReplaceBarFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/FindReplaceBarFxTest.java)
     (`catastrophicRegexInReplaceAllAbortsInsteadOfHanging`).
 - **FIND-13 · SHOULD.** In an app whose main content is a list, the filter box filters the names as plain words are
-  typed, turns `key:value` terms into chips and runs a command after `>`. `Ctrl+K` focuses it and is drawn in the box
-  as a key badge.
+  typed, turns `key:value` terms into chips and runs a command after `>`. `Ctrl/Cmd+K` focuses it and is drawn in
+  the box as a key badge.
   - *Check (code):* the box's text listener filters, and its badge is read from the filter command's chord.
   - *Reference:* Torrenta [`Omnibox`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/Omnibox.java), [`MainWindow.buildFilterBar`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java).
 - **FIND-14 · SHOULD.** In an app whose main content is a list, Escape in the filter box peels one layer: a box with
@@ -160,8 +161,8 @@ read as one family: a lens, the field as the card's own text, the count, a regex
   - *Check (code):* the box's Escape handler clears a non-empty box and otherwise focuses the list.
   - *Reference:* Torrenta [`MainWindow.onOmniboxKey`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java).
 - **FIND-15 · SHOULD.** In an app whose main content is a list, the filter box is out of the Tab order, so a fresh
-  launch does not land every keystroke in it, and the window's own chords (undo, `Ctrl+Alt+1…9`) do not fire while a
-  text field has focus: `Ctrl+Z` there is the field's own undo.
+  launch does not land every keystroke in it, and the window's own chords (undo, `Ctrl/Cmd+Alt+1…9`) do not fire
+  while a text field has focus: `Ctrl/Cmd+Z` there is the field's own undo.
   - *Check (code):* the box is not focus-traversable, and the window's chord handlers return early when the focus
     owner is a `TextInputControl`.
   - *Reference:* Torrenta [`MainWindow.buildFilterBar`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java), [`MainWindow`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java) window chords.

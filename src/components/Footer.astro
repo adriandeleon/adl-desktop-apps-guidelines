@@ -3,11 +3,9 @@
 // the latest edition or at its permanent, numbered one. In next/ it names the edition the batch follows instead.
 import Default from "@astrojs/starlight/components/Footer.astro";
 import pkg from "../../package.json";
-import { siteRoot, editionOf, NEXT } from "../lib/site.mjs";
+import { siteRoot, editionOf, longDate, NEXT } from "../lib/site.mjs";
 
-const date = new Date(`${pkg.guidelines.date}T00:00:00Z`).toLocaleDateString("en-GB", {
-  day: "numeric", month: "long", year: "numeric", timeZone: "UTC",
-});
+const date = longDate(pkg.guidelines.date);
 const root = siteRoot(pkg);
 const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
 const here = editionOf(base, root);

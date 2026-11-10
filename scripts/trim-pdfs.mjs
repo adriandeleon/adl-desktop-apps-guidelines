@@ -3,10 +3,10 @@
 // about 10 MB, most of the site, and GitHub Pages slows past its deploy timeout as the site grows. Every edition's PDF
 // stays on the `versions` branch; an older edition's one link to it, on its overview, points there on GitHub instead.
 //
-//   node scripts/trim-pdfs.mjs <dist>     after the build: scripts/build-site.mjs runs it, and so does CI with
-//                                         master's copy, so an edition published again from its own commit is trimmed too
+//   node scripts/trim-pdfs.mjs <dist>     after the build: scripts/build-site.mjs runs it. In CI that is master's
+//                                         copy of both, so an edition built again from its own commit is trimmed too
 //
-// Self-contained (node: only), so CI can run master's copy against any checkout. Running it twice changes nothing.
+// It reads only <dist>, whichever checkout built it. Running it twice changes nothing.
 import { existsSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 

@@ -21,8 +21,9 @@ Torrenta ([`AboutDialog`](https://github.com/adriandeleon/torrenta/blob/master/s
   - *Reference:* Editora [`ui/AboutDialog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/AboutDialog.java), [`AppInfo`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/AppInfo.java); the page's [Spec](#spec).
 - **ABOUT-03 · SHOULD.** *Copy details* copies the environment block and leaves the window open; its label becomes
   "Copied".
-  - *Check (code):* the button sits in the content, not the dialog's button bar, so pressing it can't close the
-    window.
+  - *Check (code):* the button's handler puts the environment block's text on the clipboard and sets the button's
+    label to the copied text (`about.copied`); the button sits in the content, not the dialog's button bar, so
+    pressing it can't close the window.
   - *Reference:* Editora [`AboutDialog`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/AboutDialog.java) (`about.copyDetails`, `about.copied`).
 - **ABOUT-04 · SHOULD.** The update status claims nothing before a check has answered: with no answer, or with the
   check switched off, it says it has not checked, never "up to date".
@@ -75,14 +76,14 @@ About names the edition of these guidelines the app implements and how fully it 
 rules the app answers to. The [app template](https://github.com/adriandeleon/adl-desktop-app-template) shows both; Termina's and Mirada's About name their
 edition but not their conformance.
 
-- **ABOUT-05 · MUST.** The edition appears in two places: a link, *Built to Pauta 4.2.0*, among the others, and a
-  line `Pauta: 4.2.0` in the environment block, right after the commit, so *Copy details* carries it.
+- **ABOUT-05 · MUST.** The edition appears in two places: a link, *Built to Pauta x.y.z*, among the others, and a
+  line `Pauta: x.y.z` in the environment block, right after the commit, so *Copy details* carries it.
   - *Check (code):* the links use the `about.pauta` key, and the environment block writes a `Pauta:` line after the
     commit.
   - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`ui/AboutDialog.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AboutDialog.java) and [`AppInfo.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/AppInfo.java); Termina's [`ui/AboutWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/AboutWindow.java) and [`AppInfo.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/AppInfo.java);
     Mirada's [`ui/AboutWindow.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/AboutWindow.java) (`about.pautaLink`) and [`AppInfo.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/AppInfo.java).
-- **ABOUT-06 · MUST.** The link opens the edition's own address, `https://pauta-project.dev/<edition>/` (for example
-  `https://pauta-project.dev/4.2.0/`), which never changes, not `latest/`, which moves on to newer editions.
+- **ABOUT-06 · MUST.** The link opens the edition's own address, `https://pauta-project.dev/<edition>/`, which never
+  changes, not `latest/`, which moves on to newer editions.
   - *Check (code):* the URL is built from the edition number and never contains `latest`.
   - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`AppInfo.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/AppInfo.java) (`pautaUrl`); Termina's [`AppInfo.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/AppInfo.java) (`pautaUrl`);
     Mirada's [`AppInfo.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/AppInfo.java) (`pautaUrl`).
@@ -102,7 +103,7 @@ edition but not their conformance.
   `pauta.json` ([PAUTA-02](../../conformance/#pauta-02)) and never higher: a link, *Pauta conformance: Core*, right
   after the edition's, that opens the [Pauta window](../pauta-window/), and a line `Pauta conformance: Core (2
   exceptions)` right after the `Pauta:` line; with one it says `(1 exception)`, with none `(no exceptions)`. At
-  Partial the edition's link reads *Working toward Pauta 4.2.0*: the app does not meet that edition yet, so it does
+  Partial the edition's link reads *Working toward Pauta x.y.z*: the app does not meet that edition yet, so it does
   not say it is built to it.
   - *Why:* [*Never claim what is not true*](../../principles/#for-the-people-using-the-apps).
   - *Check (code):* About calls the conformance helper and holds no conformance name of its own; the link runs

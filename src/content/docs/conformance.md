@@ -16,9 +16,9 @@ each MUST and SHOULD it reports as `fail` becomes an exception, of the kind that
 
 | Conformance | The app meets… | About says |
 |---|---|---|
-| **Complete** | every MUST of its edition, met or not applicable, and every SHOULD, met, not applicable or a recorded deviation | Built to Pauta 4.2.0 · Pauta conformance: Complete |
-| **Core** | every MUST in the same way; one or more SHOULDs are still pending | Built to Pauta 4.2.0 · Pauta conformance: Core |
-| **Partial** | not every MUST: one or more MUSTs are still pending | Working toward Pauta 4.2.0 · Pauta conformance: Partial |
+| **Complete** | every MUST of its edition, met or not applicable, and every SHOULD, met, not applicable or a recorded deviation | Built to Pauta x.y.z · Pauta conformance: Complete |
+| **Core** | every MUST in the same way; one or more SHOULDs are still pending | Built to Pauta x.y.z · Pauta conformance: Core |
+| **Partial** | not every MUST: one or more MUSTs are still pending | Working toward Pauta x.y.z · Pauta conformance: Partial |
 
 "Built to an edition" keeps its meaning: the app meets that edition's MUSTs. Core and Complete are the two ways to be
 built to it; a Partial app is working toward it and says so. MAY rules never count. A deviation, which only a SHOULD can
@@ -91,10 +91,12 @@ an app, and a fourth for a template repository; each one asks for something diff
     names the rule's ID.
   - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java) (`eachKindHasWhatItNeeds`).
 - **PAUTA-07 · MUST.** A `pending` exception links an open issue in the app's own repository that names the rule's
-  ID and edition, "MENU-14 (Pauta 4.2.0)". One issue may hold several rules, one per page for example, if it names
+  ID and edition, "MENU-14 (Pauta x.y.z)". One issue may hold several rules, one per page for example, if it names
   each one that way. Closing the issue removes its entries.
-  - *Check (code):* every `pending` entry's `link` is an issue URL in the app's repository whose text names that
-    entry's rule ID and edition.
+  - *Check (code):* every `pending` entry's `link` is an issue URL in the app's own repository; the source settles
+    that much. That the issue is open and names the entry's rule ID and edition is read from the issue itself
+    (`gh issue view <number>`), which needs the network: without it, say in the evidence that the issue was not
+    read.
   - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java) (`eachKindHasWhatItNeeds`), whose pending entries link issues in the template's own repository.
 - **PAUTA-08 · MUST.** Each exception's `reason` is one plain sentence for the person using the app, in English like
   the changelog: what is different and, for a deviation, what they get instead. No rule text, no class names.
@@ -140,7 +142,7 @@ a test keeps the copies honest.
     {
       "rule": "MENU-14",
       "level": "MUST",
-      "url": "https://pauta-project.dev/4.2.0/menus/#menu-14",
+      "url": "https://pauta-project.dev/<edition>/menus/#menu-14",
       "kind": "pending",
       "reason": "Some menu rows have no icon yet.",
       "link": "https://github.com/adriandeleon/<App>/issues/212"
@@ -148,21 +150,21 @@ a test keeps the copies honest.
     {
       "rule": "TABS-06",
       "level": "MUST",
-      "url": "https://pauta-project.dev/4.2.0/tabs-and-panels/#tabs-06",
+      "url": "https://pauta-project.dev/<edition>/tabs-and-panels/#tabs-06",
       "kind": "not-applicable",
       "reason": "<App> has no tabs: it shows one library in one window."
     },
     {
       "rule": "WELC-01",
       "level": "SHOULD",
-      "url": "https://pauta-project.dev/4.2.0/templates/welcome/#welc-01",
+      "url": "https://pauta-project.dev/<edition>/templates/welcome/#welc-01",
       "kind": "deviation",
       "reason": "<App> opens straight to your library instead of a Welcome page; its empty state names the ways in.",
       "link": "https://github.com/adriandeleon/<App>/blob/master/docs/decisions/0007-no-welcome-page.md"
     }
   ],
   "checked": [
-    { "rule": "KBD-15", "edition": "4.2.0", "date": "2026-11-02" }
+    { "rule": "KBD-15", "edition": "<edition>", "date": "2026-11-02" }
   ]
 }
 ```

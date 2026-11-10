@@ -97,8 +97,8 @@ title and description come from the message catalogs, and the parity test holds 
   Search Everywhere shares the URL builder so the two pickers can never disagree.
   - *Check (code):* the palette and Search Everywhere both build the URL with `CommandPalette.docsUrl`.
   - *Reference:* Editora [`CommandPalette.docsUrl`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java), `setDocsOpener`; [`PickerKeys.freeChord`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java).
-- **DOCS-11 · MAY.** Each page of the Settings window has a *Help for &lt;page&gt;* link to its docs page, from
-  one map of page to slug.
+- **DOCS-11 · MAY.** Each page of the Settings window has a link to its docs page, *Help for* and the page's name,
+  from one map of page to slug.
   - *Check (code):* one map from Settings page to docs slug feeds every page's help link.
   - *Reference:* Editora [`SettingsWindow`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsWindow.java), [`SettingsFrameBits.helpUrl`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsFrameBits.java), `settings.help`.
 

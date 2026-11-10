@@ -8,6 +8,7 @@
 #   scripts/archive-tag.sh v1.3.1 [v1.3.0 ...]
 set -euo pipefail
 cd "$(dirname "$0")/.."
+unset PAUTA_ROOT # the tag's own scripts build it in its own worktree (scripts/build-edition.sh says why)
 origin=$(node -p 'new URL(require("./package.json").guidelines.url).origin')
 root=$(node -p 'new URL(require("./package.json").guidelines.url).pathname.replace(/\/?$/, "/")')
 for tag in "$@"; do

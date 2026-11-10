@@ -108,7 +108,12 @@ Editora (`../Editora`) is the reference implementation.
   While `[Unreleased]` holds anything, the checkout is not the edition its number names: CI builds `latest/` and
   `<version>/` from the current edition's release commit (tagging and archiving it only if it isn't live yet) and
   `master` into `next/`. The editions and their agent files change only when one is released, and a site-only fix
-  reaches them with the next release too (a patch can carry one when the batch allows it); `next/` shows it at once.
+  to a page, a component or a style reaches them with the next release too (a patch can carry one when the batch
+  allows it); `next/` shows it at once. A fix to `scripts/` or to a library they import applies at once: CI keeps
+  the run's own copy of `scripts/` and `src/lib` outside the checkout and runs the build, the checks and the
+  downloads from there on the release commit (`PAUTA_ROOT` names the tree; the workflow's "Keep this run's scripts"
+  step). What stays the release commit's is what `astro build` reads there (its pages, its `src/`, its
+  `node_modules`), its `package.json`, `CHANGELOG.md` and `pins.json`, and its own `scripts/check-rules.mjs`.
   **Pauta Next** is `next/`: the batch under `[Unreleased]`, built from `master` by `scripts/build-next.mjs` on every
   deploy while the batch waits, so it can be read before anyone decides to release it. It is not an edition: no
   number or date, links into the apps at their default branch (no pins), `noindex`, a notice on every page and in its
@@ -169,8 +174,8 @@ Editora (`../Editora`) is the reference implementation.
   and writes `versions.json`, the list every page reads (`public/versions.js`) to offer editions published after it
   and, on an earlier edition, to point at the latest. The header's switcher (`src/components/EditionSelect.astro`, in the
   phone menu through `MobileMenuFooter.astro`) and the footer link the same page in another edition; a numbered folder carries `noindex`, so search engines index `latest/`.
-  `next/` sits beside them while a batch waits (**Pauta Next**, above), from `master` with master's
-  `scripts/build-next.mjs`, which also adds it to `versions.json`.
+  `next/` sits beside them while a batch waits (**Pauta Next**, above), from `master`;
+  `scripts/build-next.mjs` also adds it to `versions.json`.
   The `versions` branch holds one folder per published edition and nothing else: CI runs `scripts/archive-edition.sh
   --push` in every run that deploys, so the edition just deployed joins it (a rebuild replaces the folder, so the
   current edition takes site-only fixes until the next one is released). Never edit that branch by hand. Every run on `master`
@@ -182,9 +187,10 @@ Editora (`../Editora`) is the reference implementation.
   job tag and archive them. The deploy waits for the publish job to succeed, and the publish job reads the build's
   artifact from outside its checkout. A
   pre-1.4.0 edition is rebuilt from its tag with `scripts/archive-tag.sh vX.Y.Z` and archived with
-  `scripts/archive-edition.sh build/editions/X.Y.Z`. In CI, `npm run build` fails rather than deploy a site that
-  lacks a released edition or the downloads. The workflow's build job holds a read-only token; only the publish job,
-  which installs nothing, can push, and only in a run on `master`: a pull request, or a manual run on another branch,
+  `scripts/archive-edition.sh build/editions/X.Y.Z`. In CI, the build (`scripts/build-site.mjs`, which is `npm run
+  build`) fails rather than deploy a site that lacks a released edition or the downloads. The workflow's build job
+  holds a read-only token; only the publish job, which installs nothing and runs the run's own copy of the scripts,
+  can push, and only in a run on `master`: a pull request, or a manual run on another branch,
   checks and builds and publishes nothing. Pin every action to a commit SHA with its version in a comment. Pages link with relative paths or
   `import.meta.env.BASE_URL`, which already includes the edition folder; `src/lib/site.mjs` gives the site root and
   the edition a page is served from.

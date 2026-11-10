@@ -12,15 +12,18 @@ description: "Commands, the Command Palette, keymaps, focus and accessibility."
   - *Reference:* Editora [`command/Command.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/Command.java), [`command/CommandRegistry.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/CommandRegistry.java).
 - **KBD-02 · SHOULD.** Command ids are dotted and grouped by area, as in `file.open`, `view.toggleStatusBar`
   and `help.reportProblem`. A rule that names a command's id requires that id; these three are examples.
-  - *Check (code):* every registered id matches `<area>.<camelCaseName>`.
+  - *Check (code):* every registered id is two or more names joined by dots, and the first is the area the command
+    belongs to: `file.open`, and with a sub-area `git.log.checkout`.
   - *Reference:* Editora [`ui/MenuBarModel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java).
 - **KBD-03 · MUST.** A command's title comes from `command.<id>` and its one-line palette description from
   `command.<id>.desc` in the message catalogs.
   - *Why:* a registered command is then localized and discoverable without extra work.
   - *Check (test):* a catalog parity test fails when a registered command has no `command.<id>` or
     `command.<id>.desc` key.
-  - *Reference:* Editora [`i18n/messages.properties`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/i18n/messages.properties), [`MessagesTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/i18n/MessagesTest.java)
-    (`everyCommandTitleHasAMatchingDescription`).
+  - *Reference:* the app template's [`CommandSweepFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/CommandSweepFxTest.java) (`everyCommandIsLocalizedAndRuns`) and Mirada's
+    [`CommandCatalogTest`](https://github.com/adriandeleon/Mirada/blob/main/src/test/java/com/mirada/ui/CommandCatalogTest.java) (`everyCommandHasItsTitleAndDescriptionInTheCatalog`) walk the registered commands.
+    Editora [`i18n/messages.properties`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/i18n/messages.properties); its [`MessagesTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/i18n/MessagesTest.java) (`everyCommandTitleHasAMatchingDescription`)
+    walks the catalog instead, so it finds a title with no description but not a registered command with neither.
 - **KBD-04 · SHOULD.** A command that cannot run in the current context is shown grayed, with a tooltip that says
   why, not hidden.
   - *Check (code):* the palette and menus list a disabled command with a reason, rather than filtering it out.
@@ -45,7 +48,7 @@ description: "Commands, the Command Palette, keymaps, focus and accessibility."
     IntelliJ and VS Code give the command ([`command/OtherIdeNames.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/OtherIdeNames.java)). It doesn't match the rest of the id or the
     description, which is shown under the list. [`CommandPaletteRankTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/CommandPaletteRankTest.java) holds the order
     (`aCommandIsFoundByItsNamespaceWhenItsTitleDoesNotCarryIt`, `aKeywordMatchRanksBelowEveryTitleMatch`).
-- **KBD-07 · MUST.** The palette is an in-scene overlay in the window's root `StackPane`, not a
+- **KBD-07 · MUST.** The palette and every picker are in-scene overlays in the window's root `StackPane`, never a
   `javafx.stage.Popup`.
   - *Why:* on Windows a Popup does not reliably take OS keyboard focus, and the whole app can stop receiving
     keystrokes.
@@ -67,9 +70,10 @@ Every other list choice (recent files, themes, keymaps, a setting's values) uses
   programs don't use: off macOS, never a plain `Ctrl` or `Alt` with a letter (`Ctrl+Shift+T`, not `Ctrl+T`).
   - *Why:* an Emacs keymap in a terminal would take the shell's own keys away from it: `Ctrl+W` deletes a word,
     `Ctrl+C` interrupts, `Alt+F` and `Alt+B` move by word.
-  - *Check (code):* `emacs.json`, `cua.json` and `cua.mac.json` are in the app's resources; in a terminal,
-    `keymap.json` and `keymap.mac.json` are, and a test fails a default binding off macOS that is a plain `Ctrl` or
-    `Alt` with a letter. The command passes either set of files; judge which one the app should have.
+  - *Check (code):* `emacs.json`, `cua.json` and `cua.mac.json` are in the app's resources. In a terminal,
+    `keymap.json` and `keymap.mac.json` are there instead, and no default binding in `keymap.json` is a plain `Ctrl`
+    or `Alt` with a letter. The Command finds either set of files and cannot tell a terminal from
+    another app: when it passes, confirm the app has the set that is its own.
   - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; has() { for f in "$@"; do find src/main/resources -name "$f" | grep -q . || return 1; done; }; has emacs.json cua.json cua.mac.json || has keymap.json keymap.mac.json || { echo 'missing emacs.json, cua.json and cua.mac.json (or, in a terminal, keymap.json and keymap.mac.json)'; false; }`
   - *Reference:* Editora [`src/main/resources/com/editora/keymaps/`](https://github.com/adriandeleon/Editora/tree/master/src/main/resources/com/editora/keymaps);
     Termina's [`keymaps/`](https://github.com/adriandeleon/Termina/tree/master/src/main/resources/com/termina/keymaps), held by [`KeymapTest`](https://github.com/adriandeleon/Termina/blob/master/src/test/java/com/termina/ui/KeymapTest.java)
@@ -130,6 +134,14 @@ Every other list choice (recent files, themes, keymaps, a setting's values) uses
     drawing it.
   - *Check (test):* an FX test tabs to each control family and asserts the ring.
   - *Reference:* Editora [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) (*Keyboard focus*, one layer for every control), [`FocusRingFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/FocusRingFxTest.java).
+- **KBD-22 · SHOULD.** The ring is 2 px wide and sits just outside the control with a 1 px gap: a border with
+  negative insets, which adds nothing to the control's own, so focusing a control never moves the layout.
+  - *Why:* a ring drawn on the control's own border is lost on a flat or filled button, and one that takes room
+    makes the row jump as Tab moves along it.
+  - *Check (code):* the `:focus-visible` rules of [KBD-16](#kbd-16) set `-fx-border-width: 2` and
+    `-fx-border-insets: -3`.
+  - *Reference:* Editora [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) (*Keyboard focus*), Termina's [`app.css`](https://github.com/adriandeleon/Termina/blob/master/src/main/resources/com/termina/styles/app.css) and Mirada's [`mirada.css`](https://github.com/adriandeleon/Mirada/blob/main/src/main/resources/com/mirada/styles/mirada.css). The app template's
+    [`app.css`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/styles/app.css) sets the ring's color only, so the ring is the theme's own 1 px border.
 - **KBD-18 · SHOULD.** On/off rows use a keyboard-operable switch with the `TOGGLE_BUTTON` role.
   - *Why:* a bare AtlantaFX `ToggleSwitch` is mouse-only.
   - *Check (code):* no `new ToggleSwitch` outside the switch class.

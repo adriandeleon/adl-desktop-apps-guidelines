@@ -123,7 +123,7 @@ tray icon's menu) show text only; there the chord is appended to the title ([MEN
 
 <div class="mock-stage">
 <div class="m-menubar-stage" role="img" aria-label="Mockup of the File menu open under the menu bar">
-<div class="m-menubar"><span class="mb on">File<span class="pin out" style="left:-26px;top:3px">1</span></span><span class="mb">Edit</span><span class="mb">View</span><span class="mb">Find</span><span class="mb">Go</span><span class="mb">Run</span><span class="mb">Git</span><span class="mb">Tools</span><span class="mb">Window</span><span class="mb">Help</span></div>
+<div class="m-menubar" style="width:max-content;min-width:100%"><span class="mb on">File<span class="pin out" style="left:-26px;top:3px">1</span></span><span class="mb">Edit</span><span class="mb">Find</span><span class="mb">View</span><span class="mb">Navigate</span><span class="mb">Code</span><span class="mb">Run</span><span class="mb">VCS</span><span class="mb">Tools</span><span class="mb">Window</span><span class="mb">Help</span></div>
 <div class="m-card m-menu">
 <div class="mi"><span class="ic"><svg><use href="#i-open"/></svg></span><span class="t">Open…</span><span class="k">C-x C-f</span><span class="pin out" style="left:-26px">2</span></div>
 <div class="mi"><span class="ic"><svg><use href="#i-save"/></svg></span><span class="t">Save <span class="pin" style="margin-left:6px">3</span></span><span class="k">C-x C-s</span><span class="pin out" style="right:-26px">4</span></div>
@@ -142,16 +142,17 @@ tray icon's menu) show text only; there the chord is appended to the title ([MEN
 <ol class="anatomy">
 <li><span class="pin">1</span><span><strong>Menu button.</strong> Padding 3 × 10 on a bar with 4 px side insets; the bar and the toolbar share one <code>-color-bg-subtle</code> band with no rule under it.</span></li>
 <li><span class="pin">2</span><span><strong>Icon column</strong>, 22 px. Every row has a glyph that depicts its command; where the icon set has none that fits, the app adds one rather than leave the cell blank.</span></li>
-<li><span class="pin">3</span><span><strong>Title</strong>, 14 px Inter, the command's title with the menu's own name dropped ("Save", not "File: Save") unless two rows would then read the same.</span></li>
+<li><span class="pin">3</span><span><strong>Title</strong>, 14 px Inter, the command's title with its category prefix dropped ("Save", not "File: Save") unless two rows would then read the same. Editora drops the prefix only where two words or more are left ("File: Save As…" reads "Save As…"), so its File menu still reads "File: Save" (<a href="https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/editor/MenuTitles.java"><code>editor/MenuTitles.java</code></a>).</span></li>
 <li><span class="pin">4</span><span><strong>Chord column.</strong> Inter 11 px, periwinkle, right-aligned into one column per menu (not app-wide), read from the active keymap. Drawn by the app, not a JavaFX accelerator: Emacs chords are multi-key, which a <code>KeyCombination</code> cannot express, and on macOS an accelerator would bypass the key dispatcher.</span></li>
 <li><span class="pin">5</span><span><strong>Unbound command.</strong> An empty chord cell, never a wrong chord. A live keymap switch rewrites every cell.</span></li>
 <li><span class="pin">6</span><span><strong>Submenu row.</strong> Icon, title and an invisible chord as wide as the menu's widest, so its arrow sits at the right edge instead of halfway across.</span></li>
 <li><span class="pin">7</span><span><strong>Card.</strong> Radius 8; the shadow falls below the menu (offset ≥ radius), so nothing invisible covers the bar.</span></li>
 </ol>
 
-- **MENU-01 · MUST.** Every menu-bar item is a command from the registry, with its title
-  ([KBD-03](../keyboard/#kbd-03)), its chord from the active keymap and its enabled state from the command's gate. The bar assembles and refreshes; it
-  holds no behavior of its own.
+- **MENU-01 · MUST.** Every menu-bar item is a command from the registry, with the command's title
+  ([KBD-03](../keyboard/#kbd-03)), its chord from the active keymap and its enabled state from the command's gate.
+  A row may show the title without its category prefix ("Save As…" for "File: Save As…"); it never carries a title
+  of its own. The bar assembles and refreshes; it holds no behavior of its own.
   - *Check (code):* the bar's model lists command ids only, and every row runs its id through the registry.
   - *Reference:* Editora [`ui/MenuBarModel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java) over [`command/CommandRegistry.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/CommandRegistry.java), [`ui/MainMenuBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java).
 - **MENU-02 · MUST.** Menu-bar rows use no `KeyCombination` accelerators. In the in-window bar each row is a
@@ -246,19 +247,23 @@ The mockup is an editor tab's menu, shortened; Editora's has twenty-five rows.
   - *Reference:* the stock `ContextMenu` hide-on-Escape (the right-click menus' [Spec](#spec)); Termina's `onKeyPressed` filter hides the menu
     and consumes the key ([`TerminalView`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalView.java)).
 - **MENU-09 · MUST.** The Menu key and `Shift+F10` open the selected row's menu, scrolled into view first,
-  so every row action a mouse can reach the keyboard can too.
+  so every row action a mouse can reach the keyboard can too. The chord is the same on macOS, where keyboards have
+  no Menu key: `Shift+F10`, with no `Cmd` form.
   - *Why:* those keys arrive at the focused control, not at a row's cell, so a menu installed on cells never saw
     them.
   - *Check (test):* an FX test sends a keyboard request to a tree and a list and finds the selected row's menu,
     anchored to that row.
-  - *Reference:* Editora [`RowContextMenu.install(tree)`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/RowContextMenu.java), [`RowContextMenuFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/RowContextMenuFxTest.java).
+  - *Reference:* Editora [`RowContextMenu.install(tree)`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/RowContextMenu.java), [`RowContextMenuFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/RowContextMenuFxTest.java): it answers the request
+    JavaFX raises for those keys (`ContextMenuEvent.isKeyboardTrigger`). Termina's [`ui/ViewKeys.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/ViewKeys.java) and Mirada's
+    [`Popups.isMenuKey`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Popups.java) read the key press themselves, the same on every OS.
 - **MENU-17 · SHOULD.** The in-window menu bar is reachable from the keyboard in every keymap. JavaFX opens its first
   menu on `F10` (`Ctrl+F10` on macOS) and on a lone `Alt`; a keymap that binds that key to something else binds a
-  command that focuses the menu bar instead.
+  command that focuses the menu bar instead. So does a terminal, where a plain `F10` goes to the program it runs.
   - *Why:* the menus are a keyboard user's map of the app; a chord that never reaches them hides it.
   - *Check (by hand):* in each keymap, reach the first menu with the keyboard alone and walk the bar with the arrows.
   - *Reference:* no app yet. Editora's CUA, VS Code and Sublime keymaps bind `F10` to `debug.stepOver`
-    ([`keymaps/cua.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/cua.json)), and no command focuses the bar.
+    ([`keymaps/cua.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/cua.json)), and no command focuses the bar. Termina leaves a plain `F10` to the program in the
+    terminal ([`ui/ViewKeys.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/ViewKeys.java)) and has no such command either.
 - **MENU-10 · SHOULD.** A right-click selects first. In an editor, a right-click outside every selection moves the
   caret to the click (so Paste lands there); inside a selection it keeps carets and selections (so Cut and Copy act
   on what was clicked). From the keyboard the target is the caret. In a list, the menu is the clicked row's.

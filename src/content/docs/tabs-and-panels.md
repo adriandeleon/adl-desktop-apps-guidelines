@@ -145,10 +145,11 @@ Termina's `HeaderBar` holds the menu bar and the window title
     dragging).
 - **TABS-18 · SHOULD.** Panels float, maximize, resize and close from the keyboard, and at most one window is
   maximized at a time.
-  - *Check (code):* each action is a registered command, so the palette runs it; the Emacs keymap binds maximize,
-    close and resize.
+  - *Check (code):* floating, maximizing, resizing and closing a panel are each a registered command, so the
+    palette runs them without the mouse; and maximizing a panel first restores the one that was maximized.
   - *Reference:* Editora `view.floatToolWindow` (palette only), `view.maximizeToolWindow` (`C-x f`),
-    `view.closeFocusedToolWindow` (`C-x 0`), the resize commands (`C-x S-.`, `C-x S-,`, `C-x S-6`).
+    `view.closeFocusedToolWindow` (`C-x 0`), the resize commands (`C-x S-.`, `C-x S-,`, `C-x S-6`);
+    [`ui/ToolWindowManager.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolWindowManager.java) keeps one `maximized` panel and restores it before it maximizes another.
 - **TABS-19 · SHOULD.** Closing the panel that holds keyboard focus returns focus to where it was in the editor.
   - *Check (code):* the manager keeps the last editor focus owner and refocuses it on close.
   - *Reference:* Editora [`ToolWindowManager.focusEditor`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolWindowManager.java), a weak reference to the last editor focus owner.

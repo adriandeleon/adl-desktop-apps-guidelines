@@ -22,6 +22,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 - [ ] A template repository says so in its `pauta.json` and records the rules only an app made from it can meet as `app-only` · [PAUTA-16](../conformance/#pauta-16)
 - [ ] The conformance is computed from the exceptions by one tested helper, never stored · [PAUTA-02](../conformance/#pauta-02)
 - [ ] `PautaConformanceTest` checks `pauta.json` and the README against the edition's `rules.json` · [PAUTA-10](../conformance/#pauta-10), [PAUTA-15](../conformance/#pauta-15)
+- [ ] Every rule checked by hand recorded in `pauta.json`'s `checked` list once a person has checked it · [PAUTA-18](../conformance/#pauta-18)
 - [ ] `AGENTS.md` has a `## Pauta` section that names the edition and links its numbered `llms.txt` · [PAUTA-17](../conformance/#pauta-17)
 - [ ] About links the edition, *Built to Pauta x.y.z*, read from `pauta.version`, and shows the conformance · [ABOUT-05](../templates/about/#about-05), [ABOUT-06](../templates/about/#about-06), [ABOUT-07](../templates/about/#about-07), [ABOUT-08](../templates/about/#about-08), [ABOUT-09](../templates/about/#about-09)
 - [ ] A Pauta window, `help.pauta`, in the palette, the Help menu and About's link, listing every exception with fixed links · [PWIN-01](../templates/pauta-window/#pwin-01), [PWIN-02](../templates/pauta-window/#pwin-02), [PWIN-03](../templates/pauta-window/#pwin-03), [PWIN-04](../templates/pauta-window/#pwin-04)
@@ -82,7 +83,8 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 
 [Accessibility](../accessibility/)
 
-- [ ] Every control reachable with Tab and operable with Space or Enter, except buttons whose command the keyboard reaches another way, and showing the focus ring when it has focus · [KBD-15](../keyboard/#kbd-15), [KBD-16](../keyboard/#kbd-16)
+- [ ] Every control reachable with Tab and operable with Space or Enter, except controls whose command the keyboard reaches another way, and showing the focus ring when it has focus · [KBD-15](../keyboard/#kbd-15), [KBD-16](../keyboard/#kbd-16)
+- [ ] A find-bar or filter control out of the Tab order only where a command does what it does · [FIND-16](../templates/find-bar/#find-16)
 - [ ] Every control a person can reach has an accessible name, rows drawn from graphics included · [ACC-01](../accessibility/#acc-01)
 - [ ] Custom controls state their role and state; canvas content is exposed to the screen reader (SHOULD) · [ACC-02](../accessibility/#acc-02), [ACC-03](../accessibility/#acc-03)
 - [ ] Animations follow the OS's reduced motion; color is never the only signal (SHOULD) · [ACC-04](../accessibility/#acc-04), [ACC-05](../accessibility/#acc-05)
@@ -98,6 +100,8 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 - [ ] Dialog buttons in one order on every OS, Cancel to the left of every action · [WIN-11](../window-shell/#win-11)
 - [ ] A UI zoom that scales the whole chrome, menus included, applied at once and kept across launches · [WIN-12](../window-shell/#win-12)
 - [ ] One quit method for File → Quit, the quit command and the system's own Quit · [WIN-13](../window-shell/#win-13)
+- [ ] A Quit in every app: the `app.quit` command and a Quit row that ends the File menu, or the main menu · [WIN-14](../window-shell/#win-14)
+- [ ] On macOS, About, Settings and Quit in the application menu (SHOULD) · [WIN-15](../window-shell/#win-15)
 - [ ] About from Help, `help.about` and the macOS application menu: version and build, runtime, license, links and the last update check · [ABOUT-01](../templates/about/#about-01), [ABOUT-02](../templates/about/#about-02)
 - [ ] A Welcome page when there is nothing to restore, or an empty state that names the ways in with their chords (SHOULD) · [WELC-01](../templates/welcome/#welc-01), [WELC-02](../templates/welcome/#welc-02)
 
@@ -110,7 +114,8 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 - [ ] State colors named once on `.root` from the theme's roles, no fixed hex in a component rule · [ICON-07](../icons-and-color/#icon-07), [ICON-08](../icons-and-color/#icon-08)
 - [ ] Tinted text at 4.5:1 on its fill and on both grounds; `-color-fg-emphasis` on an emphasis fill; one focus ring · [ICON-10](../icons-and-color/#icon-10), [ICON-11](../icons-and-color/#icon-11), [ICON-12](../icons-and-color/#icon-12)
 - [ ] Icons in one family's style class each, the same glyph for an action everywhere it is reached, every glyph set credited in `NOTICE` · [ICON-19](../icons-and-color/#icon-19), [ICON-20](../icons-and-color/#icon-20), [ICON-24](../icons-and-color/#icon-24)
-- [ ] Readable text in `-color-fg-muted` or stronger, held by a pure contrast test over the stylesheets (SHOULD) · [ICON-09](../icons-and-color/#icon-09), [ICON-14](../icons-and-color/#icon-14)
+- [ ] Readable text in `-color-fg-muted` or stronger · [ICON-09](../icons-and-color/#icon-09)
+- [ ] The contrast tests pure: they read the stylesheets without starting the toolkit (SHOULD) · [ICON-14](../icons-and-color/#icon-14)
 
 ## Toolbars and tooltips
 
@@ -164,7 +169,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 - [ ] Config read with suspicion: values clamped on load, an unreadable file kept as a backup and defaults loaded · [SET-11](../settings/#set-11)
 - [ ] A config file written whole or not at all: to a temporary file beside it, then moved into place · [SET-22](../settings/#set-22)
 - [ ] Export and import of the config folder · [SET-12](../settings/#set-12)
-- [ ] No secret in a config file: keys and tokens in the OS keychain, a credential the app can ask for again in memory only · [SET-13](../settings/#set-13), [SET-14](../settings/#set-14)
+- [ ] No secret in a config file: keys and tokens in the OS keychain, or in memory for the session where no keychain answers; a credential the app can ask for again in memory only · [SET-13](../settings/#set-13), [SET-14](../settings/#set-14)
 - [ ] A secret in the wrong place refused (a sync URL with a password, an unredacted problem report), and an option that weakens security only a config key · [SET-15](../settings/#set-15), [SET-16](../settings/#set-16)
 - [ ] Settings sync through a Git repository the user owns (SHOULD) · [SYNC-01](../templates/settings-sync/#sync-01), [SYNC-02](../templates/settings-sync/#sync-02)
 
@@ -181,7 +186,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 
 [Command line](../command-line/) · [Internationalization](../i18n/)
 
-- [ ] `--help`, `--version`, `--config-dir`, `--dev` and `--report` · [CLI-01](../command-line/#cli-01), [CLI-02](../command-line/#cli-02), [CLI-05](../command-line/#cli-05)
+- [ ] `--help`, `--version`, `--config-dir`, `--dev` and `--report`, which writes its file in the current folder · [CLI-01](../command-line/#cli-01), [CLI-02](../command-line/#cli-02), [CLI-05](../command-line/#cli-05)
 - [ ] On Windows, a console launcher (or an attached console) so the flags print · [CLI-11](../command-line/#cli-11)
 - [ ] Single instance per config folder · [CLI-07](../command-line/#cli-07)
 - [ ] Six message catalogs, each with every key, held by a parity test · [INTL-01](../i18n/#intl-01), [INTL-08](../i18n/#intl-08)
@@ -237,4 +242,4 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 - [ ] Test and coverage reports uploaded; coverage totals in the job summary · [REL-27](../release/#rel-27)
 - [ ] Signing skipped without secrets, but a tag without them fails · [REL-28](../release/#rel-28)
 - [ ] A smoke launch of the packaged app on each OS before release · [REL-29](../release/#rel-29)
-- [ ] `full-tests.yml` daily, on a `full-ci` label and before every release (SHOULD) · [REL-20](../release/#rel-20)
+- [ ] The tests on all three OSes, daily or on every pull request, and before every release · [REL-20](../release/#rel-20)

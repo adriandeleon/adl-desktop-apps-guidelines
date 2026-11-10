@@ -65,12 +65,13 @@ an app, and a fourth for a template repository; each one asks for something diff
 - **PAUTA-04 · MUST.** Every MUST and SHOULD of the edition that the app does not meet has an exception, and every
   exception names a rule the app does not meet. An unmet rule with no entry is a failed audit, not an exception; an
   entry for a rule the app now meets is removed in the same change that meets it. A rule checked by hand counts like
-  any other: someone checks it in the running app before the conformance is claimed, and one that fails is pending.
+  any other: someone checks it in the running app before the conformance is claimed and records that
+  ([PAUTA-18](#pauta-18)), and one that fails is pending.
   - *Why:* [*Never claim what is not true*](../principles/#for-the-people-using-the-apps). The list is the app's
     claim; it has to be whole and current.
   - *Check (by hand):* audit the app against its edition ([Coding agents and LLMs](../coding-agents/#audit-an-app)):
-    no MUST or SHOULD is `fail`, every `manual` result has been checked by a person, and no result reports an entry
-    for a rule that passes.
+    no MUST or SHOULD is `fail`, every `manual` result has a `checked` entry (PAUTA-18), and no result reports an
+    entry for a rule that passes.
   - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`pauta.json`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/pauta.json).
 - **PAUTA-05 · MUST.** A rule limited to apps with a feature needs no entry in an app without that feature. A rule is
   limited when its own text says so ("An app with user data worth carrying between computers…"), when its page or
@@ -112,11 +113,24 @@ an app, and a fourth for a template repository; each one asks for something diff
     an app, the release build runs the test with inherited entries treated as failures, and the app's first
     release has no `app-only` entry.
   - *Reference:* the [app template](https://github.com/adriandeleon/adl-desktop-app-template) (in progress).
+- **PAUTA-18 · MUST.** A rule checked by hand has a record. Once a person has checked it in the running app and
+  found it met, `pauta.json`'s `checked` list gets an entry: the `rule`, the `edition` it was checked against and the
+  `date`. An entry stays good on later editions until one changes the rule; the move to that edition
+  ([PAUTA-11](#pauta-11)) removes it and the rule is checked again. A by-hand rule that applies to the app and has
+  neither an entry nor an exception has not been checked: it is recorded as `pending` until someone looks, like any
+  rule the app can't yet say it meets.
+  - *Why:* an audit can only answer `manual` for these rules, and its report is written again each time. Without a
+    record, a rule someone checked last week and a rule nobody ever looked at read the same, and the conformance
+    rests on memory.
+  - *Check (code):* every `checked` entry names a rule of the edition that is checked by hand, an edition no newer
+    than `pauta.version` and a date; no rule is listed twice, and none has an exception as well. In the audit, every
+    `manual` result has an entry.
+  - *Reference:* no app yet.
 
 ## The file
 
 The exceptions live in one file, bundled with the app so the Pauta window can read it:
-`src/main/resources/com/<app>/pauta.json`. The edition stays in `pom.xml` (ABOUT-08). Each entry copies the rule's
+`src/main/resources/com/<app>/pauta.json`. The by-hand checks someone has done are recorded beside them (PAUTA-18). The edition stays in `pom.xml` (ABOUT-08). Each entry copies the rule's
 `level` and `url` from the edition's [`rules.json`](../coding-agents/) so the app needs nothing else at run time, and
 a test keeps the copies honest.
 
@@ -146,22 +160,27 @@ a test keeps the copies honest.
       "reason": "<App> opens straight to your library instead of a Welcome page; its empty state names the ways in.",
       "link": "https://github.com/adriandeleon/<App>/blob/master/docs/decisions/0007-no-welcome-page.md"
     }
+  ],
+  "checked": [
+    { "rule": "KBD-15", "edition": "4.2.0", "date": "2026-11-02" }
   ]
 }
 ```
 
 - **PAUTA-09 · MUST.** The exceptions have one source, `pauta.json` laid out as [The file](#the-file) shows: `rule`, `level`, `url`, `kind` and
-  `reason` on every entry, `link` on every deviation and pending entry, one entry per rule, and `"template": true`
-  beside `exceptions` only in a template repository (PAUTA-16).
+  `reason` on every entry, `link` on every deviation and pending entry, one entry per rule, `rule`, `edition` and
+  `date` on every `checked` entry (PAUTA-18), and `"template": true` beside `exceptions` only in a template
+  repository (PAUTA-16).
   - *Check (code):* the file exists at that path, and each entry has the fields its kind needs.
   - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`pauta.json`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/pauta.json), read by [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java) (`parsesEveryField`, `everyEntryNamesARuleOfTheEditionWithItsLevelAndAddress`).
 - **PAUTA-10 · MUST.** A test reads `pauta.json` against a copy of the edition's `rules.json` in
   `src/test/resources/pauta-rules.json` and fails when the copy's `edition` is not `pauta.version`, when an entry
   names a rule the edition does not have, when its `level` or `url` differs from the edition's, when a rule appears
-  twice, when a deviation names a MUST, or when a deviation or pending entry has no `link`. Outside a template, it
-  reports each `app-only` entry and each `pending` link that is not an issue in the app's own repository (the one
-  the app's own code names; `AppInfo.GITHUB_REPO` in the template), and fails on them in the release build
-  ([PAUTA-16](#pauta-16)).
+  twice, when a deviation names a MUST, when a deviation or pending entry has no `link`, or when a `checked` entry
+  names a rule that is not checked by hand, a rule with an exception, or an edition newer than `pauta.version`
+  ([PAUTA-18](#pauta-18)). Outside a template, it reports each `app-only` entry and each `pending` link that is not
+  an issue in the app's own repository (the one the app's own code names; `AppInfo.GITHUB_REPO` in the template),
+  and fails on them in the release build ([PAUTA-16](#pauta-16)).
   - *Why:* moving to a newer edition changes levels and retires IDs; the test turns each stale entry into a failure.
   - *Check (test):* `PautaConformanceTest`, or the app's equivalent, runs in the build.
   - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java) and its copy of the edition's rules, [`pauta-rules.json`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/resources/pauta-rules.json). The template parts (`app-only`, inherited links) aren't built yet.

@@ -69,14 +69,15 @@ For one-off blocking calls (reading a file, stat-ing a path, starting a process)
 
 ## Hot paths
 
-Each app names its hot paths: what runs on every keystroke, scroll pulse or progress tick. In Editora they are
+A hot path is what runs on every keystroke, scroll pulse or progress tick. In Editora they are
 typing, scrolling, highlighting, the overlays and the gutter. In Torrenta they are the transfer table's refresh,
 in Termina the terminal grid, in Mirada stepping between images.
 
 - **PERF-06 · MUST.** Redraws are coalesced to at most one per pulse, with a flag that one request is already
-  queued, and text-driven work waits for typing to pause.
+  queued. In an app with text the user types into, work driven by that text waits for typing to pause.
   - *Check (code):* a redraw request sets a flag (Editora's are named `…Pending`) and schedules one pass, and a
-    request that finds the flag set schedules nothing; listeners on text go through a debounce.
+    request that finds the flag set schedules nothing; where the app has a text input that drives work (a search, a
+    filter, an editor), its listeners go through a debounce.
   - *Reference:* Editora [`docs/performance.md`](https://github.com/adriandeleon/Editora/blob/master/docs/performance.md) §2 (the `redrawPending` shape) and
     [`ui/WindowToolbar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowToolbar.java) (`scheduleEditStateRefresh`, with its `editStateRefreshPending` flag). [`ui/FxThrottle.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/FxThrottle.java)
     is another tool: a leading-edge throttle with a maximum wait and no such flag, which runs the first request
@@ -111,9 +112,11 @@ in Termina the terminal grid, in Mirada stepping between images.
     (2,000 records, the oldest dropped; [`DebugLogTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/DebugLogTest.java)), and [`test/OutputCap.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/test/OutputCap.java), which keeps the head and the tail of one
     test's output (200,000 characters) with a note between them of how much was cut. The note is Editora's choice,
     not part of the rule.
-- **PERF-12 · MUST.** Large inputs are guarded by size and shape before they load: expensive features turn off past
-  one threshold, the input opens read-only or capped past another, and what will not fit the free heap is refused.
-  - *Check (code):* the loader compares the size against named thresholds before reading the content.
+- **PERF-12 · MUST.** In an app that opens files or data the user picks, large inputs are guarded by size and shape
+  before they load: expensive features turn off past one threshold, the input opens read-only or capped past
+  another, and what will not fit the free heap is refused.
+  - *Check (code):* the code that loads a file compares its size against named thresholds before reading the
+    content.
   - *Reference:* Editora [`EditorBuffer.LARGE_FILE_BYTES`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/editor/EditorBuffer.java) (5 MB) and `HUGE_FILE_BYTES` (50 MB),
     [`ui/LoadHeapGuard.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/LoadHeapGuard.java) ([`LoadHeapGuardTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/LoadHeapGuardTest.java)).
 - **PERF-13 · MUST.** A closed window releases what it held: listeners, timers, executors, file watchers, native
@@ -123,16 +126,18 @@ in Termina the terminal grid, in Mirada stepping between images.
 
 ## Start-up
 
-- **PERF-14 · MUST.** The first frame comes first: only what the first window shows is built before it; tool
-  windows, panels and pages build on first open.
-  - *Check (test):* a test opens a window and finds no closed tool window's panel built before the first paint.
+- **PERF-14 · MUST.** The first frame comes first: only what the first window shows is built before it. Everything
+  else builds on first open: a closed panel's content, the Settings pages, the dialogs and the other windows.
+  - *Check (test):* a test opens the first window and finds nothing built that it does not show: no Settings page,
+    no dialog and, in an app with tool panels, no closed panel's content.
   - *Reference:* Editora's lazy [`ToolWindow`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolWindow.java) suppliers, [`LazyToolWindowsFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/LazyToolWindowsFxTest.java).
 - **PERF-15 · MUST.** What nobody waits for starts after the first frame has painted: the update check, extra
   fonts, indexes and caches.
   - *Check (test):* a test finds the deferred work not started before the first paint.
   - *Reference:* Editora [`ui/UpdateCheckScheduler.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/UpdateCheckScheduler.java), [`Fonts.loadRemainingAfterNextPaint`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Fonts.java)
     ([`UpdateCheckSchedulerTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/UpdateCheckSchedulerTest.java), [`FontsDeferredLoadFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/FontsDeferredLoadFxTest.java), [`StartupDeferralFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StartupDeferralFxTest.java)).
-- **PERF-16 · SHOULD.** Config is read off the FX thread, before the toolkit needs it.
+- **PERF-16 · SHOULD.** The config read starts before the toolkit does, so the first window never waits for it.
+  That it runs off the FX thread is [PERF-01](#perf-01).
   - *Check (code):* `main` starts the config read on its own thread before `launch`.
   - *Reference:* Editora's `config-prefetch` thread in [`App.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java).
 - **PERF-17 · SHOULD.** The app ships precompiled stylesheets (`.bss`). The AOT cache, the other half of a fast

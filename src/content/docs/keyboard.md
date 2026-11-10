@@ -114,10 +114,10 @@ Every other list choice (recent files, themes, keymaps, a setting's values) uses
 
 ## Focus and accessibility
 
-- **KBD-15 · MUST.** Every interactive control is reachable with Tab and operable with Space or Enter. A button whose
+- **KBD-15 · MUST.** Every interactive control is reachable with Tab and operable with Space or Enter. A control whose
   command the keyboard reaches another way is the exception: toolbar buttons
-  ([TBAR-02](../toolbars-and-tooltips/#tbar-02)) and the find bar's buttons
-  ([Find bar](../templates/find-bar/)) stay out of the Tab order. See [Accessibility](../accessibility/).
+  ([TBAR-02](../toolbars-and-tooltips/#tbar-02)), and the find-bar and filter controls that
+  [FIND-16](../templates/find-bar/#find-16) names, stay out of the Tab order. See [Accessibility](../accessibility/).
   - *Why:* a control that Tab can't reach is one a keyboard-only or screen-reader user can't use at all.
   - *Check (by hand):* Tab through every window and dialog without the mouse.
   - *Reference:* Editora; [`FocusRingFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/FocusRingFxTest.java) holds that every control family draws the focus ring when Tab

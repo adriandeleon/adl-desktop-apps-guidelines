@@ -123,7 +123,8 @@ to write the report; an edition supplies only its rules. In short:
 4. Read the app's \`src/main/resources/com/<app>/pauta.json\`, its recorded exceptions. An unmet rule it lists gets the
    entry's kind as its status (not-applicable, deviation, pending, or in a template app-only); MAYs need no entry.
    An unmet MUST or SHOULD it doesn't list is \`fail\`. An entry for a rule that passes or is limited, and a deviation
-   or pending entry with no link, are problems to report.
+   or pending entry with no link, are problems to report. Its \`checked\` list records the by-hand rules a person
+   has checked and found met: give a \`manual\` result its entry, or report that it has none (PAUTA-18).
 5. Report one result per rule: ID, level, status and evidence as \`file:line\`. The statuses: ${Object.keys(STATUSES)
     .map((s) => `\`${s}\``)
     .join(", ")}. As JSON, the report follows ${base}audit.schema.json. A failed MUST blocks a release.

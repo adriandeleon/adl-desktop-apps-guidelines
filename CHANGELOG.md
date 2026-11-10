@@ -37,6 +37,20 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 - **REPO-11** (SHOULD): every script in `scripts/` is a Java source file the JDK runs as it is or an `sh` or bash
   script, as in Editora, so building and releasing an app needs no second toolchain. Mirada, Modula and Torrenta
   each have Python scripts that don't meet it yet.
+- **WIN-14 · MUST.** Every app has a Quit, on every OS: the `app.quit` command and a Quit row that ends the File
+  menu, or the app's main menu where it has no menu bar. Closing the last window is never the only way out. Termina
+  and Mirada have no Quit, Modula quits from its tray and its close button only, and Torrenta registers the command
+  as `quit`.
+- **WIN-15 · SHOULD.** On macOS, About, Settings (`Cmd+,`) and Quit are in the application menu. Only Mirada puts
+  Settings there; Termina adds About, and the others nothing. *Same on every OS* names the three in its row.
+- **FIND-16 · MUST.** A control of the find bar or of a filter box leaves the Tab order only when a command does
+  what it does. **FIND-15** took the filter box out of the Tab order while **KBD-15**, a MUST, let only buttons
+  leave it, on the strength of a Spec row Editora's find bar never followed. KBD-15 now points at FIND-16, and the
+  row says what the rule says. Termina's regex toggle, out of the Tab order with no command, is the one gap.
+- **PAUTA-18 · MUST.** A rule checked by hand has a record: `pauta.json` gains a `checked` list, with the rule, the
+  edition it was checked against and the date. 42 rules come back `manual` from every audit, and nothing told one
+  a person had checked from one nobody had looked at. **PAUTA-04**, **PAUTA-09** and **PAUTA-10** follow, the
+  audit skill reports each manual result's entry, and `audit.schema.json` has the field. No app has the list yet.
 
 ### Changed
 
@@ -104,6 +118,34 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 - **KBD-09**'s terminal keymap binds no app command to a plain `Ctrl` or `Alt` with a letter off macOS, since those
   belong to the shell, and **KBD-10**'s extra keymaps don't apply to a terminal
   ([#18](https://github.com/adriandeleon/adl-desktop-apps-guidelines/issues/18)).
+- **REL-20 is a MUST**, and says what runs where instead of how Editora schedules it: the pure suite on Linux, macOS
+  and Windows and the FX suite on Linux and one more, every day or on every pull request, and before every release.
+  The `ci.yml` and `full-tests.yml` split is Editora's way; Termina, Torrenta, Mirada, Modula and nux, which run
+  everything on every pull request and failed the rule for having no `full-tests.yml`, meet it. Listing flaky tests
+  in the job summary is no longer asked.
+- **ICON-09 is a MUST**: readable text in `-color-fg-muted` or stronger stood as a SHOULD beside MUSTs for tinted
+  and emphasis text. Only Editora and the template have the test that holds it. **ICON-14** now asks that the
+  contrast tests be pure, which is what was left to it.
+- **SET-13** says what happens with no keychain, as in a Linux session with no Secret Service: the secret is kept
+  in memory for the session and its Settings row says so. Editora's fallback writes it to `settings.json`.
+- **CLI-05** says where `--report` writes: a file in the current folder, its path printed, the temp folder when
+  that can't be written. Editora and Torrenta do; the template and Mirada write beside the settings, and Termina
+  only prints.
+- **TRAY-08 is retired** into **PERF-01**: start-at-login calls off the FX thread was a SHOULD restating that MUST.
+- **JDK 25 in CI is PLAT-01's alone.** It was a MUST there and in REL-19 and a SHOULD in REL-25. REL-19 points at
+  PLAT-01, and **REL-25** is reduced to what was its own, `cache: maven` on every `setup-java` step. **PERF-16** is
+  likewise reduced to starting the config read before the toolkit.
+- **A tool panel is any panel the user shows and hides beside the content**, on a stripe or not, so TABS-13's
+  `tool.<id>` commands cover Torrenta's sidebar and detail pane and Mirada's panels.
+- **More rules say which apps they cover**: PERF-06's debounce (an app with text input), PERF-12 (an app that opens
+  the user's files), WIN-09 (an app with content to zoom), WELC-01 (files or projects in tabs), WELC-03's
+  straight-to-a-view startup and WELC-09's remote sites. PERF-14 names what the first window does not show
+  instead of tool windows, and WELC-04's hint lists the app's own ways in.
+- **ACC-07**'s screen-reader pass is a step of its own on the release checklist, not part of REL-29's smoke test,
+  which is a CI step.
+- **TRAY-10**'s Check tests that nothing is posted while the window is in front, and asks that most events default
+  to off only where there are several. Editora and Termina, with one event each, now meet it; Torrenta and nux
+  post while focused.
 
 ### Fixed
 
@@ -174,6 +216,19 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 - The overview says nearly every rule names code to copy; eighteen say no app does yet.
 - The Markdown download and the PDF show the block to copy into an app's `AGENTS.md` with `## Pauta`, as the page
   and PAUTA-17 do; they had `### Pauta`.
+- **REL-18**'s and **REL-19**'s Checks ask what the files can show: REL-18's no longer needs the test QUAL-15 makes
+  a SHOULD, and REL-19's says that required status checks are a repository setting.
+- **REPO-02** names Termina's and Mirada's changelogs, where every entry opens in bold; Editora's older entries
+  don't. The README's `<picture>`, 2× screenshots and AI statement, and "each app names its hot paths", read as
+  Editora's practice, which is what they are.
+- *Gaps per app* and the matrix follow all of the above, with the gaps the review found on the way: no settings
+  summary in Editora's and Torrenta's problem reports (DIAG-06), nux's stock OK and Cancel (CONF-03), and
+  changelog entries without a bold summary in Editora, Modula and nux.
+- **The release path, in CI.** One failed request to the site no longer republishes the current edition over the
+  fixes deployed since: `release-state.mjs` asks up to four times and, when the site still can't be asked, publishes
+  nothing new and warns on the run. `check-edition.mjs --tag` tags the commit that released the edition, not the
+  commit the run is on, and refuses when it can't tell. A release's `pins.json` is checked whole: a full commit SHA
+  for every repository the pages link into, and for no other. The scripts run from a path with a space.
 
 ## [5.0.0] - 2026-11-09
 

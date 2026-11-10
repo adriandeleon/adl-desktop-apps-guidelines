@@ -4,11 +4,12 @@ description: "JDK, JavaFX, AtlantaFX, NullAway, Maven Wrapper, tests and coverag
 ---
 
 - **PLAT-01 · MUST.** The app builds on **JDK 25 or newer**. `maven.compiler.release` 25 is the floor, not the
-  ceiling: a newer JDK builds the app too. CI builds and bundles JDK 25, the current LTS, in every app
-  ([REL-25](../release/#rel-25)); the family moves to the next LTS together, in an edition of Pauta.
+  ceiling: a newer JDK builds the app too. CI builds and bundles JDK 25, the current LTS, in every app: every
+  `actions/setup-java` step sets it up. The family moves to the next LTS together, in an edition of Pauta.
   - *Check (code):* `pom.xml` sets `maven.compiler.release` to 25 or later. Where the build has an enforcer
     `requireJavaVersion` rule, its range is the open-ended `[25,)`: it starts at 25 and has no upper bound. An app with
-    no such rule passes, and a rule inside a profile is not counted.
+    no such rule passes, and a rule inside a profile is not counted. Every `setup-java` step in the workflows has
+    `java-version` 25.
   - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; r=$(sed -n 's:.*<maven.compiler.release>\([0-9]*\)<.*:\1:p' pom.xml | head -n 1); j=$(sed -n '/<profiles>/,/<\/profiles>/!p' pom.xml | tr -d ' \t\r\n' | tr '<' '\n' | sed -n '/^requireJavaVersion>/,/^\/requireJavaVersion>/s/^version>//p'); [ "${r:-0}" -ge 25 ] && ! echo "$j" | grep -vxF '[25,)' | grep -q . || { echo "maven.compiler.release ${r:-none}; requireJavaVersion outside profiles:" ${j:-none}; false; }`
   - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml).
 - **PLAT-02 · SHOULD.** The installers carry a jlinked runtime; users never install Java.

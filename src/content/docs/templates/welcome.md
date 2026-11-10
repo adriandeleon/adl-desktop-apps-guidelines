@@ -8,7 +8,8 @@ Editora's [`ui/WelcomeText.java`](https://github.com/adriandeleon/Editora/blob/m
 
 ## Rules
 
-- **WELC-01 · SHOULD.** An app that opens files or projects shows a Welcome page when there is no session to restore.
+- **WELC-01 · SHOULD.** An app that opens files or projects in tabs shows a Welcome page when there is no session
+  to restore.
   - *Check (code):* startup with nothing restored opens the Welcome page.
   - *Reference:* Editora [`ui/WelcomePane.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WelcomePane.java), [`MainController.addWelcomeTab`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java).
 - **WELC-02 · SHOULD.** An app whose window *is* its content shows its own empty state instead, with the same
@@ -90,14 +91,15 @@ Editora's [`ui/WelcomeText.java`](https://github.com/adriandeleon/Editora/blob/m
 - **WELC-03 · SHOULD.** The page is shown at startup when there is no session to restore (so always with
   `--no-session`), by the `view.welcome` command (Help → Welcome Page, in the place
   [DOCS-07](../../documentation/#docs-07) gives it), and when the tab strip is empty after a
-  project swap. Standalone diff startup suppresses it while its worker reads the files.
-  - *Check (code):* those three paths open the one Welcome tab, and the Help `MenuSpec` lists `view.welcome`; the
-    diff startup holds a flag that skips it.
+  project swap. In an app that can start straight into one view, as Editora does for a standalone diff, that
+  startup suppresses the page while its worker reads the files.
+  - *Check (code):* those three paths open the one Welcome tab, and the Help `MenuSpec` lists `view.welcome`; a
+    startup that goes straight to a view holds a flag that skips it.
   - *Reference:* Editora [`MainController.addWelcomeTab`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java), `showWelcomeIfNoTabs`; [`WindowSessionCoordinator`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowSessionCoordinator.java)
     (`suppressWelcome`). Editora's menu row is in View, not in Help yet ([`MenuBarModel`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java)).
-- **WELC-04 · SHOULD.** Closing the last file tab does not bring the page back. The editor area shows its own quiet
-  hint instead: Open File, Open Folder, Command Palette and Welcome Page, each with its chord, and takes focus so
-  chords still reach the window.
+- **WELC-04 · SHOULD.** Closing the last tab does not bring the page back. The empty content area shows its own
+  quiet hint instead: the app's ways in, each with its chord (in Editora: Open File, Open Folder, Command Palette
+  and Welcome Page), and takes focus so chords still reach the window.
   - *Check (test):* closing the last tab shows the hint and opening a tab hides it.
   - *Reference:* Editora [`ui/EditorEmptyState.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/EditorEmptyState.java), [`EditorEmptyStateFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/EditorEmptyStateFxTest.java).
 - **WELC-05 · SHOULD.** The page is rebuilt on every show, so the recents, the Projects and Git toggles, the keymap and
@@ -116,8 +118,8 @@ Editora's [`ui/WelcomeText.java`](https://github.com/adriandeleon/Editora/blob/m
   and Enter are untouched.
   - *Check (code):* the digit handler is on `KEY_TYPED` and ignores Ctrl, Alt and Meta.
   - *Reference:* Editora [`WelcomePane.onKeyTyped`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WelcomePane.java).
-- **WELC-09 · SHOULD.** Saved SFTP sites appear as their own section; a click opens the connection form prefilled.
-  The section is hidden when there are none.
+- **WELC-09 · SHOULD.** In an app with saved remote sites, they appear as their own section; a click opens the
+  connection form prefilled. The section is hidden when there are none.
   - *Check (code):* the page adds a Remote Sites section only when the saved-sites list is not empty.
   - *Reference:* Editora [`WelcomePane`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WelcomePane.java) (`remoteSites`, `welcome.remote`).
 - **WELC-10 · SHOULD.** Customize runs `keymap.select` and `theme.setAppTheme`; a change made there re-renders the page,

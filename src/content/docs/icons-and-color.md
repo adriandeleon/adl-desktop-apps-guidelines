@@ -122,7 +122,7 @@ pill, a row tint and a hover state come from the same place. `.state-pill` is th
     pass the whole check: `.breakpoint-marker`, `.exec-arrow`, `.view-mode-bar`, `.recent-remove`,
     `.personal-note-tooltip-content`, the fold-gutter markers and the default editor and Markdown preview palettes
     in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) still carry fixed hexes.
-- **ICON-09 · SHOULD.** Readable text uses `-color-fg-muted` or stronger, which is 4.5:1 on the default, subtle and
+- **ICON-09 · MUST.** Readable text uses `-color-fg-muted` or stronger, which is 4.5:1 on the default, subtle and
   overlay grounds in both flagship themes: a line of UI text is `-color-fg-default` and secondary text
   `-color-fg-muted`. `-color-fg-subtle` (2.7:1 to 3.9:1, under 3:1 on Editora Light's subtle and inset grounds) is for disabled or
   decorative text only.
@@ -153,7 +153,8 @@ pill, a row tint and a hover state come from the same place. `.state-pill` is th
   - *Check (test):* a contrast test resolves each ladder on every bundled theme's ground.
   - *Reference:* Editora [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) (`-state-olive`, `-state-violet`, `-state-key`),
     [`StyleContrastTest.theGitOliveAndVioletFollowTheAppThemesGround`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java).
-- **ICON-14 · SHOULD.** A pure test reads the stylesheets and does the WCAG arithmetic.
+- **ICON-14 · SHOULD.** The contrast tests are pure: they read the stylesheets and do the WCAG arithmetic without
+  starting the toolkit, so they run with the unit tests on every OS.
   - *Why:* a contrast regression is invisible in a code diff.
   - *Check (code):* a test class reads the app's `.css` resources and computes contrast ratios without starting the
     toolkit.

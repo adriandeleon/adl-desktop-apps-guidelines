@@ -119,11 +119,14 @@ keymap, a theme, a language), not when the developer could not decide.
 
 - **SET-13 · MUST.** No secret goes in a config file. API keys and tokens go to the operating system's keychain:
   macOS Keychain, Windows Credential Manager, the Secret Service on Linux. Calls may block on a prompt, so they run
-  off the FX thread.
-  - *Check (code):* no key or token field in the settings model; reads and writes go through the secret store.
+  off the FX thread. Where no keychain answers, as in a Linux session with no Secret Service, the secret is kept in
+  memory for the session only and its row in Settings says so: it is never written to a file instead.
+  - *Check (code):* no key or token field in the settings model; reads and writes go through the secret store, and
+    the store's fallback, for when no keychain answers, holds the secret in memory and writes no file.
   - *Reference:* Editora [`secrets/SecretStore.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/secrets/SecretStore.java), [`config/ApiKeyVault.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/ApiKeyVault.java). Editora doesn't yet: [`Settings`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/Settings.java)
     keeps the AI keys as a fallback for when no keychain answers, and saving a key from Settings writes the keychain
-    on the FX thread. Torrenta keeps its proxy password, Torznab key and remote-profile passwords in plain text.
+    on the FX thread. Its Settings row does say which of the two holds the key. Torrenta uses no keychain: its proxy password, Torznab
+    key and remote-profile passwords are in plain text.
 - **SET-14 · MUST.** A credential the app can ask for again lives in memory for the session only and is never
   written. Work that needs it waits until the user has signed in this session; do not "fix" that by storing the
   password.

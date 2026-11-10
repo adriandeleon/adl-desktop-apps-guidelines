@@ -144,7 +144,8 @@ Editora (`../Editora`) is the reference implementation.
     origin (`git ls-remote --tags origin`). If someone else released meanwhile, renumber (and pin again). A release
     changes nothing but the version, the date, the changelog's headings and summary, `retired-rules.json` and
     `pins.json`.
-  - Never create or push a tag. CI tags `v<version>` on `master`'s commit after a release merges.
+  - Never create or push a tag. CI tags `v<version>` after a release merges, on the commit that released it, even
+    when the run that tags it is on a later commit.
   - Run `node scripts/check-edition.mjs` before you push. CI runs it on every pull request and push to `master`; it
     fails on a content change that adds nothing under `[Unreleased]` and whose commits carry no `Edition: none` trailer,
     a rule added, retired or re-leveled with nothing new under `[Unreleased]` whatever the trailers say, a numbered

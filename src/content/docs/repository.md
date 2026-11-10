@@ -16,7 +16,8 @@ filled in for a placeholder app, `ExampleApp`. `scripts/rename.sh <AppName> <pac
   one-line summary written for users.
   - *Check (code):* the file names Keep a Changelog and Semantic Versioning, starts with `## [Unreleased]`, and every
     entry starts with `- **`.
-  - *Reference:* Editora [`CHANGELOG.md`](https://github.com/adriandeleon/Editora/blob/master/CHANGELOG.md).
+  - *Reference:* Termina [`CHANGELOG.md`](https://github.com/adriandeleon/Termina/blob/master/CHANGELOG.md) and Mirada's, where every entry opens in bold. In Editora's
+    [`CHANGELOG.md`](https://github.com/adriandeleon/Editora/blob/master/CHANGELOG.md) 1,790 of 2,159 entries do: the older ones don't.
 - **REPO-03 · MUST.** `LICENSE` is MIT, "Copyright (c) 2026 Adrián Arturo De León Saldivar", with the year the app
   started in: 2026 for the six apps, later for a newer one.
   - *Check (code):* `LICENSE` opens with `MIT License` and has that copyright line, with a year from 2026 on.
@@ -88,7 +89,7 @@ it to `pauta.version` and the computed conformance ([Conformance](../conformance
 reads `Pauta 4.1.0 · Partial`; "Working toward" is the wording of the README line beside it, which takes the place of
 "Built to" at Partial.
 
-The hero screenshot is a `<picture>` with a dark `srcset` under `prefers-color-scheme: dark`, so GitHub
-shows the screenshot that matches the reader's theme. Screenshots are taken at 2× by a headless harness so
-they can be retaken after any UI change. The README states that the app is built with the help of AI
-coding tools.
+What follows is Editora's README, not a rule. Its hero screenshot is a `<picture>` with a dark `srcset` under
+`prefers-color-scheme: dark`, so GitHub shows the screenshot that matches the reader's theme. Its screenshots are
+taken at 2× by a headless harness so they can be retaken after any UI change, and it states that the app is built
+with the help of AI coding tools.

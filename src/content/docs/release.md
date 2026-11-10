@@ -127,32 +127,41 @@ configured, waiting for the token. Mirada's first winget submission
     certificate, or Azure Trusted Signing. Until then MSIs are unsigned and SmartScreen warns.
 - **REL-18 · MUST.** Every download has a GitHub **build provenance attestation**
   (`actions/attest-build-provenance`), which `gh attestation verify` checks.
-  - *Check (test):* a test keeps the attested files and the files JReleaser attaches the same list.
+  - *Check (code):* the release workflow has an `actions/attest-build-provenance` step whose subjects cover every
+    file the release attaches. The test that keeps the two lists the same is [QUAL-15](../quality/#qual-15)'s.
   - *Reference:* Editora's "Attest build provenance" step in [`release.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/release.yml), [`ReleaseSupplyChainTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/packaging/ReleaseSupplyChainTest.java). Done in
-    Editora, Termina and Mirada.
+    Editora, the app template, Termina and Mirada.
 
 The certificate renews before 2027-11-30; the Apple membership before 2027-10-31.
 
 ## CI/CD (GitHub Actions)
 
 - **REL-19 · MUST.** The CI workflow (`ci.yml` in Editora) runs on every push to the default branch and every pull
-  request: **Format** (`spotless:check`) and **Build & Test** (`./mvnw verify`, coverage gate included) on JDK 25.
-  Both are required status checks for the default branch.
-  - *Check (code):* `ci.yml` triggers on `push` to the default branch and on `pull_request`, with the two jobs; the
-    repository's rules for the default branch require both.
+  request: **Format** (`spotless:check`) and **Build & Test** (`./mvnw verify`, coverage gate included), on the JDK
+  [PLAT-01](../platform/#plat-01) names. Both are required status checks for the default branch.
+  - *Check (code):* the CI workflow triggers on `push` to the default branch and on `pull_request`, with the two
+    jobs. That the default branch requires both is a repository setting, which no file shows: an audit of the
+    files reports that half as not checked.
   - *Reference:* Editora [`ci.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/ci.yml), on `master`; Mirada's [`ci.yml`](https://github.com/adriandeleon/Mirada/blob/main/.github/workflows/ci.yml), on `main`.
-- **REL-20 · SHOULD.** The tests run on all three OSes: the pure suite (no JavaFX toolkit) on Linux, macOS and
-  Windows, and the FX suite on Linux and at least one more. `ci.yml` covers Linux on every pull request;
-  `full-tests.yml` covers the rest daily, on a pull request labeled `full-ci`, and before every release, and lists
-  flaky tests in the job summary.
+- **REL-20 · MUST.** The tests run on all three OSes: the pure suite (no JavaFX toolkit) on Linux, macOS and
+  Windows, and the FX suite on Linux and at least one more. They run there every day or on every pull request, and
+  on the commit of every release before it is built ([REL-30](#rel-30)). How the runs are split is the app's own:
+  one workflow that runs everything on every pull request meets this, and so does a quick workflow for pull
+  requests with a fuller one on a schedule.
   - *Why:* path separators, line endings, case-insensitive file systems and process spawning fail on one OS only, and
     the pure suite is where they show; the FX suite catches layout and focus differences.
-  - *Check (code):* `full-tests.yml`'s jobs run the pure suite on `windows-*` and `macos-*` and the FX suite
-    (`-Dgroups=fx`) on at least one of them; it has a `schedule` and a `pull_request` trigger gated on the label, and
-    the release preflight waits for its run on the tagged commit.
-  - *Reference:* Editora [`full-tests.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/full-tests.yml) (the pure suite on Windows and macOS, the FX suite on macOS in three
-    shards), [`scripts/ci/ReportFlakes.java`](https://github.com/adriandeleon/Editora/blob/master/scripts/ci/ReportFlakes.java), and the "Check that the Full tests
-    passed on this commit" step in [`release.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/release.yml).
+  - *Check (code):* taken together, the workflows' test jobs run the pure suite on `ubuntu-*`, `macos-*` and
+    `windows-*` runners and the FX suite on `ubuntu-*` and one more, under a `schedule` or a `pull_request` trigger
+    that needs no label; and the release workflow runs them on those runners or waits for that run on the tagged
+    commit.
+  - *Reference:* Editora splits them: [`ci.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/ci.yml) runs the whole suite on Linux on every pull request, and
+    [`full-tests.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/full-tests.yml) the pure suite on Windows and macOS and the FX suite on macOS, in three shards, daily, on
+    a pull request labeled `full-ci` and before every release: the "Check that the Full tests passed on this
+    commit" step in [`release.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/release.yml). It lists flaky tests in the job summary
+    ([`scripts/ci/ReportFlakes.java`](https://github.com/adriandeleon/Editora/blob/master/scripts/ci/ReportFlakes.java)). The app template splits them the same way, and its release calls
+    [`full-tests.yml`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/.github/workflows/full-tests.yml) itself. Termina ([`ci.yml`](https://github.com/adriandeleon/Termina/blob/master/.github/workflows/ci.yml)), Torrenta ([`ci.yml`](https://github.com/adriandeleon/torrenta/blob/master/.github/workflows/ci.yml)), Mirada
+    ([`ci.yml`](https://github.com/adriandeleon/Mirada/blob/main/.github/workflows/ci.yml)), Modula ([`build.yml`](https://github.com/adriandeleon/Modula/blob/master/.github/workflows/build.yml)) and nux ([`ci.yml`](https://github.com/adriandeleon/nux/blob/master/.github/workflows/ci.yml)) run the
+    whole suite on the three OSes on every pull request.
 - **REL-21 · MUST.** The release workflow (`release.yml` in Editora) runs on a version tag (`v*`, or better the
   version-shaped
   `v[0-9]+.[0-9]+.[0-9]+*`, which a tag like `vendor-import` doesn't match), with `workflow_dispatch` as a dry run
@@ -197,10 +206,12 @@ The certificate renews before 2027-11-30; the Apple membership before 2027-10-31
     own `permissions`.
   - *Reference:* Editora [`release.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/release.yml): `release` (publish), `bump` (the pull request) and `preflight` (start a
     Full tests run).
-- **REL-25 · SHOULD.** Every workflow sets up JDK 25 with `actions/setup-java` and `cache: maven`.
-  - *Check (code):* each `setup-java` step has `java-version: '25'` and `cache: maven`.
-  - *Reference:* Editora uses Temurin in [`ci.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/ci.yml) and [`full-tests.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/full-tests.yml), and Liberica for the release build, for
-    linux-aarch64 coverage.
+- **REL-25 · SHOULD.** Every `actions/setup-java` step caches Maven's repository (`cache: maven`). The JDK it sets
+  up is [PLAT-01](../platform/#plat-01)'s.
+  - *Check (code):* each `setup-java` step has `cache: maven`.
+  - *Reference:* Mirada ([`ci.yml`](https://github.com/adriandeleon/Mirada/blob/main/.github/workflows/ci.yml)), Modula and nux, on every step. Editora ([`ci.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/ci.yml),
+    [`release.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/release.yml)), the app template, Termina and Torrenta each have a `setup-java` step without it. Editora
+    sets up Temurin for its tests and Liberica for the release build, for linux-aarch64 coverage.
 - **REL-26 · MUST.** Every job that runs steps has `timeout-minutes`, and `concurrency` cancels a superseded
   pull-request run, never a run on the default branch. A job that calls a reusable workflow (`uses:` in place of
   `steps:`) takes no `timeout-minutes`: GitHub does not accept the key there, and the called workflow's own jobs

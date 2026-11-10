@@ -92,9 +92,10 @@ reaches every menu command through the Command Palette, which lists them all ([K
   - *Check (code):* the two commands are registered and bound in each bundled keymap.
   - *Reference:* Editora's `window.other` ("Cycle focus between the editor and tool windows"), bound only in the
     Emacs keymap (`C-x o`). `F6`, the Windows convention, is taken in Editora's other keymaps.
-- **ACC-07 · SHOULD.** Before a release, the smoke test on Windows and macOS ([REL-29](../release/#rel-29)) includes a
-  pass with the screen reader: with Narrator and with VoiceOver, open the Command Palette, run a command, and move
-  through Settings, hearing each control's name and role.
+- **ACC-07 · SHOULD.** Before a release, a person makes a pass with the screen reader on Windows and on macOS: with
+  Narrator and with VoiceOver, open the Command Palette, run a command, and move through Settings, hearing each
+  control's name and role. It is a step of its own on the release checklist: the smoke test of
+  [REL-29](../release/#rel-29) is a CI step, with nobody there to listen.
   - *Check (by hand):* the release checklist has the step, and someone did it for this release.
   - *Reference:* no app yet.
 - **ACC-08 · SHOULD.** In an overlay list that keeps focus in its text field (the Command Palette, QuickOpen), the

@@ -120,11 +120,9 @@ icons and chords do not apply here. The order does.
   - *Why:* an installer runs for every account.
   - *Check (code):* the entry's target comes from `jpackage.app-path`, and is absent when it is unset.
   - *Reference:* Torrenta [`os/Autostart.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/os/Autostart.java).
-- **TRAY-08 · SHOULD.** Every start-at-login call runs off the FX thread.
-  - *Why:* it may block on the file system or `reg.exe`.
-  - *Check (code):* every `Autostart` read and write starts on a worker thread.
-  - *Reference:* Torrenta [`SettingsWindow`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/SettingsWindow.java) (`autostart-read`, `autostart-write`) and [`MainWindow`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java)
-    (`autostart-refresh`); nux's [`App`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/App.java) (`nux-autostart`).
+- A start-at-login call may block on the file system or `reg.exe`, so it runs off the FX thread like any other I/O:
+  [PERF-01](../performance/#perf-01). Torrenta's run on their own threads (`autostart-read`, `autostart-write`,
+  `autostart-refresh`), as does nux's (`nux-autostart`).
 - **TRAY-12 · MAY.** A dock badge: Torrenta puts the download rate on the macOS dock icon through AWT's `Taskbar`
   and a count on a Linux launcher that honors Unity's `LauncherEntry` signal (KDE, Dash to Dock); nothing on
   Windows, whose taskbar badges only AWT's own windows. It is cleared when nothing downloads and has its own switch.
@@ -169,10 +167,16 @@ for their own events, Editora and Termina for a program's OSC 9 and OSC 777.
     the whole script to `osascript -e`.
 - **TRAY-10 · MUST.** Notifications are for what happened while the window was away, with one switch per event and
   few on by default.
-  - *Check (code):* each notified event has its own setting, and most default to off.
-  - *Reference:* Torrenta notifies on added, finished, seeding done, error and updated, with only *finished* on at
-    first, and a Test button in Settings shows one now ([`automation/AutomationSettings.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/automation/AutomationSettings.java)); nux notifies on
-    power events with a rule per UPS; Termina and Editora relay a program's own OSC 9 and OSC 777 notifications.
+  - *Check (code):* the code that posts a notification first tests that the window, or the tab the event belongs
+    to, is not the one in front; each notified event has its own setting; and where the app notifies of several
+    events, most default to off.
+  - *Reference:* Editora ([`ui/TerminalPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TerminalPanel.java)) and Termina ([`ui/TabMarks.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TabMarks.java)) relay a program's own OSC 9 and
+    OSC 777 notifications, one event with one switch, and post nothing while that terminal is focused and in
+    view. Torrenta notifies on added, finished, seeding done, error and updated, each with its switch and only
+    *finished* on at first, and a Test button in Settings shows one now ([`automation/AutomationSettings.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/automation/AutomationSettings.java));
+    it posts them while its window has focus too ([`automation/Automation.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/automation/Automation.java)). nux has one switch for all
+    its power events and a rule per UPS (all, critical or none), not a switch per event, and also posts while
+    its window is in front ([`App`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/App.java)).
 - **TRAY-11 · SHOULD.** A notification is never the only place a state is said: the in-app status already shows it.
   - *Check (by hand):* trigger each notified event with notifications off; the window still shows it.
   - *Reference:* Torrenta's status bar and transfer list.

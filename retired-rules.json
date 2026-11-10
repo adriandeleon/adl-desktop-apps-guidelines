@@ -26,6 +26,7 @@
     { "id": "TABS-11", "edition": "Unreleased", "see": null },
     { "id": "DOCS-09", "edition": "Unreleased", "see": "KBD-03" },
     { "id": "PAUTA-12", "edition": "Unreleased", "see": "PWIN-01" },
-    { "id": "TBAR-10", "edition": "Unreleased", "see": "MENU-06" }
+    { "id": "TBAR-10", "edition": "Unreleased", "see": "MENU-06" },
+    { "id": "TRAY-08", "edition": "Unreleased", "see": "PERF-01" }
   ]
 }

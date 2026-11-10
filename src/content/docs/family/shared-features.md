@@ -38,6 +38,5 @@ misses a rule today.
   what they do, not for the same classes.
 - **A window moved back on screen** when the monitor it was on is gone (`WindowGeometry`, `WindowPlacement`), beyond
   restoring its size and position. *(Editora, Torrenta, Termina, Mirada)*
-- **Settings in the macOS application menu**, beside About. *(Mirada)*
 - **`SECURITY.md`**, saying how to report a vulnerability privately. *(Modula)*
 - **Simple mode itself**: whether an app has one. The rules above only say how it behaves where it exists.

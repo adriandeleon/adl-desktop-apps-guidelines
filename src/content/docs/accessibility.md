@@ -11,7 +11,9 @@ OS's accessibility settings need.
 
 JavaFX hands its controls to the screen reader on Windows (UI Automation, which Narrator reads) and on macOS
 (VoiceOver). On Linux it has no bridge to the desktop's accessibility bus, so Orca reads nothing. That is JavaFX's
-limit, not the app's, and the one accessibility difference between OSes ([Same on every OS](../same-on-every-os/)).
+limit, not the app's, and one of the two accessibility differences between OSes; the other is the high-contrast
+theme, which only Windows' high-contrast mode asks for ([ACC-09](#acc-09)). Both are rows of
+[Same on every OS](../same-on-every-os/#where-the-oss-way-wins).
 
 The standard controls (`Button`, `Label`, `TextField`, `CheckBox`, `ListView`, `TreeView`) announce their name, role
 and state on their own. What the app builds itself does not: a row drawn from an icon and two labels, a status-bar
@@ -32,8 +34,8 @@ reaches every menu command through the Command Palette, which lists them all ([K
 - **Names.** Every icon-only button gets its name from one helper ([TBAR-01](../toolbars-and-tooltips/#tbar-01)); an
   on/off row is a switch with the `TOGGLE_BUTTON` role ([KBD-18](../keyboard/#kbd-18)).
 - **Contrast.** Readable text at 4.5:1 ([ICON-09](../icons-and-color/#icon-09),
-  [ICON-10](../icons-and-color/#icon-10), [ICON-11](../icons-and-color/#icon-11)), held by a test
-  ([ICON-14](../icons-and-color/#icon-14)).
+  [ICON-10](../icons-and-color/#icon-10), [ICON-11](../icons-and-color/#icon-11)), each held by a contrast test,
+  and those tests run without the toolkit ([ICON-14](../icons-and-color/#icon-14)).
 - **Size and theme.** A UI zoom scales the whole chrome ([WIN-12](../window-shell/#win-12)) and the content zooms
   from the keyboard ([WIN-09](../window-shell/#win-09)); the light or dark theme can follow the system
   ([ICON-16](../icons-and-color/#icon-16)).
@@ -94,9 +96,9 @@ reaches every menu command through the Command Palette, which lists them all ([K
     Emacs keymap (`C-x o`). `F6`, the Windows convention, is taken in Editora's other keymaps.
 - **ACC-07 · SHOULD.** Before a release, a person makes a pass with the screen reader on Windows and on macOS: with
   Narrator and with VoiceOver, open the Command Palette, run a command, and move through Settings, hearing each
-  control's name and role. It is a step of its own on the release checklist: the smoke test of
-  [REL-29](../release/#rel-29) is a CI step, with nobody there to listen.
-  - *Check (by hand):* the release checklist has the step, and someone did it for this release.
+  control's name and role. It is a step of its own in `docs/release.md` ([REPO-07](../repository/#repo-07)): the
+  smoke test of [REL-29](../release/#rel-29) is a CI step, with nobody there to listen.
+  - *Check (by hand):* `docs/release.md` has the step, and someone did it for this release.
   - *Reference:* no app yet.
 - **ACC-08 · SHOULD.** In an overlay list that keeps focus in its text field (the Command Palette, QuickOpen), the
   row the arrow keys select is announced, with its state: the list tells the screen reader its focused item moved

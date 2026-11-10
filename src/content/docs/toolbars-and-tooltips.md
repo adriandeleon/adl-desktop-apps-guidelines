@@ -79,22 +79,34 @@ title and chord come from the registry and the active keymap. Reference: Editora
     Termina's [`ui/IconNames.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/IconNames.java) (`name`), which binds both to one string. nux sets both by hand on its "?" button
     for the same reason. Editora doesn't yet on its main toolbar:
     [`WindowToolbar.setupButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowToolbar.java) and [`ToolbarCoordinator.buildExtraButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolbarCoordinator.java) set the tooltip only.
-- **TBAR-03 · MUST.** The tooltip names the command and its chord, read from the active keymap and never typed into
-  a string: "Save (C-x C-s)". An unbound command shows its title alone.
-  - *Check (code):* the tooltip is built from the command's title and the keymap's display chord for its id, and is
-    rebuilt when the keymap changes.
-  - *Reference:* Editora [`WindowToolbar.setupButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowToolbar.java) (`refreshToolbarTooltips`), [`ToolbarCoordinator.buildExtraButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolbarCoordinator.java)
-    and [`ToolWindowManager.tooltipFor`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolWindowManager.java); Torrenta's `toolbar.withChord`. Mirada's [`Icons.tooltip`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Icons.java) builds the same
+- **TBAR-03 · MUST.** The tooltip of a button that runs a command names the command and its chord, read from the
+  active keymap and never typed into a string: "Save (C-x C-s)". The name is the command's title
+  ([KBD-03](../keyboard/#kbd-03)), which a tooltip may show without its category prefix, as a menu row may
+  ([MENU-01](../menus/#menu-01)): "Save" for "File: Save". An unbound command shows its title alone.
+  - *Check (code):* the tooltip shows the command's title, whole or without its category prefix, and the keymap's
+    display chord for its id, and is rebuilt when the keymap changes.
+  - *Reference:* Editora [`ToolbarCoordinator.buildExtraButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolbarCoordinator.java) (the `command.<id>` title, prefix and all) and
+    [`ToolWindowManager.tooltipFor`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolWindowManager.java). Its main toolbar ([`WindowToolbar.setupButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowToolbar.java), `refreshToolbarTooltips`) takes
+    the chord from the keymap and the name from a `tooltip.*` catalog key of its own: for most buttons that is the
+    title without its prefix (`tooltip.save=Save` beside `command.file.save=File: Save`), for a few another name
+    (`tooltip.find=Find / Replace` for `find.show`, whose title is "Find: Incremental Search"; "Open" for
+    `file.find`; "Close Tab" for `buffer.close`), which doesn't meet the rule. Torrenta's `toolbar.withChord`.
+    Mirada's [`Icons.tooltip`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Icons.java) builds the same
     "label (key)" form with the chord from the keymap in use ([`Command.chord`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Command.java)), and [`TitleBar.relabel`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/TitleBar.java) names the
     header buttons again when the keys change; Termina's [`IconNames.withChord`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/IconNames.java) takes the chord from its keymap too.
 - **TBAR-14 · SHOULD.** Every tooltip shows after the same delay, 400 ms, set where the app makes its tooltips and
   not tooltip by tooltip.
   - *Why:* JavaFX waits a full second, which reads as no tooltip at all on a row of icons, and a delay set here and
     there makes some buttons answer faster than their neighbors.
-  - *Check (code):* the helper that builds a tooltip ([TBAR-01](#tbar-01)) sets its show delay to 400 ms, and no
-    other code sets a different one.
-  - *Reference:* Termina [`ui/IconNames.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/IconNames.java) (`SHOW_DELAY`). Editora sets 350 or 400 ms on a few tooltips of its own and leaves
-    the rest at JavaFX's second; Mirada sets 250 ms on one; the others set none.
+  - *Check (code):* every `Tooltip` the app creates gets a 400 ms show delay from one place: each is made by one
+    factory that calls `setShowDelay`, or the stylesheet's `.tooltip` rule sets `-fx-show-delay: 400ms`. A tooltip
+    made with `new Tooltip` outside the factory and given no delay fails, as does any other delay.
+  - *Reference:* no app yet. Termina is nearest: [`ui/IconNames.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/IconNames.java) (`name`, `SHOW_DELAY`) sets 400 ms on every tooltip it makes,
+    and [`ui/TerminalWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalWindow.java) sets the same inline on a tab's folder tooltip, but the tooltip on a disabled row of
+    its [`ui/CommandPalette.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/CommandPalette.java) sets none. Editora sets 300, 350 or 400 ms on some
+    ([`editor/LazyTooltip.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/editor/LazyTooltip.java)'s callers, [`ui/StructurePanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StructurePanel.java), [`ui/MapSurface.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MapSurface.java), [`ui/DiffViewerPane.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/DiffViewerPane.java)) and leaves
+    the rest at JavaFX's second; Mirada sets 250 ms on one ([`ui/MarksBadge.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MarksBadge.java)) and none on the others; the
+    app template, Torrenta, Modula and nux set none. No app's stylesheet sets `-fx-show-delay`.
 - **TBAR-06 · SHOULD.** One chrome band: the menu bar, the toolbar and the tab strip share `-color-bg-subtle` and
   draw no hairline between them; the breadcrumb, the bottom stripe and the status bar do the same at the bottom.
   - *Why:* three rules within forty pixels read as clutter, not structure.
@@ -104,15 +116,19 @@ title and chord come from the registry and the active keymap. Reference: Editora
 
 ## The toolbar
 
-**Applies to:** an app with a toolbar.
+**Applies to:** an app with a toolbar: a bar of icon-only buttons in the chrome of a window or of a panel, each a
+shortcut to a command, as Editora's and Torrenta's `ToolBar` and Mirada's header buttons are. A find bar's buttons
+are not a toolbar ([FIND-16](../templates/find-bar/#find-16) is theirs), and neither is a row of labeled buttons and
+fields.
 
 - **TBAR-02 · MUST.** Toolbar buttons stay out of the Tab order: the command, the palette and the menus reach the
   action, and Tab is for the content. The [keyboard page](../keyboard/#focus-and-accessibility) has the general
   focus rules.
   - *Check (code):* every button on a toolbar is built by `Icons.toolbarButton` or calls
     `setFocusTraversable(false)`.
-  - *Reference:* Editora [`Icons.toolbarButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Icons.java), used by the tool window toolbars (Git, Diff, Markdown lint); Termina's
-    search bar buttons; Mirada's header buttons. Editora doesn't yet on its main toolbar: the buttons built by
+  - *Reference:* Editora [`Icons.toolbarButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Icons.java), used by the tool window toolbars (Git, Diff, Markdown lint); Torrenta's
+    copy of it, which builds every button of its main toolbar ([`MainWindow.toolButton`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java)); Mirada's header buttons, which
+    its [`Icons.button`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Icons.java) takes out of the Tab order. Editora doesn't yet on its main toolbar: the buttons built by
     [`WindowToolbar.setupButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowToolbar.java) and [`ToolbarCoordinator.buildExtraButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolbarCoordinator.java), and the stripe buttons, take focus.
 - **TBAR-04 · SHOULD.** Groups are separated by spacing, not rules: keep the `Separator` nodes (their padding is the
   gap) and make the line transparent.
@@ -124,13 +140,13 @@ title and chord come from the registry and the active keymap. Reference: Editora
   - *Check (code):* every change to a toolbar item's visibility ends in one pass over the bar's separators.
   - *Reference:* Editora [`WindowChromeCoordinator.collapseToolbarSeparators`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowChromeCoordinator.java).
 - **TBAR-07 · SHOULD.** A toggle looks on while it is on: a button that opens an overlay (Find, the palette, a split)
-  and the Simple mode button carry the `:open` pseudo-class while their state holds, so the way back out does not
-  look like the way in.
+  and the Simple mode button carry a pseudo-class (Editora's `:open`) while their state holds, so the way back out
+  does not look like the way in.
   - *Check (code):* each such button sets a pseudo-class from its state, and the stylesheet gives that state a fill.
   - *Reference:* Editora [`MainController.OPEN`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java), [`WindowChromeCoordinator`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowChromeCoordinator.java) (Simple mode), `.button:open` in
     [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css). Torrenta uses `:on` for Simple mode and `:active` for the alternative speed limit.
-- **TBAR-08 · MUST.** The toolbar never holds the only way to an action: every icon in the customizable cluster is
-  also in the menus and the palette.
+- **TBAR-08 · MUST.** The toolbar never holds the only way to an action: every icon on it (in Editora, every icon
+  of the cluster the user can customize) is also in the menus and the palette.
   - *Why:* that is what makes it safe to hide icons in a narrow window and to let the user remove them.
   - *Check (code):* every toolbar catalog item runs a registered command that a menu also lists.
   - *Reference:* Editora [`toolbar/ToolbarCatalog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/toolbar/ToolbarCatalog.java): each item carries the `commandId` it runs; the only items
@@ -216,8 +232,9 @@ always reach from the bar, or the way back out of a mode, goes in the tail.
 - **Mirada**: a `HeaderBar` title bar with flat icon buttons around the file name, stroked symbolic icons in the text
   color, tooltips of the form "label (key)" with the key read from the keymap; [`Icons.button`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Icons.java) and [`Icons.name`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Icons.java) set
   each button's tooltip and accessible text together, and the buttons are out of the Tab order.
-- **Termina**: no main toolbar (the tab strip is the row under the menu bar); the search bar's buttons are 24 × 22
-  flat icons, their tooltips and accessible text set from one string by [`ui/IconNames.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/IconNames.java), out of the Tab order.
+- **Termina**: no toolbar (the tab strip is the row under the menu bar); its find bar's buttons
+  ([FIND-16](../templates/find-bar/#find-16)) are 24 × 22 flat icons, their tooltips and accessible text set from
+  one string by [`ui/IconNames.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/IconNames.java), out of the Tab order.
 
 ![Editora editing a Java file with the project tree and status bar](../../assets/shots/editora-hero.png "Editora's toolbar: grouped icons on the chrome band, the run configurations, the project picker and Settings pinned at the right.")
 ![Mirada with its file name and folder in a HeaderBar title bar, an info panel and a thumbnail strip](../../assets/shots/mirada-main.png "Mirada's HeaderBar: flat icon buttons around the file name.")

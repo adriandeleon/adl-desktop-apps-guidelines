@@ -41,7 +41,8 @@ applies to them, and only to an app that sends them.
 </ol>
 
 Tray menus are text only: AWT's `PopupMenu` and dbusmenu show no item icons, so the [menu rules](../menus/) about
-icons and chords do not apply here. The order does.
+icons and chords do not apply here. The rows come in the mockup's order: the status line, the actions, Show
+*App*, then Quit after a separator.
 
 - **TRAY-01 · MUST.** The tray is a StatusNotifierItem on Linux, with no AWT fallback, and AWT's `SystemTray` on
   Windows and macOS, created off the FX thread after the first frame.
@@ -74,7 +75,9 @@ icons and chords do not apply here. The order does.
   - *Why:* the bug they actually hit is silence: the box says close to tray, and closing quits.
   - *Check (code):* when the tray attempt returns no tray, the status bar says why and that closing quits.
   - *Reference:* Torrenta [`MainWindow.installTray`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java) ("No tray icon (…); closing the window quits Torrenta",
-    `status.noTray`); Modula's status says closing the window will quit it ([`RadioPane.reportNoTray`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/RadioPane.java)).
+    `status.noTray`); Modula's status says closing the window will quit it ([`RadioPane.reportNoTray`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/RadioPane.java)). nux
+    doesn't pass yet: when no tray comes it shows the window, if it was hidden, and says nothing
+    ([`TrayController.onCreated`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/app/TrayController.java)).
 - **TRAY-03 · MUST.** Closing the window hides it only while an icon is actually up and the setting says so, both
   read at close time; otherwise a close quits. `Platform.setImplicitExit(false)` is set only once a tray exists,
   and turning the tray off brings a hidden window back.
@@ -101,15 +104,20 @@ icons and chords do not apply here. The order does.
     shuts down directly. It doesn't catch macOS's Quit yet, so there Quit hides the window. Modula's tray Quit runs
     [`ModulaApp.quit`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ModulaApp.java) and nux's calls `Platform.exit` ([`App`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/App.java)), as its `app.quit` command does; neither closes open dialogs
     first or catches macOS's Quit.
-- **TRAY-05 · SHOULD.** `--minimized` comes up behind the icon. The window is never shown until the tray attempt
-  has answered; if no icon comes, the window is shown after all. With the tray setting off there is no icon to wait
-  for, and the window starts minimized.
-  - *Why:* a start at login can then never leave a program with no way back, and never puts a window in front of
-    someone who asked for none.
-  - *Check (code):* a `--minimized` start shows the window when the tray attempt returns none, and starts it
-    minimized when the tray setting is off.
-  - *Reference:* Torrenta [`MainWindow.show`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java), nux's [`App`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/App.java). With the tray setting off neither tries for an icon:
-    Torrenta starts with its window minimized, and nux doesn't yet: it ignores the flag and shows the window.
+- **TRAY-05 · SHOULD.** `--minimized` starts the app with no window in front, in one of two ways. With the tray
+  setting on it comes up behind the icon: the window is not shown until the tray attempt has answered, and if the
+  icon that was asked for does not come, the window is shown after all. With the tray setting off there is no icon
+  to wait for, and the window starts minimized.
+  - *Why:* a start at login can then never leave a program with no way back: a hidden window has its icon, and a
+    minimized one is on the taskbar or in the Dock. A person who turned the tray off asked for the minimized
+    window. A person who asked for an icon looks for the icon, so when none comes the window is what tells them,
+    with the reason on its status bar ([TRAY-02](#tray-02)).
+  - *Check (code):* with the tray setting on, a `--minimized` start leaves the window hidden until the tray attempt
+    answers, and shows it when the attempt returns no tray; with the setting off it shows the window minimized and
+    waits for nothing.
+  - *Reference:* Torrenta [`MainWindow.show`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java) and `installTray`, which calls `showFromTray` when no icon comes. nux's [`App`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/App.java) and
+    [`TrayController.onCreated`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/app/TrayController.java) do the same with the tray setting on; with it off nux doesn't pass yet: it ignores the flag and
+    shows the window. Modula has no `--minimized`.
 - **TRAY-06 · SHOULD.** Start at login writes the OS's own entry, and nothing else: an XDG autostart entry in
   `~/.config/autostart` (quoted `Exec`, `StartupWMClass` matching the installed launcher,
   `X-KDE-autostart-after=panel` so a tray host is up first), a LaunchAgent in `~/Library/LaunchAgents`, the
@@ -118,7 +126,9 @@ icons and chords do not apply here. The order does.
   shows unticked. The one setting beside it is *start behind the tray icon*, written into the entry as
   `--minimized`.
   - *Check (test):* a pure test of the exact bytes of each platform's entry.
-  - *Reference:* Torrenta [`os/Autostart.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/os/Autostart.java), [`os/AutostartSpec.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/os/AutostartSpec.java), [`AutostartSpecTest`](https://github.com/adriandeleon/torrenta/blob/master/src/test/java/com/torrenta/os/AutostartSpecTest.java); nux's design.
+  - *Reference:* Torrenta [`os/Autostart.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/os/Autostart.java), [`os/AutostartSpec.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/os/AutostartSpec.java), [`AutostartSpecTest`](https://github.com/adriandeleon/torrenta/blob/master/src/test/java/com/torrenta/os/AutostartSpecTest.java). nux's
+    [`autostart/AutostartSpec.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/autostart/AutostartSpec.java) is the earlier version: the same three entries, without `X-KDE-autostart-after` and
+    without reading `StartupApproved`.
 - **TRAY-07 · SHOULD.** Only the app writes the login entry, and only from an installed package: the installers
   never do it, and a run from source says it has nothing to start.
   - *Why:* an installer runs for every account.
@@ -136,12 +146,13 @@ icons and chords do not apply here. The order does.
   [single-instance hand-off](../command-line/) shows a window hidden to the tray before it opens what it was given.
   - *Check (by hand):* close to the tray, then launch the app again with a file.
   - *Reference:* Torrenta [`MainWindow.showFromTray`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java).
-- **TRAY-14 · SHOULD.** AWT stays headless unless something AWT is wanted: the tray on Windows and macOS, and on
-  macOS the dock badge ([TRAY-12](#tray-12)), the open-file handlers and Move to Trash. Linux never needs it. `main`
-  decides once, from the settings, before any AWT class loads ([CLI-09](../command-line/#cli-09)), so a tray turned
-  on later says "restart to show the tray icon" rather than "unsupported".
+- **TRAY-14 · SHOULD.** Only these uses make AWT headful, the exceptions [CLI-09](../command-line/#cli-09) leaves
+  open: the tray on Windows and macOS, and on macOS the dock badge ([TRAY-12](#tray-12)), the open-file handlers
+  and Move to Trash. Linux never needs it. Which of them the settings ask for is decided once, at start-up, where
+  CLI-09 says, so a tray turned on later says "restart to show the tray icon" rather than "unsupported".
   - *Check (test):* a test holds that AWT is headful only where one of those uses is wanted on this OS: never on
-    Linux, for the tray alone on Windows, and for the tray, the badge or a handler on macOS.
+    Linux, for the tray alone on Windows, and on macOS for the tray, the badge, a handler or, in an app that
+    trashes through AWT, Move to Trash.
   - *Reference:* Torrenta [`os/AwtUse.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/os/AwtUse.java) (`headful`, which `App.main` asks once with the tray, badge and handler
     settings), [`AwtUseTest`](https://github.com/adriandeleon/torrenta/blob/master/src/test/java/com/torrenta/os/AwtUseTest.java) (`awtIsHeadfulOnlyWhereSomethingAwtIsWanted`); [`Trays.usesAwt`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/tray/Trays.java) and [`TraysTest`](https://github.com/adriandeleon/torrenta/blob/master/src/test/java/com/torrenta/tray/TraysTest.java) for the tray
     alone, and `Trays.create`, which gives the restart reason (`tray.reason.restart`) when AWT was left headless.
@@ -152,20 +163,21 @@ icons and chords do not apply here. The order does.
 **Applies to:** every app that sends desktop notifications, with a tray or without one: Torrenta and nux
 for their own events, Editora and Termina for a program's OSC 9 and OSC 777.
 
-- **TRAY-09 · MUST.** Desktop notifications go through one notifier: `notify-send` on Linux (with `gdbus` against
-  the freedesktop service where it is missing), `osascript` with `display notification` on macOS, a PowerShell
-  toast on Windows. Each is a short program, and the text reaches the program as data (an argument, or an
-  environment variable a fixed script reads), never as part of a script. It runs off the FX thread, bounded to a few
-  seconds; a failure is logged and never breaks the app.
+- **TRAY-09 · MUST.** Desktop notifications go through one notifier: `notify-send` on Linux, `osascript` with
+  `display notification` on macOS, a PowerShell toast on Windows. On Linux an app may also fall back to `gdbus`
+  against the freedesktop service where `notify-send` is missing; the rule does not ask for it. Each is a short
+  program, and the text reaches the program as data (an argument, or an environment variable a fixed script
+  reads), never as part of a script. It runs off the FX thread, bounded to a few seconds; a failure is logged and
+  never breaks the app.
   - *Why:* text from a torrent name or a remote shell then cannot run anything.
   - *Check (test):* a test holds that each platform's command line carries the title and the message as arguments
     or environment variables of their own, that the script it runs is fixed and never has the text concatenated
     into it, and that a missing program is a problem, not an exception.
   - *Reference:* Torrenta [`automation/Notifiers.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/automation/Notifiers.java), [`ProcessNotifier`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/automation/ProcessNotifier.java), [`NotifierTest`](https://github.com/adriandeleon/torrenta/blob/master/src/test/java/com/torrenta/automation/NotifierTest.java) (it ships [`toast.ps1`](https://github.com/adriandeleon/torrenta/blob/master/src/main/resources/com/torrenta/automation/toast.ps1),
-    which takes the title and message as parameters). Editora's [`terminal/DesktopNotifier.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/terminal/DesktopNotifier.java) and Termina's
+    which takes the title and message as parameters); on Linux it runs `notify-send` and has no fallback. Editora's [`terminal/DesktopNotifier.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/terminal/DesktopNotifier.java) and Termina's
     [`ui/DesktopNotifier.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/DesktopNotifier.java) meet it on every OS: the text is an argument of `notify-send` and of `osascript` (a fixed
     `on run argv` script), a GVariant string for `gdbus`, and on Windows two environment variables that a fixed
-    PowerShell script (`-EncodedCommand`) reads. nux's [`service/Notifier`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/service/Notifier.java) has no PowerShell toast: on Windows it hands the
+    PowerShell script (`-EncodedCommand`) reads. Both fall back to `gdbus`, and so does nux. nux's [`service/Notifier`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/service/Notifier.java) has no PowerShell toast: on Windows it hands the
     notification to the tray, which shows AWT's balloon ([`tray/AwtTray.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/tray/AwtTray.java), `displayMessage`). nux doesn't meet the rule
     on macOS yet: it escapes the title and the message into an AppleScript string (`appleScriptEscape`) and passes
     the whole script to `osascript -e`.
@@ -192,7 +204,7 @@ for their own events, Editora and Termina for a program's OSC 9 and OSC 777.
 | `ui.tray` | A tray (menu-bar) icon with the rates and a menu; on by default |
 | `ui.closeToTray` | Closing the window keeps Torrenta in the tray. *The torrents go on; the tray icon's Show Torrenta brings the window back, its Quit ends the program, as does Quit in the File menu. Without a tray, closing quits.* On by default; nux grays it while the tray is off |
 | (the OS entry) | Start Torrenta when you log in. *Adds Torrenta to your login items: an entry in ~/.config/autostart on Linux, a LaunchAgent on macOS, the Run key on Windows. Turned off in the system's own settings, it shows unticked here. Only for an installed Torrenta, not a run from source.* |
-| `os.autostartInTray` | Start behind the tray icon. *At login Torrenta comes up behind its tray icon instead of as a window, and minimized where there is no tray. `torrenta --minimized` does the same by hand.* |
+| `os.autostartInTray` | Start behind the tray icon. *At login Torrenta comes up behind its tray icon instead of as a window, or minimized where the tray icon is turned off. If the icon cannot be shown, the window opens. `torrenta --minimized` does the same by hand.* |
 | `notify.<event>` | One switch per event; `notify.finished` on by default |
 | `status.noTray` | No tray icon ({reason}); closing the window quits {app} |
 

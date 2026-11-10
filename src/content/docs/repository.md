@@ -6,18 +6,18 @@ description: "README, CHANGELOG, LICENSE, NOTICE, AGENTS.md and the rest of the 
 **Start from the template.** [adl-desktop-app-template](https://github.com/adriandeleon/adl-desktop-app-template) carries an example of every file on this page,
 filled in for a placeholder app, `ExampleApp`. `scripts/rename.sh <AppName> <package>` renames it to yours.
 
-- **REPO-01 · MUST.** `README.md` is a landing page of about 200 lines: logo, badges, a one-paragraph pitch, the
-  hero screenshot, highlights, install, build, command line, config folder, license. Detail lives on the website.
-  - *Check (code):* `README.md` is near 200 lines and has those parts, with links to the website for
-    the rest.
-  - *Reference:* Editora [`README.md`](https://github.com/adriandeleon/Editora/blob/master/README.md).
+- **REPO-01 · MUST.** `README.md` is a landing page with these parts: logo, badges, a one-paragraph pitch, the
+  hero screenshot, highlights, install, build, command line, config folder, license. Detail lives on the website,
+  which the README links, so the page stays short.
+  - *Check (code):* `README.md` has each of those parts and links to the website for the rest.
+  - *Reference:* Editora [`README.md`](https://github.com/adriandeleon/Editora/blob/master/README.md) (221 lines) and the template's [`README.md`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/README.md) (148).
 - **REPO-02 · MUST.** `CHANGELOG.md` follows [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.0/) and
   SemVer: an `## [Unreleased]` section with Added / Changed / Fixed / Removed, and each entry opens with a bold
   one-line summary written for users.
   - *Check (code):* the file names Keep a Changelog and Semantic Versioning, starts with `## [Unreleased]`, and every
     entry starts with `- **`.
   - *Reference:* Termina [`CHANGELOG.md`](https://github.com/adriandeleon/Termina/blob/master/CHANGELOG.md) and Mirada's, where every entry opens in bold. In Editora's
-    [`CHANGELOG.md`](https://github.com/adriandeleon/Editora/blob/master/CHANGELOG.md) 1,790 of 2,159 entries do: the older ones don't.
+    [`CHANGELOG.md`](https://github.com/adriandeleon/Editora/blob/master/CHANGELOG.md) 1,798 of 2,167 entries do: the older ones don't.
 - **REPO-03 · MUST.** `LICENSE` is MIT, "Copyright (c) 2026 Adrián Arturo De León Saldivar", with the year the app
   started in: 2026 for the six apps, later for a newer one.
   - *Check (code):* `LICENSE` opens with `MIT License` and has that copyright line, with a year from 2026 on.
@@ -70,6 +70,8 @@ filled in for a placeholder app, `ExampleApp`. `scripts/rename.sh <AppName> <pac
 
 ## README badges (in this order)
 
+The template's README carries this row, and an app made from it starts with it:
+
 ```markdown
 [![CI](https://github.com/adriandeleon/<App>/actions/workflows/ci.yml/badge.svg)](…/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/adriandeleon/<App>)](…/releases/latest)
@@ -81,7 +83,12 @@ filled in for a placeholder app, `ExampleApp`. `scripts/rename.sh <AppName> <pac
 [![Stars](https://img.shields.io/github/stars/adriandeleon/<App>?style=flat)](…/stargazers)
 ```
 
-![The top of Editora's README on GitHub: logo, title, the badge row, the one-paragraph pitch, the website links and the hero screenshot](../../assets/shots/editora-github-readme.png "The top of Editora's README: logo, badges in this order, a two-sentence pitch, links to the website, then the hero screenshot.")
+![The top of Editora's README on GitHub: logo, title, the badge row, the one-paragraph pitch, the website links and the hero screenshot](../../assets/shots/editora-github-readme.png "The top of Editora's README: logo, seven of the eight badges in this order (it has no Pauta badge yet), a two-sentence pitch, links to the website, then the hero screenshot.")
+
+What is required of the row is in two rules: [REPO-01](#repo-01) asks for badges, and
+[PAUTA-15](../conformance/#pauta-15) for the Pauta badge among them. The other seven and their order are the
+template's: a convention, not a rule. Editora's README has those seven in this order, with `Java-25` and
+`JavaFX-27` where the template writes `25%2B` and `27%2B`, and no Pauta badge yet.
 
 The Pauta badge names the edition and the conformance, in green `2ea043` for Complete, blue `5b8def` for Core and
 amber `d29922` for Partial, and links to the app's *Pauta conformance* docs page; a test holds
@@ -89,7 +96,7 @@ it to `pauta.version` and the computed conformance ([Conformance](../conformance
 reads `Pauta 4.1.0 · Partial`; "Working toward" is the wording of the README line beside it, which takes the place of
 "Built to" at Partial.
 
-What follows is Editora's README, not a rule. Its hero screenshot is a `<picture>` with a dark `srcset` under
-`prefers-color-scheme: dark`, so GitHub shows the screenshot that matches the reader's theme. Its screenshots are
-taken at 2× by a headless harness so they can be retaken after any UI change, and it states that the app is built
-with the help of AI coding tools.
+The rest of this section describes Editora's README and is not a rule. Its hero screenshot is a `<picture>` with a
+dark `srcset` under `prefers-color-scheme: dark`, so GitHub shows the screenshot that matches the reader's theme. Its
+screenshots are taken at 2× by a headless harness so they can be retaken after any UI change, and it states that the
+app is built with the help of AI coding tools.

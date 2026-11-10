@@ -43,12 +43,13 @@ rule is:
 {
   "id": "KBD-07",
   "level": "MUST",
+  "changed": "x.y.z",
   "page": "keyboard",
   "pageTitle": "Keyboard first",
   "section": "Command Palette",
   "appliesTo": null,
   "url": "https://pauta-project.dev/<edition>/keyboard/#kbd-07",
-  "text": "The palette is an in-scene overlay in the window's root `StackPane`, not a `javafx.stage.Popup`.",
+  "text": "The palette and every picker are in-scene overlays in the window's root `StackPane`, never a `javafx.stage.Popup`.",
   "why": "on Windows a Popup does not reliably take OS keyboard focus, and the whole app can stop receiving keystrokes.",
   "check": {
     "kind": "code",
@@ -76,16 +77,23 @@ rule is:
   edition released after 4.5.0, its links point at the commit each app was at when the edition came out, so they show
   the code as it was then; `blob/master` in a page's source becomes that commit in what the edition serves. Editions
   up to 4.5.0 link the apps' default branches.
-- **Names in a rule.** Some names in a rule's `text` are required as spelled, because a user, the docs or another
-  tool finds the thing by that name: a command id, a catalog key, a chord, a command-line flag, an environment
-  variable, a property in `pom.xml` or `pauta.json`, and a file the repository must carry (`help.about`,
-  `palette.show`, `--config-dir`, `pauta.version`, `AGENTS.md`). Every other name is how Editora spells it, wherever
-  it appears, and the app's equivalent meets the rule: a Java class, method or constant, a CSS file or style class, a
-  branch or workflow file, a config file's name.
+- **Names in a rule.** Some names in a rule's `text` are required as spelled, because a user, the docs or another tool
+  finds the thing by that name: a command id, a catalog key, a chord, a command-line flag, an environment variable, a
+  property in `pom.xml` or `pauta.json`, and a file the repository must carry. For example `help.about`,
+  `palette.show`, `--config-dir`, `pauta.version` and `AGENTS.md`. A platform API the rule names
+  (`javafx.stage.Popup`, `SystemTray`, `Platform.setImplicitExit(false)`, `Future.get()`) is the requirement itself:
+  the JDK and JavaFX spell it one way for every app. Any other name is how Editora spells it, and the app's equivalent
+  meets the rule: a class, method or constant of the app's own code, a CSS file or style class, a branch or workflow
+  file, a config file's name.
 - **`why`** is `null` when the rule has no reason worth stating.
 - **`appliesTo`** is `null` for a rule that covers every app, unless its own text says otherwise. Otherwise it is the
   **Applies to** line its page or section opens with: "an app whose work goes on without its window" for the
   `TRAY` rules, and "every app that sends desktop notifications…" for TRAY-09 to TRAY-11. `pages` lists every page with its prefix, its Markdown address and its `appliesTo`.
+- **`changed`** is the edition in which the rule's level, scope or statement last changed, as a version
+  (`"5.0.0"`). A `checked` entry in an app's `pauta.json` whose `edition` is older than it is stale
+  ([PAUTA-18](../conformance/#pauta-18)). A rule unchanged since it was added has the edition that added it, 2.0.0 at the earliest; a rule's Why, Check,
+  Command and Reference do not move it. Editions up to 5.0.0 don't have the field. In `next/`, the batch that is
+  not an edition yet, a rule new or changed since the last edition has `"next"`.
 - **`statuses`** are what an audit reports for a rule ([Audit an app](#audit-an-app)), and `audit` is the address
   of the report's schema.
 
@@ -138,9 +146,11 @@ skipped and why.
 
 The procedure is the **pauta-audit skill**, which every edition serves at `skills/pauta-audit/SKILL.md`. Copy it
 into the app's `.claude/skills/pauta-audit/` (the [app template](https://github.com/adriandeleon/adl-desktop-app-template)
-ships it) or point the agent at it. The skill decides how to audit and how to write the report; an edition supplies
-only its rules, so an older edition's shorter or different procedure gives way to it. `llms.txt` and
-`llms-full.txt` carry it in short:
+ships it) or point the agent at it. Use the copy of the edition the app is built to (the newest edition's for an
+app on an edition before 4.3.1, which serves none), and replace the app's copy when the app moves to a newer
+edition ([PAUTA-11](../conformance/#pauta-11)). The skill decides how to audit and how to write the report, and
+`rules.json` supplies the rules. `llms.txt` and `llms-full.txt` carry the procedure in short; where an edition's
+short version differs from the skill, the skill wins:
 
 1. Find the edition the app implements: `pauta.version` in its `pom.xml`, or failing that the "Built to Pauta"
    line of its README. Read that edition's rules. If the app names none, ask which edition to audit against and
@@ -148,14 +158,18 @@ only its rules, so an older edition's shorter or different procedure gives way t
    `rules.json`: audit against 2.0.0 or newer, and report what the app's own edition didn't ask for as upgrade work.
 2. Take each rule in turn. A *code* check: run its `check.command` when it has one, else read or search the source as
    it says. A *test* check: find the named test, or the app's equivalent, and confirm the build runs it. A *by hand*
-   check: report it as manual.
+   check: source can't settle it, so report it as manual, unless `pauta.json` lists the rule (step 4). Which names
+   in a rule are required as spelled is under [What a rule looks like](#what-a-rule-looks-like).
 3. A rule applies to every app unless it is limited: its text names the apps it covers ("An app with user
    documents…"), its page or section opens with an **Applies to** line, or it details a limited rule
    ([PAUTA-05](../conformance/#pauta-05)). An app outside a limited rule gets `limited`, and needs no exception.
 4. Read the app's `pauta.json` ([Conformance](../conformance/)). An unmet rule it lists gets the entry's kind as its
    status; MAYs need no entry. An unmet MUST or SHOULD it doesn't list is `fail`; so is an unmet MAY, which has no
    consequence. An entry for a rule that passes or is limited, and a deviation or pending entry with no link, are
-   problems.
+   problems. A by-hand rule it lists as an exception gets that kind too, not `manual`. Its `checked` list records
+   the by-hand rules a person checked in the running app and found met ([PAUTA-18](../conformance/#pauta-18)): a
+   `manual` result carries its entry, and one with no entry is reported as not recorded, which is not a failure.
+   An entry older than the rule's `changed` is stale, and a problem.
 5. Report one result per rule: its ID, level, status and evidence as `file:line`. A failed MUST blocks a release.
 
 Every report uses the same statuses, which `rules.json` also lists:
@@ -164,7 +178,7 @@ Every report uses the same statuses, which `rules.json` also lists:
 |---|---|---|
 | `pass` | Met. | No; an entry for it is stale. |
 | `fail` | Not met, and `pauta.json` doesn't list it. A failed MUST blocks a release; a failed MAY has no consequence. | A MUST or SHOULD, yes: this is what the audit is for. A MAY, no. |
-| `manual` | Checked by hand: a person checks it in the running app, and records it in `pauta.json`'s `checked` list once it is met. | If it fails then, or until someone has looked. |
+| `manual` | Checked by hand: source can't settle it. A person checks it in the running app, and records it in `pauta.json`'s `checked` list once it is met; the report gives that entry, or says "not recorded". | No, recorded or not. Found unmet by the person who checks, it gets one, and its status is that kind from then on. |
 | `pending`, `deviation`, `not-applicable`, `app-only` | Not met, and `pauta.json` lists it as that kind. | It has one. |
 | `limited` | The rule covers apps with a feature this one lacks. | No; an entry for it is wrong. |
 
@@ -182,9 +196,10 @@ Each result reads like this:
 ```text
 KBD-07   MUST    pass     src/main/java/com/example/app/ui/CommandPalette.java:57
 TBAR-01  MUST    fail     src/main/java/com/example/app/ui/MainToolbar.java:88 builds an icon button by hand
-KBD-15   MUST    manual   Tab order needs the running app
+KBD-15   MUST    manual   Tab order needs the running app; checked 2026-11-02 against <edition>
+MENU-08  MUST    manual   Escape on a right-click menu needs the running app; not recorded
 TRAY-01  MUST    limited  no tray: no SystemTray or TrayIcon in src/
-TABS-06  MUST    not-applicable  pauta.json: the app has no tabs
+SET-14   MUST    not-applicable  pauta.json: the app never asks for a password or token
 MENU-14  MUST    pending  pauta.json: issue #212
 ```
 
@@ -195,7 +210,9 @@ MENU-14  MUST    pending  pauta.json: issue #212
   failures before you act on the report.
 - **Manual means a person.** A *by hand* check needs the running app, often on a particular OS. The agent lists
   them; someone runs them and records each one met in `pauta.json`'s `checked` list
-  ([PAUTA-18](../conformance/#pauta-18)), which the next audit reads back.
+  ([PAUTA-18](../conformance/#pauta-18)), which the next audit reads back. One with no entry is reported as not
+  recorded: that is not a failure, it needs no exception, and it leaves the conformance as it is. One the person
+  finds unmet gets an exception like any other rule ([PAUTA-04](../conformance/#pauta-04)).
 - **Gaps per app** on this site is the same audit, done by hand for the six apps. An agent's report for one of them
   should agree with [Gaps per app](../family/gaps/); where it doesn't, one of them is wrong.
 
@@ -213,9 +230,17 @@ diff <(curl -s https://pauta-project.dev/$old/rules.json | jq -r '.rules[] | "\(
 ```
 
 A line only in the new edition is a new rule or a raised level; one only in the old is a retired rule (the new
-edition's `retired` list says where it went) or a lowered level. Give the agent that list and the new edition's `llms-full.txt`, have it meet each new MUST or record it in `pauta.json`,
-replace `src/test/resources/pauta-rules.json` with the new edition's, then change `pauta.version`, `AGENTS.md` and the
-README together ([PAUTA-11](../conformance/#pauta-11)).
+edition's `retired` list says where it went) or a lowered level. A rule whose `changed` is newer than the app's
+edition has a new level, scope or statement since then. Then, in one change
+([PAUTA-11](../conformance/#pauta-11)):
+
+1. Replace `src/test/resources/pauta-rules.json` with the new edition's, and the app's copy of the audit skill
+   (`.claude/skills/pauta-audit/SKILL.md` in an app made from the template) with the one the new edition serves.
+2. Remove the `checked` entries the new `rules.json` makes stale, those whose `edition` is older than their rule's
+   `changed`, and have a person check those rules again ([PAUTA-18](../conformance/#pauta-18)).
+3. Give the agent the list and the new edition's `llms-full.txt`, and have it meet each new MUST or record it in
+   `pauta.json`. Run the audit again.
+4. Change `pauta.version`, `AGENTS.md` and the README together.
 
 ## Working on Pauta itself
 

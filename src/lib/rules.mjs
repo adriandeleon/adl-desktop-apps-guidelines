@@ -3,6 +3,7 @@
 // only: one shell command in backticks that exits 0 when the check passes) and "*Reference:*". Shared by the
 // rules.json, llms.txt and llms-full.txt endpoints (src/pages/) and scripts/check-rules.mjs, which fails the build
 // on a malformed rule.
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { notReadOnly } from "./command.mjs";
@@ -33,9 +34,12 @@ const LEANS = new RegExp(
 // and rule, it holds for the page; right under a "## " heading, for that section. A rule with neither applies to every
 // app unless its own text names the apps it covers (Conformance, PAUTA-05).
 const APPLIES = /^\*\*Applies to:\*\*\s*(.*)$/;
-// The same words written any other way ("**Applies to**:", "*Applies to:*", in a list item, in the middle of a
-// paragraph): the site shows them, and no rule would carry them.
-const APPLIES_LOOSE = /(\*\*|__|\*|_)[Aa]pplies [Tt]o(?::\1|\1:)|^\s*(?:[-*+>] )?Applies to:/;
+// The same words written any other way ("**Applies to**:", "*Applies to:*", "**Applies only to:**", in a list item, in
+// the middle of a paragraph): the site shows them, and no rule would carry them.
+const APPLIES_LOOSE = /(\*\*|__|\*|_)[Aa]pplies (?:[a-z]+ )?[Tt]o(?::\1|\1:)|^\s*(?:[-*+>] )?Applies (?:[a-z]+ )?to:/;
+// And the label with no colon at all, opening a paragraph or a list item ("**Applies to** an app with a tray icon").
+// Only there: in the middle of a sentence the words name the line ("opens with an **Applies to** line").
+const APPLIES_LABEL = /^\s*(?:[-*+>] )?(?:\*\*|__|\*|_)Applies (?:[a-z]+ )?[Tt]o\b(?!(?:\*\*|__|\*|_)? lines?\b)/;
 // A line that may follow a rule's item without being part of it: a new item, a heading, a table, a fence, HTML, a quote.
 const STARTS_BLOCK = /^(?:[-*+] |\d+[.)] |#{1,6} |`{3}|~{3}|[<|>]|(?:-{3,}|\*{3,}|_{3,})\s*$)/;
 
@@ -106,7 +110,8 @@ export function parsePage(slug, text) {
       continue;
     }
     const bare = noSpans(line);
-    if (APPLIES_LOOSE.test(bare)) {
+    const opens = i === 0 || prose[i - 1].trim() === "" || /^\s*[-*+>] /.test(line); // a paragraph or a list item
+    if (APPLIES_LOOSE.test(bare) || (opens && APPLIES_LABEL.test(bare))) {
       problems.push(`${at}: an Applies to line is written "**Applies to:** an app with…", alone at the start of its own paragraph: ${line.trim().slice(0, 60)}`);
     }
     // A header row with a "Level" cell, not a row that happens to hold the word ("| Log Level | … |").
@@ -216,14 +221,106 @@ export function readRules(root = process.cwd()) {
     if (owner.has(p.prefix)) problems.push(`${p.slug}: prefix ${p.prefix} is also ${owner.get(p.prefix)}'s`);
     owner.set(p.prefix, p.slug);
   }
-  // A retired ID never comes back, and the rule it points readers to exists.
-  const retired = readRetired(root);
+  const { version } = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
+  const newer = (a, b) => a.split(".").map(Number).reduce((d, n, i) => d || n - Number(b.split(".")[i]), 0) > 0;
+  // Each rule's `changed`: the edition the record names while the rule still reads as it did then; else the rule is
+  // new or changed since the last release, which is "next" in next/ and this version in any other build (a release's
+  // own record is fresh, scripts/check-edition.mjs, so there it is the release that says so).
+  const record = readChanges(root);
+  const since = process.env.PAUTA_PATH === "next" ? "next" : version;
+  for (const r of pages.flatMap((p) => p.rules)) {
+    const was = record?.rules?.[r.id];
+    r.changed = was && was.hash === ruleHash(r) ? was.changed : since;
+  }
   const live = new Set(pages.flatMap((p) => p.rules.map((r) => r.id)));
+  const known = new Set([...(record?.retired ?? []), ...Object.keys(record?.rules ?? {})]); // every ID an edition had
+  if (!record) problems.push(`${CHANGES} is missing; it records the edition each rule last changed in (scripts/rule-changes.mjs writes it at a release)`);
+  else {
+    const isVersion = (v) => typeof v === "string" && VERSION.test(v);
+    if (!isVersion(record.edition) || newer(record.edition, version)) problems.push(`${CHANGES}: its edition is ${JSON.stringify(record.edition)}; it is the last release's, ${version} or older`);
+    if (typeof record.rules !== "object" || !record.rules || !Array.isArray(record.retired)) problems.push(`${CHANGES} needs "rules" (ID -> changed, hash) and "retired" (IDs)`);
+    for (const [id, e] of Object.entries(record.rules ?? {})) {
+      if (!ID.test(id) || !isVersion(e?.changed) || !/^[0-9a-f]{12}$/.test(e?.hash ?? "") || (isVersion(record.edition) && newer(e.changed, record.edition))) {
+        problems.push(`${CHANGES}: ${id} must read { "changed": an edition up to ${record.edition}, "hash": 12 hex digits }; it is written by scripts/rule-changes.mjs, not by hand`);
+      }
+    }
+  }
+  // retired-rules.json: one entry per ID, each an ID some edition had, retired in an edition that exists; no entry
+  // lost (a retired ID would be free to come back); a retired ID never back in use; the rule it points to exists.
+  const retired = readRetired(root);
+  const listed = new Set();
   for (const r of retired) {
+    const where = `retired-rules.json: ${typeof r?.id === "string" ? r.id : JSON.stringify(r)}`;
+    if (!ID.test(r?.id ?? "")) problems.push(`${where} is not a rule ID`);
+    else if (listed.has(r.id)) problems.push(`${where} is listed twice`);
+    listed.add(r?.id);
+    if (r?.edition !== "Unreleased" && !(typeof r?.edition === "string" && VERSION.test(r.edition) && !newer(r.edition, version))) {
+      problems.push(`${where} says it was retired in ${JSON.stringify(r?.edition)}; that is an edition up to ${version}, or "Unreleased"`);
+    }
+    if (r?.see != null && !ID.test(r.see)) problems.push(`${where} points to ${JSON.stringify(r.see)}; "see" is a rule ID or null`);
+    if (record && ID.test(r?.id ?? "") && !known.has(r.id)) problems.push(`${where} was never a rule: no edition had it (${CHANGES})`);
     if (live.has(r.id)) problems.push(`${r.id} is retired (retired-rules.json, ${r.edition}); a new rule takes the page's next free number`);
     if (r.see && !live.has(r.see)) problems.push(`retired-rules.json: ${r.id} points to ${r.see}, which is not a rule`);
   }
+  for (const id of known) {
+    if (!live.has(id) && !listed.has(id)) problems.push(`${id} was a rule (${CHANGES}) and is no longer on a page, but retired-rules.json doesn't list it; an ID is never reused, so its entry stays`);
+  }
   return { pages, retired, problems };
+}
+
+const VERSION = /^\d+\.\d+\.\d+$/;
+const ID = /^[A-Z]{2,6}-\d{2,3}$/;
+
+/** The record of when each rule last changed, at the repository's root (see ruleHash and freshChanges). */
+export const CHANGES = "rule-changes.json";
+
+/**
+ * What `changed` watches in a rule, as twelve hex digits: its level, its scope (`appliesTo`) and its statement. Why,
+ * Check, Command and Reference are how a rule is explained and verified, not what it asks. Line breaks and where a
+ * link points are left out, so rewrapping a paragraph or moving a page changes no rule; any other edit to the words
+ * does, a typo fixed included.
+ */
+export function ruleHash(rule) {
+  const flat = (s) => (s ?? "").replace(/\]\([^)]*\)/g, "]").replace(/\s+/g, " ").trim();
+  return createHash("sha256").update(JSON.stringify([rule.level, flat(rule.appliesTo), flat(rule.text)])).digest("hex").slice(0, 12);
+}
+
+/** rule-changes.json under `root`: `{ edition, rules: { ID: { changed, hash } }, retired: [ID] }`, or null. */
+export function readChanges(root = process.cwd()) {
+  try {
+    return JSON.parse(readFileSync(join(root, CHANGES), "utf8"));
+  } catch (e) {
+    if (e.code === "ENOENT") return null;
+    throw e;
+  }
+}
+
+/**
+ * The record as the release of `version` writes it, from the record before it (`was`, or null) and the rules on the
+ * pages now: a rule that reads as recorded keeps its edition, any other (new, or changed since) gets `version`; an
+ * ID the record had as a rule and the pages no longer have joins `retired`, which never loses one.
+ * scripts/rule-changes.mjs writes this; scripts/check-edition.mjs fails a release whose file is anything else.
+ */
+export function freshChanges(was, rules, version) {
+  const entries = [...rules].sort((a, b) => a.prefix.localeCompare(b.prefix) || a.number - b.number).map((r) => {
+    const hash = ruleHash(r);
+    const before = was?.rules?.[r.id];
+    return [r.id, { changed: before?.hash === hash ? before.changed : version, hash }];
+  });
+  const live = new Set(rules.map((r) => r.id));
+  const retired = [...new Set([...(was?.retired ?? []), ...Object.keys(was?.rules ?? {}).filter((id) => !live.has(id))])].sort();
+  return { edition: version, rules: Object.fromEntries(entries), retired };
+}
+
+/** The record as the file holds it: one rule to a line, so a release's diff shows the rules it changed. */
+export function changesText(record) {
+  const rules = Object.entries(record.rules).map(([id, e]) => `    ${JSON.stringify(id)}: { "changed": ${JSON.stringify(e.changed)}, "hash": ${JSON.stringify(e.hash)} }`);
+  const comment =
+    "The edition in which each rule's level, scope or statement last changed (rules.json's `changed`), with a hash of " +
+    "the three as of `edition`, the last release; and every ID retired by then. scripts/rule-changes.mjs rewrites it " +
+    "at a release and nothing else edits it (scripts/check-edition.mjs). A rule whose hash no longer matches is new " +
+    "or changed since that release: it reads `next` in next/ (src/lib/rules.mjs).";
+  return `{\n  "comment": ${JSON.stringify(comment)},\n  "edition": ${JSON.stringify(record.edition)},\n  "rules": {\n${rules.join(",\n")}\n  },\n  "retired": ${JSON.stringify(record.retired)}\n}\n`;
 }
 
 /** The retired IDs, from retired-rules.json under `root`: `{ id, edition, see }`, `see` being the rule that holds the

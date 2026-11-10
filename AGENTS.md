@@ -38,17 +38,22 @@ Editora (`../Editora`) is the reference implementation.
   in the running app; a name it gives is Editora's spelling, which an app's equivalent meets. In the statement, a
   name is required as spelled when a user, the docs or another tool finds the thing by it: a command id, a catalog
   key, a chord, a command-line flag, an environment variable, a property in `pom.xml` or `pauta.json`, a file the
-  repository must carry; so name one there only when every app must spell it so. Any other name in a statement, a
-  Java class, method or constant, a CSS file or style class, a branch or workflow file, a config file's name, is
-  Editora's spelling too: write it so it cannot be read as the requirement, "(Editora's `AsyncTestScope`)"),
+  repository must carry; so name one there only when every app must spell it so. A platform API a statement names
+  (`javafx.stage.Popup`, `SystemTray`, `Future.get()`) is the requirement itself: the JDK and JavaFX spell it one
+  way for every app. Any other name in a statement, a class, method or constant of the app's own code, a CSS file
+  or style class, a branch or workflow file, a config file's name, is Editora's spelling too: write it so it cannot
+  be read as the requirement, "(Editora's `AsyncTestScope`)"),
   `*Command:*` (only under a `Check (code)`, and only when a shell command settles the whole
   check: one code span holding a POSIX `sh -c` command, run from the app's repository root, that exits 0 when the
   check passes and prints what it found when it fails. It opens with the guard `src/lib/rules.mjs` names (`GUARD`), so
   it fails outside an app's root, and it only reads: `npm run check` reads it as the shell does and fails on any
   command that is not on `src/lib/command.mjs`'s list of readers (`grep`, `test`, `head`, `tr`, `wc`, `echo` and the
-  like; `sed -n`, `sort`, `find` and `xargs` only in the forms that cannot write or run another program), on a command
-  named through a variable, a quote or a path, and on a redirect other than `< file`, `>/dev/null`, `2>/dev/null`,
-  `2>&1` and `>&2`. Test it under `dash` against Editora, the template and an empty folder before adding
+  like; `sed -n`, `sort`, `uniq`, `find` and `xargs` only in the forms that cannot write or run another program,
+  `find` with the tests on its list and `cd` only inside a subshell), on a command named through a variable, a quote
+  or a path, on a redirect other than `< file`, `>/dev/null`, `>>/dev/null`, `2>/dev/null`, `2>&1` and `>&2`, and on
+  what a shell could turn into one of those: a variable it cannot follow (name them in lowercase, quote them, set
+  them to written-out values), `printf -v`, `case`. The lint refuses when unsure, so a harmless command it does not
+  follow is rewritten, not excused. Test it under `dash` against all seven apps and an empty folder before adding
   it) and `*Reference:*` (the Editora file, or the app that does it, or "no app yet"). IDs are
   permanent: never renumber or reuse one. A removed rule's ID stays retired: list it in `retired-rules.json` with the
   edition that removed it and the rule that holds its requirement now (`see`), link to that rule where the old one
@@ -59,8 +64,8 @@ Editora (`../Editora`) is the reference implementation.
   and `llms-full.txt` (all three also at the site root), each page as Markdown at `<slug>.md` (`src/pages/*.js`,
   `src/lib/llms.mjs`), the audit report's statuses and JSON Schemas (`src/lib/audit.mjs`) and the audit skill
   (`skills/pauta-audit/SKILL.md`, served as it is), which the *Coding agents and LLMs* page (`coding-agents.md`)
-  explains. Change all of them if the syntax or the report changes; the template repository's copy of the skill
-  follows this one.
+  explains. Change all of them if the syntax or the report changes. An app that keeps a copy of the skill (the
+  template repository does) replaces it with the edition's when it moves to that edition (PAUTA-11).
   **Applies to.** A rule covers every app unless its text names the apps it covers, or it sits under an
   `**Applies to:** an app with…` paragraph: at the top of a page, before its first heading and rule, for the whole
   page; right under a `## ` heading, for that section (PAUTA-05). `rules.mjs` carries it to each rule's `appliesTo`;
@@ -89,7 +94,8 @@ Editora (`../Editora`) is the reference implementation.
 - Plain, direct sentences written for the app developer. No marketing copy. American spelling throughout (color,
   behavior, gray, license, customize, canceled), in pages, the changelog, the README and comments alike.
 - **Guidance collects under `## [Unreleased]`; editions are cut in batches.** A change to what a reader takes as
-  guidance (a rule, a fact about an app, the checklist, the matrix, a screenshot, a page's prose) keeps the version in
+  guidance (a rule, a fact about an app, the checklist, the matrix, a screenshot, a page's prose, the audit skill)
+  keeps the version in
   `package.json` and is described under `## [Unreleased]` in `CHANGELOG.md` (Keep a Changelog), in the section its
   edition will have (Added, Changed, Fixed). A rule it retires goes in `retired-rules.json` with the edition
   `"Unreleased"`. A change that only touches how the guide is shown (typos and spelling, links, Markdown and markup,
@@ -100,7 +106,9 @@ Editora (`../Editora`) is the reference implementation.
   **A release** is its own pull request, made when the user asks for one: it sets the version and the date in
   `package.json`, renames `## [Unreleased]` to `## [x.y.z] - YYYY-MM-DD` above a new empty `## [Unreleased]`, adds
   the edition's one-paragraph summary under its heading, replaces `"Unreleased"` in `retired-rules.json` with the
-  number, and runs `node scripts/pin-references.mjs`, which records in `pins.json` the commit at the head of every
+  number, runs `node scripts/rule-changes.mjs`, which records in `rule-changes.json` the edition each rule's level,
+  scope or statement last changed in (`changed` in `rules.json`; no network, and never edited by hand or outside a
+  release), and runs `node scripts/pin-references.mjs`, which records in `pins.json` the commit at the head of every
   repository the pages link into. What the edition serves (pages, agent files, downloads) links those commits
   instead of `blob/master`, and this repository's own links its tag (`src/lib/pins.mjs`), so an edition's References
   keep showing the code as it was at the release; the script fails when a linked path
@@ -120,7 +128,7 @@ Editora (`../Editora`) is the reference implementation.
   agent files saying never to cite it or audit against it, never tagged or archived. `versions.json` names it as
   `next` while it exists; with nothing pending, `next/` holds a redirect to `latest/` for every page. Don't release
   to show a change: point at `next/` instead, and release when the batch is worth an app's move. A release changes only `package.json`,
-  `CHANGELOG.md`, `retired-rules.json` and `pins.json`; the edition check fails it otherwise.
+  `CHANGELOG.md`, `retired-rules.json`, `rule-changes.json` and `pins.json`; the edition check fails it otherwise.
 - **Version numbers** (the Changelog page, `src/content/docs/changelog.mdx`, says the same for readers). Judge by
   the rules alone: what moving an app to the new edition costs. The largest change sets the number.
   - **Patch**: an app does nothing. No rule's ID, level or requirement changes: wording, a fixed fact (matrix, gaps,
@@ -147,8 +155,8 @@ Editora (`../Editora`) is the reference implementation.
   - A release chooses its version last, just before you push: `git fetch origin`, rebase on `origin/master`, and
     raise the part the batch calls for above the higher of `origin/master`'s version and the newest `v*` tag on
     origin (`git ls-remote --tags origin`). If someone else released meanwhile, renumber (and pin again). A release
-    changes nothing but the version, the date, the changelog's headings and summary, `retired-rules.json` and
-    `pins.json`.
+    changes nothing but the version, the date, the changelog's headings and summary, `retired-rules.json`,
+    `rule-changes.json` and `pins.json`.
   - Never create or push a tag. CI tags `v<version>` after a release merges, on the commit that released it, even
     when the run that tags it is on a later commit.
   - Run `node scripts/check-edition.mjs` before you push. CI runs it on every pull request and push to `master`; it
@@ -177,12 +185,12 @@ Editora (`../Editora`) is the reference implementation.
   `next/` sits beside them while a batch waits (**Pauta Next**, above), from `master`;
   `scripts/build-next.mjs` also adds it to `versions.json`.
   The `versions` branch holds one folder per published edition and nothing else: CI runs `scripts/archive-edition.sh
-  --push` in every run that deploys, so the edition just deployed joins it (a rebuild replaces the folder, so the
+  --push` in every run that publishes an edition, so the edition just released joins it (a rebuild replaces the folder, so the
   current edition takes site-only fixes until the next one is released). Never edit that branch by hand. Every run on `master`
   deploys, and `scripts/release-state.mjs` says what: HEAD when `[Unreleased]` is empty; while it isn't, the current
   edition built from its release commit (tagged and archived first if it isn't tagged and live yet, because its own
   run was canceled or failed) with `next/` from HEAD. GitHub cancels a run waiting in the deploy's concurrency group when a newer one queues, so an older edition
-  can be skipped too; each deploying run finds those (`scripts/missing-editions.mjs`), rebuilds them from the commit
+  can be skipped too; each run that publishes, and every pull request, finds those (`scripts/missing-editions.mjs`), rebuilds them from the commit
   that released them (`scripts/build-edition.sh`, pinned by `scripts/pin-dist.mjs`), deploys them and has the publish
   job tag and archive them. The deploy waits for the publish job to succeed, and the publish job reads the build's
   artifact from outside its checkout. A

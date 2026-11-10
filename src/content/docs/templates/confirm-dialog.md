@@ -44,17 +44,24 @@ and Cancel is the way out and the default button. An action that can be taken ba
     [`RemoveConfirm.ask`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/RemoveConfirm.java).
 - **CONF-13 · MUST.** Every question has one default button, and it is never a `danger` button: Cancel where the only
   action is destructive, Save where saving is an option ([CONF-05](#conf-05)). The dialog opens with keyboard focus
-  on it, so Enter keeps what the user has, on every OS, and the red action runs only from its own button.
+  on it, so Enter in a question that has just opened keeps what the user has, on every OS, and the red action runs
+  only from its own button: a click, or the focus moved to it with Tab and then Space, which presses the focused
+  button on every OS.
   - *Why:* Enter is the key a hurried hand presses, and Escape already cancels ([CONF-04](#conf-04)): with Cancel as
     the default, no single key destroys anything. JavaFX makes a button with the `OK_DONE` role the default by
     itself, so a named action is the default unless the dialog says otherwise. It also presses a focused button on
     Enter on Windows and Linux but not on macOS, so a question with no default button answers Enter differently on
-    each OS.
+    each OS. With Cancel as the default one difference is left, and it is JavaFX's: once Tab has put the focus on the
+    red button, Enter runs it on Windows and Linux and answers Cancel on macOS. Space is the key that does the same
+    everywhere.
   - *Check (code):* the confirmation helper calls `setDefaultButton(false)` on the action and
     `setDefaultButton(true)` on Cancel, or on Save in the unsaved-changes question; no dialog leaves a `danger`
     button, or no button at all, as the default.
   - *Reference:* Termina [`ui/Confirm.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/Confirm.java) (`Options.cancelIsDefault`, which its close-running-program question sets) and nux
-    [`ui/CommandConfirmation.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/CommandConfirmation.java) (a risky UPS command). Editora's Git confirmations, Torrenta's `RemoveConfirm`,
+    [`ui/CommandConfirmation.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/CommandConfirmation.java) (a risky UPS command). Editora does it in about twenty of its questions, each by
+    hand: deleting from the project tree ([`ProjectPanel.cancelByDefault`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ProjectPanel.java)), closing a terminal with a program running
+    ([`ui/TerminalCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TerminalCoordinator.java)), resetting settings ([`ui/SettingsResetFlow.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsResetFlow.java)), trusting a folder
+    ([`ui/TrustPrompts.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TrustPrompts.java)) among them. The rest don't yet: Editora's Git confirmations, Torrenta's `RemoveConfirm`,
     Mirada's `Confirm`, the app template's `Confirm` and Termina's removals leave the red action as the default, so
     Enter runs it; Editora's unsaved-changes and Quit questions have no default button.
 
@@ -113,7 +120,7 @@ and Cancel is the way out and the default button. An action that can be taken ba
 | Kind | `Alert(CONFIRMATION)` owned by the window (`initOwner`), shown with `showAndWait`; the answer defaults to Cancel when the dialog is closed any other way | `GitCoordinator.confirmDestructive`, `RemoveConfirm.ask` |
 | Buttons | A `ButtonType` with the action's name and the `OK_DONE` role, and Cancel with `CANCEL_CLOSE`, both named from the catalog ([CONF-03](#conf-03)). Drawn in one fixed order on every OS, Cancel first ([WIN-11](../../window-shell/#win-11)) | `RemoveConfirm.ask`, Torrenta's [`StockButtons`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/StockButtons.java) |
 | Action button | `danger` style class: the theme's `.button.danger` fills it `-color-danger-emphasis` with emphasis text. Save in the unsaved question: `success` | `MainController.styleUnsavedChangesButtons`, `styleQuitButtonAsDanger` |
-| Default button | Cancel, or Save in the unsaved-changes question ([CONF-13](#conf-13)): `setDefaultButton(true)` on it and `setDefaultButton(false)` on the action, because JavaFX makes an `OK_DONE` button the default by itself. Termina's close-running-program question and nux's risky-command question do it. In Editora's Git confirmations, Torrenta's Remove and Mirada's `Confirm` the red action is still the default and Enter runs it; Editora's unsaved-changes and Quit questions give their buttons no role, so they have no default | Termina [`Confirm`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/Confirm.java), nux [`CommandConfirmation`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/CommandConfirmation.java) |
+| Default button | Cancel, or Save in the unsaved-changes question: `setDefaultButton(true)` on it and `setDefaultButton(false)` on the action, because JavaFX makes an `OK_DONE` button the default by itself. [CONF-13](#conf-13) is the rule, and its Reference says which questions in which app do it | Termina [`Confirm`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/Confirm.java), nux [`CommandConfirmation`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/CommandConfirmation.java) |
 | Font | The UI font sheet attached to the dialog pane, because a dialog is its own scene and inherits nothing from the window | Torrenta [`Fonts.installUiFont(DialogPane)`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/Fonts.java), Editora [`App.installUiFont`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java) (every window) |
 | Stylesheet | `Dialogs.styled` adds `app.css` to a dialog that needs the app's own rules (About); the `-color-*` tokens and `.button.danger` resolve from the theme either way | `Dialogs` |
 | Text | The question in the content; a header only when the question needs a name over it. Counts as plurals, names in quotes, the consequence spelled out | `Actions.removeQuestion`, `confirm.remove.<kind>` |

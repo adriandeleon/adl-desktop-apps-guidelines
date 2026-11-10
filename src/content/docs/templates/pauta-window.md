@@ -31,9 +31,10 @@ not apply, the ones it does differently on purpose, and the ones still pending. 
   rule ID at its address in that edition (the entry's `url`), never `latest/`. The edition's link, here and in
   About, runs the `help.pautaRules` command, so the palette reaches it too.
   - *Why:* an app built to an edition answers to that edition's rules; `latest/` moves on.
-  - *Check (code):* `help.pautaRules` is registered and builds the edition URL from `pauta.version`; rule links use
-    each entry's `url`.
-  - *Reference:* [ABOUT-06](../about/#about-06).
+  - *Check (code):* `help.pautaRules` is registered and builds the edition URL from `pauta.version`; the edition's
+    link in the Pauta window and in About runs it; rule links use each entry's `url`.
+  - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`ui/Commands.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Commands.java) (`help.pautaRules`, which opens `AppInfo.pautaUrl()`), run by the edition's link in [`ui/PautaWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/PautaWindow.java) and
+    [`ui/AboutDialog.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AboutDialog.java); `PautaWindow` opens each rule ID at its entry's `url`. The address is [ABOUT-06](../about/#about-06)'s.
 - **PWIN-05 · SHOULD.** Pending exceptions come first, then deviations, then app-only (in a template), then
   not-applicable; within a kind, MUSTs before SHOULDs, then by ID.
   - *Why:* what the app still owes is what a reader came to find.
@@ -65,7 +66,7 @@ not apply, the ones it does differently on purpose, and the ones still pending. 
 <div class="mock-stage">
 <div class="m-card m-dialog m-pw" role="img" aria-label="Mockup of the Pauta window">
 <div class="titlebar">Pauta Conformance</div>
-<div class="m-about-head"><img src="../../pauta-128.png" alt="" /><div><div class="m-row"><span class="m-about-name">Pauta 4.2.0</span><span class="pin">1</span></div><div class="m-row"><span class="m-pill amber">Partial</span><span class="pin">2</span></div><div class="m-about-tagline">Mirada does not meet every MUST yet: 2 are pending.</div></div></div>
+<div class="m-about-head"><img src="../../pauta-128.png" alt="" /><div><div class="m-row"><span class="m-about-name">Pauta x.y.z</span><span class="pin">1</span></div><div class="m-row"><span class="m-pill amber">Partial</span><span class="pin">2</span></div><div class="m-about-tagline">Mirada does not meet every MUST yet: 2 are pending.</div></div></div>
 <div class="m-row m-muted"><span>3 pending · 1 deviation · 1 not applicable</span><span class="pin">3</span></div>
 <div class="m-pw-list">
 <div class="m-pw-group">Pending<span class="pin out">4</span></div>
@@ -73,11 +74,11 @@ not apply, the ones it does differently on purpose, and the ones still pending. 
 <div class="m-pw-item"><span class="m-link m-pw-id">MENU-16</span><span class="m-pw-level">MUST</span><span class="m-grow">Some menus draw in a smaller font than the rest. <span class="m-link">#44</span></span></div>
 <div class="m-pw-item"><span class="m-link m-pw-id">SYNC-01</span><span class="m-pw-level">SHOULD</span><span class="m-grow">Settings can't be synced between computers yet. <span class="m-link">#38</span></span></div>
 <div class="m-pw-group">Deviation</div>
-<div class="m-pw-item"><span class="m-link m-pw-id">WELC-01</span><span class="m-pw-level">SHOULD</span><span class="m-grow">Mirada opens straight to your last folder instead of a Welcome page; with none, its empty state names the ways in. <span class="m-link">Decision 0004</span></span><span class="pin">6</span></div>
+<div class="m-pw-item"><span class="m-link m-pw-id">KBD-12</span><span class="m-pw-level">SHOULD</span><span class="m-grow">Mirada has no keymap editor: you change a key in keymap.json, which Settings opens for you. <span class="m-link">Decision 0004</span></span><span class="pin">6</span></div>
 <div class="m-pw-group">Not applicable</div>
-<div class="m-pw-item"><span class="m-link m-pw-id">TABS-06</span><span class="m-pw-level">MUST</span><span class="m-grow">Mirada has no tabs: it shows one folder in one window.</span></div>
+<div class="m-pw-item"><span class="m-link m-pw-id">SET-14</span><span class="m-pw-level">MUST</span><span class="m-grow">Mirada never asks for a password or token.</span></div>
 </div>
-<div style="display:flex;flex-direction:column;gap:2px"><span class="m-row"><span class="m-link">Pauta 4.2.0 rules</span><span class="pin">7</span></span><span class="m-link">Conformance in the docs</span></div>
+<div style="display:flex;flex-direction:column;gap:2px"><span class="m-row"><span class="m-link">Pauta x.y.z rules</span><span class="pin">7</span></span><span class="m-link">Conformance in the docs</span></div>
 <div class="m-footer-row"><span class="m-row"><span class="m-btn">Copy as text</span><span class="pin">8</span></span><span class="m-row"><span class="pin">9</span><span class="m-btn primary">Close</span></span></div>
 </div>
 </div>
@@ -103,7 +104,7 @@ The entries above show the layout with Mirada's name; they are not Mirada's reco
 | Kind | A modal dialog owned by the window, styled through `Dialogs.styled` like About | `AboutDialog.show` |
 | Width | 560 px; the list scrolls at about ten rows | `.pauta-list` |
 | Head | The Pauta mark PNG at 72 px; "Pauta" and the edition 26 px bold | `.about-name` |
-| Conformance pill | Complete `-color-success-*`, Core `-color-accent-*`, Partial `-color-warning-*` | `.pauta-conformance` |
+| Conformance pill | Complete `-state-green` on `-state-green-bg`, Core `-state-accent` on `-state-accent-bg`, Partial `-state-amber` on `-state-amber-bg` | `.pauta-conformance` |
 | Rule ID | JetBrains Mono 12 px, accent, a link | `.pauta-rule` |
 | Source | `pauta.json` in the app's resources and `pauta.version` through `AppInfo` | [Conformance](../../conformance/#the-file) |
 | Conformance | The conformance helper, never stored | [PAUTA-02](../../conformance/#pauta-02) |

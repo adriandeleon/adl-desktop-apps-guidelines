@@ -71,9 +71,15 @@ Every app keeps one, session-only and bounded, newest first, with Esc to close a
   command.
   - *Check (code):* the unread-error count runs `view.messageLog` on a click, and the command is registered.
   - *Reference:* Editora [`StatusBar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusBar.java) (`echo`, `unreadErrors`), [`StatusBar.showMessageLog`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusBar.java).
-- **MLOG-03 · SHOULD.** `C-g` or a click outside closes the log too, as Esc does.
-  - *Check (code):* the card's key handler hides it on `C-g`; the overlay's backdrop hides it on a press.
-  - *Reference:* Editora [`MessageLogPopup`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java), [`OverlayHost`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java).
+- **MLOG-03 · SHOULD.** The active keymap's cancel chord or a click outside closes the log too, as Esc does.
+  - *Check (code):* the log closes on the chord the active keymap binds to its cancel command, not on a fixed
+    `Ctrl+G`, and the overlay's backdrop hides it on a press.
+  - *Reference:* Editora [`OverlayHost`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java), which hides the card on a press on its backdrop and on [`PickerKeys.isCancel`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java): Esc,
+    or the chord the keymap binds to `edit.cancel` (Editora's id; `C-g` in its Emacs keymap). Its [`MessageLogPopup`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java)
+    also closes on `Ctrl+G` and `Alt+G` whatever the keymap, though the CUA keymap binds `C-g` to `nav.goToLine`.
+    Elsewhere the chord is fixed: `Ctrl+G` in the app template ([`ui/OverlayHost.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/OverlayHost.java)), Termina
+    ([`ui/MessageLogWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MessageLogWindow.java)) and Mirada ([`ui/MessageLogView.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MessageLogView.java)), and Esc alone in Torrenta
+    ([`ui/MessageLogPopup.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MessageLogPopup.java)).
 - **MLOG-04 · SHOULD.** `Ctrl+C` (`Cmd+C` on macOS) copies the selected entries.
   - *Check (code):* the card's key handler copies the selection on the shortcut-down C.
   - *Reference:* Editora [`MessageLogPopup.copySelection`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java).

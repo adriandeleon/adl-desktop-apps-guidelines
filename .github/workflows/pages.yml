@@ -40,10 +40,12 @@ jobs:
           cache: npm
       - name: Decide what to publish
         # The site: latest/ and <version>/ from HEAD when [Unreleased] is empty, else from the commit that released the
-        # current edition, with next/ from HEAD. What to tag and archive: HEAD when [Unreleased] is empty, else the
-        # current edition if it isn't tagged and live yet, else nothing (scripts/release-state.mjs). Only a run on
-        # master publishes or deploys: a pull request, or a manual run on any other branch or tag, skips this step, so
-        # `publish`, `site` and `next` stay empty and the run only checks and builds its own checkout.
+        # current edition, with next/ from HEAD. What to tag and archive: HEAD when [Unreleased] is empty (the commit
+        # that released the edition, if an earlier push did and it was never tagged), else the current edition if it
+        # isn't tagged and live yet, else nothing (scripts/release-state.mjs). Only a run on master publishes or
+        # deploys: a pull request, or a manual run on any other branch or tag, skips this step, so `publish`, `site`
+        # and `next` stay empty and the run checks and builds its own checkout; a pull request then also builds what
+        # master will (the step "Rehearse the build of the released edition").
         id: state
         if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
         env:
@@ -107,8 +109,10 @@ jobs:
         # tree beside itself would find no package.json and fail. What stays the checkout's own: its pages and src/
         # as Astro reads them, package.json, CHANGELOG.md, pins.json, node_modules, and scripts/check-rules.mjs
         # (scripts/build-site.mjs says why). An older edition a canceled run skipped is still built by its own
-        # scripts, in its own worktree (scripts/build-edition.sh). A pull request takes this path too, with its own
-        # commit's scripts, which is what checks it before master runs it.
+        # scripts, in its own worktree (scripts/build-edition.sh). A pull request keeps its scripts here too, and so
+        # runs the copies; but its checkout never moves in the steps below (it has no `site`), so they build its own
+        # tree. What master does with them, building the released edition's tree, a pull request does in the step
+        # "Rehearse the build of the released edition", further down.
         env:
           RUN_SHA: ${{ github.sha }}
         run: |
@@ -128,19 +132,28 @@ jobs:
           npm ci
       - name: Check the edition published again
         # The current edition, published from its release commit because its own run was canceled or failed: checked
-        # against the commit before it, as when it was released, unless it already carries its tag.
+        # against the commit before it, as when it was released, unless it already carries its tag. The checkout is
+        # at that commit when a batch waits (the step above). When none does, the site is built from HEAD and the
+        # release commit is an earlier push: it is checked in a worktree of its own, since the check reads the
+        # files of the commit it is on.
         if: steps.state.outputs.publish != '' && steps.state.outputs.publish != github.sha
         env:
+          PUBLISH: ${{ steps.state.outputs.publish }}
           PUBLISH_BASE: ${{ steps.state.outputs.base }}
-          PAUTA_ROOT: ${{ github.workspace }}
           TOOLS: ${{ runner.temp }}/tools/scripts
         run: |
-          version=$(node -p 'require("./package.json").version')
-          if [ "$(git rev-parse -q --verify "refs/tags/v$version^{commit}")" = "$(git rev-parse HEAD)" ]; then
-            echo "v$version is tagged at this commit: it passed the edition check when it was released"
-            exit 0
+          root=$GITHUB_WORKSPACE
+          if [ "$(git rev-parse HEAD)" != "$PUBLISH" ]; then
+            root=$RUNNER_TEMP/released
+            git worktree add --quiet --detach "$root" "$PUBLISH"
           fi
-          node "$TOOLS/check-edition.mjs" "$PUBLISH_BASE"
+          version=$(cd "$root" && node -p 'require("./package.json").version')
+          if [ "$(git rev-parse -q --verify "refs/tags/v$version^{commit}")" = "$PUBLISH" ]; then
+            echo "v$version is tagged at this commit: it passed the edition check when it was released"
+          else
+            PAUTA_ROOT=$root node "$TOOLS/check-edition.mjs" "$PUBLISH_BASE"
+          fi
+          if [ "$root" != "$GITHUB_WORKSPACE" ]; then git worktree remove --force "$root"; fi
       - name: Read the version
         id: version
         run: echo "version=$(node -p 'require("./package.json").version')" >> "$GITHUB_OUTPUT"
@@ -180,6 +193,39 @@ jobs:
         env:
           TOOLS: ${{ runner.temp }}/tools/scripts
         run: node "$TOOLS/build-next.mjs" --add "$RUNNER_TEMP/next" dist
+      - name: Rehearse the build of the released edition
+        # A pull request only: what a run on master does while a batch waits under [Unreleased], which the steps
+        # above never do here. Master then builds latest/ and <version>/ from the commit that released the current
+        # edition, with the scripts of the commit it runs on; a change to scripts/ or src/lib would otherwise first
+        # meet that older tree on master, where a failure stops every deploy. So the checkout moves to that commit
+        # (as "Switch to the released edition" moves it), and this pull request's copies of the scripts build its
+        # downloads and its site, then add the next/ built above. Nothing here is uploaded, tagged or deployed: the
+        # steps below and the jobs after this one are skipped on a pull request as before. When nothing waits (the
+        # pull request is itself the release, or leaves [Unreleased] empty), master builds from HEAD, as the steps
+        # above just did. The editions a canceled run never archived were rebuilt above with these same scripts, and
+        # are kept for this build.
+        if: github.event_name == 'pull_request'
+        env:
+          PAUTA_ROOT: ${{ github.workspace }}
+          TOOLS: ${{ runner.temp }}/tools/scripts
+        run: |
+          site=$(node scripts/release-state.mjs --site)
+          if [ "$site" = "$(git rev-parse HEAD)" ]; then
+            echo "nothing waits under [Unreleased]: master builds this commit, as the steps above did"
+            exit 0
+          fi
+          echo "master builds latest/ from $site; building it with this pull request's scripts"
+          rm -rf "$RUNNER_TEMP/rehearsal"
+          mkdir "$RUNNER_TEMP/rehearsal"
+          mv dist/next "$RUNNER_TEMP/rehearsal/next"
+          if [ -d build/editions ]; then mv build/editions "$RUNNER_TEMP/rehearsal/editions"; fi
+          rm -rf dist build public/downloads
+          git checkout --quiet --detach "$site"
+          npm ci
+          if [ -d "$RUNNER_TEMP/rehearsal/editions" ]; then mkdir build && mv "$RUNNER_TEMP/rehearsal/editions" build/editions; fi
+          bash "$TOOLS/build-print.sh"
+          node "$TOOLS/build-site.mjs"
+          node "$TOOLS/build-next.mjs" --add "$RUNNER_TEMP/rehearsal/next" dist
       - name: Upload the site for Pages
         if: steps.state.outputs.site != ''
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0

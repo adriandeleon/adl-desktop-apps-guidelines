@@ -22,14 +22,18 @@ Windows legs. Termina, Torrenta, Mirada, Modula and nux release none.
 
 - **REL-01 · MUST.** jpackage builds the installers for five targets, Linux x64 and arm64, macOS arm64 and x64,
   and Windows x64, each on its own runner, through the Maven `dist` profile.
-  - *Check (code):* the release workflow's build matrix lists `linux-x64`, `linux-arm64`, `macos-arm64`,
-    `macos-x64` and `windows-x64` on those runners, and `pom.xml` has a `dist` profile.
+  - *Check (code):* the release workflow's build matrix has a leg for each of the five targets (`linux-x64`,
+    `linux-arm64`, `macos-arm64`, `macos-x64` and `windows-x64` in Editora), each on a runner of that OS and
+    architecture, and `pom.xml` has a `dist` profile. The runner images under [Targets](#targets) are Editora's:
+    another image of the same OS and architecture meets it (Termina, Torrenta, Mirada, Modula and nux build macOS
+    arm64 on `macos-latest`).
   - *Reference:* Editora [`release.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/release.yml) (the `build` job), [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml) (`dist`).
 - **REL-02 · SHOULD.** Downloads are named `<App>-<version>-<target>.<ext>`.
   - *Check (code):* the release-asset check builds the expected names this way.
   - *Reference:* Editora [`scripts/release/CheckRelease.java`](https://github.com/adriandeleon/Editora/blob/master/scripts/release/CheckRelease.java) (`expectedAssets`).
 - **REL-03 · MUST.** **JReleaser** (`jreleaser.yml`) builds nothing: it creates the GitHub release, attaches every
-  file and `checksums_sha256.txt`, and runs the packagers of [REL-12](#rel-12) and [REL-13](#rel-13).
+  file and `checksums_sha256.txt`, and runs the packagers of [REL-12](#rel-12) and [REL-13](#rel-13) where the app
+  has them.
   - *Check (code):* `jreleaser.yml` has no step that compiles or packages the app: it attaches the build matrix's
     files and the checksums file, and its `brew` and `winget` packagers, where the app has them, take those same
     files. The job that runs it needs the build jobs.
@@ -144,16 +148,18 @@ The certificate renews before 2027-11-30; the Apple membership before 2027-10-31
     files reports that half as not checked.
   - *Reference:* Editora [`ci.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/ci.yml), on `master`; Mirada's [`ci.yml`](https://github.com/adriandeleon/Mirada/blob/main/.github/workflows/ci.yml), on `main`.
 - **REL-20 · MUST.** The tests run on all three OSes: the pure suite (no JavaFX toolkit) on Linux, macOS and
-  Windows, and the FX suite on Linux and at least one more. They run there every day or on every pull request, and
-  on the commit of every release before it is built ([REL-30](#rel-30)). How the runs are split is the app's own:
-  one workflow that runs everything on every pull request meets this, and so does a quick workflow for pull
-  requests with a fuller one on a schedule.
+  Windows, and the FX suite on Linux and at least one more. They run there every day or on every pull request. How
+  the runs are split is the app's own: one workflow that runs everything on every pull request meets this, and so
+  does a quick workflow for pull requests with a fuller one on a schedule. A release waits for these runs on its own
+  commit, on all three OSes: that it waits at all is [REL-30](#rel-30).
   - *Why:* path separators, line endings, case-insensitive file systems and process spawning fail on one OS only, and
-    the pure suite is where they show; the FX suite catches layout and focus differences.
+    the pure suite is where they show; the FX suite catches layout and focus differences. The FX suite is the slow
+    one (three shards on macOS in Editora), so it is asked on two OSes and not three: the third is covered by the
+    pure suite alone.
   - *Check (code):* taken together, the workflows' test jobs run the pure suite on `ubuntu-*`, `macos-*` and
     `windows-*` runners and the FX suite on `ubuntu-*` and one more, under a `schedule` or a `pull_request` trigger
-    that needs no label; and the release workflow runs them on those runners or waits for that run on the tagged
-    commit.
+    that needs no label; and the tests a release waits for ([REL-30](#rel-30)) ran on those runners, in the release
+    workflow itself or in the run it reads.
   - *Reference:* Editora splits them: [`ci.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/ci.yml) runs the whole suite on Linux on every pull request, and
     [`full-tests.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/full-tests.yml) the pure suite on Windows and macOS and the FX suite on macOS, in three shards, daily, on
     a pull request labeled `full-ci` and before every release: the "Check that the Full tests passed on this
@@ -200,28 +206,33 @@ The certificate renews before 2027-11-30; the Apple membership before 2027-10-31
 - **REL-23 · MUST.** Dependabot updates `github-actions` and `maven` weekly.
   - *Check (code):* `.github/dependabot.yml` lists both ecosystems with `interval: weekly`.
   - *Reference:* Editora [`.github/dependabot.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/dependabot.yml).
-- **REL-24 · MUST.** Every workflow starts from `permissions: contents: read`; only a job that needs write access
-  asks for it, in its own block.
-  - *Check (code):* each workflow's top-level `permissions` is `contents: read`, and every `write` sits in a job's
-    own `permissions`.
+- **REL-24 · MUST.** Every workflow starts from `permissions: contents: read`, or from less; only a job that needs
+  write access asks for it, in its own block.
+  - *Check (code):* each workflow has a top-level `permissions` that grants no write: `contents: read`, or less
+    (`permissions: {}`); and every `write` sits in a job's own `permissions`.
   - *Reference:* Editora [`release.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/release.yml): `release` (publish), `bump` (the pull request) and `preflight` (start a
-    Full tests run).
+    Full tests run). Modula's [`notify-catalog.yml`](https://github.com/adriandeleon/Modula/blob/master/.github/workflows/notify-catalog.yml) starts from `permissions: {}`.
 - **REL-25 · SHOULD.** Every `actions/setup-java` step caches Maven's repository (`cache: maven`). The JDK it sets
   up is [PLAT-01](../platform/#plat-01)'s.
   - *Check (code):* each `setup-java` step has `cache: maven`.
   - *Reference:* Mirada ([`ci.yml`](https://github.com/adriandeleon/Mirada/blob/main/.github/workflows/ci.yml)), Modula and nux, on every step. Editora ([`ci.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/ci.yml),
     [`release.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/release.yml)), the app template, Termina and Torrenta each have a `setup-java` step without it. Editora
     sets up Temurin for its tests and Liberica for the release build, for linux-aarch64 coverage.
-- **REL-26 · MUST.** Every job that runs steps has `timeout-minutes`, and `concurrency` cancels a superseded
-  pull-request run, never a run on the default branch. A job that calls a reusable workflow (`uses:` in place of
-  `steps:`) takes no `timeout-minutes`: GitHub does not accept the key there, and the called workflow's own jobs
-  carry theirs.
-  - *Check (code):* every job with `steps:` sets `timeout-minutes`; `cancel-in-progress` is never true for a run that
-    a push to the default branch starts: it is false, absent, or an expression that is false there. A workflow that
-    no push to the default branch starts may set it to true.
-  - *Reference:* Editora [`ci.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/ci.yml) (`cancel-in-progress: ${{ github.event_name == 'pull_request' }}`) and
+- **REL-26 · MUST.** Every job that runs steps has `timeout-minutes`. Every workflow that runs on pull requests has
+  a `concurrency` group that cancels a superseded pull-request run, and never a run on the default branch. A job
+  that calls a reusable workflow (`uses:` in place of `steps:`) takes no `timeout-minutes`: GitHub does not accept
+  the key there, and the called workflow's own jobs carry theirs.
+  - *Check (code):* every job with `steps:` sets `timeout-minutes`. Every workflow with a `pull_request` trigger has
+    a `concurrency` block whose `cancel-in-progress` is true for a pull-request run: true, or an expression that is
+    true there. And in every workflow, `cancel-in-progress` is never true for a run that a push to the default
+    branch starts: it is false, absent, or an expression that is false there, and it may be plain true only in a
+    workflow that no push to the default branch starts.
+  - *Reference:* Editora [`ci.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/ci.yml) and [`full-tests.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/full-tests.yml) (`cancel-in-progress: ${{ github.event_name == 'pull_request' }}`) and
     [`terminal-image.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/terminal-image.yml) (true: it runs on pull requests, on pushes to `probe/**` and by hand); the template's `full-tests` job in
-    [`release.yml`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/.github/workflows/release.yml), which calls `full-tests.yml` and carries no timeout.
+    [`release.yml`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/.github/workflows/release.yml), which calls `full-tests.yml` and carries no timeout. The template's, Termina's and Mirada's
+    pull-request workflows use the same expression. Modula's [`build.yml`](https://github.com/adriandeleon/Modula/blob/master/.github/workflows/build.yml) and nux's [`ci.yml`](https://github.com/adriandeleon/nux/blob/master/.github/workflows/ci.yml) run on pull requests
+    with no `concurrency` block, so they cancel nothing, and Torrenta's [`ci.yml`](https://github.com/adriandeleon/torrenta/blob/master/.github/workflows/ci.yml) sets `cancel-in-progress: true`
+    for its pushes to `master` as well.
 - **REL-27 · MUST.** CI uploads the surefire reports even when tests fail, and the JaCoCo report; it writes the
   coverage totals to the job summary.
   - *Check (code):* the test reports upload under `if: always()`, and a step appends the totals to

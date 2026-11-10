@@ -4,14 +4,21 @@ description: "JDK, JavaFX, AtlantaFX, NullAway, Maven Wrapper, tests and coverag
 ---
 
 - **PLAT-01 · MUST.** The app builds on **JDK 25 or newer**. `maven.compiler.release` 25 is the floor, not the
-  ceiling: a newer JDK builds the app too. CI builds and bundles JDK 25, the current LTS, in every app: every
-  `actions/setup-java` step sets it up. The family moves to the next LTS together, in an edition of Pauta.
+  ceiling: a newer JDK builds the app too. CI builds every app on JDK 25, the current LTS: every workflow step that
+  sets up a JDK sets up release 25, and the runtime an installer carries ([PLAT-02](#plat-02)) is that JDK's. A leg
+  that builds a native image carries no JDK: it sets up a GraalVM 25 release instead. The family moves to the next
+  LTS together, in an edition of Pauta.
   - *Check (code):* `pom.xml` sets `maven.compiler.release` to 25 or later. Where the build has an enforcer
     `requireJavaVersion` rule, its range is the open-ended `[25,)`: it starts at 25 and has no upper bound. An app with
-    no such rule passes, and a rule inside a profile is not counted. Every `setup-java` step in the workflows has
-    `java-version` 25.
-  - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; r=$(sed -n 's:.*<maven.compiler.release>\([0-9]*\)<.*:\1:p' pom.xml | head -n 1); j=$(sed -n '/<profiles>/,/<\/profiles>/!p' pom.xml | tr -d ' \t\r\n' | tr '<' '\n' | sed -n '/^requireJavaVersion>/,/^\/requireJavaVersion>/s/^version>//p'); [ "${r:-0}" -ge 25 ] && ! echo "$j" | grep -vxF '[25,)' | grep -q . || { echo "maven.compiler.release ${r:-none}; requireJavaVersion outside profiles:" ${j:-none}; false; }`
-  - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml).
+    no such rule passes, and a rule inside a profile is not counted. In the workflows, every step that uses a
+    `setup-java` or `setup-graalvm` action (`actions/setup-java`, `graalvm/setup-graalvm`) names 25 or a 25.x release
+    in its `java-version`, or in the `version` a GraalVM step may give instead. The Command reads a workflow line by
+    line, not as YAML: a step ends at the next line that opens a list item. A version it cannot read as a number (an
+    expression such as `${{ matrix.java }}`, a `java-version-file`) it prints as not judged and does not fail: read
+    the matrix or the file it names.
+  - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; r=$(sed -n 's:.*<maven.compiler.release>\([0-9]*\)<.*:\1:p' pom.xml | head -n 1); j=$(sed -n '/<profiles>/,/<\/profiles>/!p' pom.xml | tr -d ' \t\r\n' | tr '<' '\n' | sed -n '/^requireJavaVersion>/,/^\/requireJavaVersion>/s/^version>//p'); w=$(for f in .github/workflows/*.yml .github/workflows/*.yaml; do [ -f "$f" ] || continue; for n in $(grep -nE '^[^#]*uses:[^#]*/setup-(java|graalvm)@' "$f" | cut -d: -f1); do v=$(tail -n +"$n" "$f" | sed -n '1d;/^ *- /q;p' | grep -E '^ *(java-)?version:' | head -n 1 | cut -d: -f2- | cut -d'#' -f1 | tr -d " '\"\r"); if printf '%s\n' "$v" | grep -qE '^25([.+-].*)?$'; then :; elif printf '%s\n' "$v" | grep -q '^[0-9]'; then echo "$f:$n sets up JDK $v"; else echo "not judged: $f:$n version ${v:-not given}" >&2; fi; done; done); [ "${r:-0}" -ge 25 ] && ! echo "$j" | grep -vxF '[25,)' | grep -q . && [ -z "$w" ] || { echo "maven.compiler.release ${r:-none}; requireJavaVersion outside profiles:" ${j:-none}; [ -z "$w" ] || echo "$w"; false; }`
+  - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml) and [`.github/workflows/ci.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/ci.yml) (`java-version: '25'`). Mirada's native legs set up Oracle
+    GraalVM with `version: '25.4'` ([`.github/workflows/release.yml`](https://github.com/adriandeleon/Mirada/blob/main/.github/workflows/release.yml)); its jlink leg sets up JDK 25.
 - **PLAT-02 · SHOULD.** The installers carry a jlinked runtime; users never install Java.
   - *Check (code):* the `dist` profile's jpackage step builds a jlinked app image (`jLinkOptions`) and wraps the
     installer around it, and that image is what the release ships.
@@ -22,11 +29,13 @@ description: "JDK, JavaFX, AtlantaFX, NullAway, Maven Wrapper, tests and coverag
   - *Check (code):* `pom.xml` sets `javafx.version` to 27 or later.
   - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; v=$(sed -n 's:.*<javafx.version>\([0-9]*\).*:\1:p' pom.xml | head -n 1); echo "javafx.version ${v:-none}"; [ "${v:-0}" -ge 27 ]`
   - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml).
-- **PLAT-04 · MUST.** The app is one named JPMS module, `com.<app>`, whose `module-info.java` opens only what
-  reflection, FXML and Jackson need.
-  - *Check (code):* `src/main/java/module-info.java` declares `module com.<app>`; each `opens` line serves FXML,
-    Jackson or another reflective reader.
-  - *Reference:* Editora [`src/main/java/module-info.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/module-info.java).
+- **PLAT-04 · MUST.** The app is one named JPMS module, whose `module-info.java` opens only what reflection, FXML
+  and Jackson need.
+  - *Check (code):* `src/main/java/module-info.java` declares one named module, not an `open module`, which opens
+    every package; each `opens` line serves FXML, Jackson or another reflective reader.
+  - *Reference:* Editora [`src/main/java/module-info.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/module-info.java) (its module is `com.editora`). The name is the
+    app's to choose: the template's is `com.example.app`, and its [`scripts/rename.sh`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/scripts/rename.sh) gives the module the
+    name of the app's Java package.
 - **PLAT-05 · MUST.** Controls use **AtlantaFX 3.x** (`atlantafx-base`). The light and dark themes it carries are
   [ICON-15](../icons-and-color/#icon-15).
   - *Check (code):* `pom.xml` depends on `atlantafx-base` 3.x.
@@ -49,12 +58,15 @@ description: "JDK, JavaFX, AtlantaFX, NullAway, Maven Wrapper, tests and coverag
   - *Why:* a check bound to a build phase fails in the same job as the tests, so the failed job does not say which
     of the two is wrong.
   - *Check (code):* the spotless plugin configures `palantirJavaFormat`, and in a workflow that runs on pull
-    requests a job runs `spotless:check` and neither builds nor tests: no Maven `verify`, `test`, `package` or
-    `install` in the same job. The plugin's `check` goal bound to a phase (`./mvnw verify`) does not meet it alone.
+    requests a job runs `spotless:check` and neither builds nor tests: no Maven `compile`, `test-compile`, `test`,
+    `package`, `verify`, `integration-test`, `install` or `deploy` in the same job. The plugin's `check` goal bound
+    to a phase (`./mvnw verify`) does not meet it alone.
     The Command reads a workflow line by line, not as YAML: a job is what lies between two keys at the indentation
-    of the first key under `jobs:`, and a Maven run counts when its goal is on the line that names `mvn` or `mvnw`.
-    A goal on a continuation line, or a build started from a script, it does not see.
-  - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; grep -q palantirJavaFormat pom.xml || { echo 'pom.xml configures no palantirJavaFormat'; exit 1; }; for f in .github/workflows/*.yml .github/workflows/*.yaml; do grep -qE '^( *-? *|on:.*)pull_request' "$f" 2>/dev/null || continue; i=$(sed -n '/^jobs:/,$p' < "$f" | grep -E '^ +[A-Za-z0-9_-]+:' | head -n 1 | sed -n 's/^\( *\).*/\1/p'); for s in $(grep -nE '^[^#]*spotless:check' "$f" | cut -d: -f1); do a=0; b=999999; for h in $(grep -nE "^$i[A-Za-z0-9_-]+:" "$f" | cut -d: -f1); do if [ "$h" -le "$s" ]; then a=$h; elif [ "$b" -eq 999999 ]; then b=$h; fi; done; m=; for t in $(grep -nE '^[^#]*mvnw?(\.cmd)?[[:space:]](.*[[:space:]])?(verify|test|package|install)([[:space:]]|$)' "$f" | cut -d: -f1); do [ "$t" -ge "$a" ] && [ "$t" -lt "$b" ] && m="$m $f:$t"; done; [ -z "$m" ] && exit 0; echo "spotless:check at $f:$s shares its job with a build or test run:$m"; done; done; w=$(grep -lE '^[^#]*spotless:check' .github/workflows/* 2>/dev/null); echo "no job of its own runs spotless:check in a workflow with a pull_request trigger (named in: ${w:-no workflow})"; exit 1`
+    of the first key under `jobs:`, and a Maven run counts when its goal is on the line that names `mvn` or `mvnw`
+    (a `name:` line is not a run). What it does not see, so read the workflow where one applies: a goal on a
+    continuation line; a build started from a script; a job's `if:`; and a Format job in a workflow of its own that
+    the pull-request workflow calls (`workflow_call`), which meets the rule and which the Command fails.
+  - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; grep -q palantirJavaFormat pom.xml || { echo 'pom.xml configures no palantirJavaFormat'; exit 1; }; for f in .github/workflows/*.yml .github/workflows/*.yaml; do grep -qE '^( *-? *|on:.*[^A-Za-z0-9_-])pull_request(_target)?([^A-Za-z0-9_-]|$)' "$f" 2>/dev/null || continue; i=$(sed -n '/^jobs:/,$p' < "$f" | grep -E '^ +[A-Za-z0-9_-]+:' | head -n 1 | sed -n 's/^\( *\).*/\1/p'); for s in $(grep -nE '^[^#]*mvnw?(\.cmd)?[[:space:]]([^#]*[[:space:]])?spotless:check' "$f" | grep -vE '^[0-9]+: *-? *name:' | cut -d: -f1); do a=0; b=999999; for h in $(grep -nE "^$i[A-Za-z0-9_-]+:" "$f" | cut -d: -f1); do if [ "$h" -le "$s" ]; then a=$h; elif [ "$b" -eq 999999 ]; then b=$h; fi; done; m=; for t in $(grep -nE '^[^#]*mvnw?(\.cmd)?[[:space:]]([^#]*[[:space:]])?(compile|test-compile|test|package|verify|integration-test|install|deploy)([^A-Za-z0-9:_.=/-]|$)' "$f" | grep -vE '^[0-9]+: *-? *name:' | cut -d: -f1); do [ "$t" -ge "$a" ] && [ "$t" -lt "$b" ] && m="$m $f:$t"; done; [ -z "$m" ] && exit 0; echo "spotless:check at $f:$s shares its job with a build or test run:$m"; done; done; w=$(grep -lE '^[^#]*spotless:check' .github/workflows/* 2>/dev/null); echo "no job of its own runs spotless:check in a workflow with a pull_request trigger (named in: ${w:-no workflow})"; exit 1`
   - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml) (spotless plugin), [`.github/workflows/ci.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/ci.yml) (the `format` job, *Format*); the
     template, Termina and Mirada have the same job in their `ci.yml`. Torrenta and Modula do not yet: their `test`
     job runs `./mvnw verify`, the phase the check is bound to, and no job runs `spotless:check`. nux has no Spotless.

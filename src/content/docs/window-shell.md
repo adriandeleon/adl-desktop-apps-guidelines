@@ -56,64 +56,90 @@ description: "Status bar, themes, title bar, dialogs, Welcome, About, window sta
     (`aWindowComesBackAtTheSizeAndPlaceItsSessionRecorded`, `aWindowThatWasMaximizedComesBackMaximized`), which
     restore a window from a saved `workspace-state.json`. No Editora test saves the geometry and reads it back.
 - **WIN-09 · SHOULD.** In an app with content to zoom (text, an image, a terminal), it zooms from the keyboard
-  (`Ctrl/Cmd +`, `-`, `0`), kept across launches. The UI zoom is [WIN-12](#win-12).
+  (`Ctrl+=`, `Ctrl+-` and `Ctrl+0`, with `Cmd` on macOS; `=` is the key that carries `+`), kept across launches.
+  The UI zoom is [WIN-12](#win-12).
   - *Check (code):* the content's zoom in, out and reset are commands bound in every keymap, and the zoom level is a
     saved setting.
   - *Reference:* Editora `view.textZoomIn`, `view.textZoomOut` and `view.textZoomReset`, kept in
-    [`Settings.fontZoom`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/Settings.java); Termina's `font.zoom`
-    ([`config/Settings.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/config/Settings.java)).
+    [`Settings.fontZoom`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/Settings.java) and bound to `C-=`, `C--` and `C-0`
+    ([`keymaps/cua.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/cua.json)); Termina's `zoomIn`, `zoomOut` and `actualSize`, on `Shortcut+Equals`, `Shortcut+Minus` and
+    `Shortcut+0` ([`keymaps/keymap.json`](https://github.com/adriandeleon/Termina/blob/master/src/main/resources/com/termina/keymaps/keymap.json)), kept in `font.zoom` ([`config/Settings.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/config/Settings.java)).
 - **WIN-12 · MUST.** The app has a UI zoom: one setting scales the whole chrome, the menus
   ([MENU-16](../menus/#menu-16)), toolbar, tabs and status bar included. It applies at once, is kept across
-  launches, and commands zoom it in, out and back to the default. In an app with content of its own to zoom (an
-  editor's text, a terminal's grid, an image) `Ctrl/Cmd +`, `-` and `0` stay with the content zoom
-  ([WIN-09](#win-09)) and the UI zoom's commands carry no fixed chord; in an app without, those chords are the UI
-  zoom.
+  launches, and three commands zoom it in, out and back to the default. In an app with content of its own to zoom
+  (an editor's text, a terminal's grid, an image) `Ctrl+=`, `Ctrl+-` and `Ctrl+0` (`Cmd` on macOS) stay with the
+  content zoom ([WIN-09](#win-09)) and this rule fixes no chord for the UI zoom's commands; in an app without,
+  those chords are the UI zoom's.
   - *Why:* a person who needs larger text gets it everywhere, and the menus can only follow a zoom that exists.
   - *Check (code):* the chrome's font sizes come from one root size the setting changes, and its fixed sizes are
-    multiplied by the zoom, not written as absolute pixels; three commands zoom it in, out and back to the default.
-  - *Reference:* no app yet. Editora, Termina and Mirada zoom their content only (`view.textZoomIn`, `font.zoom`,
+    multiplied by the zoom, not written as absolute pixels. A change to the setting restyles every open window with
+    no restart, and the value is saved with the settings and read back at start-up. Three registered commands zoom
+    it in, out and back to the default. The rule names no ids for them: they are the app's own. In an app with a
+    content zoom they are three more commands, with ids that are not the content zoom's (Mirada's `view.zoomIn` and
+    Termina's `zoomIn` zoom the content), and the keymaps bind `=`, `-` and `0` with `Ctrl` (`Cmd` on macOS) to the
+    content zoom's commands; in an app without, to the UI zoom's.
+  - *Reference:* no app yet. Editora, Termina and Mirada zoom their content only (`view.textZoomIn`, `zoomIn`,
     `view.zoomIn`), and Editora writes its menu font as absolute pixels ([`MainMenuBar.UI_FONT_SIZE`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java), `.context-menu`
     in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css)). Torrenta, Modula, nux and the app template have no zoom command.
 - **WIN-13 · MUST.** Every quit entry point runs one quit method: File → Quit, the quit command, and the system's own
   Quit, which on macOS is the application menu's and the Dock's. That method asks what the
   [Confirm dialog](../templates/confirm-dialog/) rules require ([CONF-01](../templates/confirm-dialog/#conf-01)),
-  closes open dialogs and saves the window state ([WIN-08](#win-08)). A tray's Quit runs it too
-  ([TRAY-04](../tray-and-background/#tray-04)).
+  closes open dialogs and saves the window state ([WIN-08](#win-08)). Which of those entry points an app must have
+  is [WIN-14](#win-14), and a tray's Quit is [TRAY-04](../tray-and-background/#tray-04).
   - *Why:* a second way out skips what the first one does: the question about unsaved work, the saved window, or,
     in a tray app, the quit itself. Quitting from inside a dialog's nested event loop has aborted the JVM.
   - *Check (code):* one quit method; the File → Quit row and the quit command run it, and on macOS the system's Quit
     reaches it. JavaFX turns the application menu's and the Dock's Quit into a close request on every window
     (`GlassStage.requestClosingAllWindows`) unless the app catches Glass's quit action (`handleQuitAction`), so the
-    quit handler calls the quit method, or, in an app with one window, that window's close request does.
+    quit handler calls the quit method, or, in an app with one window, that window's close request does. The
+    method itself asks before it discards anything [CONF-01](../templates/confirm-dialog/#conf-01) covers (unsaved
+    work; an app with nothing to lose asks nothing), closes the app's other windows and its open dialogs before it
+    exits, and saves the window state.
   - *Reference:* the app template's [`MainWindow.quit`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MainWindow.java): the `app.quit` command, which File → Quit runs, and the
     window's close request both call it, so macOS's Quit reaches it as a close request; it hides the other windows
-    and dialogs, saves the window state and waits for the last settings write. Editora's File → Quit and `app.quit`
-    run [`MainController.onQuit`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java), which asks about the quit once and then about each window's unsaved files; macOS's Quit doesn't reach it yet:
+    and dialogs, saves the window state and waits for the last settings write, and has nothing unsaved to ask
+    about. Editora's File → Quit and `app.quit` run [`MainController.onQuit`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java), which asks about the quit once and then about each window's unsaved files; macOS's Quit doesn't reach it yet:
     [`MacOpenFiles`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/MacOpenFiles.java) wraps Glass's handler and passes `handleQuitAction` on to JavaFX's own, so each window gets a close
     request and asks for itself. Torrenta ([`MainWindow.quit`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java)), Modula ([`ModulaApp.quit`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ModulaApp.java)) and nux (`Platform.exit`, from
     `app.quit` and from the tray, in [`App`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/App.java)) don't catch macOS's Quit either. Termina and Mirada have no quit command ([WIN-14](#win-14)):
     the last window to close ends the app, and macOS's Quit arrives at each window as a close request, which asks
     ([`TerminalWindow.close`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalWindow.java), [`ViewerWindow.mayClose`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/ViewerWindow.java)).
-- **WIN-14 · MUST.** Every app has a Quit, on every OS: the `app.quit` command, in the Command Palette, and a Quit
-  row that ends the File menu, or the app's main menu where it has no menu bar. Quit runs the quit method of
+- **WIN-14 · MUST.** Every app has a Quit, on every OS: the `app.quit` command, in the Command Palette, and, where
+  the app has a File menu or a main menu, a Quit row that ends it. A main menu is the menu button that stands in
+  for the menu bar in an app with none (Mirada's ☰ on Windows and Linux). A menu button that lists one kind of
+  thing is not a main menu (nux's Profiles and Commands), and neither is a right-click menu (the only menu Modula
+  has): an app with no File menu and no main menu meets the rule with the command alone. What Quit does is
   [WIN-13](#win-13). Closing the last window may end the app as well, but it is never the only way out.
   - *Why:* someone who quits one app of the family from the palette or the File menu looks for the same in the
     next. An app that ends only with its last window has no answer once it has a tray or a second window.
-  - *Check (code):* `app.quit` is registered, and the File menu, or the main menu of an app with no menu bar, ends
-    with a row that runs it.
-  - *Reference:* the app template's [`Commands.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Commands.java) (`app.quit`) and [`AppMenus.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AppMenus.java) (File → Quit); Editora's `app.quit` and File → Quit. nux registers
-    `app.quit` and has no menu to put it in. Torrenta has File → Quit and registers the command as `quit`. Termina
-    and Mirada have no Quit: their File and main menus end with a close-window row. Modula quits from its tray
-    and its window's close button only.
-- **WIN-15 · SHOULD.** On macOS, About, Settings and Quit are in the application menu, the one macOS names after
-  the app: About ([ABOUT-01](../templates/about/#about-01)), Settings with `Cmd+,`, and the system's own Quit with
-  `Cmd+Q` ([WIN-13](#win-13)). Each runs the same command as its row on Windows and Linux.
-  - *Why:* it is where every Mac app has them, and `Cmd+,` is how a Mac user opens settings. It is one of the
-    places [the OS's way wins](../same-on-every-os/#where-the-oss-way-wins).
-  - *Check (code):* on macOS the app adds About and Settings to the application menu, each running its command, and
-    Settings carries `Cmd+,`.
-  - *Reference:* Mirada [`MacAppMenu.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/os/MacAppMenu.java), which adds About and Settings with `Cmd+,`. Termina's [`MacAppMenu.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MacAppMenu.java) adds About
-    only; Editora, the app template and Torrenta add neither, and keep Settings in the File menu or the toolbar.
+  - *Check (code):* `app.quit` is registered and the palette lists it. Where the app builds a File menu, the menu's
+    last row runs `app.quit`; where it has no menu bar and a main menu instead, that menu's last row does. An app
+    with neither menu passes on the command.
+  - *Reference:* the app template's [`Commands.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Commands.java) (`app.quit`) and [`AppMenus.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AppMenus.java) (Quit, the File menu's last row); Editora's `app.quit`, the
+    last row of its File menu ([`ui/MenuBarModel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java)). Torrenta's File menu ends with Quit, and it registers the command as `quit`.
+    Termina and Mirada have no Quit. Termina's File menu has Close Window and ends with Settings, Sync Now and
+    Configure Profiles ([`ui/MenuBarModel.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MenuBarModel.java)); Mirada's ☰ menu ([`ui/TitleBar.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/TitleBar.java)) and, on macOS, its File menu
+    ([`ui/MacMenus.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MacMenus.java)) end with Close (`window.close`). nux has neither menu and meets the rule with `app.quit`
+    ([`App`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/App.java)). Modula has neither menu and no quit command: it quits from its tray and its window's close button
+    ([`ModulaApp.quit`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ModulaApp.java)).
+- **WIN-15 · SHOULD.** On macOS, Settings is in the application menu, the one macOS names after the app, and runs
+  the same command as the Settings row on Windows and Linux. Its row shows the chord the active keymap binds to
+  that command (`Cmd+,` in the CUA keymap: [SET-01](../settings/#set-01)), appended to the title as
+  [MENU-02](../menus/#menu-02) has the system menu bar's rows show theirs, and the item is given no key equivalent
+  of its own. About, in the same menu, is [ABOUT-01](../templates/about/#about-01), and the Quit JavaFX puts there
+  is [WIN-13](#win-13).
+  - *Why:* it is where every Mac app has Settings, one of the places
+    [the OS's way wins](../same-on-every-os/#where-the-oss-way-wins). A key equivalent set on the item is an
+    accelerator under another name: macOS runs the item before the app's key dispatcher sees the key, and the menu
+    goes on showing `⌘,` in a keymap that binds another chord, or none.
+  - *Check (code):* on macOS the app inserts a Settings item into the application menu that runs the settings
+    command. The item's title carries the chord the active keymap binds to that command and is written again when
+    the keymap changes; the item is created without a key equivalent.
+  - *Reference:* Mirada [`MacAppMenu.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/os/MacAppMenu.java) adds the item, and it runs `app.settings`. It doesn't show the keymap's chord yet: it
+    creates the item with the native key equivalent `Cmd+,` (`createMenuItem(…, ',', COMMAND)`), which stays
+    whatever the keymap binds, and Mirada's Emacs keymap binds `C-,`
+    ([`keymaps/emacs.json`](https://github.com/adriandeleon/Mirada/blob/main/src/main/resources/com/mirada/keymaps/emacs.json)). Termina's [`MacAppMenu.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MacAppMenu.java) adds About only. Editora, the app template, Torrenta, Modula
+    and nux add nothing to that menu.
 - **WIN-10 · MAY.** The window has modes that change how much chrome it shows: Zen shows none, Expert keeps only
   the menu bar and the status bar, and Simple shows fewer menus, for new users.
   - *Check (code):* each mode is a command, and one truth table decides which chrome each mode shows.

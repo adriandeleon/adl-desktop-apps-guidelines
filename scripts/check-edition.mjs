@@ -8,25 +8,27 @@
 // Guidance collects on master under CHANGELOG.md's "## [Unreleased]" and is published in batches (AGENTS.md,
 // "Editions"). A change is one of two kinds:
 //   - an unreleased change keeps package.json's version. If it touches what readers take as guidance (a page,
-//     pages.json, a screenshot), it adds to [Unreleased], unless the commits that change those files carry an
-//     `Edition: none` trailer (a format change: typos, links, markup); a trailer waives only its own commit's files,
-//     and never a rule added, retired or re-leveled: that is guidance whatever the commit says. A rule it retires is
-//     listed in retired-rules.json with the edition "Unreleased".
-//   - a release raises the version, moves everything under [Unreleased] into "## [<version>] - <date>" and leaves
-//     [Unreleased] empty. Its number is judged against the edition before it (that edition's tag), so it covers the
-//     whole batch: rules gained, lost or re-leveled make at least a minor (AGENTS.md, "Version numbers"), and every ID
-//     retired since is listed with this version. The number must be above the base's and every tag on origin, and
-//     pins.json must pin it (scripts/pin-references.mjs): a full commit SHA for every repository the pages link into,
-//     and for no other.
+//     pages.json, a screenshot, the audit skill under skills/), it adds lines to [Unreleased] (taking one out says
+//     nothing new), unless the commits that change those files carry an `Edition: none` trailer (a format change:
+//     typos, links, markup); a trailer waives only its own commit's files, and never a rule added, retired or
+//     re-leveled: that is guidance whatever the commit says. A rule it retires is listed in retired-rules.json with
+//     the edition "Unreleased". It leaves rule-changes.json alone: that file is a release's.
+//   - a release raises the version, moves everything under [Unreleased] into "## [<version>] - <date>" (every line
+//     of it, as it was) and leaves [Unreleased] empty. Its number is judged against the edition before it (that
+//     edition's tag), so it covers the whole batch: rules gained, lost or re-leveled make at least a minor (AGENTS.md,
+//     "Version numbers"), and every ID retired since is listed with this version. The number must be above the base's
+//     and every tag on origin; pins.json must pin it (scripts/pin-references.mjs): a full commit SHA for every
+//     repository the pages link into, and for no other; and rule-changes.json must be what scripts/rule-changes.mjs
+//     writes for it: each rule with the edition it last changed in.
 // Either way CHANGELOG.md's newest numbered section is package.json's version and date, and a change adds at most one.
 // Tags are CI's: nothing else creates or pushes them.
 import { execFileSync } from "node:child_process";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
-import { unreleased } from "../src/lib/editions.mjs";
+import { parseEditions, unreleased } from "../src/lib/editions.mjs";
 import { linkedRepos } from "../src/lib/pins.mjs";
 import { originTags, releaseCommits } from "../src/lib/releases.mjs";
-import { pageOrder, parsePage, readRetired } from "../src/lib/rules.mjs";
+import { CHANGES, changesText, freshChanges, pageOrder, parsePage, readChanges, readRetired, ruleHash } from "../src/lib/rules.mjs";
 
 // The tree to check is the current directory, or $PAUTA_ROOT when CI runs master's copy of this script on the checkout
 // of a released edition (.github/workflows/pages.yml, "Keep this run's scripts"). package.json, CHANGELOG.md,
@@ -63,6 +65,23 @@ const pending = unreleased(changelog);
 const basePending = unreleased(git("show", `${base}:CHANGELOG.md`));
 const release = version !== baseVersion;
 if (release && pending) errors.push(`a release moves everything under ## [Unreleased] into ## [${version}]; [Unreleased] must be empty`);
+// What a changelog section says, line by line: a section says something new when it holds a line the base's did not
+// (an entry added, or one reworded). One that only lost lines, or that differs in blank lines and spaces, does not.
+const said = (text) => text.split("\n").map((l) => l.trim()).filter(Boolean);
+const saysNew = said(pending).some((l) => !said(basePending).includes(l));
+if (release) {
+  // The release's section holds what [Unreleased] held, as it was: an entry dropped or reworded on the way would
+  // reach readers unreviewed, and an emptied section would publish the batch with nothing said about it.
+  const body = said(parseEditions(changelog).find((e) => e.version === version)?.body ?? "");
+  const lost = said(basePending).filter((l) => !body.includes(l));
+  if (!body.length) errors.push(`## [${version}] in CHANGELOG.md is empty; a release's section says what the edition changed`);
+  else if (lost.length) {
+    errors.push(
+      `a release moves everything under ## [Unreleased] into ## [${version}] as it was; these lines of ${base}'s [Unreleased] are not in it` +
+        ` (reword or drop an entry in a change of its own, before the release):\n    ${lost.slice(0, 8).join("\n    ")}${lost.length > 8 ? `\n    … and ${lost.length - 8} more` : ""}`,
+    );
+  }
+}
 
 // One edition per change.
 const baseSections = new Set(sections(git("show", `${base}:CHANGELOG.md`)));
@@ -79,22 +98,19 @@ const tags = originTags();
 const tagCommit = (v) => tags.get(v) ?? "";
 const newest = [...tags.keys()].sort(cmp).at(-1);
 
-// Every rule's ID and level at a commit, read as rules.mjs reads them (a page is .md or .mdx).
+// Every rule at a commit, read as rules.mjs reads them (a page is .md or .mdx), and each one's level.
 const show = (ref, path) => {
   try {
-    return execFileSync("git", ["show", `${ref}:${path}`], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
+    return execFileSync("git", ["show", `${ref}:${path}`], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"], maxBuffer: 64 << 20 });
   } catch {
     return null;
   }
 };
-const levels = (ref) => {
-  const map = new Map();
-  for (const slug of pageOrder(JSON.parse(show(ref, "pages.json")))) {
-    const text = show(ref, `src/content/docs/${slug}.md`) ?? show(ref, `src/content/docs/${slug}.mdx`) ?? "";
-    for (const r of parsePage(slug, text).rules) map.set(r.id, r.level);
-  }
-  return map;
-};
+const rulesAt = (ref) =>
+  pageOrder(JSON.parse(show(ref, "pages.json"))).flatMap(
+    (slug) => parsePage(slug, show(ref, `src/content/docs/${slug}.md`) ?? show(ref, `src/content/docs/${slug}.mdx`) ?? "").rules,
+  );
+const levels = (ref) => new Map(rulesAt(ref).map((r) => [r.id, r.level]));
 // A release is judged against the edition before it, so the whole batch counts: its tag, or, when a canceled run left
 // it untagged, the commit that released it. An unreleased change is judged against its base.
 let previous = base;
@@ -131,7 +147,7 @@ if (release && ruleChanges.length && major === baseMajor && minor === baseMinor)
 
 if (release) {
   // A release names the batch; it doesn't change it. Anything else it touches would reach readers unchecked.
-  const allowed = new Set(["package.json", "CHANGELOG.md", "retired-rules.json", "pins.json"]);
+  const allowed = new Set(["package.json", "CHANGELOG.md", "retired-rules.json", "pins.json", CHANGES]);
   const others = git("diff", "--name-only", base, "HEAD").split("\n").filter((f) => f && !allowed.has(f));
   if (others.length) {
     errors.push(`a release changes only ${[...allowed].join(", ")}; land these first, under [Unreleased]:\n    ${others.join("\n    ")}`);
@@ -140,13 +156,40 @@ if (release) {
   if (left.length) errors.push(`retired-rules.json still says "Unreleased" for ${left.join(", ")}; a release numbers them ${version}`);
 }
 
+// rule-changes.json, where each rule's `changed` is kept (src/lib/rules.mjs): a release rewrites it with
+// scripts/rule-changes.mjs, and it must be exactly what that script writes from the base's file and this commit's
+// pages, so no rule changed in the batch keeps an older edition and none is dated by hand. Any other change leaves
+// it as the base has it: a rule changed since the release is told by its hash, not by an edit here. Two cases have
+// no file to compare with: an edition released before the file existed (neither commit has it), and the one change
+// that adds it, whose hashes must be those of the released edition's own pages.
+const record = readChanges();
+const baseRecord = JSON.parse(show(base, CHANGES) ?? "null");
+const recordText = (r) => changesText({ edition: r.edition, rules: r.rules ?? {}, retired: r.retired ?? [] });
+if (release && (record || baseRecord)) {
+  if (!baseRecord) errors.push(`this release adds ${CHANGES}; add it in a change of its own first, recorded for ${baseVersion}`);
+  else if (!record || recordText(record) !== changesText(freshChanges(baseRecord, rulesAt("HEAD"), version))) {
+    errors.push(`${CHANGES} is not fresh for ${version}: some rule's edition or hash is not what this release makes it; run node scripts/rule-changes.mjs`);
+  }
+} else if (!release && baseRecord) {
+  if (!record) errors.push(`this change removes ${CHANGES}, which records the edition each rule last changed in`);
+  else if (recordText(record) !== recordText(baseRecord)) {
+    errors.push(`this change edits ${CHANGES}; only a release does (scripts/rule-changes.mjs). A rule changed since ${baseRecord.edition} reads "next" without it`);
+  }
+} else if (!release && record) {
+  const at = tagCommit(version) || releaseCommits(base).get(version);
+  const then = at ? new Map(rulesAt(at).map((r) => [r.id, ruleHash(r)])) : new Map();
+  const off = [...new Set([...then.keys(), ...Object.keys(record.rules ?? {})])].filter((id) => record.rules?.[id]?.hash !== then.get(id));
+  if (record.edition !== version) errors.push(`${CHANGES} is added for ${record.edition}; it records the last release, ${version}`);
+  else if (off.length) errors.push(`${CHANGES} is added with hashes that are not ${version}'s rules as released: ${off.slice(0, 12).join(", ")}${off.length > 12 ? ` and ${off.length - 12} more` : ""}`);
+}
+
 if (!release) {
   const paths = ["src/content/docs", "pages.json", "src/assets/shots", "skills"];
   const changed = new Set(git("diff", "--name-only", base, "HEAD", "--", ...paths).split("\n").filter(Boolean));
   // A rule added, retired or re-leveled is what an edition is made of: no trailer says otherwise.
-  if (ruleChanges.length && pending === basePending) {
+  if (ruleChanges.length && !saysNew) {
     errors.push(
-      `the rules changed, but ## [Unreleased] in CHANGELOG.md says nothing new; describe the change there (an` +
+      `the rules changed, but ## [Unreleased] in CHANGELOG.md says nothing new (no line added); describe the change there (an` +
         ` "Edition: none" trailer covers format only, never a rule):\n    ${ruleChanges.join("\n    ")}`,
     );
   }
@@ -161,9 +204,9 @@ if (!release) {
     for (const f of git("diff-tree", "--no-commit-id", "--name-only", "-r", c, "--", ...paths).split("\n")) if (changed.has(f)) unwaived.add(f);
   }
   const content = [...unwaived].join("\n");
-  if (content && pending === basePending) {
+  if (content && !saysNew) {
     errors.push(
-      `these change what readers take as guidance, but ## [Unreleased] in CHANGELOG.md says nothing new; describe the` +
+      `these change what readers take as guidance, but ## [Unreleased] in CHANGELOG.md says nothing new (no line added); describe the` +
         ` change there, or, if it only changes format (typos, links, markup), add an "Edition: none" trailer (in the` +
         ` message's last paragraph, with its other trailers) to each commit that changes these:\n    ${content.split("\n").join("\n    ")}`,
     );
@@ -182,6 +225,8 @@ if (!release) {
   const again = "run node scripts/pin-references.mjs";
   if (pins?.edition !== version) {
     errors.push(`pins.json pins ${pins?.edition ?? "nothing"}; a release pins its References: ${again}`);
+  } else if (pins.date !== pkg.guidelines.date) {
+    errors.push(`pins.json is dated ${pins.date ?? "nothing"}, and the edition ${pkg.guidelines.date}; ${again}`);
   } else if (!pins.repos || typeof pins.repos !== "object" || Array.isArray(pins.repos)) {
     errors.push(`pins.json has no "repos" (repository -> commit); ${again}`);
   } else {
@@ -209,7 +254,11 @@ if (!release) {
   }
 }
 
-if (errors.length) {
+// With --tag, an edition already tagged at this very commit was checked when it was released, by the scripts of that
+// day; what a later version of this script asks more of a release is not asked of it again (the workflow's own
+// checks skip it the same way), or publishing it again after a failed deploy would stop here.
+const settled = tag && tags.has(version) && tagCommit(version) === git("rev-parse", "HEAD");
+if (errors.length && !settled) {
   console.error(`Edition check against ${base} failed:\n- ${errors.join("\n- ")}`);
   process.exit(1);
 }

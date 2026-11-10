@@ -130,16 +130,19 @@ read as one family: a lens, the field as the card's own text, the count, a regex
   match the search starts on. In a document (an editor, a console, a log) that is the first match at or after the
   caret as it was when the bar opened, so refining the query does not run away down the document. In a terminal it
   is the newest match at or above the bottom of the view, since a terminal is searched upward
-  ([FIND-06](#find-06)).
-  - *Check (code):* every match in view is painted while the bar is open, not only the active one. In a document the
+  ([FIND-06](#find-06)). A view that can draw one selection and nothing else, such as a log in a plain text area,
+  shows the active match alone, and the count ([FIND-02](#find-02)) says how many there are.
+  - *Check (code):* every match in view is painted while the bar is open, not only the active one, unless the view
+    can draw a single selection only. In a document the
     search starts from an anchor saved when the bar opens, not from the current selection; in a terminal, from the
     bottom row of the view.
   - *Reference:* Editora [`FindReplaceBar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/FindReplaceBar.java) (`searchAnchor`, `recompute`) over the editor. Over a terminal, Editora's
     [`terminal/TerminalView.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/terminal/TerminalView.java) (`startIndex`, `drawSearch`) and Termina's [`TerminalView`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalView.java) (`drawSearchMatches`)
     with [`ScrollbackSearch.initial`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/ScrollbackSearch.java). Editora's [`ConsoleFindBar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ConsoleFindBar.java) and the app template's
-    [`ui/DebugLogFindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DebugLogFindBar.java) don't yet: each selects the active match and paints no other, and searches from the
-    current selection (`refine`). The template's log is a `TextArea`, which draws one selection and nothing else, so
-    its bar meets the rule only once the log is shown in a view that can paint the matches.
+    [`ui/DebugLogFindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DebugLogFindBar.java) don't yet: each searches from the current selection (`refine`), not from an anchor saved
+    when the bar opened. Editora's console is a `CodeArea`, which could paint every match, and its bar paints the
+    active one only. The template's log is a `TextArea`, which draws one selection and nothing else, so its bar
+    rightly shows the active match alone.
 - **FIND-06 · MUST.** Enter steps to the next match and Shift+Enter to the previous one, wrapping around at the ends. In
   a terminal the directions are up and down the scrollback: Enter steps up to older output, Shift+Enter down.
   - *Check (code):* the query field's key handler steps forward on Enter and backward on Shift+Enter.

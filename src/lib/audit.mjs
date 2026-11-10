@@ -68,6 +68,7 @@ export function auditSchema(base) {
               description: "For a manual result: the app's pauta.json `checked` entry for this rule (Conformance, PAUTA-18), when it has one.",
               properties: {
                 edition: { type: "string", pattern: VERSION, description: "The edition the rule was checked against." },
+                version: { type: "string", description: "The app's own version at the check, where the entry records it." },
                 date: { type: "string", format: "date" },
               },
             },

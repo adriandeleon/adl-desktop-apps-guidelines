@@ -22,7 +22,7 @@ NullAway runs as an error on every package, each `@NullMarked` in its own `packa
     table.
   - *Reference:* Editora [`BuildHygieneTest.theCoverageFloorsQuotedInTheTestingGuideAreTheOnesTheBuildEnforces`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/packaging/BuildHygieneTest.java),
     [`docs/testing.md`](https://github.com/adriandeleon/Editora/blob/master/docs/testing.md).
-- **QUAL-05 · MUST.** Extract the decision, then test it ([principle 12](../principles/#for-the-people-building-them)).
+- **QUAL-05 · SHOULD.** Extract the decision, then test it ([principle 12](../principles/#for-the-people-building-them)).
   Prefer a pure decision helper plus unit tests; use the headless FX harness only when controller or toolkit
   behavior is the point.
   - *Check (code):* enablement, visibility and navigation rules sit in classes that import no `javafx` type, each

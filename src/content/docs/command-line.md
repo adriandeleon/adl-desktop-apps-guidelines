@@ -76,7 +76,10 @@ description: "The flags every app accepts and the single-instance hand-off."
     module and main class. The launcher's own `arguments=--headless` applies only when the person gives none (its
     [`CLAUDE.md`](https://github.com/adriandeleon/torrenta/blob/master/CLAUDE.md) says so), so `torrenta-nox --help`, `--version`, `--report` and an option it does not know reach
     `main` as typed, and `main` refuses the unknown option and answers the three flags before it looks for
-    `--headless` ([`App.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/App.java)). No other app has a `win-console` launcher or calls `AttachConsole`.
+    `--headless` ([`App.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/App.java)). No other app has a `win-console` launcher or calls `AttachConsole`. Mirada's
+    one Windows executable is its native image, copied over jpackage's launcher ([`native-app-image.sh`](https://github.com/adriandeleon/Mirada/blob/main/scripts/native-app-image.sh)); whether it prints in
+    the console depends on how that image is linked, which Mirada's files do not say, and no Windows run has
+    confirmed it.
 - **CLI-06 · SHOULD.** `[files…]` opens these items.
   - *Check (by hand):* launch with two files and find both open.
   - *Reference:* Editora [`App.fileTargets`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java).

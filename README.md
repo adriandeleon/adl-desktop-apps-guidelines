@@ -77,7 +77,7 @@ A rule is a list item that opens with its ID and level, `**KBD-07 · MUST.**`, f
 Guidance collects under *Unreleased* in `CHANGELOG.md` and is published in batches, as editions. Until then the batch
 can be read at [`/next/`](https://pauta-project.dev/next/), Pauta Next: not an edition, never cited, never archived.
 Every push to `master` is checked, built and deployed to GitHub Pages. When nothing waits under *Unreleased*, `master`
-is the current edition; while something does, the current edition is built from its release commit with `master`'s
+is the current edition; while something does, the current edition is built from the last commit before that batch began with `master`'s
 scripts, `master` is built into `/next/`, and CI tags and archives the current edition then if its own run didn't
 (`scripts/release-state.mjs`, `scripts/build-next.mjs`). The site carries every edition: the current one at `/latest/` and `/<version>/`, the
 earlier ones from the `versions` branch, where CI archives each edition it deploys, and CI tags each `v<version>`.

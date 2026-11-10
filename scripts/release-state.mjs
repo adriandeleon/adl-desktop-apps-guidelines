@@ -17,7 +17,9 @@
 //                       - empty, when something is pending and the edition is tagged and live, or tagged while the
 //                         site can't be asked (below).
 //   site=<sha>        the commit latest/ and <version>/ are built from, which every run on master deploys: HEAD when
-//                     nothing is pending, else the commit that released <version>
+//                     nothing is pending, else the last commit before the batch began: the commit that released
+//                     <version>, or a later one that left [Unreleased] empty, so a fix to the site alone made after
+//                     the release stays on the site while the next batch waits (`lastClean`)
 //   next=<sha>        HEAD when something is pending: next/ is built from it (scripts/build-next.mjs), else empty
 //   base=<sha>        what scripts/check-edition.mjs compares `publish` with: the release commit's first parent, or
 //                     $BEFORE (a push's previous master), or HEAD's first parent (a manual run)
@@ -52,8 +54,28 @@ const pkg = JSON.parse(readFileSync("package.json", "utf8"));
 const version = pkg.version;
 const pending = unreleased(readFileSync("CHANGELOG.md", "utf8")) !== "";
 const head = git("rev-parse", "HEAD");
+
+// The newest commit, from the one that released the edition onward along master's first parents, that still is that
+// edition: the same version, nothing under [Unreleased]. Each of them was deployed as the edition when it was pushed
+// (nothing was pending then, so HEAD was the site), and the first commit that starts the next batch ends the run.
+function lastClean(release) {
+  let clean = release;
+  for (const c of git("rev-list", "--first-parent", "--reverse", `${release}..HEAD`).split("\n").filter(Boolean)) {
+    let same;
+    try {
+      same = JSON.parse(git("show", `${c}:package.json`)).version === version && unreleased(git("show", `${c}:CHANGELOG.md`)) === "";
+    } catch {
+      same = false;
+    }
+    if (!same) break;
+    clean = c;
+  }
+  return clean;
+}
+
 if (process.argv.includes("--site")) {
-  const release = pending ? releaseCommits("HEAD").get(version) : head;
+  const found = pending ? releaseCommits("HEAD").get(version) : head;
+  const release = found && pending ? lastClean(found) : found;
   if (!release) {
     console.error(`no commit on HEAD's first-parent history carries ${version}`);
     process.exit(1);
@@ -100,14 +122,14 @@ if (pending) {
     console.error(`no commit on HEAD's first-parent history carries ${version}`);
     process.exit(1);
   }
-  site = release;
+  site = lastClean(release);
   const live = tagged ? await liveVersion() : null;
   if (tagged && live === version) {
     publish = "";
-    why = `${version} is tagged and live: serving it from ${release.slice(0, 7)}, and the batch under [Unreleased] at next/`;
+    why = `${version} is tagged and live: serving it from ${site.slice(0, 7)}, and the batch under [Unreleased] at next/`;
   } else if (tagged && live === null) {
     publish = "";
-    why = `${version} is tagged, and the site could not be asked whether it is live: publishing nothing new, serving it from ${release.slice(0, 7)}, and the batch under [Unreleased] at next/`;
+    why = `${version} is tagged, and the site could not be asked whether it is live: publishing nothing new, serving it from ${site.slice(0, 7)}, and the batch under [Unreleased] at next/`;
     // An annotation on the run, so "could not be asked" is seen and not only logged.
     console.error(`::warning title=Pauta ${version} may not be archived::${pkg.guidelines.url} could not be asked which edition is live, so ${version} was not archived again. This run deploys it; if the versions branch lacks ${version}/, the next release's run rebuilds it.`);
   } else {

@@ -98,7 +98,10 @@ edition but not their conformance.
   reading its changelog for new or stronger MUSTs, meeting them, then changing the number. An app at Partial names
   the edition it is working toward instead, and says so (ABOUT-09).
   - *Check (by hand):* audit the app against the MUSTs of the edition it names.
-  - *Reference:* no app yet.
+  - *Reference:* no app yet. Termina's About says "Built to Pauta 2.0.2" ([`pom.xml`](https://github.com/adriandeleon/Termina/blob/master/pom.xml), `pauta.version`), an edition
+    that already required a find bar in its Debug Log, the UI font on every scene and the command ids `help.about`
+    and `palette.show`, none of which it has. Mirada's says 4.0.1, which already required its settings in
+    `~/.mirada` on every OS.
 - **ABOUT-08 · MUST.** The edition has one source: a `pauta.version` property in `pom.xml`, which the build filters
   into the app's resources and the app reads from there, like its own version (`build-info.properties` and `AppInfo`
   in the app template). The README's Pauta badge and its "Built to" line name the same edition and change with it.

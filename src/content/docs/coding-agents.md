@@ -79,12 +79,13 @@ rule is:
   up to 4.5.0 link the apps' default branches.
 - **Names in a rule.** Some names in a rule's `text` are required as spelled, because a user, the docs or another tool
   finds the thing by that name: a command id, a catalog key, a chord, a command-line flag, an environment variable, a
-  property in `pom.xml` or `pauta.json`, and a file the repository must carry. For example `help.about`,
-  `palette.show`, `--config-dir`, `pauta.version` and `AGENTS.md`. A platform API the rule names
+  property in `pom.xml` or `pauta.json`, and a file the repository must carry, whether a document at its root or a
+  resource or tool configuration the rule names. For example `help.about`, `palette.show`, `--config-dir`,
+  `pauta.version`, `AGENTS.md`, `emacs.json`, `messages_<code>.properties` and `jreleaser.yml`. A platform API the rule names
   (`javafx.stage.Popup`, `SystemTray`, `Platform.setImplicitExit(false)`, `Future.get()`) is the requirement itself:
   the JDK and JavaFX spell it one way for every app. Any other name is how Editora spells it, and the app's equivalent
   meets the rule: a class, method or constant of the app's own code, a CSS file or style class, a branch or workflow
-  file, a config file's name.
+  file, a file the app writes as it runs (its config files).
 - **`why`** is `null` when the rule has no reason worth stating.
 - **`appliesTo`** is `null` for a rule that covers every app, unless its own text says otherwise. Otherwise it is the
   **Applies to** line its page or section opens with: "an app whose work goes on without its window" for the

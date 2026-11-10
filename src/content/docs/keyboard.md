@@ -67,8 +67,8 @@ Every other list choice (recent files, themes, keymaps, a setting's values) uses
 
 ## Keymaps
 
-- **KBD-09 · MUST.** Except in a terminal, Emacs and CUA keymaps ship as JSON resources, CUA with a `.mac.json`
-  variant where Cmd replaces Ctrl. A terminal's keys belong to the program it runs (`C-a`, `M-x` reach the shell), so
+- **KBD-09 · MUST.** Except in a terminal, Emacs and CUA keymaps ship as JSON resources, `emacs.json` and
+  `cua.json`, CUA with a `cua.mac.json` variant where Cmd replaces Ctrl. A terminal's keys belong to the program it runs (`C-a`, `M-x` reach the shell), so
   it ships one keymap of its own instead, `keymap.json` and `keymap.mac.json`, binding its commands to chords
   programs don't use: off macOS, never a plain `Ctrl` or `Alt` with a letter (`Ctrl+Shift+T`, not `Ctrl+T`).
   - *Why:* an Emacs keymap in a terminal would take the shell's own keys away from it: `Ctrl+W` deletes a word,

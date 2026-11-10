@@ -114,9 +114,10 @@ to write the report; an edition supplies only its rules. In short:
    check says. *Check (test)*: find the named test, or the app's equivalent, and confirm the build runs it.
    *Check (by hand)*: source can't settle it; report it as manual. Some names in a rule's statement are required as
    written: a command id, a catalog key, a chord, a command-line flag, an environment variable, a property in
-   pom.xml or pauta.json, and a file the repository must carry. A platform API the rule names (javafx.stage.Popup,
+   pom.xml or pauta.json, and a file the repository must carry (a document at its root, or a resource or tool
+   configuration the rule names: emacs.json, jreleaser.yml). A platform API the rule names (javafx.stage.Popup,
    SystemTray, Future.get()) is the requirement itself. Any other name (a class, method or constant of the app's
-   own code, a CSS file or style class, a branch or workflow file, a config file's name), and every name only a
+   own code, a CSS file or style class, a branch or workflow file, a file the app writes as it runs), and every name only a
    Check or Reference gives, is Editora's spelling, and the app's equivalent meets it.
 3. A rule applies to every app unless it is limited: its text names the apps it covers ("An app with user
    documents…"), its page or section opens with an **Applies to** line (\`appliesTo\` in rules.json), or it details a

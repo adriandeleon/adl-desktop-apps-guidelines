@@ -38,10 +38,12 @@ Editora (`../Editora`) is the reference implementation.
   in the running app; a name it gives is Editora's spelling, which an app's equivalent meets. In the statement, a
   name is required as spelled when a user, the docs or another tool finds the thing by it: a command id, a catalog
   key, a chord, a command-line flag, an environment variable, a property in `pom.xml` or `pauta.json`, a file the
-  repository must carry; so name one there only when every app must spell it so. A platform API a statement names
+  repository must carry, whether a document at its root or a resource or tool configuration the rule names
+  (`AGENTS.md`, `emacs.json`, `messages_<code>.properties`, `jreleaser.yml`); so name one there only when every app
+  must spell it so. A platform API a statement names
   (`javafx.stage.Popup`, `SystemTray`, `Future.get()`) is the requirement itself: the JDK and JavaFX spell it one
   way for every app. Any other name in a statement, a class, method or constant of the app's own code, a CSS file
-  or style class, a branch or workflow file, a config file's name, is Editora's spelling too: write it so it cannot
+  or style class, a branch or workflow file, a file the app writes as it runs (its config files), is Editora's spelling too: write it so it cannot
   be read as the requirement, "(Editora's `AsyncTestScope`)"),
   `*Command:*` (only under a `Check (code)`, and only when a shell command settles the whole
   check: one code span holding a POSIX `sh -c` command, run from the app's repository root, that exits 0 when the
@@ -114,9 +116,10 @@ Editora (`../Editora`) is the reference implementation.
   keep showing the code as it was at the release; the script fails when a linked path
   isn't there. Pages keep writing `blob/master`. **Version numbers** below says which part to raise, for the whole batch.
   While `[Unreleased]` holds anything, the checkout is not the edition its number names: CI builds `latest/` and
-  `<version>/` from the current edition's release commit (tagging and archiving it only if it isn't live yet) and
-  `master` into `next/`. The editions and their agent files change only when one is released, and a site-only fix
-  to a page, a component or a style reaches them with the next release too (a patch can carry one when the batch
+  `<version>/` from the last commit before the batch began (the current edition's release commit, or a later one
+  that changed only the site), tagging and archiving the edition only if it isn't live yet, and `master` into
+  `next/`. The editions and their agent files change only when one is released, and a site-only fix to a page, a
+  component or a style made once a batch waits reaches them with the next release too (a patch can carry one when the batch
   allows it); `next/` shows it at once. A fix to `scripts/` or to a library they import applies at once: CI keeps
   the run's own copy of `scripts/` and `src/lib` outside the checkout and runs the build, the checks and the
   downloads from there on the release commit (`PAUTA_ROOT` names the tree; the workflow's "Keep this run's scripts"
@@ -188,7 +191,7 @@ Editora (`../Editora`) is the reference implementation.
   --push` in every run that publishes an edition, so the edition just released joins it (a rebuild replaces the folder, so the
   current edition takes site-only fixes until the next one is released). Never edit that branch by hand. Every run on `master`
   deploys, and `scripts/release-state.mjs` says what: HEAD when `[Unreleased]` is empty; while it isn't, the current
-  edition built from its release commit (tagged and archived first if it isn't tagged and live yet, because its own
+  edition built from the last commit before the batch began (tagged and archived first if it isn't tagged and live yet, because its own
   run was canceled or failed) with `next/` from HEAD. GitHub cancels a run waiting in the deploy's concurrency group when a newer one queues, so an older edition
   can be skipped too; each run that publishes, and every pull request, finds those (`scripts/missing-editions.mjs`), rebuilds them from the commit
   that released them (`scripts/build-edition.sh`, pinned by `scripts/pin-dist.mjs`), deploys them and has the publish

@@ -52,9 +52,12 @@ reaches every menu command through the Command Palette, which lists them all ([K
     row that lays out its own nodes sets `setAccessibleText` on them.
   - *Reference:* Editora names its controls area by area
     ([`NamedControlsFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/NamedControlsFxTest.java)),
-    and sets each row's text on the macOS system menu bar. Its in-window rows, a `CustomMenuItem` that draws an icon,
-    a title and a chord ([`ui/MainMenuBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java)), carry no text yet, so a screen reader on Windows
-    reads nothing for them. No app has the test that sweeps every window yet.
+    and sets each row's text on the macOS system menu bar. Its in-window command rows, each a `CustomMenuItem` that draws an icon,
+    a title and a chord ([`ui/MainMenuBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java)), carry no text and no accessible text yet;
+    its submenus keep their own. No app has the test that sweeps every window for every focus-traversable node yet.
+    Termina's [`IconOnlyButtonsFxTest.java`](https://github.com/adriandeleon/Termina/blob/master/src/test/java/com/termina/ui/IconOnlyButtonsFxTest.java) comes nearest: it opens the main window, the menus, Settings and About and
+    fails an icon-only button with no name, and no other kind of control. Torrenta sets an accessible text once in
+    the whole app, and Modula never.
 - **ACC-02 · SHOULD.** A control the app builds from panes or draws itself says what it is and does what its role
   offers: `setAccessibleRole` with the role it acts as (`BUTTON`, `TOGGLE_BUTTON`, `LIST_VIEW`, `TREE_ITEM`), its
   state answered from `queryAccessibleAttribute` (selected, expanded, checked), `notifyAccessibleAttributeChanged`

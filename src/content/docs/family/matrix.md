@@ -75,7 +75,7 @@ differently, — not found.
 | An icon on every menu row | ◐ about half the menu bar | ◐ not the RSS menus | ◐ about half the menu bar | — | ● | — |
 | Chord beside each menu row, right-click menus included | ◐ menu bar only | ◐ menu bar and torrent menu | ◐ menu bar only | ● right-click menu | ● every menu | — |
 | Menu font set on `.context-menu` (Inter 14 px at the default zoom) | ● | — | ◐ root font only | ◐ size only | ● | — |
-| Right-click menu: one at a time, any outside press closes it | ● every window | ◐ stock auto-hide | ◐ terminal view | ◐ radio pane | ◐ stock auto-hide | — |
+| Right-click menu: one at a time, any outside press closes it | ● every window | ◐ stock auto-hide | ◐ terminal view, not the tab menus | ◐ radio pane, not the preset chips | ● viewer and bookmarks windows | — no right-click menu |
 | Icon-only buttons carry an accessible name | ◐ not the main toolbar | ● | ● `IconNames.name` | — tooltip only | ● `Icons.name` | ● by hand |
 | Toolbar tooltips show the command's chord | ● | ● | — no toolbar | — | ● | — |
 | Tab strip: unsaved and pinned states, drag to reorder, reopen closed | ● | — | ● pin, reorder, reopen | — | — | — |

@@ -35,7 +35,7 @@ title and chord come from the registry and the active keymap. Reference: Editora
 <span class="m-tb-gap"></span>
 <span class="m-tb-btn open"><svg><use href="#tb-find"/></svg><span class="pin out" style="left:5px;top:-24px">4</span></span>
 <span class="m-tb-btn"><svg><use href="#tb-palette"/></svg></span>
-<span class="m-tb-tail"><span class="m-tb-combo">Project: Editora ▾</span><span class="m-tb-btn"><svg><use href="#tb-settings"/></svg></span><span class="pin out" style="right:-26px;top:5px">6</span></span>
+<span class="m-tb-tail"><span class="m-tb-combo">Editora ▾</span><span class="m-tb-btn"><svg><use href="#tb-settings"/></svg></span><span class="pin out" style="right:-26px;top:5px">6</span></span>
 </div>
 <div class="m-tb-tabs"><span class="tab on">Main.java</span><span class="tab">pom.xml</span><span class="pin out" style="left:-26px;top:5px">5</span></div>
 <div class="m-tb-tip">Save (C-x C-s)<span class="pin out" style="right:-26px;top:3px">3</span></div>
@@ -60,6 +60,8 @@ title and chord come from the registry and the active keymap. Reference: Editora
 | Icon | The command's glyph, 17 px drawn (Torrenta) or a kit glyph at the toolbar scale (Editora); `-color-fg-muted`, `-color-fg-default` on hover, `-color-accent-fg` while `:open` | `Icons`, `.toolbar-icon`, `.icon-line`, `.button:open` |
 | Group gap | A vertical `Separator` with its line transparent; its 0.75 em padding is the gap | `.tool-bar .separator:vertical > .line` |
 | Tail | Its own container (`.toolbar-tail`), same insets and font as the bar, never overflowed | `ToolbarOverflowFxTest` |
+| Run controls | The run configuration combo, then Run, Debug and Stop, the bar's only state colors: the glyph in `-state-green`, `-state-accent` and `-state-red`; hidden in Simple mode and while there is nothing to launch | `.run-config-play`, `.run-config-bug`, `.run-config-stop`, `RunConfigToolbar.visible` |
+| Tail gaps | Blank `Region`s, no separators: 78 px (about three icons) before the project switcher, 40 px before Simple mode and Settings, 14 px before a badge | `WindowToolbar.appendFixedTail` |
 | Tooltip | `<title> (<chord>)`, the chord from `KeymapManager.displayChord`; only the title when unbound; radius 8 like the menus | `ToolbarCoordinator.buildExtraButton`, `ToolWindowManager.tooltipFor`, `.tooltip` |
 | Stripe button | A toolbar button on the tool window rail: min 24 px, padding 9 × 5, radius 6, 8 px apart on a 30 px rail; the same muted, hover and `:open` colors; the bottom stripe adds a 14 px label | `.tool-stripe-button`, `ToolWindowManager.register` |
 | Customize mode | The bar tinted `-color-accent-subtle`, a move cursor, the dragged button at 0.4 opacity, a 2 px accent insertion line on the drop target's edge | `.tool-bar.toolbar-customizing`, `.toolbar-drop-before` |
@@ -160,6 +162,53 @@ fields.
 - The toolbar's right-click menu follows the rules for every right-click menu:
   [MENU-06](../menus/#menu-06) and [MENU-07](../menus/#menu-07).
 
+## The main toolbar
+
+**Applies to:** an app with a main toolbar, the row of command buttons across the top of its window, as Editora's
+and Torrenta's are.
+
+The main toolbar reads left to right in two parts. The **icon cluster** holds the everyday commands in groups (in
+Editora: file, with Recent as a menu button; edit; find; split; the palette) and is the part that gives way: a narrow
+window moves its last icons into the `ToolBar`'s overflow chevron (`»`). The **pinned tail** sits beside it in a
+container of its own and keeps every control at any width. Editora's holds the run configuration selector with Run,
+Debug and Stop, the project switcher with Open Folder, a *snapshot* or *dev* badge when the build is one, and Simple
+mode and Settings at the end. A command the bar can lose to a narrow window goes in the cluster. One the user must
+always reach from the bar, or the way back out of a mode, goes in the tail.
+
+- **TBAR-15 · SHOULD.** The icon cluster and the pinned tail are separate containers: when the window narrows, the
+  cluster's icons go into the overflow chevron and the tail keeps every control.
+  - *Why:* a `ToolBar` overflows from its end, so with everything in one bar a narrow window hides Settings and the
+    project switcher first and keeps icons that are all in the menus anyway ([TBAR-08](#tbar-08)).
+  - *Check (test):* an FX test narrows the window and finds the cluster overflowing while the tail's last control
+    stays flush with the bar's right edge.
+  - *Reference:* Editora [`WindowToolbar.appendFixedTail`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowToolbar.java), [`ToolbarOverflowFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ToolbarOverflowFxTest.java). Torrenta keeps
+    Simple mode and Settings inside its `ToolBar`, after a spacer, so they are the first to overflow.
+- **TBAR-16 · SHOULD.** Settings closes the bar at its right end, with the Simple mode toggle just before it in an
+  app that has Simple mode, whether the mode is on or off.
+  - *Why:* the same two buttons in the same place in every app, and the toggle is the way back out of a mode that
+    empties much of the bar.
+  - *Check (by hand):* look at the bar's right end with Simple mode off, then on.
+  - *Reference:* Editora [`WindowToolbar.appendFixedTail`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowToolbar.java); Torrenta [`MainWindow.buildToolbar`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java).
+- **TBAR-17 · SHOULD.** A button is disabled while its command can't act (Save on a saved file, Undo with nothing to
+  undo, Cut and Copy with no selection, a split on a tab that can't be split), and the events that change that state
+  update it; nothing polls. [KBD-04](../keyboard/#kbd-04) has the same state in the menus and the palette.
+  - *Why:* a button that does nothing when clicked reads as a broken button.
+  - *Check (code):* each button's disabled state is bound to its command's availability, or refreshed from the
+    document's edit, selection and dirty events and on a tab switch.
+  - *Reference:* Editora [`WindowToolbar.refreshEditState`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowToolbar.java), `refreshSplitButtons` and `refreshPasteState`,
+    which reads the clipboard only on a tab switch, on focus and after a copy, never on a keystroke; the buttons
+    added from the catalog ([`ToolbarCoordinator.buildExtraButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolbarCoordinator.java)) stay enabled. Torrenta
+    [`MainWindow.toolButton`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java) binds each button's `disableProperty` to its command's `enabled`.
+- **TBAR-18 · SHOULD.** A command hides the toolbar and shows it again, and the choice is kept across launches.
+  - *Check (code):* a registered command toggles the bar, and the setting it writes is read back at startup.
+  - *Reference:* Editora `view.toggleToolbar` ([`WindowChromeCoordinator.toggleToolbar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowChromeCoordinator.java)), with a floating button at
+    the top right that brings a hidden bar back; Torrenta `toggle-toolbar`, kept as `settings.toolbar()`.
+- **TBAR-19 · SHOULD.** The bar keeps its height when a control in it hides or shows (the project switcher in Simple
+  mode or with Projects off), so the tabs and the content under it never move.
+  - *Check (by hand):* turn Simple mode on and off and watch the tab strip's top edge.
+  - *Reference:* Editora [`WindowToolbar.stabilizeToolbarHeight`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowToolbar.java), which pins the row's minimum height to the
+    project switcher's.
+
 ## Tool window stripes
 
 **Applies to:** an app with tool window stripes.
@@ -179,7 +228,7 @@ fields.
 
 - **Editora**: the customizable cluster, the pinned tail, the stripes.
 - **Torrenta**: the same [`Icons.toolbarButton`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/Icons.java) and [`Icons.name`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/Icons.java), 32 px buttons, Simple mode as `:on`; its separators
-  still draw a line.
+  still draw a line, and Simple mode and Settings sit inside the `ToolBar`, so a narrow window overflows them first.
 - **Mirada**: a `HeaderBar` title bar with flat icon buttons around the file name, stroked symbolic icons in the text
   color, tooltips of the form "label (key)" with the key read from the keymap; [`Icons.button`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Icons.java) and [`Icons.name`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Icons.java) set
   each button's tooltip and accessible text together, and the buttons are out of the Tab order.

@@ -59,6 +59,10 @@ launcher's JVM options with every other unknown one.
 - **The config read begun before the toolkit** ([PERF-16](../../performance/#perf-16)): Editora starts it in `main`
   and `start()` takes the result. Torrenta, Modula and nux load their settings inside `start()`; Termina reads them
   in `init()`, after the toolkit is up; Mirada's earlier read only happens in its native image.
+- **A pinned toolbar tail** ([TBAR-15](../../toolbars-and-tooltips/#tbar-15)): Torrenta keeps Simple mode and Settings
+  inside its `ToolBar`, so a narrow window overflows them before its icons.
+- **Toolbar buttons that follow their command** ([TBAR-17](../../toolbars-and-tooltips/#tbar-17)): the buttons Editora
+  adds from its catalog (Commit, Problems and the rest) stay enabled when their command can't act.
 - **Settings Sync** ([SYNC-01](../../templates/settings-sync/#sync-01)): Modula, Mirada and nux don't have it.
 - **The Message Log as an in-scene card** ([MLOG-08](../../templates/message-log/#mlog-08)): Termina's is a separate
   window keeping 500 entries, and Torrenta's card is 640 × 300, not 773 × 336.

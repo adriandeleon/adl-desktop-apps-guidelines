@@ -58,6 +58,13 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
   Torrenta take all three.
 - **TBAR-14 · SHOULD.** Every tooltip shows after the same 400 ms, set where the app makes its tooltips. Only
   Termina does; the others leave most at JavaFX's second.
+- **The main toolbar** gets a section on the Toolbars page: the icon cluster that overflows and the pinned tail that
+  never does, with five SHOULDs drawn from Editora's bar and Torrenta's. **TBAR-15**: the cluster and the tail are
+  separate containers, so a narrow window overflows the icons and keeps the tail (Torrenta's Simple mode and
+  Settings overflow first). **TBAR-16**: Settings closes the bar, Simple mode's toggle just before it. **TBAR-17**: a
+  button is disabled while its command can't act, updated by events. **TBAR-18**: a command hides the bar, and the
+  choice is kept. **TBAR-19**: the bar keeps its height when a control in it hides. The Spec table adds the run
+  controls and the tail's gaps.
 - **KBD-22 · SHOULD.** The focus ring's metrics, which three apps had agreed on with no rule: 2 px wide, just
   outside the control with a 1 px gap, taking no room in the layout. The template sets the ring's color only.
 

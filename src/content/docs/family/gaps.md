@@ -47,6 +47,10 @@ at.
   Editora has no `-v` and Mirada no short flags; Modula and nux have no flags at all.
 - **One tooltip delay** ([TBAR-14](../../toolbars-and-tooltips/#tbar-14)): only Termina sets 400 ms for all of
   them. Editora sets 350 or 400 ms on a few, Mirada 250 ms on one, and the rest show after JavaFX's second.
+- **A pinned toolbar tail** ([TBAR-15](../../toolbars-and-tooltips/#tbar-15)): Torrenta keeps Simple mode and Settings
+  inside its `ToolBar`, so a narrow window overflows them before its icons.
+- **Toolbar buttons that follow their command** ([TBAR-17](../../toolbars-and-tooltips/#tbar-17)): the buttons Editora
+  adds from its catalog (Commit, Problems and the rest) stay enabled when their command can't act.
 - **Settings Sync** ([SYNC-01](../../templates/settings-sync/#sync-01)): Modula, Mirada and nux don't have it.
 - **The Message Log as an in-scene card** ([MLOG-08](../../templates/message-log/#mlog-08)): Termina's is a separate
   window keeping 500 entries, and Torrenta's card is 640 × 300, not 773 × 336.

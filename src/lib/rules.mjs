@@ -252,8 +252,9 @@ export function absoluteLinks(markdown, pageUrl) {
   );
 }
 
-/** Where an edition lives: https://pauta-project.dev/2.0.0/ for package.json's url and version. */
-export function editionUrl(pkg, edition = pkg.version) {
+/** Where an edition lives: https://pauta-project.dev/2.0.0/ for package.json's url and version, or .../next/ while the
+ *  build is for the next/ folder (PAUTA_PATH, scripts/build-next.mjs). */
+export function editionUrl(pkg, edition = process.env.PAUTA_PATH === "next" ? "next" : pkg.version) {
   const url = new URL(pkg.guidelines.url);
   return `${url.origin}${url.pathname.replace(/\/?$/, "/")}${edition}/`;
 }

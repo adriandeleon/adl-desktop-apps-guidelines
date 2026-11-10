@@ -94,6 +94,10 @@ export function rulesSchema(base) {
       edition: { type: "string", pattern: VERSION },
       date: { type: "string", format: "date" },
       url: { type: "string", format: "uri", description: "The edition's address; every URL in the file is under it." },
+      next: {
+        type: "string",
+        description: "Only in next/: the rules waiting for the edition after `edition`, not an edition themselves. Never cite them or audit against them.",
+      },
       levels: { type: "object", additionalProperties: { type: "string" }, description: "MUST, SHOULD and MAY, and what each means." },
       checks: { type: "object", additionalProperties: { type: "string" }, description: "code, test and by hand, and how each is verified." },
       statuses: { type: "object", additionalProperties: { type: "string" }, description: "What an audit reports for a rule (audit.schema.json)." },

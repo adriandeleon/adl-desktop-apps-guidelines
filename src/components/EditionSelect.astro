@@ -1,13 +1,13 @@
 ---
 // The edition switcher: the edition this page belongs to, and the same page in any other one. The options are the
 // editions CHANGELOG.md knows at build time; public/versions.js adds those published since, so a page built long ago
-// still offers the newest edition. In the header on wide screens (SiteTitle.astro), in the menu on phones
+// still offers the newest edition, and next/ while a batch waits for its release. In the header on wide screens (SiteTitle.astro), in the menu on phones
 // (MobileMenuFooter.astro).
 import Select from "@astrojs/starlight/components/Select.astro";
 import pkg from "../../package.json";
 import text from "../../CHANGELOG.md?raw";
 import { parseEditions, released } from "../lib/editions.mjs";
-import { siteRoot, editionOf } from "../lib/site.mjs";
+import { siteRoot, editionOf, NEXT } from "../lib/site.mjs";
 
 const root = siteRoot(pkg);
 const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
@@ -16,6 +16,7 @@ const versions = released(parseEditions(text)).map((e) => e.version);
 if (!versions.includes(pkg.version)) versions.unshift(pkg.version); // bumped before its changelog section was written
 const options = [
   { value: "latest", label: `latest (${pkg.version})`, selected: here === "latest" },
+  ...(here === NEXT ? [{ value: NEXT, label: NEXT, selected: true }] : []),
   ...versions.map((v) => ({ value: v, label: v, selected: here === v })),
 ];
 ---

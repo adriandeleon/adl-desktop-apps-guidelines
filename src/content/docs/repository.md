@@ -52,6 +52,18 @@ filled in for a placeholder app, `ExampleApp`. `scripts/rename.sh <AppName> <pac
   - *Check (code):* `branding/` has an `.svg`; the `jpackage` icon paths in `pom.xml` point at the generated files.
   - *Reference:* Editora [`branding/editora-icon.svg`](https://github.com/adriandeleon/Editora/blob/master/branding/editora-icon.svg), with [`editora.png`](https://github.com/adriandeleon/Editora/blob/master/branding/editora.png), `.icns` and `.ico` beside it; the
     template keeps them in [`packaging/icons/`](https://github.com/adriandeleon/adl-desktop-app-template/tree/master/packaging/icons).
+- **REPO-11 · SHOULD.** Every script in `scripts/` is a Java source file the JDK runs as it is (`java
+  scripts/Name.java`, a compact source file or an ordinary class) or an `sh` or bash script.
+  - *Why:* every app already needs the JDK, and a Java script runs the same on Windows, macOS and Linux. A Python or
+    Node script makes every contributor and CI runner install a second toolchain for one step. A script that runs on
+    Windows is easier to keep in Java than in bash.
+  - *Check (code):* no file under `scripts/` is Python, JavaScript, TypeScript, Ruby, Perl, Groovy, Lua, PHP,
+    PowerShell or a batch file, and every shebang there names `sh`, `bash` or `java`. Data files beside the scripts
+    (fixtures, lists, templates) are not scripts.
+  - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; [ -d scripts ] || exit 0; bad=$(find scripts -type f | while IFS= read -r f; do if printf '%s\n' "$f" | grep -qE '\.(py|js|mjs|cjs|ts|rb|pl|ps1|bat|cmd|groovy|kts|lua|php)$'; then echo "$f"; continue; fi; l=$(head -n 1 "$f" | tr -d '\r'); if printf '%s\n' "$l" | grep -q '^#!'; then printf '%s\n' "$l" | grep -qE '^#! *(/usr)?/bin/(env +(-S +)?)?((ba|da)?sh|java)( |$)' || echo "$f: $l"; fi; done); [ -z "$bad" ] || { printf '%s\n' "$bad"; false; }`
+  - *Reference:* Editora [`scripts/`](https://github.com/adriandeleon/Editora/tree/master/scripts), whose Java
+    scripts have their own tests, run by [`scripts/lib/RunTests.java`](https://github.com/adriandeleon/Editora/blob/master/scripts/lib/RunTests.java)
+    ([`docs/testing.md`](https://github.com/adriandeleon/Editora/blob/master/docs/testing.md)).
 
 ![Editora's repository root on GitHub: branding, docs, AGENTS.md, CHANGELOG.md, CLAUDE.md, CONTRIBUTING.md, LICENSE, NOTICE, README.md and TODO.md, with the About sidebar](../../assets/shots/editora-github-root.png "Editora's repository root: every file on this page, with the homepage, Readme, MIT license and Contributing links GitHub derives from them.")
 

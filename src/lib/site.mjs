@@ -11,3 +11,7 @@ export function editionOf(base, root) {
   const slot = base.replace(/\/?$/, "/").slice(root.length).replace(/\/$/, "");
   return slot || "latest";
 }
+
+/** The folder of the batch waiting under CHANGELOG.md's [Unreleased], built from master by scripts/build-next.mjs. It
+ *  is not an edition: no number, no date, never archived, never cited; the site has it only while a batch waits. */
+export const NEXT = "next";

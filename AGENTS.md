@@ -8,7 +8,7 @@ Editora (`../Editora`) is the reference implementation.
 - `npm run dev` — local site at http://localhost:4321/ (one edition, at the root)
 - `npm run print` — builds `public/downloads/` (PDF + single Markdown); needs pandoc, python3 and Chrome
 - `npm run build` — the whole site into `dist/`: this edition at `latest/` and `<version>/`, every earlier edition
-  from the `versions` branch, the root redirects (see **Editions on the site**)
+  from the `versions` branch, `next/` (see **Pauta Next**), the root redirects (see **Editions on the site**)
 - `npm run preview` — serves `dist/` as deployed, at http://localhost:4321/
 - `npm run check` — fails on a malformed rule, a retired ID in use, a page missing from `pages.json`, a relative
   link that leads to no page, section, rule or screenshot, or a checklist line whose level isn't its rules'
@@ -105,10 +105,16 @@ Editora (`../Editora`) is the reference implementation.
   instead of `blob/master`, and this repository's own links its tag (`src/lib/pins.mjs`), so an edition's References
   keep showing the code as it was at the release; the script fails when a linked path
   isn't there. Pages keep writing `blob/master`. **Version numbers** below says which part to raise, for the whole batch.
-  While `[Unreleased]` holds anything, CI checks and builds `master` but deploys, tags and archives only the current
-  edition, from its release commit, and only if it isn't live yet: the checkout is not the edition its number names.
-  The site, `latest/` and the agent files change only when an edition is released, and a site-only fix waits for the
-  next release too (a patch can carry one when the batch allows it). A release changes only `package.json`,
+  While `[Unreleased]` holds anything, the checkout is not the edition its number names: CI builds `latest/` and
+  `<version>/` from the current edition's release commit (tagging and archiving it only if it isn't live yet) and
+  `master` into `next/`. The editions and their agent files change only when one is released, and a site-only fix
+  reaches them with the next release too (a patch can carry one when the batch allows it); `next/` shows it at once.
+  **Pauta Next** is `next/`: the batch under `[Unreleased]`, built from `master` by `scripts/build-next.mjs` on every
+  deploy while the batch waits, so it can be read before anyone decides to release it. It is not an edition: no
+  number or date, links into the apps at their default branch (no pins), `noindex`, a notice on every page and in its
+  agent files saying never to cite it or audit against it, never tagged or archived. `versions.json` names it as
+  `next` while it exists; with nothing pending, `next/` holds a redirect to `latest/` for every page. Don't release
+  to show a change: point at `next/` instead, and release when the batch is worth an app's move. A release changes only `package.json`,
   `CHANGELOG.md`, `retired-rules.json` and `pins.json`; the edition check fails it otherwise.
 - **Version numbers** (the Changelog page, `src/content/docs/changelog.mdx`, says the same for readers). Judge by
   the rules alone: what moving an app to the new edition costs. The largest change sets the number.
@@ -162,12 +168,14 @@ Editora (`../Editora`) is the reference implementation.
   and writes `versions.json`, the list every page reads (`public/versions.js`) to offer editions published after it
   and, on an earlier edition, to point at the latest. The header's switcher (`src/components/EditionSelect.astro`, in the
   phone menu through `MobileMenuFooter.astro`) and the footer link the same page in another edition; a numbered folder carries `noindex`, so search engines index `latest/`.
+  `next/` sits beside them while a batch waits (**Pauta Next**, above), from `master` with master's
+  `scripts/build-next.mjs`, which also adds it to `versions.json`.
   The `versions` branch holds one folder per published edition and nothing else: CI runs `scripts/archive-edition.sh
   --push` in every run that deploys, so the edition just deployed joins it (a rebuild replaces the folder, so the
-  current edition takes site-only fixes until the next one is released). Never edit that branch by hand. What a run
-  deploys is `scripts/release-state.mjs`'s call: HEAD when `[Unreleased]` is empty; while it isn't, the current
-  edition from its release commit if that edition isn't tagged and live yet (its own run was canceled or failed), else
-  nothing. GitHub cancels a run waiting in the deploy's concurrency group when a newer one queues, so an older edition
+  current edition takes site-only fixes until the next one is released). Never edit that branch by hand. Every run on `master`
+  deploys, and `scripts/release-state.mjs` says what: HEAD when `[Unreleased]` is empty; while it isn't, the current
+  edition built from its release commit (tagged and archived first if it isn't tagged and live yet, because its own
+  run was canceled or failed) with `next/` from HEAD. GitHub cancels a run waiting in the deploy's concurrency group when a newer one queues, so an older edition
   can be skipped too; each deploying run finds those (`scripts/missing-editions.mjs`), rebuilds them from the commit
   that released them (`scripts/build-edition.sh`, pinned by `scripts/pin-dist.mjs`), deploys them and has the publish
   job tag and archive them. The deploy waits for the publish job to succeed, and the publish job reads the build's

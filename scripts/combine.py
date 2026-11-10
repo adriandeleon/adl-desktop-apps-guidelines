@@ -4,12 +4,16 @@ from urllib.parse import urljoin
 from pathlib import Path
 
 order_file, docs_dir, today, version, site = sys.argv[1], Path(sys.argv[2]), sys.argv[3], sys.argv[4], sys.argv[5]
+# The folder the pages are served from and the version as printed: the version both times, or "next" and a label that
+# says the batch is unreleased (scripts/build-print.sh with PAUTA_PATH=next).
+folder = sys.argv[6] if len(sys.argv) > 6 else version
+label = sys.argv[7] if len(sys.argv) > 7 else version
 RAW = "https://raw.githubusercontent.com/adriandeleon/adl-desktop-apps-guidelines/master/src/assets/shots/"
 # The edition's pins (src/lib/pins.mjs says why): links into the apps' code at the commits recorded at its release,
 # this repository's at its tag. None when pins.json is for another edition.
 _pins_file = Path(order_file).parent / "pins.json"
 PINS = json.loads(_pins_file.read_text(encoding="utf-8")) if _pins_file.exists() else None
-if PINS and PINS.get("edition") != version:
+if PINS and (PINS.get("edition") != version or folder != version):
     PINS = None
 
 
@@ -24,7 +28,7 @@ def pin(text):
     return text.replace("raw.githubusercontent.com/adriandeleon/adl-desktop-apps-guidelines/master/",
                         f"raw.githubusercontent.com/adriandeleon/adl-desktop-apps-guidelines/v{PINS['edition']}/")
 groups = json.loads(Path(order_file).read_text(encoding="utf-8"))["groups"]
-EDITION = site.rstrip("/") + "/" + version + "/"
+EDITION = site.rstrip("/") + "/" + folder + "/"
 CODE = re.compile(r"(^ *```.*?^ *```|`[^`\n]*`)", re.M | re.S)
 LINK = re.compile(r"\]\((?!https?:|mailto:)([^)\s]+)\)")
 # An SVG <use href="#i-close"/> names a symbol drawn in the same document, so it stays as written.
@@ -67,7 +71,7 @@ print("`scripts/rename.sh <AppName> <package>`, then add any rule from a later e
 print("through the New app checklist.\n")
 print("**MUST** is a release blocker for a new app. **SHOULD** is expected unless the app has a stated reason.")
 print("**MAY** is a pattern worth copying when the app grows into it.\n")
-print(f"**Version {version} · {today}** · Web version: <{site}>\n")
+print(f"**Version {label} · {today}** · Web version: <{site}>\n")
 
 for group in groups:
     for slug in group["items"]:

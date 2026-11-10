@@ -13,6 +13,7 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { blankCode, parsePage, readRules } from "../src/lib/rules.mjs";
+import { NEXT } from "../src/lib/site.mjs";
 
 process.chdir(fileURLToPath(new URL("..", import.meta.url))); // not .pathname, which keeps a space as %20
 const { pages, retired, problems } = readRules();
@@ -89,8 +90,14 @@ for (const { file, slug, text } of docs) {
       if (!existsSync(join(dirname(file), target))) problems.push(`${at}: the image ${target} is not there`);
       continue;
     }
-    const url = new URL(target, `https://x/${slug === "index" ? "" : `${slug}/`}`);
-    const page = decodeURIComponent(url.pathname).replace(/^\/|\/$/g, "");
+    // Resolved inside a folder that stands for the edition's, so a link that climbs out of it is seen.
+    const url = new URL(target, `https://x/edition/${slug === "index" ? "" : `${slug}/`}`);
+    if (url.pathname === `/${NEXT}/`) continue; // Pauta Next, a folder beside the editions (scripts/build-next.mjs)
+    if (!url.pathname.startsWith("/edition/")) {
+      problems.push(`${at}: a link to "${target}", which leaves the edition's folder; only ${NEXT}/ lives beside it`);
+      continue;
+    }
+    const page = decodeURIComponent(url.pathname.slice("/edition".length)).replace(/^\/|\/$/g, "");
     const anchor = decodeURIComponent(url.hash.slice(1));
     if (RULE_ID.test(anchor)) {
       const id = anchor.toUpperCase();

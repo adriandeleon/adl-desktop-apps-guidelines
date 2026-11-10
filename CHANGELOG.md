@@ -34,6 +34,9 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
   differ.
 - *Same on every OS* gains the rows its "whole list" lacked: the macOS application menu, files opened from the OS,
   file associations, the Trash and high contrast. "Primary modifier" is "Keymap chords", for what KBD-21 allows.
+- **REPO-11** (SHOULD): every script in `scripts/` is a Java source file the JDK runs as it is or an `sh` or bash
+  script, as in Editora, so building and releasing an app needs no second toolchain. Mirada, Modula and Torrenta
+  each have Python scripts that don't meet it yet.
 
 ### Changed
 

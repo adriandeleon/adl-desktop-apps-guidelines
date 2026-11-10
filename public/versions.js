@@ -1,8 +1,9 @@
 // Every edition's pages carry this script with data-root (the site root), data-version (the edition the page belongs
-// to) and data-edition (the folder it is served from: "latest" or the version). It reads /versions.json, which
-// scripts/build-site.mjs writes on every deploy, so a page published long ago still knows the newest edition: it adds
-// the editions the page's switcher predates, and on an earlier edition shows a notice with the way to the same page in
-// the latest one. Without the file (astro dev) it does nothing.
+// to) and data-edition (the folder it is served from: "latest", the version, or "next"). It reads /versions.json,
+// which scripts/build-site.mjs writes on every deploy, so a page published long ago still knows the newest edition: it
+// adds the editions the page's switcher predates (and next/ while a batch waits for its release, which
+// scripts/build-next.mjs adds as `next`), and on an earlier edition or in next/ shows a notice with the way to the same
+// page in the latest one. Without the file (astro dev) it does nothing.
 (() => {
   const me = document.currentScript;
   if (!me) return;
@@ -21,6 +22,13 @@
       const latest = select.querySelector('option[value="latest"]');
       if (latest) latest.textContent = `latest (${data.latest})`;
       for (const option of [...select.options]) if (option.value !== "latest") option.remove();
+      if (data.next) {
+        const option = document.createElement("option");
+        option.value = "next";
+        option.textContent = "next";
+        option.defaultSelected = own === "next";
+        select.append(option);
+      }
       for (const v of data.versions) {
         const option = document.createElement("option");
         option.value = v.version;
@@ -54,11 +62,15 @@
     const box = document.createElement("div");
     box.className = "edition-notice";
     box.setAttribute("role", "status");
-    box.append(
-      `You are reading Pauta ${version}, an earlier edition. The latest is `,
-      Object.assign(document.createElement("strong"), { textContent: data.latest }),
-      ": ", a, ".",
-    );
+    const latest = Object.assign(document.createElement("strong"), { textContent: data.latest });
+    if (edition === "next") {
+      box.append(
+        "You are reading Pauta Next: changes waiting for the edition after ", latest, ". They are not an edition " +
+          "yet and may change before one is released. Apps are built and audited to a numbered edition: see ", a, ".",
+      );
+    } else {
+      box.append(`You are reading Pauta ${version}, an earlier edition. The latest is `, latest, ": ", a, ".");
+    }
     (document.querySelector("main") || document.body).prepend(box);
   };
 
@@ -67,7 +79,7 @@
     .then((data) => {
       if (!data || !Array.isArray(data.versions)) return;
       refreshSwitcher(data);
-      if (edition !== "latest" && version && data.latest !== version) notice(data);
+      if (edition === "next" || (edition !== "latest" && version && data.latest !== version)) notice(data);
     })
     .catch(() => {});
 })();

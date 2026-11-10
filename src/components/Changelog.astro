@@ -5,7 +5,7 @@ import { createMarkdownProcessor } from "@astrojs/markdown-remark";
 import pkg from "../../package.json";
 import text from "../../CHANGELOG.md?raw"; // bundled at build time, so the page needs no file at run time
 import { parseEditions, isVersion } from "../lib/editions.mjs";
-import { siteRoot } from "../lib/site.mjs";
+import { siteRoot, longDate } from "../lib/site.mjs";
 
 interface Props {
   /** Only the edition package.json names (the overview's What's new); otherwise every edition. */
@@ -39,8 +39,6 @@ for (const { version, date, body } of parseEditions(text)) {
 }
 const current = editions.find((e) => e.version === pkg.version) ?? editions.find((e) => e.date);
 const shown = latest ? (current ? [current] : []) : editions;
-const long = (d: string) =>
-  new Date(`${d}T00:00:00Z`).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
 ---
 
 <div class:list={["editions", { news: latest }]}>
@@ -61,7 +59,7 @@ const long = (d: string) =>
     latest ? (
       <section class="edition">
         <p class="edition-meta">
-          Edition <strong>{e.version}</strong>{e.date && <> · <time datetime={e.date}>{long(e.date)}</time></>}
+          Edition <strong>{e.version}</strong>{e.date && <> · <time datetime={e.date}>{longDate(e.date)}</time></>}
         </p>
         {e.groups.map((g) => (
           <p class="edition-summary">
@@ -76,7 +74,7 @@ const long = (d: string) =>
       <section class="edition" id={e.version.toLowerCase()}>
         <h2>
           <a href={`#${e.version.toLowerCase()}`}>{e.version}</a>
-          {e.date && <time datetime={e.date}>{long(e.date)}</time>}
+          {e.date && <time datetime={e.date}>{longDate(e.date)}</time>}
           {isVersion(e.version) && e.date && (
             <a class="browse" href={`${root}${e.version}/`}>Read this edition</a>
           )}

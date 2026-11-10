@@ -51,6 +51,15 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
   edition it was checked against and the date. 42 rules come back `manual` from every audit, and nothing told one
   a person had checked from one nobody had looked at. **PAUTA-04**, **PAUTA-09** and **PAUTA-10** follow, the
   audit skill reports each manual result's entry, and `audit.schema.json` has the field. No app has the list yet.
+- **CLI-12 · MUST.** An option the app does not know stops the launch with a message and exit status 2, and an
+  argument that starts with `-` is never taken for a file. The template, Termina and Torrenta do; Editora skips an
+  unknown option without a word, Mirada takes a single-dash one for a file, and Modula and nux read none.
+- **CLI-13 · SHOULD.** The same short flags everywhere: `-h` for help, `-v` and `-V` for the version. Termina and
+  Torrenta take all three.
+- **TBAR-14 · SHOULD.** Every tooltip shows after the same 400 ms, set where the app makes its tooltips. Only
+  Termina does; the others leave most at JavaFX's second.
+- **KBD-22 · SHOULD.** The focus ring's metrics, which three apps had agreed on with no rule: 2 px wide, just
+  outside the control with a 1 px gap, taking no room in the layout. The template sets the ring's color only.
 
 ### Changed
 
@@ -146,6 +155,28 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 - **TRAY-10**'s Check tests that nothing is posted while the window is in front, and asks that most events default
   to off only where there are several. Editora and Termina, with one event each, now meet it; Torrenta and nux
   post while focused.
+- **DIAG-10** asks for Check for Updates in the Help menu "where the app has one": nux, with no menu bar, has it in
+  its palette.
+- **CLI-07** names its exception: one instance per config folder, unless a launch asks for another with
+  `--new-instance` (CLI-03).
+- **REL-11** says "every download of every target" and points at Targets for which target gets which type; "on
+  every platform" asked for a `.deb` on arm64 that Editora's own release does not build.
+- **MENU-01** lets a row show the command's title without its category prefix, which the mockup already did.
+  **MENU-09** says `Shift+F10` is the chord on macOS too, and **MENU-17** covers a terminal, where a plain `F10`
+  goes to the program.
+- **OS-02** says its class names are the app's own, and that a class which only shows the OS's name asks the one
+  class for it. **WIN-04** asks its dialog helper for the stylesheet only: the UI font on every scene is ICON-01's,
+  and Editora's helper never attached it.
+- **WIN-01** reads "shown by default; the user may hide it" for "always present (it can be toggled)", and
+  **WIN-10** says what each mode shows. **TRAY-05** and **FIND-04** each wrote two apps' different behavior into one
+  rule, and each now picks one: with the tray setting off `--minimized` starts the window minimized, as in
+  Torrenta (nux shows it), and the find command run while the bar is open finds the next match, as in Editora
+  (Termina puts the caret back in the field).
+- **PAL-04** keeps what was its own, an empty query on every open; the rest repeated PAL-01 and PAL-02.
+- **KBD-07** names pickers in its statement, as its Check always did: the palette and every picker are in-scene
+  overlays, never a `Popup`. **QOPEN-02**, a SHOULD, said so for pickers and now links to it.
+- **REL-22** takes a version in the comment after a pinned action's SHA, never a branch name. Every app's pins
+  already do.
 
 ### Fixed
 
@@ -229,6 +260,28 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
   nothing new and warns on the run. `check-edition.mjs --tag` tags the commit that released the edition, not the
   commit the run is on, and refuses when it can't tell. A release's `pins.json` is checked whole: a full commit SHA
   for every repository the pages link into, and for no other. The scripts run from a path with a space.
+- **Checks that asked more or less than their rule**: OS-02 also catches a class that tells Windows apart by
+  `File.separatorChar` (seven more of Editora's do); PLAT-10's Command passes only when the job that runs
+  `spotless:check` neither builds nor tests; REL-22's reads `.github/actions` and wants a version-shaped comment;
+  KBD-02 accepts an id with a sub-area, where its pattern failed 38 of Editora's; and SET-01, SET-09, SET-12, SET-13,
+  SET-19, TABS-18, ABOUT-03, PWIN-06, PAUTA-07 and FIND-03 test what their statements say.
+- **Facts**: the menu bar mockup has Editora's eleven menus; the Settings Sync mockup no longer shows a state
+  Editora never shows; WIN-04's Reference says Editora's helper attaches the stylesheet only; KBD-03 names the
+  tests that walk the registry; FIND-13 and FIND-15 write their chords for macOS too. The literal 4.2.0 in the
+  About, Pauta window and Conformance examples is x.y.z, and `llms.txt` finds the edition where the audit skill
+  does.
+- **The site and the PDF.** The PDF's matrices carry "Yes", "Partly" and "No" as text under their dots, where a
+  search or a screen reader found empty cells, and the Shared features matrix fits the page: three apps' columns
+  were cut off. The checklist's ticks are kept per edition, where ticking a line in one edition ticked it in
+  every other; `latest/` starts a new edition from the ticks it held before. Dates read "November 9, 2026", in
+  the American order the rest of the guide uses. The published `changelog.md` no longer links *Unreleased* to a
+  comparison from 1.1.0.
+- **This repository has Dependabot**, for its GitHub Actions and npm packages, as REL-23 asks of the apps.
+- **An edition built again is built with the current scripts.** While a batch waits, CI builds the current edition
+  from its release commit, and every step then ran that commit's copy of `scripts/`, so a fix to the build made
+  after a release could not reach it. CI now keeps the run's own `scripts/` and `src/lib` outside the checkout and
+  runs them on the release commit; the pages, the agent files and the packages stay the edition's own. The
+  workflow also gives the loop that rebuilds skipped editions no standard input to swallow.
 
 ## [5.0.0] - 2026-11-09
 
@@ -971,7 +1024,3 @@ closes them. It is a minor: one rule is added and others now cover cases they le
 - **Repository documents screenshots**: Editora's repository root and the top of its README on GitHub.
 - **Web version on GitHub Pages** with search, light and dark themes, and PDF and single-Markdown downloads built
   in the same workflow.
-
-[Unreleased]: https://github.com/adriandeleon/adl-desktop-apps-guidelines/compare/v1.1.0...HEAD
-[1.1.0]: https://github.com/adriandeleon/adl-desktop-apps-guidelines/compare/v1.0.0...v1.1.0
-[1.0.0]: https://github.com/adriandeleon/adl-desktop-apps-guidelines/releases/tag/v1.0.0

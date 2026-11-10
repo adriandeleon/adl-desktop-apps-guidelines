@@ -83,8 +83,8 @@ The palette is an in-scene overlay in the window's root `StackPane`, over a fain
 
 ## Behavior
 
-- **PAL-04 · SHOULD.** The palette opens from the `palette.show` command, by its chord or a menu item, with an empty
-  query that lists every command.
+- **PAL-04 · SHOULD.** Every open starts with an empty query: the palette does not keep the last one, so it opens
+  on the whole list ([PAL-02](#pal-02)).
   - *Check (code):* `show` clears the field and filters on the empty query before the card appears.
   - *Reference:* Editora [`CommandPalette.show`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java).
 - **PAL-05 · SHOULD.** Typing filters the list, and the first *enabled* match is selected.

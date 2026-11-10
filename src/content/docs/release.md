@@ -64,8 +64,8 @@ Windows legs. Termina, Torrenta, Mirada, Modula and nux release none.
 
 ## Install methods
 
-- **REL-11 · MUST.** The GitHub release offers every download on every platform: the `.dmg`, `.msi`, `.deb`,
-  `.rpm`, `.AppImage` and `.tar.gz`, with checksums.
+- **REL-11 · MUST.** The GitHub release offers every download of every target: the `.dmg`, `.msi`, `.deb`,
+  `.rpm`, `.AppImage` and `.tar.gz`, with checksums. Which target gets which type is under [Targets](#targets).
   - *Check (code):* `jreleaser.yml` attaches each of these types.
   - *Reference:* Editora [`jreleaser.yml`](https://github.com/adriandeleon/Editora/blob/master/jreleaser.yml).
 - **REL-12 · SHOULD.** On macOS (Apple Silicon) the app installs with
@@ -191,11 +191,11 @@ The certificate renews before 2027-11-30; the Apple membership before 2027-10-31
     publishes needs the build legs, directly or through the signing and asset-check jobs.
 - **REL-22 · MUST.** Every workflow pins each third-party action to a commit SHA, with its version in a comment
   (`actions/setup-java@b843ebf… # v6.1.0`).
-  - *Check (code):* every `uses:` in `.github/workflows/` ends in a 40-character SHA and a comment naming its version
-    (`# vX.Y.Z`), or its branch when the action publishes no tag. The `v2` in Editora's and Torrenta's
-    `jreleaser/release-action … # v2` is a branch, not a tag: the SHA is that branch's head. The action does publish
-    tagged releases, and the template, Termina and Mirada pin 2.5.0.
-  - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; [ -d .github/workflows ] || { echo 'no .github/workflows'; exit 1; }; ! grep -rhE '^[[:space:]]*-?[[:space:]]*uses:' .github/workflows | grep -vE 'uses:[[:space:]]*\./' | grep -vE '@[0-9a-f]{40}[[:space:]]+#[[:space:]]*[^[:space:]]+'`
+  - *Check (code):* every `uses:` in `.github/workflows/`, and in a composite action under `.github/actions/` where
+    the repository has one, ends in a 40-character SHA and a comment naming its version (`# v6.1.0`, `# 2.5.0`, `# v2`), never a
+    branch such as `# main`. The `v2` in Editora's and Torrenta's `jreleaser/release-action … # v2` names that
+    action's `v2` line, whose head the SHA is; the template, Termina and Mirada pin its 2.5.0 release.
+  - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; [ -d .github/workflows ] || { echo 'no .github/workflows'; exit 1; }; ! grep -rhE '^[[:space:]]*-?[[:space:]]*uses:' .github/workflows .github/actions 2>/dev/null | grep -vE 'uses:[[:space:]]*\./' | grep -vE '@[0-9a-f]{40}[[:space:]]+#[[:space:]]*v?[0-9]'`
   - *Reference:* Editora [`.github/workflows/`](https://github.com/adriandeleon/Editora/tree/master/.github/workflows).
 - **REL-23 · MUST.** Dependabot updates `github-actions` and `maven` weekly.
   - *Check (code):* `.github/dependabot.yml` lists both ecosystems with `interval: weekly`.

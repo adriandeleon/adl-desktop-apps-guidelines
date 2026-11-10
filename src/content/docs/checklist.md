@@ -44,7 +44,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 [Same on every OS](../same-on-every-os/)
 
 - [ ] Every command, setting and window on Windows, macOS and Linux, with the same defaults; one the OS can't serve is disabled and says why · [OS-01](../same-on-every-os/#os-01)
-- [ ] One `Os` class reads `os.name`, and no other class does · [OS-02](../same-on-every-os/#os-02)
+- [ ] One `Os` class reads `os.name`, and no other class does or tells the OS apart another way · [OS-02](../same-on-every-os/#os-02)
 - [ ] A test runs as each OS and finds the same commands, menu rows and settings pages (SHOULD) · [OS-03](../same-on-every-os/#os-03)
 
 ## Code quality
@@ -74,7 +74,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 [Keyboard first](../keyboard/) · [Command Palette](../templates/command-palette/) · [Find bar](../templates/find-bar/)
 
 - [ ] One command registry: every action is a command with an id, its title and one-line description from the message catalogs, held by the parity test · [KBD-01](../keyboard/#kbd-01), [KBD-03](../keyboard/#kbd-03)
-- [ ] One Command Palette per window, `M-x` or `Ctrl+Shift+P`, an in-scene overlay (not a `Popup`) that lists every command · [KBD-05](../keyboard/#kbd-05), [KBD-07](../keyboard/#kbd-07), [PAL-01](../templates/command-palette/#pal-01), [PAL-02](../templates/command-palette/#pal-02)
+- [ ] One Command Palette per window, `M-x` or `Ctrl+Shift+P`, an in-scene overlay, as every picker is (never a `Popup`), that lists every command · [KBD-05](../keyboard/#kbd-05), [KBD-07](../keyboard/#kbd-07), [PAL-01](../templates/command-palette/#pal-01), [PAL-02](../templates/command-palette/#pal-02)
 - [ ] Emacs and CUA keymaps at least, each `.mac.json` variant binding the same commands, with user overrides on top · [KBD-09](../keyboard/#kbd-09), [KBD-21](../keyboard/#kbd-21), [KBD-11](../keyboard/#kbd-11)
 - [ ] A find bar in the scene wherever there is text to search, the Debug Log window included: searches as you type with a count, Enter and Shift+Enter step, Escape closes it; an app whose main content is a list filters it instead · [FIND-01](../templates/find-bar/#find-01), [FIND-02](../templates/find-bar/#find-02), [FIND-03](../templates/find-bar/#find-03), [FIND-06](../templates/find-bar/#find-06), [FIND-07](../templates/find-bar/#find-07)
 - [ ] One QuickOpen-style picker for every list choice (themes, keymaps, recent items, a setting's values), in the overlay host (SHOULD) · [QOPEN-01](../templates/quick-open/#qopen-01), [QOPEN-02](../templates/quick-open/#qopen-02)
@@ -84,6 +84,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 [Accessibility](../accessibility/)
 
 - [ ] Every control reachable with Tab and operable with Space or Enter, except controls whose command the keyboard reaches another way, and showing the focus ring when it has focus · [KBD-15](../keyboard/#kbd-15), [KBD-16](../keyboard/#kbd-16)
+- [ ] The focus ring 2 px wide, just outside the control, taking no room in the layout (SHOULD) · [KBD-22](../keyboard/#kbd-22)
 - [ ] A find-bar or filter control out of the Tab order only where a command does what it does · [FIND-16](../templates/find-bar/#find-16)
 - [ ] Every control a person can reach has an accessible name, rows drawn from graphics included · [ACC-01](../accessibility/#acc-01)
 - [ ] Custom controls state their role and state; canvas content is exposed to the screen reader (SHOULD) · [ACC-02](../accessibility/#acc-02), [ACC-03](../accessibility/#acc-03)
@@ -123,6 +124,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 
 - [ ] Icon-only buttons built by one helper that sets the tooltip and the accessible name (`Icons.button`, `Icons.name`) · [TBAR-01](../toolbars-and-tooltips/#tbar-01)
 - [ ] Toolbar buttons out of the Tab order; every tooltip names the command and its chord from the active keymap · [TBAR-02](../toolbars-and-tooltips/#tbar-02), [TBAR-03](../toolbars-and-tooltips/#tbar-03)
+- [ ] Every tooltip shown after the same 400 ms delay (SHOULD) · [TBAR-14](../toolbars-and-tooltips/#tbar-14)
 - [ ] The toolbar never holds the only way to an action · [TBAR-08](../toolbars-and-tooltips/#tbar-08)
 - [ ] Groups separated by spacing on one chrome band, no hairlines; a toggle wears `:open` while it is on (SHOULD) · [TBAR-04](../toolbars-and-tooltips/#tbar-04), [TBAR-06](../toolbars-and-tooltips/#tbar-06), [TBAR-07](../toolbars-and-tooltips/#tbar-07)
 
@@ -153,7 +155,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 
 - [ ] The tray is a StatusNotifierItem on Linux, with no AWT fallback, and AWT's `SystemTray` on Windows and macOS, and the app is fully usable without an icon · [TRAY-01](../tray-and-background/#tray-01), [TRAY-02](../tray-and-background/#tray-02)
 - [ ] Closing the window hides it only while an icon is up and the setting says so; the tray's Quit runs the app's one quit method and ends the program with the window hidden · [TRAY-03](../tray-and-background/#tray-03), [TRAY-04](../tray-and-background/#tray-04)
-- [ ] Start at login writes the OS's own entry (XDG autostart, LaunchAgent, `HKCU` Run), and `--minimized` comes up behind the icon (SHOULD) · [TRAY-05](../tray-and-background/#tray-05), [TRAY-06](../tray-and-background/#tray-06)
+- [ ] Start at login writes the OS's own entry (XDG autostart, LaunchAgent, `HKCU` Run), and `--minimized` comes up behind the icon, or minimized with the tray off (SHOULD) · [TRAY-05](../tray-and-background/#tray-05), [TRAY-06](../tray-and-background/#tray-06)
 
 [Notifications](../tray-and-background/#notifications) (for an app that sends desktop notifications, with a tray or without one)
 
@@ -187,6 +189,8 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 [Command line](../command-line/) · [Internationalization](../i18n/)
 
 - [ ] `--help`, `--version`, `--config-dir`, `--dev` and `--report`, which writes its file in the current folder · [CLI-01](../command-line/#cli-01), [CLI-02](../command-line/#cli-02), [CLI-05](../command-line/#cli-05)
+- [ ] An unknown option stops the launch with a message and exit status 2 · [CLI-12](../command-line/#cli-12)
+- [ ] `-h` for help, `-v` and `-V` for the version (SHOULD) · [CLI-13](../command-line/#cli-13)
 - [ ] On Windows, a console launcher (or an attached console) so the flags print · [CLI-11](../command-line/#cli-11)
 - [ ] Single instance per config folder · [CLI-07](../command-line/#cli-07)
 - [ ] Six message catalogs, each with every key, held by a parity test · [INTL-01](../i18n/#intl-01), [INTL-08](../i18n/#intl-08)
@@ -235,7 +239,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 - [ ] The CI workflow on every push to the default branch and every pull request: Format and Build & Test, both required checks · [REL-19](../release/#rel-19)
 - [ ] The release workflow on a version tag that matches the pom, with a `workflow_dispatch` dry run · [REL-21](../release/#rel-21)
 - [ ] A release cut only from a commit whose tests passed: the release workflow runs them, or its preflight reads CI's result · [REL-30](../release/#rel-30)
-- [ ] Every third-party action pinned to a commit SHA · [REL-22](../release/#rel-22)
+- [ ] Every third-party action pinned to a commit SHA, with its version in a comment · [REL-22](../release/#rel-22)
 - [ ] Dependabot for `github-actions` and `maven` · [REL-23](../release/#rel-23)
 - [ ] `permissions: contents: read` by default; write only in publishing jobs · [REL-24](../release/#rel-24)
 - [ ] `timeout-minutes` on every job that runs steps; superseded pull-request runs canceled · [REL-26](../release/#rel-26)

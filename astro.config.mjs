@@ -35,7 +35,11 @@ export default defineConfig({
       head: [
         { tag: "script", attrs: { src: at("lightbox.js"), defer: true } },
         { tag: "script", attrs: { src: at("mock-fit.js"), defer: true } },
-        { tag: "script", attrs: { src: at("checklist.js"), defer: true } },
+        // The checklist keeps its ticks per edition, so it is told which one the page belongs to.
+        {
+          tag: "script",
+          attrs: { src: at("checklist.js"), defer: true, "data-version": pkg.version, "data-edition": edition || "latest" },
+        },
         // Tells a page which edition it belongs to; reads /versions.json so an old page knows the newest one.
         {
           tag: "script",

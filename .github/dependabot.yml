@@ -1,0 +1,26 @@
+# Dependabot: weekly update pull requests for the GitHub Actions the workflow uses and for the site's npm packages,
+# as REL-23 asks of the apps. The actions are pinned to commit SHAs with the version in a trailing comment
+# (`uses: owner/action@<sha> # vX.Y.Z`); Dependabot rewrites both together.
+#
+# Its pull requests change no page, so the edition check asks nothing of them (scripts/check-edition.mjs). Nothing
+# here scans for vulnerabilities by itself: "Dependabot alerts" and "Dependabot security updates" are repository
+# settings.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      # Astro and Starlight release together; one pull request for the set keeps them in step.
+      astro:
+        patterns:
+          - "astro"
+          - "@astrojs/*"

@@ -1,14 +1,45 @@
 // Makes the New app checklist usable: the boxes can be ticked, the ticks are kept in this browser, and a line above
 // the first group counts them with a button to clear them. An item is remembered by its group and its text, so
 // rewording an item un-ticks only that item. Without storage the boxes still tick; they just are not kept.
+//
+// Ticks belong to an edition: latest/ and the numbered folder of the same edition share them (they are the same
+// pages), every other edition has its own, and next/ has its own, shared with no edition. The script tag carries
+// data-version and data-edition (astro.config.mjs). When latest/ moves to a new edition its list opens with the ticks
+// latest/ held before, copied once, so a reader working down the list keeps their place and the earlier edition keeps
+// its own record.
 (() => {
-  const KEY = "pauta.checklist.v1";
+  const me = document.currentScript;
+  const folder = me?.dataset.edition || "latest"; // "latest", a version, or "next"
+  const scope = folder === "next" ? "next" : me?.dataset.version || folder;
+  const key = (name) => `pauta.checklist.v2:${name}`;
+  const KEY = key(scope);
+  const LATEST = "pauta.checklist.latest"; // the edition latest/ last kept ticks for
+  const LEGACY = "pauta.checklist.v1"; // the one list every edition shared; pages published before this still use it
 
-  function load() {
-    try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch { return {}; }
-  }
+  // Every read and write is guarded: a private window or blocked storage throws on access.
+  const read = (name) => {
+    try { return localStorage.getItem(name); } catch { return null; }
+  };
+  const parse = (text) => {
+    try {
+      const state = JSON.parse(text || "{}");
+      return state && typeof state === "object" ? state : {};
+    } catch { return {}; }
+  };
   function save(state) {
-    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch { /* private window or blocked storage */ }
+    try {
+      localStorage.setItem(KEY, JSON.stringify(state));
+      if (folder === "latest") localStorage.setItem(LATEST, scope);
+    } catch { /* private window or blocked storage */ }
+  }
+  function load() {
+    const own = read(KEY);
+    if (own !== null || folder !== "latest") return parse(own);
+    // latest/ on an edition with no ticks yet: start from the ones latest/ held before, and keep the copy.
+    const before = read(LATEST);
+    const state = parse(before && before !== scope ? read(key(before)) : read(LEGACY));
+    if (Object.keys(state).length) save(state);
+    return state;
   }
 
   function setup() {
@@ -37,7 +68,7 @@
       <span class="count" aria-live="polite"></span>
       <span class="track" aria-hidden="true"><span class="fill"></span></span>
       <button type="button" class="reset">Clear ticks</button>
-      <span class="note">Ticks are kept in this browser only.</span>`;
+      <span class="note">Ticks are kept in this browser only, for ${folder === "next" ? "Pauta Next" : "this edition"}.</span>`;
     const firstHeading = content.querySelector("h2, .sl-heading-wrapper");
     firstHeading?.parentElement === content ? content.insertBefore(bar, firstHeading) : content.prepend(bar);
     const count = bar.querySelector(".count");

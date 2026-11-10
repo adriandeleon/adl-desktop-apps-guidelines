@@ -6,7 +6,7 @@ description: "The family's Sync settings page: keep user data the same on every 
 Keeps the user's data (snippets, templates, shortcuts, profiles, saved views) the same on every computer. No server
 and no account of ours: the store is a private Git repository the user owns.
 
-**Applies to:** an app with user data worth carrying between computers ([SYNC-01](#sync-01)).
+**Applies to:** an app with user data worth carrying between computers.
 
 ## Rules
 
@@ -49,7 +49,7 @@ them and does not state them again as rules.
 <div class="m-card2">
 <div class="m-setrow"><div class="m-grow"><div class="label">Repository <span class="pin">2</span></div><div class="note">The URL of a private Git repository, empty or already used by another of your computers.</div><div class="m-field" style="margin-top:6px"><span class="ph">git@github.com:you/editora-sync.git</span></div></div></div>
 <div class="m-setrow"><div class="m-grow"><div class="label">Branch</div><div class="note">The branch your synced files are kept on; main unless the repository also holds something else.</div></div><div class="m-field" style="width:90px">main</div><span class="m-btn primary">Connect</span><span class="m-btn">Create on GitHub…</span><span class="pin">3</span></div>
-<div class="m-setrow"><div class="m-grow"><div class="label">Status</div></div><span class="pin">4</span><span class="m-pill green">Connected · synced 3 min ago</span><span class="m-btn">Sync Now</span><span class="m-btn">Open Sync Folder</span></div>
+<div class="m-setrow"><div class="m-grow"><div class="label">Status</div></div><span class="pin">4</span><span class="m-pill amber">Not connected</span><span class="m-btn" aria-disabled="true">Sync Now</span><span class="m-btn">Open Sync Folder</span></div>
 </div>
 <div class="m-card2">
 <div class="m-setrow" style="padding-bottom:4px"><span class="m-subtle" style="font-size:11px;font-weight:600">What to sync</span><span class="pin">5</span></div>

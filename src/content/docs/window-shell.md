@@ -5,12 +5,14 @@ description: "Status bar, themes, title bar, dialogs, Welcome, About, window sta
 
 ![Editora's Welcome tab](../../assets/shots/editora-welcome.png "Editora's Welcome page: Start actions with their chords, Recent Projects, Recent Files and Customize.")
 
-- **WIN-01 · MUST.** A status bar is always present (it can be toggled). Its left side is the *echo area*: one line
-  of feedback for the last action, errors in red and warnings in amber. Clicking it opens the Message Log.
-  - *Check (code):* the echo label switches between an error and a warning style class, and its click handler runs
-    the Message Log command.
+- **WIN-01 · MUST.** The main window has a status bar, shown by default; the user may hide it. Its left side is the
+  *echo area*: one line of feedback for the last action, errors in red and warnings in amber. Clicking it opens the
+  Message Log.
+  - *Check (code):* the main window builds a status bar that is visible unless the user hid it; the echo label
+    switches between an error and a warning style class, and its click handler runs the Message Log command.
   - *Reference:* Editora [`ui/StatusBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusBar.java) (`status-echo-error`, `status-echo-warn`; a click runs
-    `view.messageLog`) and the [Message Log template](../templates/message-log/).
+    `view.messageLog`) and the [Message Log template](../templates/message-log/). Editora hides and shows the bar
+    with `view.toggleStatusBar` and a setting, and Zen mode hides it ([`ui/Chrome.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Chrome.java), `statusBar`).
 - **WIN-03 · MUST.** In an app with a menu bar, the menu bar sits in the title bar by default on Windows and Linux:
   JavaFX 27's `HeaderBar` with `StageStyle.EXTENDED` carries the menu, and a setting that starts on lets the user
   fall back to a decorated window. On macOS the menus are in the system menu bar (`useSystemMenuBar`), and the window
@@ -26,10 +28,13 @@ description: "Status bar, themes, title bar, dialogs, Welcome, About, window sta
     `StageStyle.EXTENDED` stage wherever JavaFX supports one, on macOS too. Its header holds the file name and
     buttons, the main menu's among them, and no menu bar; on macOS [`ui/MacMenus.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MacMenus.java) puts the menus in the system
     menu bar. Modula and nux have no menu bar.
-- **WIN-04 · SHOULD.** Native dialogs go through one helper that attaches the app stylesheet and the UI font.
-  - *Why:* a dialog is its own scene and inherits neither.
+- **WIN-04 · SHOULD.** Native dialogs go through one helper that attaches the app stylesheet. The UI font reaches
+  every scene, a dialog's included, by [ICON-01](../icons-and-color/#icon-01).
+  - *Why:* a dialog is its own scene and does not inherit the window's stylesheet.
   - *Check (code):* every `Alert` and `Dialog` the app builds passes through the helper.
-  - *Reference:* Editora [`ui/Dialogs.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Dialogs.java) ([`Dialogs.styled`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Dialogs.java)).
+  - *Reference:* Editora [`ui/Dialogs.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Dialogs.java) ([`Dialogs.styled`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Dialogs.java)), which attaches `app.css` only. The UI font reaches an
+    Editora dialog another way: [`App.installUiFont`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java) adds `ui-font.css` to every window's scene
+    ([ICON-01](../icons-and-color/#icon-01)).
 - **WIN-11 · MUST.** A dialog's buttons are in the same order on every OS, with Cancel to the left of every action, as
   the [Confirm dialog](../templates/confirm-dialog/) draws them (Cancel, Save and Discard where there are three:
   [CONF-05](../templates/confirm-dialog/#conf-05)): the dialog's `ButtonBar` gets one fixed order, never JavaFX's
@@ -109,10 +114,11 @@ description: "Status bar, themes, title bar, dialogs, Welcome, About, window sta
     Settings carries `Cmd+,`.
   - *Reference:* Mirada [`MacAppMenu.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/os/MacAppMenu.java), which adds About and Settings with `Cmd+,`. Termina's [`MacAppMenu.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MacAppMenu.java) adds About
     only; Editora, the app template and Torrenta add neither, and keep Settings in the File menu or the toolbar.
-- **WIN-10 · MAY.** Modes: Zen (no chrome), Simple (fewer menus for new users), Expert.
+- **WIN-10 · MAY.** The window has modes that change how much chrome it shows: Zen shows none, Expert keeps only
+  the menu bar and the status bar, and Simple shows fewer menus, for new users.
   - *Check (code):* each mode is a command, and one truth table decides which chrome each mode shows.
-  - *Reference:* Editora [`ui/WindowChromeCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowChromeCoordinator.java) (`toggleZen`, `applySimpleMode`) over the truth table in
-    [`ui/Chrome.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Chrome.java).
+  - *Reference:* Editora [`ui/WindowChromeCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowChromeCoordinator.java) (`toggleZen`, `toggleExpert`, `applySimpleMode`) over the truth
+    table in [`ui/Chrome.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Chrome.java), where Expert hides the toolbar, the tabs, the breadcrumb and the tool stripes.
 
 The rest of the window has its own pages. Light and dark themes switched at run time, the "follow the system" choice
 and what the state colors mean are [ICON-15](../icons-and-color/#icon-15), [ICON-16](../icons-and-color/#icon-16) and

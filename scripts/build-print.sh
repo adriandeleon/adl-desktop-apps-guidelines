@@ -3,7 +3,15 @@
 # Needs pandoc, python3, Google Chrome (or Chromium) and the npm packages (npm ci): CI installs pandoc, the runner image
 # has the others.
 set -euo pipefail
-cd "$(dirname "$0")/.."
+# The tree to print: this script's own checkout, or $PAUTA_ROOT when CI runs master's copy of the script on the
+# checkout of a released edition (.github/workflows/pages.yml, "Keep this run's scripts"). The helpers and the print
+# template are the ones beside this script: one tool, changed together, so a fix to the PDF's layout reaches an
+# edition built again. Everything they read is the tree's: package.json, pages.json, pins.json, the pages, the
+# screenshots, src/styles/templates.css (the mockups' stylesheet belongs with the pages that use it), public/icons
+# and node_modules (the fonts, sharp). PAUTA_ROOT is exported for the helpers that must find the tree themselves.
+tools=$(cd "$(dirname "$0")" && pwd)
+cd "${PAUTA_ROOT:-$tools/..}"
+export PAUTA_ROOT=$PWD
 out=public/downloads
 work=build/print
 mkdir -p "$out" "$work"
@@ -22,21 +30,21 @@ fi
 export PAUTA_PRINT_FOLDER=$folder
 
 # 1. One Markdown file, pages in pages.json order: each page's title becomes an H2, its headings move down a level.
-python3 -I scripts/combine.py pages.json src/content/docs "$today" "$version" "$site" "$folder" "$label" > "$out/adl-desktop-apps-guidelines.md"
+python3 -I "$tools/combine.py" pages.json src/content/docs "$today" "$version" "$site" "$folder" "$label" > "$out/adl-desktop-apps-guidelines.md"
 
 # 2. The screenshots as JPEG, for print only: Chrome embeds a PNG uncompressed and a JPEG as it is, so the PDF is a
 #    fraction of the size (scripts/print-shots.mjs).
 rm -rf "$work/shots"
-node scripts/print-shots.mjs src/assets/shots "$work/shots"
+node "$tools/print-shots.mjs" src/assets/shots "$work/shots"
 
 # 3. HTML for print (the masthead carries the title and intro, so the combined file's preamble is dropped). Fonts come
 #    from the site's own npm packages (node_modules), never the network.
 sed -n '/^## /,$p' "$out/adl-desktop-apps-guidelines.md" \
   | sed -E "s#https://raw.githubusercontent.com/adriandeleon/adl-desktop-apps-guidelines/[^/]+/src/assets/shots/([^)\" ]+)\.png#file://$PWD/$work/shots/\1.jpg#g" \
-  | pandoc -f gfm -t html5 --toc --toc-depth=2 --template=scripts/print-template.html \
+  | pandoc -f gfm -t html5 --toc --toc-depth=2 --template="$tools/print-template.html" \
       --variable fonts="file://$PWD/node_modules" \
       --metadata date="$today" --metadata version="$label" --metadata site="$site" --metadata title="Pauta" --no-highlight -o "$work/raw.html"
-python3 -I scripts/print-markup.py "$work/raw.html" "$work/guide.html" src/styles/templates.css
+python3 -I "$tools/print-markup.py" "$work/raw.html" "$work/guide.html" src/styles/templates.css
 
 # 4. PDF, with bookmarks from the headings.
 chrome=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser) || {

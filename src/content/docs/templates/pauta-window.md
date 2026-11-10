@@ -30,7 +30,7 @@ not apply, the ones it does differently on purpose, and the ones still pending. 
 - **PWIN-04 · MUST.** Every link opens a fixed address: the edition at `https://pauta-project.dev/<edition>/`, each
   rule ID at its address in that edition (the entry's `url`), never `latest/`. The edition's link, here and in
   About, runs the `help.pautaRules` command, so the palette reaches it too.
-  - *Why:* an app built to 4.2.0 answers to 4.2.0's rules; `latest/` moves on.
+  - *Why:* an app built to an edition answers to that edition's rules; `latest/` moves on.
   - *Check (code):* `help.pautaRules` is registered and builds the edition URL from `pauta.version`; rule links use
     each entry's `url`.
   - *Reference:* [ABOUT-06](../about/#about-06).
@@ -42,7 +42,9 @@ not apply, the ones it does differently on purpose, and the ones still pending. 
     Its `Kind` has three kinds, pending, deviation and not-applicable: it sorts those and cannot read `app-only` yet.
 - **PWIN-06 · SHOULD.** *Copy as text* copies the edition, the conformance and the list as Markdown, one line per exception,
   and leaves the window open; its label becomes "Copied".
-  - *Check (code):* the button sits in the content, not the button bar, like About's *Copy details*.
+  - *Check (code):* the button's handler copies the edition, the conformance and one line per exception as Markdown
+    and sets the button's label to the copied text (`pauta.copied`); the button sits in the content, not the button
+    bar, like About's *Copy details*, so pressing it can't close the window.
   - *Reference:* the app template's [`ui/PautaWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/PautaWindow.java) (`pauta.copy`, `pauta.copied`), built
     like Editora's About *Copy details*.
 - **PWIN-07 · SHOULD.** A *Conformance in the docs* link runs the `help.pautaDocs` command, which opens the app's
@@ -54,7 +56,7 @@ not apply, the ones it does differently on purpose, and the ones still pending. 
   - *Reference:* the app template's [`AppInfo.pautaDocsUrl()`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/AppInfo.java), registered as
     `help.pautaDocs` in [`ui/Commands.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Commands.java).
 - **PWIN-08 · SHOULD.** With no exceptions, the list's place says so in one line, "No exceptions: Mirada meets every
-  MUST and SHOULD of Pauta 4.2.0.", and the copy button still works.
+  MUST and SHOULD of Pauta x.y.z.", and the copy button still works.
   - *Check (by hand):* with an empty `exceptions` array, open the window.
   - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`ui/PautaWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/PautaWindow.java) (`pauta.none`).
 

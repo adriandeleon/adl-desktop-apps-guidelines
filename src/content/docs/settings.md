@@ -7,7 +7,8 @@ description: "The Settings window with search, live apply, versioned config and 
 
 - **SET-01 · MUST.** The Settings window opens from a palette command, bound to `Ctrl+,` (`Cmd+,` on macOS) in the
   CUA keymap.
-  - *Check (code):* a registered command opens Settings, and `cua.json` and `cua.mac.json` bind it.
+  - *Check (code):* a registered command opens Settings, and the CUA keymap binds it to `Ctrl+,` (`C-,` in
+    Editora's `cua.json`) and, on macOS, to `Cmd+,` (`Cmd-,` in `cua.mac.json`).
   - *Reference:* Editora `view.settings`, bound in [`keymaps/cua.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/cua.json) and [`cua.mac.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/cua.mac.json) (and in the VS Code and
     Sublime keymaps; IntelliJ's uses `C-M-s`).
 - **SET-02 · MUST.** The window has a sidebar of pages with icons on the left, the page on the right, and a search
@@ -77,7 +78,9 @@ keymap, a theme, a language), not when the developer could not decide.
     ([`config/Settings.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/Settings.java), `window`).
 - **SET-09 · MUST.** Every versioned file has a schema version, and each version has a `v → v+1` migration
   step. A purely additive field uses an identity step.
-  - *Check (code):* each store declares `SCHEMA_VERSION`, and the migrations have one step per version.
+  - *Check (code):* each versioned file's store declares its schema version (`SCHEMA_VERSION` in Editora) and the
+    file carries it, and the migrations hold one step for every version below the current one, an identity step
+    where the version only added a field.
   - *Reference:* Editora [`config/migration/ConfigMigrations.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/migration/ConfigMigrations.java), [`ConfigSchema.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/migration/ConfigSchema.java), [`ConfigMigrationsTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/config/migration/ConfigMigrationsTest.java).
 - **SET-10 · MUST.** A file newer than the running build is backed up to `<name>.v<n>.bak` and defaults load.
   - *Why:* an older build never clobbers a newer config.
@@ -111,9 +114,12 @@ keymap, a theme, a language), not when the developer could not decide.
     [`config/ConfigImport.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/ConfigImport.java) (`apply`) doesn't yet: an import writes `settings.json` and the zip's other files in place.
 - **SET-12 · MUST.** Export configuration writes a timestamped `.zip` of the config folder; Import restores from
   one.
-  - *Check (test):* tests over the zip's name and contents, and an import that replaces only the ticked parts.
-  - *Reference:* Editora [`config/ConfigExporter.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/ConfigExporter.java), [`config/ConfigImport.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/ConfigImport.java), [`ConfigExporterTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/config/ConfigExporterTest.java),
-    [`ConfigImportTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/config/ConfigImportTest.java).
+  - *Check (test):* a test finds the time of the export in the zip's name and the config folder's files among its
+    entries, and a test imports such a zip and finds its files restored.
+  - *Reference:* Editora [`config/ConfigExporter.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/ConfigExporter.java), [`config/ConfigImport.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/ConfigImport.java), [`ConfigExporterTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/config/ConfigExporterTest.java)
+    (`zipNameDropsLeadingDotAndEmbedsVersionUserTime`, `exportZipsAllFilesWithRelativeEntries`),
+    [`ConfigImportTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/config/ConfigImportTest.java) (`theTickedPartsReplaceTheirsHereAndNothingElseChanges`: Editora's import restores the parts the
+    user ticks).
 
 ## Secrets stay out of files
 
@@ -122,7 +128,9 @@ keymap, a theme, a language), not when the developer could not decide.
   off the FX thread. Where no keychain answers, as in a Linux session with no Secret Service, the secret is kept in
   memory for the session only and its row in Settings says so: it is never written to a file instead.
   - *Check (code):* no key or token field in the settings model; reads and writes go through the secret store, and
-    the store's fallback, for when no keychain answers, holds the secret in memory and writes no file.
+    every caller reaches it from a background thread, never from a handler on the FX thread; the store's fallback,
+    for when no keychain answers, holds the secret in memory and writes no file, and the secret's row in Settings
+    says when it is kept for the session only.
   - *Reference:* Editora [`secrets/SecretStore.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/secrets/SecretStore.java), [`config/ApiKeyVault.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/ApiKeyVault.java). Editora doesn't yet: [`Settings`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/Settings.java)
     keeps the AI keys as a fallback for when no keychain answers, and saving a key from Settings writes the keychain
     on the FX thread. Its Settings row does say which of the two holds the key. Torrenta uses no keychain: its proxy password, Torznab
@@ -158,7 +166,9 @@ Such an app offers sync, on its own Settings page, into a Git repository the use
   - *Reference:* Editora [`sync/SyncAccount.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/sync/SyncAccount.java), [`SyncAccountTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/sync/SyncAccountTest.java), [`ui/SettingsSyncPage.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsSyncPage.java).
 - **SET-19 · SHOULD.** Sync runs automatically (on change and at start) and on demand. Machine-local keys (window
   size, paths) never sync.
-  - *Check (code):* one pure class decides which keys or files travel, and machine-local ones are not among them.
+  - *Check (code):* a sync starts by itself after startup and after a local change, and a command starts one on
+    demand (`sync.now` in Editora); and no machine-local key or file (window size, a path) is among those the sync
+    sends to the repository.
   - *Reference:* Editora [`ui/SettingsSync.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsSync.java) (after startup, after a local change, on an interval, and
     `sync.now`), [`sync/SyncCategory.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/sync/SyncCategory.java); Torrenta [`sync/SyncKeys.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/sync/SyncKeys.java).
 - **SET-20 · SHOULD.** On a same-entry conflict *this machine wins*, and a backup is taken before any sync that

@@ -90,14 +90,23 @@ Everything else, and in particular:
     ([KBD-04](../keyboard/#kbd-04) for a command).
   - *Reference:* Editora [`ui/SettingsWindow.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsWindow.java) (the extended-window row, disabled on macOS
     "rather than hidden, so its note still explains why").
-- **OS-02 · MUST.** One class answers which OS the app runs on (`Os`, with `isWindows()`, `isMac()` and
-  `isLinux()`), and no other class reads the `os.name` property.
+- **OS-02 · MUST.** One class answers which OS the app runs on (called `Os` on this page, with `isWindows()`,
+  `isMac()` and `isLinux()`; the names are the app's own), and no other class reads the `os.name` property. A class
+  that only shows the OS's name, in About or a problem report, asks that class for it.
   - *Why:* checks scattered through the code are how apps drift apart on one OS without anyone choosing it. In one
     class, every difference can be found with one search, and a test can run the app as any OS
     ([OS-03](#os-03)).
-  - *Check (code):* `grep -rln '"os.name"' src/main/java` lists one file.
-  - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; n=$(grep -rl '"os.name"' src/main/java | wc -l); [ "$n" -eq 1 ] || { echo "$n files read os.name (one Os class should):"; grep -rl '"os.name"' src/main/java; false; }`
-  - *Reference:* no app yet. Every app reads `os.name` in several classes, Editora in about fifty; Editora's
+  - *Check (code):* `grep -rl '"os.name"' src/main/java` lists one file, the `Os` class, and no other file works out
+    the OS for itself. The Command also lists the files that compare `File.separatorChar` or `File.pathSeparatorChar`
+    with a character (`File.separatorChar == '\\'` for "is this Windows"), the other way Editora does it. A class that
+    only prints the name, in About or a problem report, reads the property too, so it is listed. A grep finds only
+    the spellings it is given: when the Command passes, still read for a test that stands in for the OS some other
+    way, such as a separator compared as a string or an environment variable only one OS sets.
+  - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; n=$(grep -rl '"os.name"' src/main/java | wc -l); s=$(grep -rlE "eparatorChar *[!=]= *'" src/main/java | wc -l); u=$(grep -rlE "\"os[.]name\"|eparatorChar *[!=]= *'" src/main/java | wc -l); [ "$n" -eq 1 ] && [ "$u" -eq 1 ] || { echo "$n files read os.name (one Os class should):"; grep -rl '"os.name"' src/main/java; echo "$s files compare a file or path separator with a character (only that class may):"; grep -rlE "eparatorChar *[!=]= *'" src/main/java; false; }`
+  - *Reference:* no app yet. Every app reads `os.name` in several classes, Editora in about fifty, and ten of
+    Editora's classes tell Windows apart by a separator, seven of them without reading `os.name`
+    ([`lsp/JavaRuntimes.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/lsp/JavaRuntimes.java),
+    [`dap/DapManager.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/dap/DapManager.java)). Editora's
     [`process/DesktopActions.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/process/DesktopActions.java) has the `Os` enum to start from.
 - **OS-03 · SHOULD.** Tests can run as any OS: the `Os` class takes an override, and one test asserts that the
   command ids, the menu bar's rows and the settings pages are the same for Windows, macOS and Linux.

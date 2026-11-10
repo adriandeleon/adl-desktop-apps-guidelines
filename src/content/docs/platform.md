@@ -48,10 +48,13 @@ description: "JDK, JavaFX, AtlantaFX, NullAway, Maven Wrapper, tests and coverag
   change in a Format job of its own ([REL-19](../release/#rel-19)).
   - *Why:* a check bound to a build phase fails in the same job as the tests, so the failed job does not say which
     of the two is wrong.
-  - *Check (code):* the spotless plugin configures `palantirJavaFormat`, and a job runs `spotless:check` in a
-    workflow that runs on pull requests. The plugin's `check` goal bound to a phase (`./mvnw verify`) does not meet
-    it alone.
-  - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; grep -q palantirJavaFormat pom.xml || { echo 'pom.xml configures no palantirJavaFormat'; exit 1; }; for f in .github/workflows/*.yml .github/workflows/*.yaml; do grep -qE '^[^#]*spotless:check' "$f" 2>/dev/null && grep -qE '^( *-? *|on:.*)pull_request' "$f" && exit 0; done; w=$(grep -lE '^[^#]*spotless:check' .github/workflows/* 2>/dev/null); echo "no workflow with a pull_request trigger runs spotless:check (named in: ${w:-no workflow})"; exit 1`
+  - *Check (code):* the spotless plugin configures `palantirJavaFormat`, and in a workflow that runs on pull
+    requests a job runs `spotless:check` and neither builds nor tests: no Maven `verify`, `test`, `package` or
+    `install` in the same job. The plugin's `check` goal bound to a phase (`./mvnw verify`) does not meet it alone.
+    The Command reads a workflow line by line, not as YAML: a job is what lies between two keys at the indentation
+    of the first key under `jobs:`, and a Maven run counts when its goal is on the line that names `mvn` or `mvnw`.
+    A goal on a continuation line, or a build started from a script, it does not see.
+  - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; grep -q palantirJavaFormat pom.xml || { echo 'pom.xml configures no palantirJavaFormat'; exit 1; }; for f in .github/workflows/*.yml .github/workflows/*.yaml; do grep -qE '^( *-? *|on:.*)pull_request' "$f" 2>/dev/null || continue; i=$(sed -n '/^jobs:/,$p' < "$f" | grep -E '^ +[A-Za-z0-9_-]+:' | head -n 1 | sed -n 's/^\( *\).*/\1/p'); for s in $(grep -nE '^[^#]*spotless:check' "$f" | cut -d: -f1); do a=0; b=999999; for h in $(grep -nE "^$i[A-Za-z0-9_-]+:" "$f" | cut -d: -f1); do if [ "$h" -le "$s" ]; then a=$h; elif [ "$b" -eq 999999 ]; then b=$h; fi; done; m=; for t in $(grep -nE '^[^#]*mvnw?(\.cmd)?[[:space:]](.*[[:space:]])?(verify|test|package|install)([[:space:]]|$)' "$f" | cut -d: -f1); do [ "$t" -ge "$a" ] && [ "$t" -lt "$b" ] && m="$m $f:$t"; done; [ -z "$m" ] && exit 0; echo "spotless:check at $f:$s shares its job with a build or test run:$m"; done; done; w=$(grep -lE '^[^#]*spotless:check' .github/workflows/* 2>/dev/null); echo "no job of its own runs spotless:check in a workflow with a pull_request trigger (named in: ${w:-no workflow})"; exit 1`
   - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml) (spotless plugin), [`.github/workflows/ci.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/ci.yml) (the `format` job, *Format*); the
     template, Termina and Mirada have the same job in their `ci.yml`. Torrenta and Modula do not yet: their `test`
     job runs `./mvnw verify`, the phase the check is bound to, and no job runs `spotless:check`. nux has no Spotless.

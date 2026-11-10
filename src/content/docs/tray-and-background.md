@@ -10,9 +10,10 @@ are earlier copies of it with their own menus: on Linux both fall back to the AW
 fails, and `Trays.create` returns a tray or nothing, with no reason (nux [`tray/Trays.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/tray/Trays.java), Modula [`tray/Trays.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/tray/Trays.java)).
 Only Torrenta has `Trays.Attempt`, the reason and no fallback. nux's [`TrayController`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/app/TrayController.java) holds the close policy.
 
-**Applies to:** an app whose work goes on without its window, as Torrenta's, Modula's and nux's does. For the others
-(Editora, Termina, Mirada) a tray is MAY, none has one, and only [Notifications](#notifications) applies, to an app
-that sends them.
+**Applies to:** an app whose work goes on without its window, as Torrenta's, Modula's and nux's does.
+
+For the others (Editora, Termina, Mirada) a tray is optional and none has one. Only [Notifications](#notifications)
+applies to them, and only to an app that sends them.
 
 ## The icon and its menu
 
@@ -101,11 +102,14 @@ icons and chords do not apply here. The order does.
     [`ModulaApp.quit`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ModulaApp.java) and nux's calls `Platform.exit` ([`App`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/App.java)), as its `app.quit` command does; neither closes open dialogs
     first or catches macOS's Quit.
 - **TRAY-05 · SHOULD.** `--minimized` comes up behind the icon. The window is never shown until the tray attempt
-  has answered; if no icon comes, the window is shown after all. With the tray setting off, Torrenta starts
-  minimized instead and nux ignores the flag.
-  - *Why:* a start at login can then never leave a program with no way back.
-  - *Check (code):* a `--minimized` start shows the window when the tray attempt returns none.
-  - *Reference:* Torrenta [`MainWindow.show`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java), nux's [`App`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/App.java).
+  has answered; if no icon comes, the window is shown after all. With the tray setting off there is no icon to wait
+  for, and the window starts minimized.
+  - *Why:* a start at login can then never leave a program with no way back, and never puts a window in front of
+    someone who asked for none.
+  - *Check (code):* a `--minimized` start shows the window when the tray attempt returns none, and starts it
+    minimized when the tray setting is off.
+  - *Reference:* Torrenta [`MainWindow.show`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java), nux's [`App`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/App.java). With the tray setting off neither tries for an icon:
+    Torrenta starts with its window minimized, and nux doesn't yet: it ignores the flag and shows the window.
 - **TRAY-06 · SHOULD.** Start at login writes the OS's own entry, and nothing else: an XDG autostart entry in
   `~/.config/autostart` (quoted `Exec`, `StartupWMClass` matching the installed launcher,
   `X-KDE-autostart-after=panel` so a tray host is up first), a LaunchAgent in `~/Library/LaunchAgents`, the

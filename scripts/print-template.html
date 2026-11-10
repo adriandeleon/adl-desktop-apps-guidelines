@@ -114,6 +114,12 @@ table.matrix td:first-child { min-width: 240px; }
 .s-part::before { background: linear-gradient(90deg, var(--amber) 50%, transparent 50%); border: 1.5px solid var(--amber); width: 7px; height: 7px; }
 .s-no::before { background: transparent; border: 1.5px solid var(--rule); width: 7px; height: 7px; }
 .s-yes, .s-part, .s-no { justify-content: center; }
+/* The dot's meaning as text ("Yes", "Partly", "No"; scripts/print-markup.py). Chrome prints transparent text as
+   invisible text that a search, a copy and pdftotext still read; text that is clipped, opacity 0 or font-size 0 never
+   reaches the PDF. It sits over the dot and ends at its right edge, in the note's own size, so the page looks the
+   same and a line reads "Yes: Primer". */
+.s { position: relative; }
+.s .said { position: absolute; right: calc(100% - 10px); top: 0; color: transparent; white-space: pre; transform: scaleX(0.4); transform-origin: right; }
 
 .lvl { font-family: var(--font-mono); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; padding: 1px 7px; border-radius: 4px; white-space: nowrap; }
 .lvl-must { background: var(--caret-soft); color: var(--caret); }
@@ -146,6 +152,8 @@ footer.colophon { max-width: 1180px; margin: 0 auto; padding-block: 24px 48px; c
   tr, pre { break-inside: avoid; }
   .table-wrap { overflow: visible; }
   table.matrix td:first-child { min-width: 0; }
+  /* A note wraps on paper: kept on one line, the notes of Shared features push Modula, Mirada and nux off the page. */
+  table.matrix td:not(:first-child) { white-space: normal; }
   a { color: var(--ink); text-decoration: none; }
 }
 figure.shot { margin: 18px 0; break-inside: avoid; }

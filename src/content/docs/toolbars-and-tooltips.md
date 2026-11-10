@@ -85,6 +85,14 @@ title and chord come from the registry and the active keymap. Reference: Editora
     and [`ToolWindowManager.tooltipFor`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolWindowManager.java); Torrenta's `toolbar.withChord`. Mirada's [`Icons.tooltip`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Icons.java) builds the same
     "label (key)" form with the chord from the keymap in use ([`Command.chord`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Command.java)), and [`TitleBar.relabel`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/TitleBar.java) names the
     header buttons again when the keys change; Termina's [`IconNames.withChord`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/IconNames.java) takes the chord from its keymap too.
+- **TBAR-14 · SHOULD.** Every tooltip shows after the same delay, 400 ms, set where the app makes its tooltips and
+  not tooltip by tooltip.
+  - *Why:* JavaFX waits a full second, which reads as no tooltip at all on a row of icons, and a delay set here and
+    there makes some buttons answer faster than their neighbors.
+  - *Check (code):* the helper that builds a tooltip ([TBAR-01](#tbar-01)) sets its show delay to 400 ms, and no
+    other code sets a different one.
+  - *Reference:* Termina [`ui/IconNames.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/IconNames.java) (`SHOW_DELAY`). Editora sets 350 or 400 ms on a few tooltips of its own and leaves
+    the rest at JavaFX's second; Mirada sets 250 ms on one; the others set none.
 - **TBAR-06 · SHOULD.** One chrome band: the menu bar, the toolbar and the tab strip share `-color-bg-subtle` and
   draw no hairline between them; the breadcrumb, the bottom stripe and the status bar do the same at the bottom.
   - *Why:* three rules within forty pixels read as clutter, not structure.

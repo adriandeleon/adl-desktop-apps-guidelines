@@ -12,7 +12,13 @@ def cell(m):
     for glyph, cls, label in (("●", "s-yes", "Yes"), ("◐", "s-part", "Partly"), ("—", "s-no", "No")):
         if body.startswith(glyph):
             note = body[len(glyph):].strip()
-            return f'<td{attrs}><span class="s {cls}" title="{label}">{note}</span></td>'
+            # The dot is drawn in CSS, so the state is also written as text the page does not show (.said in
+            # scripts/print-template.html): the PDF then says "Yes", "Partly" or "No" to a search, a copy, a screen
+            # reader and pdftotext, as the site's hidden text does (src/lib/rehype-status.mjs).
+            said = f'<span class="said">{label}: </span>' if note else f'<span class="said">{label}</span>'
+            # The note is one box beside the dot, so a note with code in it wraps as a sentence does.
+            note = f'<span class="note">{note}</span>' if note else ""
+            return f'<td{attrs}><span class="s {cls}" title="{label}">{said}{note}</span></td>'
     return m.group(0)
 
 # Status dots only in a feature matrix (a table whose header names the apps); elsewhere "—" stays a dash.
@@ -34,7 +40,10 @@ s = re.sub(r"<strong>([A-Z]{2,6}-\d{2,3}) · (MUST|SHOULD|MAY)\.</strong>",
 
 # Links into this edition (scripts/combine.py made every page's relative links absolute) lead to the PDF's own pages:
 # the rule or section when it is on that page, else the page's heading. Each page is an <h2>, in pages.json order.
-ROOT = Path(__file__).resolve().parent.parent
+# The tree whose guide is printed: scripts/build-print.sh names it in PAUTA_ROOT, which is this script's own checkout
+# unless CI runs master's copy on the checkout of a released edition. Its package.json, pages.json and public/ are
+# read, never the ones beside this script.
+ROOT = Path(os.environ.get("PAUTA_ROOT") or Path(__file__).resolve().parent.parent).resolve()
 pkg = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
 EDITION = pkg["guidelines"]["url"].rstrip("/") + "/" + (os.environ.get("PAUTA_PRINT_FOLDER") or pkg["version"]) + "/"
 slugs = [slug for g in json.loads((ROOT / "pages.json").read_text(encoding="utf-8"))["groups"] for slug in g["items"]]
@@ -96,7 +105,7 @@ def para(m):
 s = re.sub(r"<p>(.*?)</p>", para, s, flags=re.S)
 
 # Each app's icon beside its name in table headers and bold row labels.
-ICONS = (Path(__file__).resolve().parent.parent / "public" / "icons").as_uri()
+ICONS = (ROOT / "public" / "icons").as_uri()
 APPS = {"Editora": "editora", "Torrenta": "torrenta", "Termina": "termina", "Modula": "modula", "Mirada": "mirada", "nux": "nux"}
 def icon(app):
     return f'<img class="app-icon" src="{ICONS}/{APPS[app]}.svg" alt="" />'
@@ -104,7 +113,7 @@ s = re.sub(r"<th([^>]*)>(" + "|".join(APPS) + r")</th>", lambda m: f"<th{m.group
 s = re.sub(r"<td([^>]*)><strong>(" + "|".join(APPS) + r")</strong></td>", lambda m: f"<td{m.group(1)}><strong>{icon(m.group(2))}{m.group(2)}</strong></td>", s)
 # Paths into public/ (site-absolute under the base, or relative such as ../../icons/) point at the files for the
 # file:// print.
-PUBLIC = (Path(__file__).resolve().parent.parent / "public").as_uri()
+PUBLIC = (ROOT / "public").as_uri()
 s = s.replace('src="/adl-desktop-apps-guidelines/', f'src="{PUBLIC}/')
 s = re.sub(r'src="(?:\.\./)+icons/', f'src="{PUBLIC}/icons/', s)
 # The template mockups' stylesheet.

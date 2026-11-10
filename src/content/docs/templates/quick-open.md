@@ -19,7 +19,8 @@ this page; the rest is the shape.
     merge parent to revert against ([`ui/GitWindowCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/GitWindowCoordinator.java)), and the settings backup to restore
     ([`ui/SettingsResetFlow.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsResetFlow.java)).
 - **QOPEN-02 · SHOULD.** The picker is the palette's card in the shared in-scene overlay host, with a title naming the
-  command over the field and a prompt in the field; never a `javafx.stage.Popup`.
+  command over the field and a prompt in the field. That it is never a `javafx.stage.Popup` is
+  [KBD-07](../../keyboard/#kbd-07).
   - *Check (code):* the picker shows its card through the overlay host and sets a title and a prompt text.
   - *Reference:* Editora [`QuickOpen.setOverlayHost`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java), [`ui/OverlayHost.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java); the page's [Spec](#spec).
 

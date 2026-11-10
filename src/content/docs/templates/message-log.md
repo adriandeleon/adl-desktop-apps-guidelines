@@ -18,11 +18,11 @@ Every app keeps one, session-only and bounded, newest first, with Esc to close a
 <div class="m-row"><span class="header">Messages</span><span class="pin">1</span></div>
 <div class="m-row"><div class="m-field focus m-grow"><span class="ph">Filter messages…</span></div><span class="pin">2</span></div>
 <div class="entries">
-<div class="entry sel"><span class="time">14:32:07</span><span class="m-grow">Saved Shelf.java</span><span class="pin">3</span></div>
-<div class="entry"><span class="time">14:31:52</span><span class="m-grow error">Language server for Java failed to start: jdtls was not found</span><span class="pin">4</span></div>
-<div class="entry"><span class="time">14:30:18</span><span class="m-grow warn">Settings sync: not connected, retrying</span></div>
-<div class="entry"><span class="time">14:29:40</span><span class="m-grow">Line numbers: on</span></div>
-<div class="entry"><span class="time">14:29:05</span><span class="m-grow">Opened ~/workspace/shelf/src/main/java/com/example/shelf/Shelf.java</span></div>
+<div class="entry sel"><span class="time" style="font-family:inherit">14:32:07</span><span class="m-grow">Saved Shelf.java</span><span class="pin">3</span></div>
+<div class="entry"><span class="time" style="font-family:inherit">14:31:52</span><span class="m-grow error">Language server for Java failed to start: jdtls was not found</span><span class="pin">4</span></div>
+<div class="entry"><span class="time" style="font-family:inherit">14:30:18</span><span class="m-grow warn">Settings sync: not connected, retrying</span></div>
+<div class="entry"><span class="time" style="font-family:inherit">14:29:40</span><span class="m-grow">Line numbers: on</span></div>
+<div class="entry"><span class="time" style="font-family:inherit">14:29:05</span><span class="m-grow">Opened ~/workspace/shelf/src/main/java/com/example/shelf/Shelf.java</span></div>
 </div>
 <div class="footer"><span class="m-btn flat">Copy</span><span class="m-btn flat">Clear</span><span class="m-btn flat">Open Doctor</span><span class="pin">5</span><span class="m-grow"></span><span class="m-subtle" style="font-size:11px">Esc to close</span><span class="pin">6</span></div>
 </div>

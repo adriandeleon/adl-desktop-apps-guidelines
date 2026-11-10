@@ -9,8 +9,9 @@
 //   node scripts/build-next.mjs --add <dir> <dist>   puts <dir> at <dist>/next/ and adds `next` to <dist>/versions.json,
 //                                                    or, with no build in <dir>, fills <dist>/next/ with redirects
 //
-// scripts/build-site.mjs runs both. --add reads only node: and its arguments, so CI runs master's copy of it on a site
-// built from an older release commit (.github/workflows/pages.yml).
+// scripts/build-site.mjs runs both. --add reads only its arguments, so CI runs it on a site built from an older release
+// commit (.github/workflows/pages.yml). --build works on this script's own checkout, or on $PAUTA_ROOT when the
+// script is run from another one (scripts/build-site.mjs says what stays the tree's).
 import { spawnSync } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
@@ -29,7 +30,9 @@ const run = (cmd, argv, env = {}) => {
 async function build(out) {
   if (!out) throw new Error("--build <dir>");
   out = resolve(out);
-  process.chdir(fileURLToPath(new URL("..", import.meta.url))); // not .pathname, which keeps a space as %20
+  const scripts = dirname(fileURLToPath(import.meta.url));
+  process.chdir(process.env.PAUTA_ROOT || fileURLToPath(new URL("..", import.meta.url))); // not .pathname, which keeps a space as %20
+  if (process.env.PAUTA_ROOT) process.env.PAUTA_ROOT = process.cwd(); // absolute, for scripts/build-print.sh
   const { unreleased } = await import("../src/lib/editions.mjs");
   if (!unreleased(readFileSync("CHANGELOG.md", "utf8"))) {
     rmSync(out, { recursive: true, force: true });
@@ -46,7 +49,7 @@ async function build(out) {
   }
   try {
     console.log("\n▶ next/: downloads");
-    run("bash", ["scripts/build-print.sh"], { PAUTA_PATH: NEXT });
+    run("bash", [join(scripts, "build-print.sh")], { PAUTA_PATH: NEXT });
     console.log("\n▶ astro build → next/");
     run("npx", ["astro", "build"], { PAUTA_PATH: NEXT });
   } finally {

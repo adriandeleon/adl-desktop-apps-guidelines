@@ -142,10 +142,10 @@ ships it) or point the agent at it. The skill decides how to audit and how to wr
 only its rules, so an older edition's shorter or different procedure gives way to it. `llms.txt` and
 `llms-full.txt` carry it in short:
 
-1. Find the edition the app implements: `pauta.version` in its `pom.xml`, the About window, or its README. Read
-   that edition's rules. If the app names none, ask which edition to audit against and offer the newest; with no
-   one to ask, use the newest and say so in the report. A 1.x edition has no `rules.json`: audit against
-   2.0.0 or newer, and report what the app's own edition didn't ask for as upgrade work.
+1. Find the edition the app implements: `pauta.version` in its `pom.xml`, or failing that the "Built to Pauta"
+   line of its README. Read that edition's rules. If the app names none, ask which edition to audit against and
+   offer the newest; with no one to ask, use the newest and say so in the report. A 1.x edition has no
+   `rules.json`: audit against 2.0.0 or newer, and report what the app's own edition didn't ask for as upgrade work.
 2. Take each rule in turn. A *code* check: run its `check.command` when it has one, else read or search the source as
    it says. A *test* check: find the named test, or the app's equivalent, and confirm the build runs it. A *by hand*
    check: report it as manual.
@@ -153,8 +153,9 @@ only its rules, so an older edition's shorter or different procedure gives way t
    documents…"), its page or section opens with an **Applies to** line, or it details a limited rule
    ([PAUTA-05](../conformance/#pauta-05)). An app outside a limited rule gets `limited`, and needs no exception.
 4. Read the app's `pauta.json` ([Conformance](../conformance/)). An unmet rule it lists gets the entry's kind as its
-   status; MAYs need no entry. An unmet MUST or SHOULD it doesn't list is `fail`. An entry for a rule that passes or
-   is limited, and a deviation or pending entry with no link, are problems.
+   status; MAYs need no entry. An unmet MUST or SHOULD it doesn't list is `fail`; so is an unmet MAY, which has no
+   consequence. An entry for a rule that passes or is limited, and a deviation or pending entry with no link, are
+   problems.
 5. Report one result per rule: its ID, level, status and evidence as `file:line`. A failed MUST blocks a release.
 
 Every report uses the same statuses, which `rules.json` also lists:
@@ -162,7 +163,7 @@ Every report uses the same statuses, which `rules.json` also lists:
 | Status | Means | Needs an exception? |
 |---|---|---|
 | `pass` | Met. | No; an entry for it is stale. |
-| `fail` | Not met, and `pauta.json` doesn't list it. A failed MUST blocks a release. | Yes: this is what the audit is for. |
+| `fail` | Not met, and `pauta.json` doesn't list it. A failed MUST blocks a release; a failed MAY has no consequence. | A MUST or SHOULD, yes: this is what the audit is for. A MAY, no. |
 | `manual` | Checked by hand: a person checks it in the running app, and records it in `pauta.json`'s `checked` list once it is met. | If it fails then, or until someone has looked. |
 | `pending`, `deviation`, `not-applicable`, `app-only` | Not met, and `pauta.json` lists it as that kind. | It has one. |
 | `limited` | The rule covers apps with a feature this one lacks. | No; an entry for it is wrong. |

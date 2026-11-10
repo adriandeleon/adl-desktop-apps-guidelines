@@ -7,7 +7,9 @@
 #
 # Rebuilding an edition replaces its folder, so a site-only change to the current edition reaches its archive too.
 set -euo pipefail
-cd "$(dirname "$0")/.."
+# The repository to work in: this script's own checkout, or $PAUTA_ROOT when CI runs master's copy of the script on
+# the checkout of the commit it publishes (.github/workflows/pages.yml, "Keep this run's scripts").
+cd "${PAUTA_ROOT:-$(dirname "$0")/..}"
 push=no
 dirs=()
 for arg in "$@"; do

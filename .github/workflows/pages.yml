@@ -99,8 +99,26 @@ jobs:
         run: |
           node scripts/check-rules.mjs
           node scripts/build-next.mjs --build "$RUNNER_TEMP/next"
+      - name: Keep this run's scripts
+        # scripts/ and the libraries they import (src/lib), as this run's commit has them, outside the checkout. Every
+        # step from here on runs them from there, on the checkout (PAUTA_ROOT): when the checkout moves to the commit
+        # that released the current edition (next step), the build, the checks and the downloads are still master's,
+        # so a fix to them made after the release applies. Nothing else is copied, so a script that looked for the
+        # tree beside itself would find no package.json and fail. What stays the checkout's own: its pages and src/
+        # as Astro reads them, package.json, CHANGELOG.md, pins.json, node_modules, and scripts/check-rules.mjs
+        # (scripts/build-site.mjs says why). An older edition a canceled run skipped is still built by its own
+        # scripts, in its own worktree (scripts/build-edition.sh). A pull request takes this path too, with its own
+        # commit's scripts, which is what checks it before master runs it.
+        env:
+          RUN_SHA: ${{ github.sha }}
+        run: |
+          set -o pipefail
+          mkdir "$RUNNER_TEMP/tools"
+          git archive "$RUN_SHA" scripts src/lib | tar -x -C "$RUNNER_TEMP/tools"
+          test -f "$RUNNER_TEMP/tools/scripts/build-site.mjs"
       - name: Switch to the released edition
-        # latest/ and <version>/ are the edition as released, with that commit's own packages.
+        # latest/ and <version>/ are the edition as released, with that commit's own packages. Its own copy of
+        # scripts/ is not run again, but for scripts/check-rules.mjs.
         if: steps.state.outputs.site != '' && steps.state.outputs.site != github.sha
         env:
           SITE: ${{ steps.state.outputs.site }}
@@ -114,49 +132,54 @@ jobs:
         if: steps.state.outputs.publish != '' && steps.state.outputs.publish != github.sha
         env:
           PUBLISH_BASE: ${{ steps.state.outputs.base }}
+          PAUTA_ROOT: ${{ github.workspace }}
+          TOOLS: ${{ runner.temp }}/tools/scripts
         run: |
           version=$(node -p 'require("./package.json").version')
           if [ "$(git rev-parse -q --verify "refs/tags/v$version^{commit}")" = "$(git rev-parse HEAD)" ]; then
             echo "v$version is tagged at this commit: it passed the edition check when it was released"
             exit 0
           fi
-          node scripts/check-edition.mjs "$PUBLISH_BASE"
+          node "$TOOLS/check-edition.mjs" "$PUBLISH_BASE"
       - name: Read the version
         id: version
         run: echo "version=$(node -p 'require("./package.json").version')" >> "$GITHUB_OUTPUT"
       - name: Build the PDF and Markdown downloads
-        run: ./scripts/build-print.sh
+        env:
+          PAUTA_ROOT: ${{ github.workspace }}
+          TOOLS: ${{ runner.temp }}/tools/scripts
+        run: bash "$TOOLS/build-print.sh"
       - name: Rebuild editions a canceled run never archived
         # Usually none. Each one is built from the commit that released it, served with this deploy, and archived by
         # the publish job, so only a run that publishes (or a pull request, as a check) rebuilds them.
         # The list stays in build/editions/ so the artifact below always keeps its dist/ and build/ paths.
         if: github.event_name == 'pull_request' || steps.state.outputs.publish != ''
+        env:
+          PAUTA_ROOT: ${{ github.workspace }}
+          TOOLS: ${{ runner.temp }}/tools/scripts
         run: |
           mkdir -p build/editions
-          node scripts/missing-editions.mjs > build/editions/missing.txt
+          node "$TOOLS/missing-editions.mjs" > build/editions/missing.txt
+          # The build reads nothing from standard input, and is given none: the loop's input is the list, and a
+          # program in the edition's own build (its npm packages, its scripts) that read it would swallow the
+          # editions still to come, which would then be skipped without a word.
           while read -r version commit; do
-            ./scripts/build-edition.sh "$version" "$commit"
+            bash "$TOOLS/build-edition.sh" "$version" "$commit" < /dev/null
           done < build/editions/missing.txt
       - name: Build the site
-        # scripts/build-site.mjs: every edition in its folder. In CI it fails when an edition or a download is missing.
-        run: npm run build
-      - name: Keep the PDFs of the two newest editions
-        # master's copy of scripts/trim-pdfs.mjs, whichever commit this run builds: an edition published again from
-        # its own release commit, whose build predates the script, gets the same trimmed site.
+        # scripts/build-site.mjs (`npm run build`, run here as this run's copy): every edition in its folder, with
+        # the PDF of the two newest only (scripts/trim-pdfs.mjs). In CI it fails when an edition or a download is
+        # missing.
         env:
-          RUN_SHA: ${{ github.sha }}
-        run: |
-          git show "$RUN_SHA:scripts/trim-pdfs.mjs" > "$RUNNER_TEMP/trim-pdfs.mjs"
-          node "$RUNNER_TEMP/trim-pdfs.mjs" dist
+          PAUTA_ROOT: ${{ github.workspace }}
+          TOOLS: ${{ runner.temp }}/tools/scripts
+        run: node "$TOOLS/build-site.mjs"
       - name: Add next/
-        # The batch built above, with master's copy of scripts/build-next.mjs: the release commit's build predates it
-        # or holds redirects at next/.
+        # The batch built above, in place of the redirects the build of a release commit leaves at next/.
         if: steps.state.outputs.next != ''
         env:
-          RUN_SHA: ${{ github.sha }}
-        run: |
-          git show "$RUN_SHA:scripts/build-next.mjs" > "$RUNNER_TEMP/build-next.mjs"
-          node "$RUNNER_TEMP/build-next.mjs" --add "$RUNNER_TEMP/next" dist
+          TOOLS: ${{ runner.temp }}/tools/scripts
+        run: node "$TOOLS/build-next.mjs" --add "$RUNNER_TEMP/next" dist
       - name: Upload the site for Pages
         if: steps.state.outputs.site != ''
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
@@ -174,8 +197,9 @@ jobs:
           retention-days: 1
 
   # Tags the edition and keeps it on the versions branch. The one job that can write to the repository; it installs
-  # nothing and runs only this repository's scripts, at the commit the build job published. On master only: the build
-  # job already leaves `publish` empty anywhere else, and this job tests the ref itself rather than trust that output.
+  # nothing and runs only this repository's scripts: this run's own (master's, as in the build job), on the checkout of
+  # the commit the build job published. On master only: the build job already leaves `publish` empty anywhere else,
+  # and this job tests the ref itself rather than trust that output.
   publish:
     if: github.ref == 'refs/heads/master' && needs.build.outputs.publish != ''
     needs: build
@@ -209,6 +233,17 @@ jobs:
         run: |
           stray=$(cd "$EDITIONS" && find . -mindepth 1 -maxdepth 3 -type d | grep -vxE '\./(dist|build|build/editions)|\./(dist|build/editions)/[0-9]+\.[0-9]+\.[0-9]+|\./(dist|build/editions)/[0-9]+\.[0-9]+\.[0-9]+/[^/]+' || true)
           [ -z "$stray" ] || { echo "unexpected paths in the editions artifact:" >&2; echo "$stray" >&2; exit 1; }
+      - name: Keep this run's scripts
+        # As in the build job: scripts/ and src/lib of this run's commit, read from git and so from nothing the build
+        # job uploaded, into a folder that must not exist yet. Usually they are the checkout's own; when the edition
+        # is published again from its release commit, they are master's, which tags and archives as master does now.
+        env:
+          RUN_SHA: ${{ github.sha }}
+        run: |
+          set -o pipefail
+          mkdir "$RUNNER_TEMP/tools"
+          git archive "$RUN_SHA" scripts src/lib | tar -x -C "$RUNNER_TEMP/tools"
+          test -f "$RUNNER_TEMP/tools/scripts/archive-edition.sh"
       - name: Tag the editions and keep them on the versions branch
         # Only CI tags: v<version> once, on the commit that released it, which a run on a later commit is not on
         # (scripts/check-edition.mjs --tag), and any older edition a canceled run left untagged, at the commit that
@@ -221,11 +256,13 @@ jobs:
           VERSION: ${{ needs.build.outputs.version }}
           BASE: ${{ needs.build.outputs.base }}
           EDITIONS: ${{ runner.temp }}/editions
+          PAUTA_ROOT: ${{ github.workspace }}
+          TOOLS: ${{ runner.temp }}/tools/scripts
         run: |
-          node scripts/check-edition.mjs --tag "$BASE"
-          node scripts/missing-editions.mjs --tag
+          node "$TOOLS/check-edition.mjs" --tag "$BASE"
+          node "$TOOLS/missing-editions.mjs" --tag
           shopt -s nullglob
-          ./scripts/archive-edition.sh --push "$EDITIONS/dist/${VERSION}" "$EDITIONS"/build/editions/[0-9]*
+          bash "$TOOLS/archive-edition.sh" --push "$EDITIONS/dist/${VERSION}" "$EDITIONS"/build/editions/[0-9]*
 
   deploy:
     # Every run on master deploys, and no other run does: the current edition, and next/ while a batch waits. When the

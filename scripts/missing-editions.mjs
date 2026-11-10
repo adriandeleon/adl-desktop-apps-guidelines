@@ -17,7 +17,10 @@ import { fileURLToPath } from "node:url";
 import { releaseCommits } from "../src/lib/releases.mjs";
 import { compareVersions, parseEditions, released } from "../src/lib/editions.mjs";
 
-process.chdir(fileURLToPath(new URL("..", import.meta.url))); // not .pathname, which keeps a space as %20
+// The tree to work on: this script's own checkout, or $PAUTA_ROOT when CI runs master's copy of the script on the
+// checkout of a released edition (.github/workflows/pages.yml, "Keep this run's scripts"). The version and the
+// changelog are that tree's; src/lib/releases.mjs and editions.mjs, imported above, are the ones beside this script.
+process.chdir(process.env.PAUTA_ROOT || fileURLToPath(new URL("..", import.meta.url))); // not .pathname, which keeps a space as %20
 const tag = process.argv.includes("--tag");
 const git = (...a) => execFileSync("git", a, { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }).trim();
 const current = JSON.parse(readFileSync("package.json", "utf8")).version;

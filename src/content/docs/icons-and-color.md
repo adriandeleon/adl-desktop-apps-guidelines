@@ -20,7 +20,7 @@ timestamps.
 | Property | Value | Reference |
 |---|---|---|
 | UI family | Inter, in four faces, bundled in the app's resources and registered before any CSS is applied | `Fonts.UI`, `Fonts.loadForFirstPaint`, `resources/com/editora/fonts/inter/` |
-| Root size | 14 px, the AtlantaFX theme's root size; popups pin absolute pixels where an owner's font would leak (see [Menus](../menus/)) | `MainMenuBar.UI_FONT_SIZE` |
+| Root size | 14 px at the default zoom, the AtlantaFX theme's root size, scaled by the UI zoom ([WIN-12](../window-shell/#win-12)); a popup sets its own size from that one value, so an owner's font never leaks into it ([MENU-16](../menus/#menu-16)) | `MainMenuBar.UI_FONT_SIZE` |
 | How it is attached | A scene stylesheet (`ui-font.css`, one `.root` rule whose `-fx-font-family` names Inter) on every window's scene, dialogs and popups included | `App.installUiFont` |
 | Monospace | JetBrains Mono by default; Cascadia Code, Fira Code, IBM Plex Mono and Source Code Pro are bundled as editor choices | `Fonts.DEFAULT`, `Fonts.BUNDLED` |
 
@@ -33,6 +33,7 @@ timestamps.
   - *Check (code):* a listener on `Window.getWindows()` adds `ui-font.css` to each window's scene, and to a new
     scene when the window's scene changes; no `.root` rule in `app.css` sets `-fx-font-family`.
   - *Reference:* Editora [`App.installUiFont`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java), [`styles/ui-font.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/ui-font.css). Termina and Torrenta carry the same sheet.
+    Modula doesn't yet: the `.root` rule of its [`modula.css`](https://github.com/adriandeleon/Modula/blob/master/src/main/resources/com/modula/modula.css) sets IBM Plex Mono for the whole window.
 - **ICON-02 · MUST.** The app bundles Inter's four faces and registers them before any CSS is applied; it never
   maps the platform's own UI font.
   - *Why:* an earlier macOS-only sheet used San Francisco, which JavaFX faux-bolds; Inter has a real bold on every
@@ -40,10 +41,11 @@ timestamps.
   - *Check (code):* `Inter-Regular`, `Inter-Bold`, `Inter-Italic` and `Inter-BoldItalic` `.ttf` are under the app's
     `fonts/inter/` with their `OFL.txt`, and `Font.loadFont` runs on them before the first window is shown.
   - *Reference:* Editora [`src/main/resources/com/editora/fonts/inter/`](https://github.com/adriandeleon/Editora/tree/master/src/main/resources/com/editora/fonts/inter), [`ui/Fonts.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Fonts.java) (`loadForFirstPaint`,
-    called from [`App`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java)). Termina and Torrenta bundle the same four faces.
+    called from [`App`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java)). Termina and Torrenta bundle the same four faces. Modula doesn't yet: its
+    [`fonts/`](https://github.com/adriandeleon/Modula/tree/master/src/main/resources/com/modula/fonts) holds IBM Plex Mono only.
 
-Modula is the stated exception to ICON-01 and ICON-02: IBM Plex Mono everywhere, because every reading on a radio is
-a number (see *Before adding a setting* in [Settings](../settings/)).
+Modula sets everything in IBM Plex Mono today. Its readings may stay monospace, as content; Inter on its menus,
+settings and dialogs is a gap ([Gaps per app](../family/gaps/)).
 
 ## The palette: Caret & Ink
 
@@ -76,9 +78,9 @@ grounds, and **brace** periwinkle reserved for the keyboard. Amber, red and gree
   `editora-dark.css` copied unchanged into its own `styles/`.
   - *Why:* the palette is the family's, not the editor's.
   - *Check (code):* the app's two files are identical to Editora's.
-  - *Reference:* Torrenta and Termina `styles/`. Both copies of `editora-dark.css` match Editora's; both copies of
-    `editora-light.css` still have the earlier `-color-accent-fg`, `-color-warning-fg` and `-color-success-fg`,
-    which Editora has since darkened.
+  - *Reference:* Termina [`styles/`](https://github.com/adriandeleon/Termina/tree/master/src/main/resources/com/termina/styles) and the app template's [`styles/`](https://github.com/adriandeleon/adl-desktop-app-template/tree/master/src/main/resources/com/example/app/styles), whose two files match Editora's. Torrenta's
+    `editora-dark.css` matches too; its [`editora-light.css`](https://github.com/adriandeleon/torrenta/blob/master/src/main/resources/com/torrenta/styles/editora-light.css) still has the earlier `-color-accent-fg`,
+    `-color-warning-fg` and `-color-success-fg`, which Editora has since darkened.
 - **ICON-06 · SHOULD.** Brace (`-state-key`) is a `ladder()` over `-color-bg-default` that picks a deep ink on a
   light ground and a lighter periwinkle the darker the ground gets, and reads at 4.5:1 or more on every bundled
   theme's default and subtle surfaces.
@@ -139,7 +141,8 @@ pill, a row tint and a hover state come from the same place. `.state-pill` is th
     paint on an emphasis fill use it.
   - *Reference:* Editora [`StyleContrastTest.inkOnAnEmphasisFillIsTheThemesOnEmphasisColour`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java).
 - **ICON-12 · MUST.** One focus ring, `-focus-ring: -color-accent-emphasis`, drawn by the `:focus-visible` block in
-  `app.css` ([KBD-16](../keyboard/#kbd-16)), at 3:1 or better on every surface (see [Keyboard first](../keyboard/)).
+  the app stylesheet ([KBD-16](../keyboard/#kbd-16)), at 3:1 or better on every surface (see
+  [Keyboard first](../keyboard/)).
   - *Check (test):* a test reads `-focus-ring` from `.root` and computes it on the default, subtle, inset and
     overlay grounds.
   - *Reference:* Editora [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) (*Keyboard focus*),
@@ -168,8 +171,9 @@ pill, a row tint and a hover state come from the same place. `.state-pill` is th
   - *Check (code):* the theme setting has a system value, and a listener on
     `Platform.getPreferences().colorSchemeProperty()` re-applies the theme.
   - *Reference:* Mirada [`settings/Settings.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/settings/Settings.java) (`ThemeChoice.SYSTEM`), [`ui/Theme.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Theme.java); nux [`config/Advanced.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/config/Advanced.java)
-    (`THEME_SYSTEM`), [`ui/Theme.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/Theme.java). Editora, Torrenta, Termina and Modula don't yet: their pickers list named
-    themes only.
+    (`THEME_SYSTEM`), [`ui/Theme.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/Theme.java); Termina [`ui/Themes.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/Themes.java) (`SYSTEM_ID`, `followSystem`), with the
+    listener in [`ui/WindowManager.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/WindowManager.java); the app template's [`ui/Themes.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Themes.java) (`ThemeChoice.SYSTEM`). Editora,
+    Torrenta and Modula don't yet: their pickers list named themes only.
 - **ICON-17 · MUST.** A theme name the app does not know falls back to the first-run default theme.
   - *Check (code):* the lookup from a saved name to a theme ends in the default, not an exception.
   - *Reference:* Editora [`Themes.themeFor`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Themes.java), falling back to [`Themes.DEFAULT`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Themes.java) (Editora Light).
@@ -212,7 +216,8 @@ are not interchangeable.
 | Drawn size | 16 × 1.2 = 19.2 px (`LINE_SCALE` = `ICON_SCALE` × 24 ÷ 16) | 24 × 0.8 = 19.2 px (`ICON_SCALE`) | `Icons` |
 | Used for | The chrome the kit draws: toolbar, tool stripe, tabs, and every action that has a kit glyph | Everything the kit specifies no glyph for: file types, context-menu rows, build-tool and browser brand marks | `Icons`, `FileIcons` |
 
-- **ICON-19 · MUST.** A glyph node carries one family's style class, `icon-line` or `toolbar-icon`, never both.
+- **ICON-19 · MUST.** A glyph node carries one family's style class, never both. Editora's two are `icon-line` and
+  `toolbar-icon`.
   - *Why:* a line glyph is colored by its stroke, and any `X .toolbar-icon` fill rule (there are dozens) would paint
     its outline solid. A glyph that moves family moves its CSS with it.
   - *Check (test):* a test builds every line glyph and fails when one also carries `toolbar-icon`.

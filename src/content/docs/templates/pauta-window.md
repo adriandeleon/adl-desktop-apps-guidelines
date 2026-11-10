@@ -21,8 +21,9 @@ not apply, the ones it does differently on purpose, and the ones still pending. 
   pending exception its link.
   - *Check (by hand):* open the window and compare it with `pauta.json`, entry by entry.
   - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`ui/PautaWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/PautaWindow.java).
-- **PWIN-03 · MUST.** It reads from `pauta.json` and `AppInfo` alone, and takes the conformance from the same helper
-  as About ([PAUTA-02](../../conformance/#pauta-02)). Nothing in it is written in the window's code.
+- **PWIN-03 · MUST.** It reads the exceptions from `pauta.json` and the edition from the build, as About does
+  ([ABOUT-08](../about/#about-08); `AppInfo` in the template), and takes the conformance from the same helper as
+  About ([PAUTA-02](../../conformance/#pauta-02)). Nothing in it is written in the window's code.
   - *Check (code):* the window loads the exceptions through one loader and calls the conformance helper; it holds no
     rule IDs or conformance names of its own.
   - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`ui/PautaWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/PautaWindow.java) (`PautaConformance.of`).
@@ -38,6 +39,7 @@ not apply, the ones it does differently on purpose, and the ones still pending. 
   - *Why:* what the app still owes is what a reader came to find.
   - *Check (test):* a unit test of the sort.
   - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`PautaConformance.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/PautaConformance.java) (`sorted`), tested by [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java).
+    Its `Kind` has three kinds, pending, deviation and not-applicable: it sorts those and cannot read `app-only` yet.
 - **PWIN-06 · SHOULD.** *Copy as text* copies the edition, the conformance and the list as Markdown, one line per exception,
   and leaves the window open; its label becomes "Copied".
   - *Check (code):* the button sits in the content, not the button bar, like About's *Copy details*.
@@ -84,7 +86,7 @@ The entries above show the layout with Mirada's name; they are not Mirada's reco
 <li><span class="pin">1</span><span><strong>Edition.</strong> The Pauta mark at 72 px beside "Pauta" and the edition, in About's name style.</span></li>
 <li><span class="pin">2</span><span><strong>Conformance.</strong> A pill: Complete green, Core accent, Partial amber. Below it, one sentence in the tagline style that says what it means for this app.</span></li>
 <li><span class="pin">3</span><span><strong>Counts.</strong> How many exceptions of each kind, muted. A kind with none is left out.</span></li>
-<li><span class="pin">4</span><span><strong>Group header.</strong> One per kind present: Pending, Deviation, Not applicable, in that order. The list scrolls past about ten rows; the rest of the window stays put.</span></li>
+<li><span class="pin">4</span><span><strong>Group header.</strong> One per kind present, in this order: Pending, Deviation, For each app made from it (the app-only entries of a template), Not applicable. The list scrolls past about ten rows; the rest of the window stays put.</span></li>
 <li><span class="pin">5</span><span><strong>Exception row.</strong> The rule's ID in monospace, linked to the rule in this edition; its level, MUST or SHOULD, muted; the reason; for a pending exception, the issue number as a link.</span></li>
 <li><span class="pin">6</span><span><strong>Decision link.</strong> A deviation links its decision record by number.</span></li>
 <li><span class="pin">7</span><span><strong>Links.</strong> The edition's rules at its own address, and the app's conformance page in its docs.</span></li>

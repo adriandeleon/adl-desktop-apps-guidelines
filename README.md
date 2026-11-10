@@ -21,7 +21,7 @@
 UI, UX and platform rules so the family of JavaFX desktop apps is the same app on Windows, macOS and Linux — [Editora](https://github.com/adriandeleon/Editora),
 [Torrenta](https://github.com/adriandeleon/torrenta), [Termina](https://github.com/adriandeleon/Termina),
 [Modula](https://github.com/adriandeleon/Modula), [Mirada](https://github.com/adriandeleon/Mirada) and
-[nux](https://github.com/adriandeleon/nux). Editora is the reference implementation: every rule names the class
+[nux](https://github.com/adriandeleon/nux). Editora is the reference implementation: nearly every rule names the class
 or file to copy from.
 
 🧰 **Starting a new app?** Use [adl-desktop-app-template](https://github.com/adriandeleon/adl-desktop-app-template),

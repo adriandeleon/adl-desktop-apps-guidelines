@@ -109,9 +109,14 @@ rule is then `fail`.
 
 Read the whole rule (`text`, `why`, `check`, `appliesTo`) before judging it.
 
-**Names.** A command id, catalog key, file, property or style class that the rule's own `text` names is required:
-every app spells it that way, and the same thing under another name fails the rule (say so in the evidence). A name
-that only `check` or `reference` gives is how Editora spells it, and this app's equivalent meets it.
+**Names.** Some names in the rule's own `text` are required as spelled, because a user, the docs or another tool
+finds the thing by that name: a command id, a catalog key, a chord, a command-line flag, an environment variable, a
+property in `pom.xml` or `pauta.json`, and a file the repository must carry. Every app spells it that way, and the
+same thing under another name fails the rule (say so in the evidence). Any other name in `text` (a Java class,
+method or constant, a CSS file or style class, a branch or workflow file, a config file's name), and every name
+that only `check` or `reference` gives, is how Editora spells it, and this app's equivalent meets it. Edition 5.0.0's
+list was a command id, catalog key, file, property or style class: for an app on 5.0.0, judge by that list. Earlier
+editions say nothing about names, so there an equivalent meets the rule.
 
 Then, in this order:
 
@@ -128,7 +133,7 @@ Then, in this order:
      fails outside an app's root; take it from `rules.json` with `jq -r '.rules[] | select(.id == "OS-02") |
      .check.command'`, never through `@tsv`, which doubles its backslashes. Otherwise read or search the source as
      `check.text` says (a name only the check gives is Editora's spelling: find this app's
-     equivalent; a name the rule's `text` gives is required, as above). It is met only if everything the check names is
+     equivalent; a name of a required kind in the rule's `text` is required, as above). It is met only if everything the check names is
      there. Evidence is the `file:line` that satisfies it; for an unmet rule, the closest place it should be and what
      is missing.
    - **`test`.** The check names a test as Editora calls it. Find that test or this app's equivalent in `src/test/`,

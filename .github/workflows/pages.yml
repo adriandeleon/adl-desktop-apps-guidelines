@@ -41,10 +41,11 @@ jobs:
       - name: Decide what to publish
         # The site: latest/ and <version>/ from HEAD when [Unreleased] is empty, else from the commit that released the
         # current edition, with next/ from HEAD. What to tag and archive: HEAD when [Unreleased] is empty, else the
-        # current edition if it isn't tagged and live yet, else nothing (scripts/release-state.mjs). A pull request
-        # publishes nothing.
+        # current edition if it isn't tagged and live yet, else nothing (scripts/release-state.mjs). Only a run on
+        # master publishes or deploys: a pull request, or a manual run on any other branch or tag, skips this step, so
+        # `publish`, `site` and `next` stay empty and the run only checks and builds its own checkout.
         id: state
-        if: github.event_name != 'pull_request'
+        if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
         env:
           BEFORE: ${{ github.event.before }}
         run: |
@@ -55,15 +56,18 @@ jobs:
       - name: Check the edition
         # Guidance under [Unreleased], or a release numbered above master's and every tag (scripts/check-edition.mjs),
         # for this commit. A release commit that already carries its own v<version> tag passed this check when it was
-        # merged and tagged; it is only being published again (its deploy failed).
+        # merged and tagged; it is only being published again (its deploy failed). A manual run on another branch is
+        # checked like a pull request: against the commit where it left master.
         env:
           EVENT: ${{ github.event_name }}
           PR_BASE: ${{ github.base_ref }}
           PUBLISH: ${{ steps.state.outputs.publish }}
           PUBLISH_BASE: ${{ steps.state.outputs.base }}
           BEFORE: ${{ github.event.before }}
+          REF: ${{ github.ref }}
         run: |
           if [ "$EVENT" = pull_request ]; then base="origin/$PR_BASE"
+          elif [ "$REF" != refs/heads/master ]; then base="$(git merge-base origin/master HEAD)"
           elif [ -n "$PUBLISH" ] && [ "$PUBLISH" = "$(git rev-parse HEAD)" ]; then base="$PUBLISH_BASE"
           elif [ -n "$BEFORE" ] && [ -n "${BEFORE//0/}" ]; then base="$BEFORE"
           else base="HEAD^1"; fi
@@ -170,9 +174,10 @@ jobs:
           retention-days: 1
 
   # Tags the edition and keeps it on the versions branch. The one job that can write to the repository; it installs
-  # nothing and runs only this repository's scripts, at the commit the build job published.
+  # nothing and runs only this repository's scripts, at the commit the build job published. On master only: the build
+  # job already leaves `publish` empty anywhere else, and this job tests the ref itself rather than trust that output.
   publish:
-    if: needs.build.outputs.publish != ''
+    if: github.ref == 'refs/heads/master' && needs.build.outputs.publish != ''
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -222,9 +227,10 @@ jobs:
           ./scripts/archive-edition.sh --push "$EDITIONS/dist/${VERSION}" "$EDITIONS"/build/editions/[0-9]*
 
   deploy:
-    # Every run on master deploys: the current edition, and next/ while a batch waits. When the run publishes an
-    # edition, only after the publish job succeeded, so the edition is tagged and archived before it goes live.
-    if: ${{ !cancelled() && needs.build.result == 'success' && needs.build.outputs.site != '' && (needs.publish.result == 'success' || (needs.build.outputs.publish == '' && needs.publish.result == 'skipped')) }}
+    # Every run on master deploys, and no other run does: the current edition, and next/ while a batch waits. When the
+    # run publishes an edition, only after the publish job succeeded, so the edition is tagged and archived before it
+    # goes live.
+    if: ${{ !cancelled() && github.ref == 'refs/heads/master' && needs.build.result == 'success' && needs.build.outputs.site != '' && (needs.publish.result == 'success' || (needs.build.outputs.publish == '' && needs.publish.result == 'skipped')) }}
     needs: [build, publish]
     runs-on: ubuntu-latest
     timeout-minutes: 25

@@ -20,18 +20,19 @@ Torrenta shares [`MatchText`](https://github.com/adriandeleon/torrenta/blob/mast
   ([KBD-03](../../keyboard/#kbd-03)).
   - *Check (code):* the palette's rows come from the whole registry, filtered only by the query; a command that
     cannot run stays listed, grayed.
-  - *Reference:* Editora [`CommandPalette.filter`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java) (`registry.all()`), [`MessagesTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/i18n/MessagesTest.java); the Spec table below.
+  - *Reference:* Editora [`CommandPalette.filter`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java) (`registry.all()`), [`MessagesTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/i18n/MessagesTest.java); the page's [Spec](#spec).
 
 - **PAL-10 · SHOULD.** The palette is 620 px wide, its rows 36 px high with 8 visible before the list scrolls, at
-  the default zoom ([WIN-09](../../window-shell/#win-09)), and its field's prompt is the catalog's `palette.prompt`
+  the default zoom ([WIN-12](../../window-shell/#win-12)), and its field's prompt is the catalog's `palette.prompt`
   ("Run command…").
   - *Why:* the palette is the one window every app shares; a different width or prompt is the first thing a person
     moving between apps notices.
   - *Check (code):* the palette's width, row height and visible rows come from constants of these values, and its
     prompt from `tr("palette.prompt")`.
   - *Reference:* Editora [`ui/CommandPalette.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java) (`ROW_HEIGHT`, `VISIBLE_ROWS`), Torrenta,
-    Termina and the app template's [`ui/Picker.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Picker.java). Modula's is 420 px with a typed-in
-    "Type a command…", nux's 540 px with that prompt, and Mirada types its prompt in rather than reading the catalog.
+    Termina and the app template's [`ui/Picker.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Picker.java). Mirada's [`ui/CommandPalette.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/CommandPalette.java) matches the three
+    sizes and reads the same words from the catalog under another key, `palette.runCommandPrompt`. Modula's is
+    420 px with a literal "Type a command…", and nux's 540 px with a `palette.prompt` that reads "Type a command…".
 
 The palette is an in-scene overlay in the window's root `StackPane`, over a faint scrim, never a
 `javafx.stage.Popup`: [KBD-07](../../keyboard/#kbd-07).
@@ -64,7 +65,7 @@ The palette is an in-scene overlay in the window's root `StackPane`, over a fain
 <li><span class="pin">5</span><span><strong>Key chip.</strong> The command's binding in the active keymap, in the keyboard color (brace periwinkle). Absent when unbound.</span></li>
 <li><span class="pin">6</span><span><strong>Unavailable command.</strong> Listed, grayed, never selected and inert to clicks. Its tooltip says why and what to do ("Unavailable — no merge, rebase, cherry-pick or revert is in progress.").</span></li>
 <li><span class="pin">7</span><span><strong>Description.</strong> The selected command's <code>command.&lt;id&gt;.desc</code>, one line with an ellipsis, always one line tall so the card never jumps.</span></li>
-<li><span class="pin">8</span><span><strong>Key legend.</strong> The palette's own keys, rendered from the active keymap.</span></li>
+<li><span class="pin">8</span><span><strong>Key legend.</strong> The palette's own keys, rendered from the active keymap. The mockup shows the Emacs keymap's: <code>C-n</code>, <code>C-p</code> and <code>C-g</code> are its line and cancel chords (<a href="#pal-06">PAL-06</a>, <a href="#pal-07">PAL-07</a>).</span></li>
 </ol>
 
 ## Spec
@@ -78,7 +79,7 @@ The palette is an in-scene overlay in the window's root `StackPane`, over a fain
 | Row text | 12.5 px; padding 7 × 16 | `.command-palette .list-cell` |
 | Scrim | `rgba(0,0,0,0.18)`; a click on it closes the palette | `.overlay-backdrop` |
 | Content | Every registered command: title from `command.<id>`, description from `command.<id>.desc` | `CommandRegistry`, `MessagesTest` |
-| Ranking | Fuzzy score over title, id and description; a query that names a title outranks a fuzzy hit | `FuzzyMatch`, `titlePhraseScore` |
+| Ranking | Editora scores the title; when the title does not match, the id's namespace word (`markdown` for `markdown.tableAddRow`, "Table: Add Row"), then the names other IDEs give the command. The description is shown, not matched. A query that names a title outranks a fuzzy hit. The app template scores the title and the description | `FuzzyMatch`, `Command.keywords`, `OtherIdeNames`, `titlePhraseScore`; the template's [`ui/Picker.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Picker.java) |
 
 ## Behavior
 
@@ -89,14 +90,20 @@ The palette is an in-scene overlay in the window's root `StackPane`, over a fain
 - **PAL-05 · SHOULD.** Typing filters the list, and the first *enabled* match is selected.
   - *Check (test):* a test with a disabled command at the top finds the cursor on the first enabled row.
   - *Reference:* Editora [`CommandPalette.selectFirstEnabled`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java), [`CommandPaletteDisabledFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/CommandPaletteDisabledFxTest.java).
-- **PAL-06 · SHOULD.** ↑ ↓, `C-n` `C-p` and Page Up/Down move the selection; Enter, or a click on an enabled row, runs
-  the command. The palette closes first, then the command runs.
-  - *Check (code):* the run path hides the card before it calls the registry, and does nothing on a disabled row.
-  - *Reference:* Editora [`CommandPalette.runSelected`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java), [`PickerKeys`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java).
-- **PAL-07 · SHOULD.** Esc, `C-g` or a click on the scrim cancels, and focus returns to where it was.
-  - *Check (code):* the cancel key and a press on the backdrop both hide the overlay, and hiding focuses the node that
-    had focus before it opened.
-  - *Reference:* Editora [`PickerKeys`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java) (`CANCEL`), [`OverlayHost`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java) (`previousFocus`).
+- **PAL-06 · SHOULD.** The active keymap's line chords (`nav.lineDown`, `nav.lineUp`) and page chords
+  (`nav.pageDown`, `nav.pageUp`) move the selection, as do ↑ ↓ and Page Up/Down, which always work; `C-n` and `C-p`
+  are what the Emacs keymap gives. Enter, or a click on an enabled row, runs the command. The palette closes first,
+  then the command runs.
+  - *Check (code):* the palette's key handler looks a press up in the active keymap and moves on those commands, not
+    on fixed letters; the run path hides the card before it calls the registry, and does nothing on a disabled row.
+  - *Reference:* Editora [`CommandPalette.runSelected`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java), [`PickerKeys.resolve`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java). The app template hardcodes
+    the Emacs keys: its [`ui/Picker.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Picker.java) moves on `Ctrl+N` and `Ctrl+P` whatever the keymap.
+- **PAL-07 · SHOULD.** The active keymap's cancel chord (`edit.cancel`), Esc or a click on the scrim cancels, and
+  focus returns to where it was; `C-g` is what the Emacs keymap gives.
+  - *Check (code):* Esc, the chord the active keymap binds to the cancel command, and a press on the backdrop all
+    hide the overlay, and hiding focuses the node that had focus before it opened.
+  - *Reference:* Editora [`PickerKeys`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java) (`isCancel`), [`OverlayHost`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java) (`previousFocus`). The app template
+    hardcodes `Ctrl+G` in its [`ui/OverlayHost.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/OverlayHost.java).
 - **PAL-08 · SHOULD.** `C-h`, or the first of `C-h`, `F1`, `Shift+F1` the active keymap leaves free, opens the selected
   command's page on the website, for the running version.
   - *Check (code):* the docs chord is the first free one of the three, and the URL is built from the app's versioned

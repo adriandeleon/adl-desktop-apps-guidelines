@@ -4,8 +4,11 @@ description: "The menu bar and right-click menus: an icon and the chord on every
 ---
 
 Two surfaces show the same rows: the **menu bar**, a browsable map of every command, and **right-click menus**, what
-can be done with the thing under the pointer. Both are built from the [command registry](../keyboard/), so a row's
-title, icon, chord and enabled state come from the command and never drift from the palette or the toolbar.
+can be done with the thing under the pointer. A row built from the [command registry](../keyboard/) takes its title,
+icon, chord and enabled state from the command, so it never drifts from the palette or the toolbar. Editora builds
+its menu bar that way ([`ui/MenuBarModel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java)); its right-click menus are still built by hand, each row with its own
+title, glyph and action ([`LazyContextMenu.item`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/LazyContextMenu.java)). The app template's [`ui/CommandMenu.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/CommandMenu.java) builds a right-click
+menu from registered command ids.
 Reference: Editora's [`ui/MainMenuBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java) (menu bar), [`ui/ContextMenuDismissal.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ContextMenuDismissal.java), [`ui/LazyContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/LazyContextMenu.java),
 [`ui/RowContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/RowContextMenu.java) and [`ui/TabContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabContextMenu.java) (right-click menus), and the `.menu-item` and `.context-menu`
 rules in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css).
@@ -29,13 +32,15 @@ rules in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/mai
 
 ## Look and feel
 
-Both surfaces draw their rows the same way. Absolute pixels are deliberate: a popup inherits the font of the node it
-was opened from, and `em` would resolve against a file tree's or an 18 px toolbar's size (Editora's toolbar menu once
+Both surfaces draw their rows the same way, and the sizes in the table are the ones at the default zoom. A menu sets
+its own font size on `.context-menu`, 14 px at the default zoom, from the one value the UI zoom sets
+([WIN-12](../window-shell/#win-12)), so it never inherits its owner's: a popup takes the font of the node it was
+opened from, and `em` would resolve against a file tree's or an 18 px toolbar's size (Editora's toolbar menu once
 rendered a third larger than every other menu in the app).
 
 | Property | Value | Reference |
 |---|---|---|
-| Font | Inter 14 px, regular, in every row and label | `.context-menu`, `.context-menu .menu-item .label` in `app.css`; `MainMenuBar.UI_FONT_SIZE` |
+| Font | Inter 14 px at the default zoom, regular, in every row and label; set on `.context-menu` from the value the UI zoom sets, never inherited from the owner | `.context-menu`, `.context-menu .menu-item .label` in `app.css`; `MainMenuBar.UI_FONT_SIZE` |
 | Row | 34 px high: padding 8 × 12, the same in every theme | `.menu-item { -fx-padding: 8px 12px }` |
 | Icon column | 22 px, filled on every row: a command row's glyph, or a check row's tick; 8 px to the title | `MainMenuBar.ICON_COLUMN`, `rowContent` |
 | Icon | The command's glyph, the same one as on the toolbar and in the palette (Save is the same floppy everywhere), filled `-color-fg-muted` | `Icons`, `MenuBarIcons`, `.toolbar-icon` |
@@ -49,10 +54,10 @@ rendered a third larger than every other menu in the app).
 
 The shadow's offset is not cosmetic. A menu is a native window sized to its root *including the effect*, so a shadow
 that reaches above the menu is invisible window over the bar the menu hangs from, and the pointer lands on it instead
-of the next menu button. The offset must be at least the radius; Editora pins it with [`MenuPopupBoundsFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/MenuPopupBoundsFxTest.java).
+of the next menu button. The offset must be at least the radius ([MENU-18](#menu-18)); Editora pins it with [`MenuPopupBoundsFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/MenuPopupBoundsFxTest.java).
 
-The three rules below hold for every menu the app draws itself: the menu bar, right-click menus, the drop-down of a menu
-button or a split button, and the toolbar's overflow. The menus a platform draws (the macOS system menu bar, a
+The rules of this section hold for every menu the app draws itself: the menu bar, right-click menus, the drop-down of
+a menu button or a split button, and the toolbar's overflow. The menus a platform draws (the macOS system menu bar, a
 tray icon's menu) show text only; there the chord is appended to the title ([MENU-02](#menu-02)) and the
 [tray](../tray-and-background/) shows neither.
 
@@ -65,32 +70,54 @@ tray icon's menu) show text only; there the chord is appended to the title ([MEN
     toolbar, in the palette and in the menu ([ICON-20](../icons-and-color/#icon-20)) is learned once. A blank
     cell breaks the column, and a borrowed glyph says something else.
   - *Check (test):* an FX test opens the menu bar's menus and the right-click menus of a tab, an editor, a list row
-    and the toolbar, and fails on any visible row that is not a check or radio item and has no graphic.
+    and the toolbar, and fails on any visible row that is not a check or radio item and shows no glyph. On a plain
+    `MenuItem` the glyph is `getGraphic()`. A menu-bar row ([MENU-02](#menu-02)) is a `CustomMenuItem` whose
+    `getGraphic()` is null: its glyph is the node inside the icon column (`menu-item-icon`) of its content, so the
+    test reads that column, and an empty column fails. A submenu's graphic is the same row layout, read the same way.
   - *Reference:* Editora [`ui/MenuBarIcons.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarIcons.java), [`editor/MenuIcons.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/editor/MenuIcons.java), [`ui/TabContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabContextMenu.java); Termina's tab
     menu has an icon on every row. Editora doesn't yet pass: about half its menu-bar rows have no glyph, and
     [`MenuBarIconsTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/MenuBarIconsTest.java) holds that a command without a fitting glyph gets none, which this rule reverses; many
     right-click and drop-down rows have none either (Run All Requests in a `.http` file, the CSV grid's menu, the
     Markdown preview's).
 - **MENU-15 · MUST.** Every menu row whose command has a chord in the active keymap shows it, in right-click menus
-  and drop-downs as in the menu bar: right-aligned in the menu's chord column, Inter 11 px in `-state-key`. An
-  unbound command leaves the cell empty, never a wrong chord, and a keymap switch rewrites every cell.
+  and drop-downs as in the menu bar: right-aligned in the menu's chord column, in `-state-key`, at the size
+  [MENU-16](#menu-16) gives. An unbound command leaves the cell empty, never a wrong chord, and a keymap switch
+  rewrites every cell.
   - *Why:* the menu is where a user learns the keys. A right-click menu that hides them teaches the mouse, while the
     palette and the toolbar's tooltips already show the same chord.
   - *Check (test):* an FX test binds a command, opens a right-click menu that lists it and finds its chord in a
     `menu-item-chord` label; after a keymap switch it finds the new chord.
   - *Reference:* Editora [`MainMenuBar.rowContent`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java) and `alignChordColumns`, `.menu-item-chord` in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css). Editora's
-    right-click menus show no chords yet: a row there is a plain `MenuItem`, not the menu bar's row.
+    right-click menus show no chords yet: a row there is a plain `MenuItem`, not the menu bar's row. The app
+    template's do: [`ui/CommandMenu.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/CommandMenu.java) draws each row as the menu bar's ([`AppMenus.inWindowRow`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AppMenus.java)) and re-reads its
+    chord on every showing (`refresh`).
 - **MENU-16 · MUST.** Every menu draws its titles in Inter 14 px regular and its chords in Inter 11 px at the
-  default zoom, scaled by the UI zoom ([WIN-09](../window-shell/#win-09)), whatever node it was opened from: the
-  size is pinned on `.context-menu` and its rows' labels from one value the zoom sets, never inherited from the
+  default zoom, scaled by the UI zoom ([WIN-12](../window-shell/#win-12)), whatever node it was opened from: the
+  size is set on `.context-menu` and its rows' labels from one value the zoom sets, never inherited from the
   node.
   - *Why:* a popup inherits the font of the node it was shown from, and `em` resolves against it: Editora's toolbar
     menu once rendered at the bar's 18 px, a third larger than every other menu, and a file tree's or a monospace
     editor's font leaks the same way.
   - *Check (test):* an FX test opens a menu from the toolbar, an editor and a tree row and reads Inter 14 px from
-    each row's title, and 14 px times the zoom after the UI zoom changes. Editora pins 14 px and has no UI zoom yet.
+    each row's title, and 14 px times the zoom after the UI zoom changes.
   - *Reference:* Editora `.context-menu` and `.menu-item-chord` in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css), [`MainMenuBar.UI_FONT_SIZE`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java),
-    [`ToolbarMenuFontFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ToolbarMenuFontFxTest.java).
+    [`ToolbarMenuFontFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ToolbarMenuFontFxTest.java) and [`ContextMenuFontFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ContextMenuFontFxTest.java). Editora writes 14 px and 11 px as absolute pixels and has no UI
+    zoom yet ([WIN-12](../window-shell/#win-12)), so its menus keep their size whatever opens them but don't scale.
+- **MENU-18 · SHOULD.** At the default zoom a menu row is 34 px high (padding 8 × 12), its icon column is 22 px wide
+  with 8 px to the title, and its chord starts at least 18 px after the title column. The popup's card has a radius
+  of 8 and a shadow of radius 16 at offset Y 16: the offset is at least the radius.
+  - *Why:* one row in every app is what makes the menus one family's. And a menu is a native window sized to its
+    root with the effect included, so a shadow that reaches above the menu is invisible window over the bar the
+    menu hangs from, and the pointer lands on it instead of the next menu button.
+  - *Check (code):* the stylesheet sets the row's padding and the popup's radius and shadow, with the shadow's
+    offset no smaller than its radius; the row's layout sets the icon column's width and the chord's margin.
+  - *Reference:* Editora `.menu-item` and `.context-menu` in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css), and [`MainMenuBar.ICON_COLUMN`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java) and
+    `rowContent`; [`MenuPopupBoundsFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/MenuPopupBoundsFxTest.java) holds the shadow below the popup. Termina's [`ui/MenuRows.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MenuRows.java) has the
+    same 22 px column and 18 px chord margin. The app template differs: [`ui/AppMenus.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AppMenus.java) has an 18 px icon column
+    (`ICON_SLOT`) and a 16 px chord margin, its [`app.css`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/styles/app.css) colors the chord `-color-fg-muted` where
+    [MENU-15](#menu-15) asks for `-state-key`, and its popup keeps the theme's shadow, radius 6 (8 in the dark
+    theme) at offset Y 2. Modula's [`modula.css`](https://github.com/adriandeleon/Modula/blob/master/src/main/resources/com/modula/modula.css) gives `.context-menu` a shadow of radius 20 at offset Y 6, and its
+    rows a padding of 4 × 8.
 
 ## The menu bar
 
@@ -140,7 +167,8 @@ tray icon's menu) show text only; there the chord is appended to the title ([MEN
   - *Why:* a menu built before Git finished detecting a repository must not stay grayed out.
   - *Check (test):* an FX test detects a repository after the window is built and finds the menu enabled.
   - *Reference:* Editora [`MainMenuBar.refreshEnablement`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java), [`MenuBarEnablementFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/MenuBarEnablementFxTest.java).
-- **MENU-04 · SHOULD.** Simple mode shows a shorter menu, rebuilt only when the mode actually changes.
+- **MENU-04 · SHOULD.** An app with a Simple mode shows a shorter menu in it, rebuilt only when the mode actually
+  changes.
   - *Check (code):* the bar rebuilds only when the simple flag differs from the current one.
   - *Reference:* Editora [`MainMenuBar.setSimple`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java), [`MenuBarModel.menus(simple)`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java).
 
@@ -151,7 +179,10 @@ tray icon's menu) show text only; there the chord is appended to the title ([MEN
 - **MENU-05 · MUST.** Every list row, tree row, tab, editor and read-only console has a right-click menu with the
   actions for *that* thing, each one a command.
   - *Check (by hand):* right-click each kind of thing; every row's action is also in the palette.
-  - *Reference:* Editora [`ui/TabContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabContextMenu.java), [`ui/RowContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/RowContextMenu.java), [`ui/ConsoleContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ConsoleContextMenu.java).
+  - *Reference:* Editora [`ui/TabContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabContextMenu.java), [`ui/RowContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/RowContextMenu.java), [`ui/ConsoleContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ConsoleContextMenu.java);
+    its rows are built by hand and call the window's methods, not a command id. The app template's
+    [`ui/CommandMenu.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/CommandMenu.java) builds each menu from registered command ids and runs a row through the registry
+    (`onRow` for a list row, `onConsole` for a read-only console; [`RightClickMenusFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/RightClickMenusFxTest.java)).
 
 The mockup is an editor tab's menu, shortened; Editora's has twenty-five rows.
 
@@ -196,8 +227,9 @@ The mockup is an editor tab's menu, shortened; Editora's has twenty-five rows.
     is then no longer dismissible.
   - *Check (test):* an FX test right-clicks another row with a menu open and finds one menu showing.
   - *Reference:* Editora [`ui/ContextMenuDismissal.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ContextMenuDismissal.java) closes every open right-click menu on the press that opens
-    the next ([`ContextMenuDismissalFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ContextMenuDismissalFxTest.java)); Modula's [`RadioPane`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/RadioPane.java) hides the previous menu before showing a new one;
-    Termina keeps one menu per view and shows it again.
+    the next ([`ContextMenuDismissalFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ContextMenuDismissalFxTest.java)), and its toolbar keeps one menu and shows it again, so a second
+    right-click on the bar moves it ([`ToolbarCoordinator`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolbarCoordinator.java), [`ToolbarContextMenuDismissFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ToolbarContextMenuDismissFxTest.java)); Modula's [`RadioPane`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/RadioPane.java)
+    hides the previous menu before showing a new one; Termina keeps one menu per view and shows it again.
 - **MENU-07 · MUST.** A press anywhere outside a right-click menu closes it, including inside the control the menu
   was opened on. The press is not consumed: a click in a list still selects the row, and a right-click on another
   row opens that row's menu straight away. Drop-downs opened by a plain click (menu buttons, choice boxes, the menu
@@ -206,11 +238,12 @@ The mockup is an editor tab's menu, shortened; Editora's has twenty-five rows.
     a text area stays open when the user clicks another row or the text.
   - *Check (test):* an FX test clicks inside the owner control and in another window, and the menu closes.
   - *Reference:* Editora [`ContextMenuDismissal.install()`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ContextMenuDismissal.java), called once in [`App`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java) at startup for every current and
-    future window; [`ContextMenuDismissalFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ContextMenuDismissalFxTest.java).
+    future window; [`ContextMenuDismissalFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ContextMenuDismissalFxTest.java), and for the toolbar's menu, whose owner is the whole bar,
+    [`ToolbarContextMenuDismissFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ToolbarContextMenuDismissFxTest.java).
 - **MENU-08 · MUST.** Escape closes a right-click menu and focus goes back where it was. In a terminal the Escape
   does not reach the shell.
   - *Check (by hand):* open a menu, press Escape, and type: the keys reach the control that had focus.
-  - *Reference:* the stock `ContextMenu` hide-on-Escape (Spec below); Termina's `onKeyPressed` filter hides the menu
+  - *Reference:* the stock `ContextMenu` hide-on-Escape (the right-click menus' [Spec](#spec)); Termina's `onKeyPressed` filter hides the menu
     and consumes the key ([`TerminalView`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalView.java)).
 - **MENU-09 · MUST.** The Menu key and `Shift+F10` open the selected row's menu, scrolled into view first,
   so every row action a mouse can reach the keyboard can too.
@@ -238,8 +271,10 @@ The mockup is an editor tab's menu, shortened; Editora's has twenty-five rows.
   - *Check (code):* per-file menus are created through `LazyContextMenu.of(build)`.
   - *Reference:* Editora [`ui/LazyContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/LazyContextMenu.java), [`LazyContextMenuFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/LazyContextMenuFxTest.java). A read-only console's menu is just
     Select All and Copy, both disabled while it is empty ([`ConsoleContextMenu`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ConsoleContextMenu.java)).
-- **MENU-12 · SHOULD.** A destructive row carries the `danger` class. The action follows the
-  [window shell](../window-shell/) rule: it asks first with a button that names it, or is undoable.
+- **MENU-12 · SHOULD.** A destructive row is styled as dangerous, its text in `-color-danger-fg` (Editora's style
+  class for it is `danger`). The action follows the
+  [Confirm dialog](../templates/confirm-dialog/) rules ([CONF-01](../templates/confirm-dialog/#conf-01),
+  [CONF-03](../templates/confirm-dialog/#conf-03)): it asks first with a button that names it, or is undoable.
   - *Check (code):* rows that delete, discard or reset add `danger` to their style classes.
   - *Reference:* Editora `.menu-item.danger` in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css), [`ui/BranchPopup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/BranchPopup.java).
 - **MENU-13 · MAY.** In a terminal view, a program that grabbed the mouse owns the right-click;
@@ -253,7 +288,7 @@ The mockup is an editor tab's menu, shortened; Editora's has twenty-five rows.
 |---|---|---|
 | Kind | `javafx.scene.control.ContextMenu`, auto-hide on, hide on Escape on: a popup window, unlike the palette | `TabContextMenu`, `ConsoleContextMenu` |
 | Opens at | The pointer; from the keyboard, the selected row's bottom edge at min(width ÷ 4, 48) px in, or under the caret | `RowContextMenu.anchorX`, `ContextMenuTarget` |
-| Font | Inter 14 px, pinned on `.context-menu`, whatever the owner's font | `app.css` |
+| Font | Inter 14 px at the default zoom, set on `.context-menu` from one value the UI zoom sets, so it never inherits the owner's font | `app.css` |
 | Rows | 34 px (padding 8 × 12); icon column 22 px; glyph scaled 0.8 from a 24 dp Material path, or a 16-unit line glyph | `Icons.ICON_SCALE`, `Icons.line` |
 | Card | Radius 8, shadow radius 16 at offset Y 16 | `.context-menu` |
 | Dismissal | Any press outside the menu, in any window; the next right-click; Escape | `ContextMenuDismissal`, `ContextMenuDismissalFxTest` |
@@ -261,5 +296,5 @@ The mockup is an editor tab's menu, shortened; Editora's has twenty-five rows.
 
 ## In the apps
 
-![Termina window with tabs in the title bar and a tab context menu](../../assets/shots/termina-tabs.png "Termina's tab menu: an icon on every row, following Editora's convention.")
+![Termina window with a menu bar, a tab strip under it and a tab context menu](../../assets/shots/termina-tabs.png "Termina's tab menu: an icon on every row, following Editora's convention.")
 ![Editora's View menu open with toggle commands and their chords](../../assets/shots/editora-menu-bar.png "Editora's in-window menu bar with the chord column, in an earlier build whose rows still lack icons and repeat the menu's name.")

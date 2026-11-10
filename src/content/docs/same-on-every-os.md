@@ -17,12 +17,16 @@ bug: an app records it in `pauta.json` as `pending`, with an issue, until it is 
 
 | What | Windows | macOS | Linux | Rules |
 |------|---------|-------|-------|-------|
-| Primary modifier | `Ctrl` | `Cmd`, from each keymap's `.mac.json` variant | `Ctrl` | [KBD-09](../keyboard/#kbd-09), [KBD-10](../keyboard/#kbd-10), [KBD-21](../keyboard/#kbd-21) |
+| Keymap chords | The keymap as written, with `Ctrl` | Each keymap's `.mac.json` variant: `Cmd` where the other has `Ctrl`, the macOS keymap of the editor it copies, and another chord where macOS keeps one for itself | The keymap as written, with `Ctrl` | [KBD-09](../keyboard/#kbd-09), [KBD-10](../keyboard/#kbd-10), [KBD-21](../keyboard/#kbd-21) |
 | How a chord is written | `Ctrl+Shift+P` | `⇧⌘P`, in Apple's modifier order | `Ctrl+Shift+P` | |
-| Quit | File → Quit, the tray's Quit | The same, plus the app menu's and the Dock's Quit, caught as the app's own | File → Quit, the tray's Quit | [TRAY-04](../tray-and-background/#tray-04) |
-| Menu bar | In the title bar, by default | The system menu bar, in a decorated window | In the title bar, by default | [WIN-03](../window-shell/#win-03) |
+| Quit | File → Quit, the tray's Quit | The same, plus the app menu's and the Dock's Quit, caught as the app's own | File → Quit, the tray's Quit | [WIN-13](../window-shell/#win-13), [TRAY-04](../tray-and-background/#tray-04) |
+| Application menu | None | About and Quit, in the menu macOS names after the app | None | [ABOUT-01](../templates/about/#about-01), [WIN-13](../window-shell/#win-13) |
+| Menu bar | In the title bar, by default | The system menu bar | In the title bar, by default | [WIN-03](../window-shell/#win-03) |
 | Open and save dialogs | The OS's own (`FileChooser`) | The OS's own | The OS's own | |
 | Opening a file or link, showing it in the file manager | Explorer | Finder (`open`) | `xdg-open` | |
+| Files opened from the OS | Arguments, handed to the running instance | `openFiles` Apple Events, sent to the running app | Arguments, handed to the running instance | [CLI-07](../command-line/#cli-07) |
+| File associations | The `.msi` registers the app's file types; a URL scheme goes under `HKCU\Software\Classes` | The bundle's `Info.plist` declares its document types and URL schemes; the user picks the default in Finder | The desktop entry's `MimeType`; `xdg-mime` or the package sets the default | |
+| Trash | The Recycle Bin | The Trash, the one Finder empties | The freedesktop.org trash | |
 | Tray icon | AWT `SystemTray` | AWT `SystemTray` | StatusNotifierItem | [TRAY-01](../tray-and-background/#tray-01) |
 | Notifications | A PowerShell toast, shown as Windows PowerShell's | `osascript`, shown as Script Editor's | `notify-send`, shown as the app's | [TRAY-09](../tray-and-background/#tray-09) |
 | Dock or taskbar badge | None | The dock icon | A launcher that honors `LauncherEntry` | [TRAY-12](../tray-and-background/#tray-12) |
@@ -31,16 +35,30 @@ bug: an app records it in `pauta.json` as `pending`, with an issue, until it is 
 | Start at login | The `HKCU` `Run` value | A LaunchAgent | An XDG autostart entry | [TRAY-06](../tray-and-background/#tray-06) |
 | Saved secrets | Credential Manager | Keychain | The Secret Service | [SET-13](../settings/#set-13) |
 | Screen reader | Narrator (UI Automation) | VoiceOver | None: JavaFX has no bridge to the Linux accessibility bus | [Accessibility](../accessibility/) |
+| High contrast | A high-contrast theme while Windows' high-contrast mode is on | None yet | None yet | [ACC-09](../accessibility/#acc-09) |
 | Installers | `.msi` (unsigned until [REL-17](../release/#rel-17) is met), winget on x64 | `.dmg`, Homebrew on Apple Silicon | `.deb`, `.rpm`, `.AppImage`, `.tar.gz`; on arm64, `.tar.gz` (and `.deb` where the tooling allows) | [REL-11](../release/#rel-11), [REL-12](../release/#rel-12), [REL-13](../release/#rel-13) |
 
-Some differences in the apps today are on no row, so each breaks a rule until it is fixed:
+Some differences in the apps today are on no row, or miss what a row says, so each breaks a rule until it is
+fixed:
 
 - Mirada keeps its settings in `~/Library/Application Support` and `%APPDATA%`, not `~/.mirada`
   ([SET-07](../settings/#set-07)).
 - Torrenta hides its "on metered connections" row on macOS instead of disabling it ([OS-01](#os-01)).
-- Editora's move to the Trash does nothing on Windows, where Mirada and Torrenta use the Recycle Bin ([OS-01](#os-01)).
-- No app's macOS Quit reaches a tray app's quit yet ([TRAY-04](../tray-and-background/#tray-04)), and no app's
-  flags print on Windows ([CLI-11](../command-line/#cli-11)).
+- Editora deletes a file for good on Windows, where it reaches no Recycle Bin; Mirada and Torrenta use it
+  ([OS-01](#os-01)).
+- Editora's "Save as administrator" row is not disabled on Windows, where it does nothing ([OS-01](#os-01)).
+- Termina removes its `hideMenuBar` command on macOS instead of disabling it ([OS-01](#os-01)).
+- Mirada closes the window on Escape on Linux only, follows the OS's accent color on macOS and Windows only, and
+  puts the title on the left on Windows only ([OS-01](#os-01)).
+- No app fixes the order of a dialog's buttons, so Editora, Torrenta, Termina, Mirada and nux draw them in JavaFX's
+  order for the OS ([WIN-11](../window-shell/#win-11)).
+- nux raises its Windows notifications as the tray icon's balloon, not a toast, so none shows without the tray
+  ([TRAY-09](../tray-and-background/#tray-09)).
+- Editora, Torrenta, Modula and nux don't run their quit method from macOS's own Quit: the application menu's and
+  the Dock's Quit ask each window to close, which in Torrenta, Modula and nux, closing to the tray, hides the window
+  ([WIN-13](../window-shell/#win-13)).
+- Editora, Termina, Modula and nux ship no console launcher on Windows, and none attaches to the parent's console;
+  Torrenta's `torrenta-nox` is one ([CLI-11](../command-line/#cli-11)).
 
 ## The same everywhere
 

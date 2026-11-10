@@ -23,13 +23,18 @@ description: "The flags every app accepts and the single-instance hand-off."
   - *Check (test):* a test runs the report command and finds the redacted report written.
   - *Reference:* Editora [`report/ReportCommand.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/report/ReportCommand.java) ([`ReportCommandTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/report/ReportCommandTest.java)).
 - **CLI-11 · MUST.** On Windows, `--help`, `--version` and `--report` print in the console they were typed in. A GUI
-  launcher has no console, so the installer also carries a console launcher (jpackage's `win-console`, named
-  `<app>-cli`) that runs the same entry point, or `main` attaches to the parent's console before it prints.
+  launcher has no console, so the installer also carries a console launcher (jpackage's `win-console`) that runs the
+  same entry point, or `main` attaches to the parent's console before it prints.
   - *Why:* without it, the three flags print nothing from cmd or PowerShell, and the command line differs on one OS.
-  - *Check (code):* the Windows jpackage configuration adds a launcher with `win-console=true`, or `main` calls
-    `AttachConsole` before printing.
-  - *Reference:* no app yet for the GUI. Torrenta's headless launcher is a console program
-    ([`src/jpackage/torrenta-nox-windows.properties`](https://github.com/adriandeleon/torrenta/blob/master/src/jpackage/torrenta-nox-windows.properties), `win-console=true`).
+  - *Check (code):* the Windows jpackage configuration adds a launcher with `win-console=true` that runs the app's
+    own main class and lets the three flags reach it, or `main` calls `AttachConsole` before printing.
+  - *Reference:* Torrenta meets it with its second launcher, `torrenta-nox`:
+    [`src/jpackage/torrenta-nox-windows.properties`](https://github.com/adriandeleon/torrenta/blob/master/src/jpackage/torrenta-nox-windows.properties) sets `win-console=true`, and its [`pom.xml`](https://github.com/adriandeleon/torrenta/blob/master/pom.xml) adds that launcher
+    to the image on Windows (the `os-windows` profile picks the file), beside the main launcher and on the same
+    module and main class. The launcher's own `arguments=--headless` applies only when the person gives none (its
+    [`CLAUDE.md`](https://github.com/adriandeleon/torrenta/blob/master/CLAUDE.md) says so), so `torrenta-nox --help`, `--version` and `--report` reach `main` as typed, and `main`
+    answers all three before it looks for `--headless` ([`App.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/App.java)). No other app has a `win-console` launcher
+    or calls `AttachConsole`.
 - **CLI-06 · SHOULD.** `[files…]` opens these items.
   - *Check (by hand):* launch with two files and find both open.
   - *Reference:* Editora [`App.fileTargets`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java).
@@ -43,13 +48,16 @@ description: "The flags every app accepts and the single-instance hand-off."
 - **CLI-08 · SHOULD.** An advisory lock tells two processes on one config folder about each other.
   - *Check (test):* a test takes the lock from two processes.
   - *Reference:* Editora [`config/InstanceLock.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/InstanceLock.java) ([`InstanceLockTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/config/InstanceLockTest.java)).
-- **CLI-09 · SHOULD.** `main` sets `java.awt.headless=true` before any AWT class loads. The one exception is an AWT
-  tray on Windows or macOS, which `main` decides once, before that point ([TRAY-14](../tray-and-background/#tray-14)).
+- **CLI-09 · SHOULD.** `main` sets `java.awt.headless=true` before any AWT class loads. The exceptions are the uses
+  [TRAY-14](../tray-and-background/#tray-14) allows, which `main` decides once, before that point: the tray on
+  Windows and macOS, and on macOS the dock badge, open-file handlers and the trash.
   - *Why:* on macOS, AWT's native toolkit and JavaFX contend for the one AppKit run loop and can hang; headless
     Java2D still draws to images.
-  - *Check (code):* `System.setProperty("java.awt.headless", …)` is among the first statements of `main`, and it is
-    `"true"` unless the tray needs AWT.
-  - *Reference:* Editora [`App.main`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java).
+  - *Check (code):* `main` calls `System.setProperty("java.awt.headless", …)` before `launch` and before anything
+    that loads an AWT class, and the value is `"true"` unless one of those uses needs AWT on this OS.
+  - *Reference:* Editora [`App.main`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java), always headless. Torrenta [`os/AwtUse.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/os/AwtUse.java) (`headful`, which its `App.main` asks
+    once: never on Linux, for the tray on Windows, and for the tray, the dock badge or the open-file handlers on
+    macOS). Mirada [`App.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/App.java) (headless except on macOS, for Move to Trash: [`os/Trash.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/os/Trash.java), `headless`).
 - **CLI-10 · SHOULD.** External tools are resolved through the login shell's `PATH`.
   - *Why:* a `.app` launched from Finder inherits a stripped `PATH`.
   - *Check (code):* every process the app starts gets a `PATH` that includes the login shell's.

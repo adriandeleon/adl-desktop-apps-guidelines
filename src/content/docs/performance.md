@@ -33,7 +33,8 @@ every change on a hot path there must honor.
     window closes.
   - *Check (code):* every `Executors.new…` and `new Thread` gets a name and `setDaemon(true)`, through a thread
     factory such as `daemon("my-feature")`; virtual threads are daemons already.
-  - *Reference:* the shape below; Editora [`terminal/TerminalExecutors.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/terminal/TerminalExecutors.java).
+  - *Reference:* Editora [`terminal/TerminalExecutors.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/terminal/TerminalExecutors.java) (its `daemon(name)` thread factory); the canonical
+    shape is in [The UI thread](#the-ui-thread).
 - **PERF-05 · MUST.** Blocking work stays off the common `ForkJoinPool`, and a `Process` subclass overrides
   `onExit()`.
   - *Why:* the common pool has one worker fewer than the machine has cores, so a few blocked waits
@@ -72,11 +73,14 @@ Each app names its hot paths: what runs on every keystroke, scroll pulse or prog
 typing, scrolling, highlighting, the overlays and the gutter. In Torrenta they are the transfer table's refresh,
 in Termina the terminal grid, in Mirada stepping between images.
 
-- **PERF-06 · MUST.** Redraws are coalesced to at most one per pulse with a `pending` flag, and text-driven work
-  waits for typing to pause.
-  - *Check (code):* a redraw request sets a `pending` flag and schedules one pass; listeners on text go through a
-    debounce.
-  - *Reference:* Editora [`ui/FxThrottle.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/FxThrottle.java).
+- **PERF-06 · MUST.** Redraws are coalesced to at most one per pulse, with a flag that one request is already
+  queued, and text-driven work waits for typing to pause.
+  - *Check (code):* a redraw request sets a flag (Editora's are named `…Pending`) and schedules one pass, and a
+    request that finds the flag set schedules nothing; listeners on text go through a debounce.
+  - *Reference:* Editora [`docs/performance.md`](https://github.com/adriandeleon/Editora/blob/master/docs/performance.md) §2 (the `redrawPending` shape) and
+    [`ui/WindowToolbar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowToolbar.java) (`scheduleEditStateRefresh`, with its `editStateRefreshPending` flag). [`ui/FxThrottle.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/FxThrottle.java)
+    is another tool: a leading-edge throttle with a maximum wait and no such flag, which runs the first request
+    of a burst at once and then at most one per interval.
 - **PERF-07 · MUST.** Streams (process output, logs, progress) reach the FX thread in batches at least 16 ms
   apart, never one `runLater` per line.
   - *Check (code):* a reader thread appends to a buffer that the FX thread drains, with a minimum interval
@@ -101,11 +105,12 @@ in Termina the terminal grid, in Mirada stepping between images.
 
 ## Memory and size
 
-- **PERF-11 · MUST.** Everything that grows is bounded: logs, histories, consoles, caches, undo. The newest is kept,
-  with a note of what was cut.
+- **PERF-11 · MUST.** Everything that grows is bounded: logs, histories, consoles, caches, undo. The newest is kept.
   - *Check (test):* each such store has a test that fills it past its cap and finds the oldest dropped.
-  - *Reference:* Editora [`ui/MessageLog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLog.java) (200, [`MessageLogTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/MessageLogTest.java)), [`ui/DebugLog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/DebugLog.java) ([`DebugLogTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/DebugLogTest.java)),
-    [`test/OutputCap.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/test/OutputCap.java).
+  - *Reference:* Editora [`ui/MessageLog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLog.java) (200 entries, the oldest dropped; [`MessageLogTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/MessageLogTest.java)), [`ui/DebugLog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/DebugLog.java)
+    (2,000 records, the oldest dropped; [`DebugLogTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/DebugLogTest.java)), and [`test/OutputCap.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/test/OutputCap.java), which keeps the head and the tail of one
+    test's output (200,000 characters) with a note between them of how much was cut. The note is Editora's choice,
+    not part of the rule.
 - **PERF-12 · MUST.** Large inputs are guarded by size and shape before they load: expensive features turn off past
   one threshold, the input opens read-only or capped past another, and what will not fit the free heap is refused.
   - *Check (code):* the loader compares the size against named thresholds before reading the content.
@@ -130,10 +135,11 @@ in Termina the terminal grid, in Mirada stepping between images.
 - **PERF-16 · SHOULD.** Config is read off the FX thread, before the toolkit needs it.
   - *Check (code):* `main` starts the config read on its own thread before `launch`.
   - *Reference:* Editora's `config-prefetch` thread in [`App.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java).
-- **PERF-17 · SHOULD.** The app ships precompiled stylesheets (`.bss`) and an AOT cache trained on a real session.
-  - *Check (code):* the build converts the `.css` files to `.bss` and runs a training launch for the AOT cache.
-  - *Reference:* Editora [`scripts/css2bss.java`](https://github.com/adriandeleon/Editora/blob/master/scripts/css2bss.java), [`scripts/aot_build.java`](https://github.com/adriandeleon/Editora/blob/master/scripts/aot_build.java); Termina's and Mirada's
-    [`scripts/aot-train.sh`](https://github.com/adriandeleon/Mirada/blob/main/scripts/aot-train.sh).
+- **PERF-17 · SHOULD.** The app ships precompiled stylesheets (`.bss`). The AOT cache, the other half of a fast
+  start, is [REL-10](../release/#rel-10).
+  - *Check (code):* the build converts the app's `.css` files to `.bss`, and the packaged app carries them.
+  - *Reference:* Editora [`scripts/css2bss.java`](https://github.com/adriandeleon/Editora/blob/master/scripts/css2bss.java), run by the `css-to-bss` execution in [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml). No other app
+    converts its own stylesheets yet.
 
 ## Measure, don't guess
 

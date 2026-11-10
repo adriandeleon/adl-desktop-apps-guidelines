@@ -22,6 +22,10 @@
     { "id": "PAL-03", "edition": "4.3.0", "see": "KBD-07" },
     { "id": "MLOG-01", "edition": "4.3.0", "see": "DIAG-01" },
     { "id": "PLAT-06", "edition": "5.0.0", "see": "ICON-08" },
-    { "id": "TABS-14", "edition": "5.0.0", "see": "PERF-14" }
+    { "id": "TABS-14", "edition": "5.0.0", "see": "PERF-14" },
+    { "id": "TABS-11", "edition": "Unreleased", "see": null },
+    { "id": "DOCS-09", "edition": "Unreleased", "see": "KBD-03" },
+    { "id": "PAUTA-12", "edition": "Unreleased", "see": "PWIN-01" },
+    { "id": "TBAR-10", "edition": "Unreleased", "see": "MENU-06" }
   ]
 }

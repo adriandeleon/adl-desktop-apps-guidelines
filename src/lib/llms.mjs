@@ -112,9 +112,11 @@ to write the report; an edition supplies only its rules. In short:
    app's repository root. Exit 0: the check passes; still read the rest of the rule and cite the file:line that meets
    it. Any other exit: the check fails, and what it printed is the evidence. Otherwise read or search the source as the
    check says. *Check (test)*: find the named test, or the app's equivalent, and confirm the build runs it.
-   *Check (by hand)*: source can't settle it; report it as manual. A name the rule's statement gives (a command id,
-   a key, a file) is required as written; one only its Check gives is Editora's spelling, and the app's equivalent
-   meets it.
+   *Check (by hand)*: source can't settle it; report it as manual. Some names in a rule's statement are required as
+   written: a command id, a catalog key, a chord, a command-line flag, an environment variable, a property in
+   pom.xml or pauta.json, and a file the repository must carry. Any other name (a Java class, method or constant, a
+   CSS file or style class, a branch or workflow file, a config file's name), and every name only a Check or
+   Reference gives, is Editora's spelling, and the app's equivalent meets it.
 3. A rule applies to every app unless it is limited: its text names the apps it covers ("An app with user
    documents…"), its page or section opens with an **Applies to** line (\`appliesTo\` in rules.json), or it details a
    rule that is limited. A limited rule the app is outside of is \`limited\` and needs no exception.
@@ -243,7 +245,13 @@ function htmlBlock(block) {
     decode(m[1] ?? m[2]),
   );
   if (labels.length) return labels.map((l) => `*${l.replace(/\.$/, "")}. Drawn on the page; the numbers below mark its parts.*`).join("\n\n");
-  return `*${inline(block)}*`;
+  // A mockup with no name of its own, such as a row of states: its texts, one line of the source to a line, with " / "
+  // between the texts of a line so a caption, a message and its buttons don't run together ("CancelSaveDiscard").
+  const rows = block
+    .split("\n")
+    .map((row) => row.split(/<(?!\/?(?:strong|b|em|i|code|kbd|a)\b)[^>]*>/).map(inline).filter(Boolean).join(" / "))
+    .filter(Boolean);
+  return rows.length > 1 ? rows.map((row) => `- *${row}*`).join("\n") : `*${rows[0] ?? ""}*`;
 }
 
 /** The Changelog page as Markdown: its prose, then every edition from CHANGELOG.md, as the page renders them. */

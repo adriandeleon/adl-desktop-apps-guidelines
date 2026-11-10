@@ -20,8 +20,13 @@ and no account of ours: the store is a private Git repository the user owns.
   is [SET-15](../../settings/#set-15).
   - *Check (code):* the sync package runs `git` against the user's URL, with no server or account of the app's own.
   - *Reference:* Editora [`sync/`](https://github.com/adriandeleon/Editora/tree/master/src/main/java/com/editora/sync) package ([`SyncEngine`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/sync/SyncEngine.java), [`SyncMerge`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/sync/SyncMerge.java), [`SyncAccount`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/sync/SyncAccount.java)), [`SyncEngine.hasCredentials`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/sync/SyncEngine.java);
-    Termina carries the same package, Torrenta its own [`sync/`](https://github.com/adriandeleon/torrenta/tree/master/src/main/java/com/torrenta/sync) with [`SyncEngine`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/sync/SyncEngine.java) and [`SyncAccount`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/sync/SyncAccount.java); the Spec table
-    below.
+    Termina carries the same package, Torrenta its own [`sync/`](https://github.com/adriandeleon/torrenta/tree/master/src/main/java/com/torrenta/sync) with [`SyncEngine`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/sync/SyncEngine.java) and [`SyncAccount`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/sync/SyncAccount.java); the page's
+    [Spec](#spec).
+
+How sync behaves is on the Settings page: setup and the pinned account ([SET-18](../../settings/#set-18)), when it
+runs and what never travels ([SET-19](../../settings/#set-19)), who wins a conflict and the backup
+([SET-20](../../settings/#set-20)), and where its status shows ([SET-21](../../settings/#set-21)). This page shows
+them and does not state them again as rules.
 
 ## Anatomy
 
@@ -97,12 +102,12 @@ that would remove most of a kind of data and waits for confirmation). The pill's
 | Property | Value | Reference |
 |---|---|---|
 | Store | A Git repository the user owns, cloned into `<config>/sync/`; one folder per kind of data | `SyncEngine`, `SyncTarget` |
-| Sign-in | The user's own Git credentials (credential helper or SSH key); the GitHub account that can read the repository is pinned per clone | `SyncAccount` |
-| Automatic runs | After startup, 30 s after a local change, and every *n* minutes (default 15) | `SettingsSync.DIRTY_DELAY_SECONDS`, `syncIntervalMinutes` |
-| Conflicts | Per entry; this computer wins; the other version stays in history | `SyncMerge` |
-| Safety | Files a sync replaces are copied to the sync folder first; a sync that would remove most of a kind of data stops and asks | `SyncReport` |
+| Sign-in | The user's own Git credentials (credential helper or SSH key); the GitHub account that can read the repository is pinned per clone ([SET-18](../../settings/#set-18)) | `SyncAccount` |
+| Automatic runs | After startup, 30 s after a local change, and every *n* minutes (default 15) ([SET-19](../../settings/#set-19)) | `SettingsSync.DIRTY_DELAY_SECONDS`, `syncIntervalMinutes` |
+| Conflicts | Per entry; this computer wins; the other version stays in history ([SET-20](../../settings/#set-20)) | `SyncMerge` |
+| Safety | Files a sync replaces are copied to the sync folder first ([SET-20](../../settings/#set-20)); a sync that would remove most of a kind of data stops and asks | `SyncReport` |
 | One runner | Sync runs in the first instance only; a second instance says so | `status.sync.secondaryInstance` |
-| Failures | To the status bar and the [Message Log](../message-log/), said once per failure, not once per interval | `SettingsSync` |
+| Failures | To the status bar and the [Message Log](../message-log/), said once per failure, not once per interval ([SET-21](../../settings/#set-21)) | `SettingsSync` |
 | Palette | Settings Sync: Set Up…, Sync Now, and Toggle Sync Automatically | `sync.setup`, `sync.now`, `sync.toggleAuto` |
 
 ## Copy

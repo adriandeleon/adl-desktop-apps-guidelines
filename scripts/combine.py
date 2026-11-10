@@ -31,16 +31,35 @@ groups = json.loads(Path(order_file).read_text(encoding="utf-8"))["groups"]
 EDITION = site.rstrip("/") + "/" + folder + "/"
 CODE = re.compile(r"(^ *```.*?^ *```|`[^`\n]*`)", re.M | re.S)
 LINK = re.compile(r"\]\((?!https?:|mailto:)([^)\s]+)\)")
-HREF = re.compile(r'href="(?!https?:|mailto:)([^"]+)"')
+# An SVG <use href="#i-close"/> names a symbol drawn in the same document, so it stays as written.
+HREF = re.compile(r'(<use\b[^>]*?\s)?href="(?!https?:|mailto:)([^"]+)"')
+FENCE = re.compile(r"^ {0,3}(`{3,}|~{3,})")
 
 
 def absolute(markdown, page):
     """A page's relative links ("../menus/", "#kbd-07") made absolute in its edition, as the site resolves them, so
     the single Markdown file's links work anywhere; the print build turns those into the PDF's own pages again
     (scripts/print-markup.py). Code keeps its examples as written."""
-    fix = lambda s: HREF.sub(lambda m: f'href="{urljoin(page, m.group(1))}"',
+    fix = lambda s: HREF.sub(lambda m: m.group(0) if m.group(1) else f'href="{urljoin(page, m.group(2))}"',
                              LINK.sub(lambda m: "](" + urljoin(page, m.group(1)) + ")", s))
     return "".join(part if i % 2 else fix(part) for i, part in enumerate(CODE.split(markdown)))
+
+
+def demote(markdown):
+    """Every heading a level down, since each page's title becomes an H2. A fenced code block keeps its lines as
+    written: the "## Pauta" block a reader copies into an app's AGENTS.md (PAUTA-17) is an example, not a heading."""
+    out, fence = [], None  # fence: the run of backticks or tildes that opened the block we are in
+    for line in markdown.split("\n"):
+        m = FENCE.match(line)
+        if fence is None:
+            if m:
+                fence = m.group(1)
+            else:
+                line = re.sub(r"^(#{2,5}) ", lambda h: "#" + h.group(1) + " ", line)
+        elif m and m.group(1)[0] == fence[0] and len(m.group(1)) >= len(fence) and not line.strip().strip(fence[0]):
+            fence = None
+        out.append(line)
+    return "\n".join(out)
 
 
 print("# Pauta: the adl desktop apps guidelines\n")
@@ -59,7 +78,7 @@ for group in groups:
         text = (docs_dir / f"{slug}.md").read_text(encoding="utf-8")
         front, body = re.match(r"^---\n(.*?)\n---\n(.*)$", text, re.S).groups()
         title = json.loads(re.search(r"^title:\s*(.+)$", front, re.M).group(1))
-        body = re.sub(r"^(#{2,5}) ", lambda m: "#" + m.group(1) + " ", body, flags=re.M)
+        body = demote(body)
         # Screenshots point at the repository's raw files, so the single Markdown file works anywhere.
         body = re.sub(r"\]\((?:\.\./)+assets/shots/", "](" + RAW, body)
         body = absolute(body, EDITION + slug + "/")

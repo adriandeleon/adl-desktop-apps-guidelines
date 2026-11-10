@@ -10,8 +10,9 @@ Editora (`../Editora`) is the reference implementation.
 - `npm run build` — the whole site into `dist/`: this edition at `latest/` and `<version>/`, every earlier edition
   from the `versions` branch, `next/` (see **Pauta Next**), the root redirects (see **Editions on the site**)
 - `npm run preview` — serves `dist/` as deployed, at http://localhost:4321/
-- `npm run check` — fails on a malformed rule, a retired ID in use, a broken link to a rule, or a checklist line
-  whose level isn't its rules' (`scripts/check-rules.mjs`); `npm run build` runs it first
+- `npm run check` — fails on a malformed rule, a retired ID in use, a page missing from `pages.json`, a relative
+  link that leads to no page, section, rule or screenshot, or a checklist line whose level isn't its rules'
+  (`scripts/check-rules.mjs`); `npm run build` runs it first
 - `node scripts/check-edition.mjs` — fails when this branch's changelog or edition clashes with `origin/master` or a
   tag (see **Several sessions at once**)
 
@@ -34,13 +35,20 @@ Editora (`../Editora`) is the reference implementation.
 - **Rule IDs**: every rule is a list item, never a table row, that opens with `**KBD-07 · MUST.**`, one testable
   statement, then sub-items `*Why:*` (only when there is a reason worth stating), `*Check (code|test|by
   hand):*` (how an agent or a person verifies it in an app: what to grep or read, which test holds it, or what to do
-  in the running app; a name it gives is Editora's spelling, which an app's equivalent meets, while a name in the
-  statement is required in every app, so name an id, key or file there only when every app must spell it so),
+  in the running app; a name it gives is Editora's spelling, which an app's equivalent meets. In the statement, a
+  name is required as spelled when a user, the docs or another tool finds the thing by it: a command id, a catalog
+  key, a chord, a command-line flag, an environment variable, a property in `pom.xml` or `pauta.json`, a file the
+  repository must carry; so name one there only when every app must spell it so. Any other name in a statement, a
+  Java class, method or constant, a CSS file or style class, a branch or workflow file, a config file's name, is
+  Editora's spelling too: write it so it cannot be read as the requirement, "(Editora's `AsyncTestScope`)"),
   `*Command:*` (only under a `Check (code)`, and only when a shell command settles the whole
   check: one code span holding a POSIX `sh -c` command, run from the app's repository root, that exits 0 when the
   check passes and prints what it found when it fails. It opens with the guard `src/lib/rules.mjs` names (`GUARD`), so
-  it fails outside an app's root, and it only reads: `npm run check` fails on a redirect into a file or a program that
-  writes or reaches the network. Test it under `dash` against Editora, the template and an empty folder before adding
+  it fails outside an app's root, and it only reads: `npm run check` reads it as the shell does and fails on any
+  command that is not on `src/lib/command.mjs`'s list of readers (`grep`, `test`, `head`, `tr`, `wc`, `echo` and the
+  like; `sed -n`, `sort`, `find` and `xargs` only in the forms that cannot write or run another program), on a command
+  named through a variable, a quote or a path, and on a redirect other than `< file`, `>/dev/null`, `2>/dev/null`,
+  `2>&1` and `>&2`. Test it under `dash` against Editora, the template and an empty folder before adding
   it) and `*Reference:*` (the Editora file, or the app that does it, or "no app yet"). IDs are
   permanent: never renumber or reuse one. A removed rule's ID stays retired: list it in `retired-rules.json` with the
   edition that removed it and the rule that holds its requirement now (`see`), link to that rule where the old one
@@ -65,7 +73,7 @@ Editora (`../Editora`) is the reference implementation.
   each line ends with links to the rules it covers (`[KBD-07](../keyboard/#kbd-07)`), every MUST is on a line, and a
   line marked `(SHOULD)` names only SHOULDs while any other line names only MUSTs. `npm run check` fails when a
   line and its rules disagree, when a MUST is on no line, or when a link to a rule points at a rule that doesn't
-  exist or at the wrong page.
+  exist or at the wrong page, or reads as another rule.
   **One requirement, one rule.** Before adding a rule, search the pages for the same requirement; when another page
   states it, link to that rule instead (an overview page points at the template that details it). Two IDs for one
   requirement make an app record two exceptions, and they drift apart in level.
@@ -87,7 +95,8 @@ Editora (`../Editora`) is the reference implementation.
   `"Unreleased"`. A change that only touches how the guide is shown (typos and spelling, links, Markdown and markup,
   styles, scripts, the build, branding, the PDF's layout) takes no changelog entry. When it touches a page,
   `pages.json` or a screenshot, say so with an `Edition: none` trailer on each commit that touches them (a trailer
-  waives only its own commit's files), or the edition check fails it.
+  waives only its own commit's files, and never a rule added, retired or re-leveled; git must read it as a trailer, so
+  it goes in the message's last paragraph, beside `Co-Authored-By`), or the edition check fails it.
   **A release** is its own pull request, made when the user asks for one: it sets the version and the date in
   `package.json`, renames `## [Unreleased]` to `## [x.y.z] - YYYY-MM-DD` above a new empty `## [Unreleased]`, adds
   the edition's one-paragraph summary under its heading, replaces `"Unreleased"` in `retired-rules.json` with the
@@ -137,7 +146,8 @@ Editora (`../Editora`) is the reference implementation.
     `pins.json`.
   - Never create or push a tag. CI tags `v<version>` on `master`'s commit after a release merges.
   - Run `node scripts/check-edition.mjs` before you push. CI runs it on every pull request and push to `master`; it
-    fails on a content change that adds nothing under `[Unreleased]` and whose commits carry no `Edition: none` trailer, a numbered
+    fails on a content change that adds nothing under `[Unreleased]` and whose commits carry no `Edition: none` trailer,
+    a rule added, retired or re-leveled with nothing new under `[Unreleased]` whatever the trailers say, a numbered
     section added without raising the version, a release that leaves anything under `[Unreleased]`, a release
     numbered at or below master's or a tag on origin, a patch release whose rules gained, lost or re-leveled an ID
     since the edition before it, a retired ID not listed with `"Unreleased"` (or, in a release, its number), or a
@@ -173,7 +183,8 @@ Editora (`../Editora`) is the reference implementation.
   pre-1.4.0 edition is rebuilt from its tag with `scripts/archive-tag.sh vX.Y.Z` and archived with
   `scripts/archive-edition.sh build/editions/X.Y.Z`. In CI, `npm run build` fails rather than deploy a site that
   lacks a released edition or the downloads. The workflow's build job holds a read-only token; only the publish job,
-  which installs nothing, can push. Pin every action to a commit SHA with its version in a comment. Pages link with relative paths or
+  which installs nothing, can push, and only in a run on `master`: a pull request, or a manual run on another branch,
+  checks and builds and publishes nothing. Pin every action to a commit SHA with its version in a comment. Pages link with relative paths or
   `import.meta.env.BASE_URL`, which already includes the edition folder; `src/lib/site.mjs` gives the site root and
   the edition a page is served from.
 - **Where the site lives.** `package.json`'s `guidelines.url` is the only place the site's address is written;

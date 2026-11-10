@@ -14,7 +14,8 @@ Editora's [`ui/WelcomeText.java`](https://github.com/adriandeleon/Editora/blob/m
 - **WELC-02 · SHOULD.** An app whose window *is* its content shows its own empty state instead, with the same
   ingredients: the ways in, each with its chord.
   - *Check (by hand):* start the app with nothing in it and read the empty state's keys.
-  - *Reference:* Torrenta [`ui/Welcome.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/Welcome.java) (see In the apps below).
+  - *Reference:* Torrenta [`ui/Welcome.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/Welcome.java); Mirada [`ui/ViewerWindow.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/ViewerWindow.java) (`offerToOpen`,
+    `viewer.emptyHint`); both are described under [In the apps](#in-the-apps).
 
 ## Anatomy
 
@@ -87,11 +88,13 @@ Editora's [`ui/WelcomeText.java`](https://github.com/adriandeleon/Editora/blob/m
 **Applies to:** an app with a Welcome page ([WELC-01](#welc-01)).
 
 - **WELC-03 · SHOULD.** The page is shown at startup when there is no session to restore (so always with
-  `--no-session`), by the `view.welcome` command (Help → Welcome Page), and when the tab strip is empty after a
+  `--no-session`), by the `view.welcome` command (Help → Welcome Page, in the place
+  [DOCS-07](../../documentation/#docs-07) gives it), and when the tab strip is empty after a
   project swap. Standalone diff startup suppresses it while its worker reads the files.
-  - *Check (code):* those three paths open the one Welcome tab; the diff startup holds a flag that skips it.
+  - *Check (code):* those three paths open the one Welcome tab, and the Help `MenuSpec` lists `view.welcome`; the
+    diff startup holds a flag that skips it.
   - *Reference:* Editora [`MainController.addWelcomeTab`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java), `showWelcomeIfNoTabs`; [`WindowSessionCoordinator`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowSessionCoordinator.java)
-    (`suppressWelcome`).
+    (`suppressWelcome`). Editora's menu row is in View, not in Help yet ([`MenuBarModel`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java)).
 - **WELC-04 · SHOULD.** Closing the last file tab does not bring the page back. The editor area shows its own quiet
   hint instead: Open File, Open Folder, Command Palette and Welcome Page, each with its chord, and takes focus so
   chords still reach the window.
@@ -143,7 +146,7 @@ Editora's [`ui/WelcomeText.java`](https://github.com/adriandeleon/Editora/blob/m
 | `welcome.notation.emacs` | Chords use Emacs notation: C- is Ctrl, M- is Alt, S- is Shift. Pick another keymap above to see your platform's notation. |
 | `welcome.help` / `welcome.documentation` / `welcome.whatsNew` / `welcome.doctor` | Help / Documentation / What's New / Doctor: Check External Tools |
 | `welcome.version` | Version {0} |
-| `welcome.page` | Welcome Page *(the menu item)* |
+| `welcome.page` | Welcome Page *(the row in the empty editor's hint, [WELC-04](#welc-04); the menu row takes the command's title, `command.view.welcome`)* |
 
 ## In the apps
 
@@ -153,5 +156,7 @@ Torrenta has no documents to come back to, so its welcome is an **empty state ov
 torrent (`ui/Welcome.java`, bound to the list being empty): a drop zone that says "Drop a .torrent, a magnet or a
 link anywhere", the four keys that matter with their chords (open a .torrent file, add what is on the clipboard,
 filter or run a command, Settings), the clipboard's magnet or link offered with an *Add it* button when there is
-one, and where downloads go with a *change* link. Nothing on it takes focus: the keys are the way in. Termina, Mirada,
-Modula and nux open straight into their content and have neither.
+one, and where downloads go with a *change* link. Nothing on it takes focus: the keys are the way in. Mirada, with
+no folder open, shows an empty state too (`offerToOpen` in [`ui/ViewerWindow.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/ViewerWindow.java)): a hint that names the Open
+command's chord ("Open an image with {0}, or drop one here"), buttons for the Open Image… and Open Folder… commands
+and a Documentation link. Termina, Modula and nux open straight into their content and have neither.

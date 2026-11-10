@@ -191,6 +191,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 - [ ] `AGENTS.md`, with a one-line `CLAUDE.md` pointing to it · [REPO-05](../repository/#repo-05), [DOCS-14](../documentation/#docs-14)
 - [ ] `CONTRIBUTING.md`, `docs/` and `branding/` · [REPO-06](../repository/#repo-06), [REPO-07](../repository/#repo-07), [REPO-10](../repository/#repo-10)
 - [ ] `.github/ISSUE_TEMPLATE/bug_report.yml` · [REPO-09](../repository/#repo-09)
+- [ ] Scripts in Java, run by the JDK as source files, or in `sh` or bash (SHOULD) · [REPO-11](../repository/#repo-11)
 
 ## Documentation
 

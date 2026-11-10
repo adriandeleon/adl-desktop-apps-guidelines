@@ -8,6 +8,12 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 
 ## [Unreleased]
 
+### Added
+
+- **REPO-11** (SHOULD): every script in `scripts/` is a Java source file the JDK runs as it is or an `sh` or bash
+  script, as in Editora, so building and releasing an app needs no second toolchain. Mirada, Modula and Torrenta
+  each have Python scripts that don't meet it yet.
+
 ### Changed
 
 - **PLAT-11** no longer requires TestFX: FX tests run on JUnit over the Headless glass platform, and TestFX MAY

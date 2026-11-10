@@ -278,7 +278,17 @@ export const CHANGES = "rule-changes.json";
  * What `changed` watches in a rule, as twelve hex digits: its level, its scope (`appliesTo`) and its statement. Why,
  * Check, Command and Reference are how a rule is explained and verified, not what it asks. Line breaks and where a
  * link points are left out, so rewrapping a paragraph or moving a page changes no rule; any other edit to the words
- * does, a typo fixed included.
+ * does, a typo fixed included, and so does an edit to the Markdown around them: emphasis added or taken off, a name
+ * newly linked or put in backticks, a link's label reworded. What it does not see is anything the statement only
+ * points at: a value in a spec table, the rule it hands a requirement to.
+ * The record (rule-changes.json) keeps each rule's hash and not its text, made by this function at the last release.
+ * So a change to what is hashed makes every rule it touches read as changed until a release rewrites the record, and
+ * that release would date them all with its own number: change this only in a release, with the record's hashes made
+ * again from the edition before it, or keep the old function beside the new one until the record holds the new one's.
+ * Decided for the next release, and not done before it: that release switches this function to a hash of the
+ * statement's words alone (no emphasis marks, no link brackets), and for that one release scripts/rule-changes.mjs
+ * and scripts/check-edition.mjs accept a stored hash that matches either function, the old or the new, so the switch
+ * re-dates no rule.
  */
 export function ruleHash(rule) {
   const flat = (s) => (s ?? "").replace(/\]\([^)]*\)/g, "]").replace(/\s+/g, " ").trim();

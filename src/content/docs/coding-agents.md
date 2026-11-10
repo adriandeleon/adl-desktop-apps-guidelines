@@ -29,8 +29,9 @@ served from 2.0.0 on, the page Markdown, the skill and the schemas from 4.3.1, a
 after 4.5.0; the 1.x editions, from before rules
 had IDs, have their pages only. `versions.json` at the site root lists every published edition.
 
-The [single Markdown file](../downloads/adl-desktop-apps-guidelines.md) is the whole guide in one file. It is large,
-and its pages and rules are the same.
+The [single Markdown file](../downloads/adl-desktop-apps-guidelines.md) is the whole guide in one file. It is large.
+Its pages and rules are the site's, and each mockup reads as it does in `<page>.md`: a sentence saying what it
+shows.
 
 ## What a rule looks like
 
@@ -49,14 +50,14 @@ rule is:
   "section": "Command Palette",
   "appliesTo": null,
   "url": "https://pauta-project.dev/<edition>/keyboard/#kbd-07",
-  "text": "The palette and every picker are in-scene overlays in the window's root `StackPane`, never a `javafx.stage.Popup`.",
+  "text": "The palette and every picker (a card that lists choices to filter and pick one from: [QOPEN-01](https://pauta-project.dev/<edition>/templates/quick-open/#qopen-01)) are in-scene overlays in the window's root `StackPane`, never a `javafx.stage.Popup`.",
   "why": "on Windows a Popup does not reliably take OS keyboard focus, and the whole app can stop receiving keystrokes.",
   "check": {
     "kind": "code",
     "text": "the palette and every picker add their node to the root `StackPane`; none creates a `Popup`.",
     "command": null
   },
-  "reference": "Editora `ui/CommandPalette.java`."
+  "reference": "Editora [`ui/OverlayHost.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java), the one host installed in the scene's root `StackPane`, which shows the palette ([`ui/CommandPalette.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java)), the picker ([`ui/QuickOpen.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java)) and the picker's relatives ([QOPEN-12](https://pauta-project.dev/<edition>/templates/quick-open/#qopen-12))."
 }
 ```
 
@@ -67,12 +68,18 @@ rule is:
 - **`level`** is MUST (a release blocker for a new app), SHOULD (expected unless the app has a stated reason) or
   MAY (worth copying when the app grows into it).
 - **`check.kind`** says how the rule is verified: `code` by reading or searching the source, `test` by a named test
-  the build runs, `by hand` in the running app, which source alone can't settle.
+  the build runs, `by hand` in the running app, which source alone can't settle. A rule has a `test` check only
+  when its statement requires the test ("A test holds it.", or a rule that is itself about a test). A `code` check may end "A test that asserts it is the
+  surest evidence": that test is evidence, and an app without it still meets the rule by the behavior its code
+  shows. A check that reads what the app's checkout does not hold, the website's repository or a repository
+  setting, says so in its last sentence ([`not-checked`](#audit-an-app)).
 - **`check.command`**, on some `code` checks, is one POSIX shell command (Linux, macOS, Git Bash or WSL): run it with
   `sh -c` from the app's repository root. Exit 0: the check passes; still read the rest of the rule and cite the
   file:line that meets it. Any other exit: the check fails, and what it printed is the evidence (OS-02's lists the
   classes that read `os.name`). Every command only reads, and opens with a guard that fails it outside an app's root.
-  It is `null` where reading the code takes judgment.
+  It is `null` where reading the code takes judgment. A search written inside `check.text` (the `grep` of
+  PERF-01, say) is not a command in this sense: it lists candidate lines for a person or an agent to judge, and
+  its exit code is no verdict.
 - **`reference`** names the Editora file, or the other app, that does it. The agent copies from there. From the first
   edition released after 4.5.0, its links point at the commit each app was at when the edition came out, so they show
   the code as it was then; `blob/master` in a page's source becomes that commit in what the edition serves. Editions
@@ -104,8 +111,8 @@ An app is built to one edition, the one `pauta.version` in its `pom.xml` names (
 [About window](../templates/about/)). Its agent should read that edition, not `latest/`: a newer edition may hold
 MUSTs the app doesn't meet yet, and an agent that reads them will "fix" what nobody asked it to.
 
-Say so in a `## Pauta` section of the app's `AGENTS.md` ([PAUTA-17](../conformance/#pauta-17)). The
-[app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`AGENTS.md`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/AGENTS.md) has one; an app made before it adds this:
+Say so in a section of the app's `AGENTS.md` ([PAUTA-17](../conformance/#pauta-17)). The
+[app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`AGENTS.md`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/AGENTS.md) has one, headed "Pauta"; an app made before it adds this:
 
 ```markdown
 ## Pauta
@@ -159,19 +166,24 @@ short version differs from the skill, the skill wins:
    `rules.json`: audit against 2.0.0 or newer, and report what the app's own edition didn't ask for as upgrade work.
 2. Take each rule in turn. A *code* check: run its `check.command` when it has one, else read or search the source as
    it says. A *test* check: find the named test, or the app's equivalent, and confirm the build runs it. A *by hand*
-   check: source can't settle it, so report it as manual, unless `pauta.json` lists the rule (step 4). Which names
-   in a rule are required as spelled is under [What a rule looks like](#what-a-rule-looks-like).
+   check: the source can't confirm it, so report it as manual, unless `pauta.json` lists the rule (step 4) or the
+   source plainly shows it unmet, which is a `fail` like any other. A check that needs the website's repository or
+   a repository setting, which the app's checkout does not hold, is `not-checked` when the audit can't reach
+   it. Which names in a rule are required as spelled is under [What a rule looks like](#what-a-rule-looks-like).
 3. A rule applies to every app unless it is limited: its text names the apps it covers ("An app with user
    documents…"), its page or section opens with an **Applies to** line, or it details a limited rule
    ([PAUTA-05](../conformance/#pauta-05)). An app outside a limited rule gets `limited`, and needs no exception.
+   Those three are the only places a scope is written: an audit never infers one from what the app lacks.
 4. Read the app's `pauta.json` ([Conformance](../conformance/)). An unmet rule it lists gets the entry's kind as its
    status; MAYs need no entry. An unmet MUST or SHOULD it doesn't list is `fail`; so is an unmet MAY, which has no
    consequence. An entry for a rule that passes or is limited, and a deviation or pending entry with no link, are
    problems. A by-hand rule it lists as an exception gets that kind too, not `manual`. Its `checked` list records
    the by-hand rules a person checked in the running app and found met ([PAUTA-18](../conformance/#pauta-18)): a
-   `manual` result carries its entry, and one with no entry is reported as not recorded, which is not a failure.
+   `manual` result carries its entry, and one with no entry is reported as not recorded, which is not a failure:
+   the list is the app's to keep or not, and PAUTA-18 governs only the entries that are there.
    An entry older than the rule's `changed` is stale, and a problem.
-5. Report one result per rule: its ID, level, status and evidence as `file:line`. A failed MUST blocks a release.
+5. Report one result per rule: its ID, level, status and evidence as `file:line`. A failed MUST blocks a release;
+   a `manual` or `not-checked` MUST does not, and stays in the report until someone settles it.
 
 Every report uses the same statuses, which `rules.json` also lists:
 
@@ -179,7 +191,8 @@ Every report uses the same statuses, which `rules.json` also lists:
 |---|---|---|
 | `pass` | Met. | No; an entry for it is stale. |
 | `fail` | Not met, and `pauta.json` doesn't list it. A failed MUST blocks a release; a failed MAY has no consequence. | A MUST or SHOULD, yes: this is what the audit is for. A MAY, no. |
-| `manual` | Checked by hand: source can't settle it. A person checks it in the running app, and records it in `pauta.json`'s `checked` list once it is met; the report gives that entry, or says "not recorded". | No, recorded or not. Found unmet by the person who checks, it gets one, and its status is that kind from then on. |
+| `manual` | Checked by hand: the source leaves it open. A person checks it in the running app, and may record it in `pauta.json`'s `checked` list once it is met; the report gives that entry, or says "not recorded". | No, recorded or not. Found unmet by the person who checks, it gets one, and its status is that kind from then on. |
+| `not-checked` | The Check needs something an audit of the app's checkout cannot see: another repository (the website's), or what the repository's host keeps and no file shows (a repository setting, an issue's state). Not a finding and not a pass; the evidence says what would settle it. It does not block a release. | No. Found unmet by whoever settles it, it gets one. |
 | `pending`, `deviation`, `not-applicable`, `app-only` | Not met, and `pauta.json` lists it as that kind. | It has one. |
 | `limited` | The rule covers apps with a feature this one lacks. | No; an entry for it is wrong. |
 
@@ -197,10 +210,11 @@ Each result reads like this:
 ```text
 KBD-07   MUST    pass     src/main/java/com/example/app/ui/CommandPalette.java:57
 TBAR-01  MUST    fail     src/main/java/com/example/app/ui/MainToolbar.java:88 builds an icon button by hand
-KBD-15   MUST    manual   Tab order needs the running app; checked 2026-11-02 against <edition>
-MENU-08  MUST    manual   Escape on a right-click menu needs the running app; not recorded
+SET-02   MUST    manual   the Settings window's layout needs the running app; checked 2026-11-02 against <edition>
+PWIN-02  MUST    manual   compare the Pauta window with pauta.json in the running app; not recorded
 TRAY-01  MUST    limited  no tray: no SystemTray or TrayIcon in src/
-SET-14   MUST    not-applicable  pauta.json: the app never asks for a password or token
+PAUTA-13 MUST    not-checked  needs the website's repository: its docs have a Pauta conformance page
+DIAG-07  SHOULD  not-applicable  pauta.json: the app depends on no outside tool, so a Doctor has nothing to check
 MENU-14  MUST    pending  pauta.json: issue #212
 ```
 
@@ -210,10 +224,19 @@ MENU-14  MUST    pending  pauta.json: issue #212
 - **Check the evidence.** A verdict without `file:line` is a guess. Open a sample of the passes as well as the
   failures before you act on the report.
 - **Manual means a person.** A *by hand* check needs the running app, often on a particular OS. The agent lists
-  them; someone runs them and records each one met in `pauta.json`'s `checked` list
+  them; someone runs them and may record each one met in `pauta.json`'s `checked` list
   ([PAUTA-18](../conformance/#pauta-18)), which the next audit reads back. One with no entry is reported as not
   recorded: that is not a failure, it needs no exception, and it leaves the conformance as it is. One the person
-  finds unmet gets an exception like any other rule ([PAUTA-04](../conformance/#pauta-04)).
+  finds unmet gets an exception like any other rule ([PAUTA-04](../conformance/#pauta-04)). The agent settles one
+  case by itself: a by-hand rule the source plainly shows unmet is a `fail`, with the `file:line`.
+- **Not checked means out of reach.** A few checks read the app's website repository
+  ([DOCS-01](../documentation/#docs-01), [PAUTA-13](../conformance/#pauta-13)) or a repository setting
+  ([REL-19](../release/#rel-19)). An audit run from the app's checkout alone reports them as `not-checked` and
+  says what would settle each; with the website checked out beside the app, or `gh` signed in, it judges them.
+- **Nothing to judge is not a guess.** A rule about how a required part behaves (the find bar of a log shown as
+  text, the Pauta window) fails with the rule that requires the part, and its evidence names that rule, so a
+  missing find bar reads as one cause. A rule that constrains things an app may have or not (every entry, row or
+  file of a kind) passes in an app that has none. The skill's step 4 has the order.
 - **Gaps per app** on this site is the same audit, done by hand for the six apps. An agent's report for one of them
   should agree with [Gaps per app](../family/gaps/); where it doesn't, one of them is wrong.
 

@@ -62,6 +62,7 @@ export default defineConfig({
       editLink: { baseUrl: "https://github.com/adriandeleon/adl-desktop-apps-guidelines/edit/master/" },
       lastUpdated: true,
       components: {
+        Banner: "./src/components/Banner.astro",
         Footer: "./src/components/Footer.astro",
         Hero: "./src/components/Hero.astro",
         SiteTitle: "./src/components/SiteTitle.astro",

@@ -1,11 +1,12 @@
 ---
 // CHANGELOG.md (Keep a Changelog) rendered on the site: the current edition as "What's new" on the overview, and
 // every edition on the Changelog page, each under its own anchor. The file stays the one source of what changed.
+// In next/ the overview's "What's new" is the batch itself, what waits under [Unreleased], and says it is no edition.
 import { createMarkdownProcessor } from "@astrojs/markdown-remark";
 import pkg from "../../package.json";
 import text from "../../CHANGELOG.md?raw"; // bundled at build time, so the page needs no file at run time
 import { parseEditions, isVersion } from "../lib/editions.mjs";
-import { siteRoot, longDate } from "../lib/site.mjs";
+import { siteRoot, editionOf, longDate, NEXT } from "../lib/site.mjs";
 
 interface Props {
   /** Only the edition package.json names (the overview's What's new); otherwise every edition. */
@@ -38,7 +39,10 @@ for (const { version, date, body } of parseEditions(text)) {
   editions.push({ version, date, html: (await processor.render(body)).code, groups: headlines(body) });
 }
 const current = editions.find((e) => e.version === pkg.version) ?? editions.find((e) => e.date);
-const shown = latest ? (current ? [current] : []) : editions;
+// next/ is built only while something waits (scripts/build-next.mjs), so there the section is never empty.
+const waiting = editionOf(base, root) === NEXT ? editions.find((e) => !isVersion(e.version) && !e.date) : undefined;
+const news = waiting ?? current;
+const shown = latest ? (news ? [news] : []) : editions;
 ---
 
 <div class:list={["editions", { news: latest }]}>
@@ -59,7 +63,11 @@ const shown = latest ? (current ? [current] : []) : editions;
     latest ? (
       <section class="edition">
         <p class="edition-meta">
-          Edition <strong>{e.version}</strong>{e.date && <> · <time datetime={e.date}>{longDate(e.date)}</time></>}
+          {e === waiting ? (
+            <>Pauta <strong>Next</strong> · unreleased changes after {pkg.version}, not an edition yet</>
+          ) : (
+            <>Edition <strong>{e.version}</strong>{e.date && <> · <time datetime={e.date}>{longDate(e.date)}</time></>}</>
+          )}
         </p>
         {e.groups.map((g) => (
           <p class="edition-summary">
@@ -67,7 +75,11 @@ const shown = latest ? (current ? [current] : []) : editions;
           </p>
         ))}
         <p class="edition-more">
-          <a href={`${base}changelog/`}>Everything that changed, and every earlier edition</a>
+          {e === waiting ? (
+            <a href={`${base}changelog/#${e.version.toLowerCase()}`}>Everything that waits, and every edition</a>
+          ) : (
+            <a href={`${base}changelog/`}>Everything that changed, and every earlier edition</a>
+          )}
         </p>
       </section>
     ) : (

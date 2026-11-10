@@ -46,10 +46,10 @@ Every edition stays online at its own address: [`/latest/`](https://pauta-projec
 
 | Part | Pages |
 |---|---|
-| Start here | Principles · New app checklist · Coding agents and LLMs |
-| Foundations | Platform baseline (JDK 25, JavaFX 27, AtlantaFX, NullAway, Maven Wrapper) · Repository documents · Documentation (user docs on the website, `docs/`, Help → Documentation) · Code quality gates (90% coverage) |
-| Experience | Keyboard first & Command Palette · Window shell · Icons and color (Inter, the Caret & Ink palette, state colors, icon families) · Toolbars and tooltips · Tabs and tool panels · Menus (menu bar, right-click menus) · Tray and background (close to tray, start at login, notifications) · Settings (search, Git/GitHub sync) · Diagnostics (Message Log, Debug Log, updates, Report a Problem) · Command line · Internationalization |
-| Templates | Command Palette · QuickOpen picker · Welcome page · About window · Confirm dialog · Find bar · Message Log · Settings Sync |
+| Start here | Principles · Same on every OS · New app checklist · Conformance (`pauta.json`, exceptions, the audit) · Coding agents and LLMs |
+| Foundations | Platform baseline (JDK 25, JavaFX 27, AtlantaFX, NullAway, Maven Wrapper) · Repository documents · Documentation (user docs on the website, `docs/`, Help → Documentation) · Code quality gates (90% coverage) · Performance (nothing slow on the FX thread, start-up) |
+| Experience | Keyboard first & Command Palette · Accessibility · Window shell · Icons and color (Inter, the Caret & Ink palette, state colors, icon families) · Toolbars and tooltips · Tabs and tool panels · Menus (menu bar, right-click menus) · Tray and background (close to tray, start at login, notifications) · Settings (search, Git/GitHub sync) · Diagnostics (Message Log, Debug Log, updates, Report a Problem) · Command line · Internationalization |
+| Templates | Command Palette · QuickOpen picker · Welcome page · About window · Pauta window · Confirm dialog · Find bar · Message Log · Settings Sync |
 | Shipping | jpackage + JReleaser installers for macOS / Linux / Windows on arm64 and x64, signing, CI |
 | The family | Feature matrix of the six apps · Shared features · Gaps per app |
 

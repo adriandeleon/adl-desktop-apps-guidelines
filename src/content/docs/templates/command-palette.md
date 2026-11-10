@@ -14,21 +14,27 @@ Torrenta shares [`MatchText`](https://github.com/adriandeleon/torrenta/blob/mast
   `M-x` in the Emacs keymap and `Ctrl+Shift+P` (`Cmd+Shift+P` on macOS) in the others (`Ctrl+Shift+A` allowed in the
   IntelliJ keymap), are
   [KBD-05](../../keyboard/#kbd-05).
-  - *Check (code):* the window builds one `CommandPalette`, and `palette.show` opens it.
+  - *Check (code):* each window builds one palette, and the command registered as `palette.show` opens it (in
+    Editora the window controller builds one `CommandPalette`).
   - *Reference:* Editora [`ui/CommandPalette.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java), built once in [`MainController`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java).
 - **PAL-02 · MUST.** The palette lists every registered command, with its title and description
   ([KBD-03](../../keyboard/#kbd-03)).
   - *Check (code):* the palette's rows come from the whole registry, filtered only by the query; a command that
     cannot run stays listed, grayed.
   - *Reference:* Editora [`CommandPalette.filter`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java) (`registry.all()`), [`MessagesTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/i18n/MessagesTest.java); the page's [Spec](#spec).
+    Torrenta's and Modula's palettes don't yet. Torrenta's lists only the commands that can run now: `show` in
+    [`ui/CommandPalette.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/CommandPalette.java) drops every disabled command, after `offeredCommands` in [`ui/MainWindow.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java) has
+    dropped what the engine cannot run and what Simple mode hides. Modula's leaves out one (`stereo`, while its
+    control is disabled, in [`ui/RadioPane.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/RadioPane.java)).
 
 - **PAL-10 · SHOULD.** The palette is 620 px wide, its rows 36 px high with 8 visible before the list scrolls, at
-  the default zoom ([WIN-12](../../window-shell/#win-12)), and its field's prompt is the catalog's `palette.prompt`
-  ("Run command…").
+  the default zoom ([WIN-12](../../window-shell/#win-12)), and its field's prompt reads "Run command…", in words
+  from the catalog (Editora's key for them is `palette.prompt`).
   - *Why:* the palette is the one window every app shares; a different width or prompt is the first thing a person
     moving between apps notices.
   - *Check (code):* the palette's width, row height and visible rows come from constants of these values, and its
-    prompt from `tr("palette.prompt")`.
+    prompt is read from the catalog, where the English is "Run command…". The rule asks for the words, not for a
+    catalog key.
   - *Reference:* Editora [`ui/CommandPalette.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java) (`ROW_HEIGHT`, `VISIBLE_ROWS`), Torrenta,
     Termina and the app template's [`ui/Picker.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Picker.java). Mirada's [`ui/CommandPalette.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/CommandPalette.java) matches the three
     sizes and reads the same words from the catalog under another key, `palette.runCommandPrompt`. Modula's is
@@ -87,8 +93,10 @@ The palette is an in-scene overlay in the window's root `StackPane`, over a fain
   on the whole list ([PAL-02](#pal-02)).
   - *Check (code):* `show` clears the field and filters on the empty query before the card appears.
   - *Reference:* Editora [`CommandPalette.show`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java).
-- **PAL-05 · SHOULD.** Typing filters the list, and the first *enabled* match is selected.
-  - *Check (test):* a test with a disabled command at the top finds the cursor on the first enabled row.
+- **PAL-05 · SHOULD.** Typing in the palette filters its list, and the first *enabled* match is selected.
+  - *Check (code):* after each filter the palette selects the first row whose command can run, stepping over
+    disabled rows at the top (Editora's `selectFirstEnabled`). A test that asserts it, with a disabled command at
+    the top, is the surest evidence.
   - *Reference:* Editora [`CommandPalette.selectFirstEnabled`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java), [`CommandPaletteDisabledFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/CommandPaletteDisabledFxTest.java).
 - **PAL-06 · SHOULD.** The active keymap's line and page chords move the selection, as do ↑ ↓ and Page Up/Down,
   which always work. In Editora they are the chords of its `nav.lineDown`, `nav.lineUp`, `nav.pageDown` and
@@ -103,20 +111,23 @@ The palette is an in-scene overlay in the window's root `StackPane`, over a fain
     fixed table of Emacs chords beside them (`EMACS`: `C-n`, `C-p`, `C-v`, `M-v`); Torrenta's
     [`ui/CommandPalette.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/CommandPalette.java) (`onKey`) on the arrows and `Ctrl+N` and `Ctrl+P`, with no page keys; Modula's
     [`ui/CommandPalette.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/CommandPalette.java) and nux's [`ui/CommandPalette.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/CommandPalette.java) on the arrows alone.
-- **PAL-07 · SHOULD.** The active keymap's cancel chord, Esc or a click on the scrim cancels, and focus returns to
-  where it was. In Editora the chord is that of its `edit.cancel` command, `C-g` in the Emacs keymap.
+- **PAL-07 · SHOULD.** The active keymap's cancel chord, Esc or a click on the scrim cancels the palette, and focus
+  returns to where it was. In Editora the chord is that of its `edit.cancel` command, `C-g` in the Emacs keymap.
   - *Check (code):* Esc, the chord the active keymap binds to the cancel command, and a press on the backdrop all
     hide the overlay, and hiding focuses the node that had focus before it opened.
   - *Reference:* Editora [`PickerKeys`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java) (`isCancel`), [`OverlayHost`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java) (`previousFocus`), the only one that asks the
     keymap for the chord. `Ctrl+G` is fixed in the app template's [`ui/OverlayHost.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/OverlayHost.java) and in the `EMACS` table
     of Termina's [`ui/PaletteKeys.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/PaletteKeys.java) and Mirada's [`ui/PaletteKeys.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/PaletteKeys.java); Torrenta's, Modula's and nux's palettes
     cancel on Esc alone.
-- **PAL-08 · SHOULD.** `C-h`, or the first of `C-h`, `F1`, `Shift+F1` the active keymap leaves free, opens the selected
-  command's page on the website, for the running version.
-  - *Check (code):* the docs chord is the first free one of the three, and the URL is built from the app's versioned
-    docs address.
-  - *Reference:* Editora [`CommandPalette`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java) ([`PickerKeys.freeChord`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java), `docsUrl`), [`AppInfo.docsUrl`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/AppInfo.java).
-- **PAL-09 · SHOULD.** A live keymap switch re-renders the key chips, the opener chip and the key legend.
+- **PAL-08 · SHOULD.** In the palette, a help chord opens the selected command's page in the docs on the website,
+  for the running version. The chord is the first of `Ctrl+H`, `F1` and `Shift+F1` that the active keymap leaves
+  free. It is the same on macOS, where `Ctrl+H` is the Control key and has no `Cmd` form (`C-h` in Emacs notation).
+  - *Check (code):* the palette's help chord is the first of the three that the active keymap neither binds nor
+    starts a longer chord with, and the URL it opens is built from the app's versioned docs address and the
+    selected command's id.
+  - *Reference:* Editora [`CommandPalette`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java) ([`PickerKeys.freeChord`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java) over `C-h`, `f1` and `S-f1`; `docsUrl`), [`AppInfo.docsUrl`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/AppInfo.java).
+    No other app's palette has a help chord yet.
+- **PAL-09 · SHOULD.** A live keymap switch re-renders the palette's key chips, its opener chip and its key legend.
   - *Check (code):* applying a new keymap calls the palette's rebind method, which rebuilds the opener, the legend and
     the rows.
   - *Reference:* Editora [`CommandPalette.refreshBindings`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java), called from [`SettingsReapply`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsReapply.java).

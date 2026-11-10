@@ -2,8 +2,10 @@
 // to) and data-edition (the folder it is served from: "latest", the version, or "next"). It reads /versions.json,
 // which scripts/build-site.mjs writes on every deploy, so a page published long ago still knows the newest edition: it
 // adds the editions the page's switcher predates (and next/ while a batch waits for its release, which
-// scripts/build-next.mjs adds as `next`), and on an earlier edition or in next/ shows a notice with the way to the same
-// page in the latest one. Without the file (astro dev) it does nothing.
+// scripts/build-next.mjs adds as `next`), and on an earlier edition shows a notice with the way to the same page in the
+// latest one. A page of next/ carries its notice in its own HTML (src/components/Banner.astro), since it is not an
+// edition whatever is published later; there this script only points the notice's link at the same page in latest/.
+// Without the file (astro dev) it does nothing.
 (() => {
   const me = document.currentScript;
   if (!me) return;
@@ -41,6 +43,20 @@
   };
 
   const notice = async (data) => {
+    const home = `${root}latest/`;
+    let href = home;
+    try {
+      const r = await fetch(home + rest, { method: "HEAD" });
+      if (r.ok) href = home + rest;
+    } catch {}
+    const said = href === home ? "the latest edition" : "this page in the latest edition";
+    // next/: the notice the page was built with, when it has one.
+    const built = edition === "next" && document.querySelector(".edition-notice");
+    if (built) {
+      const link = built.querySelector("a");
+      if (link) Object.assign(link, { href, textContent: said });
+      return;
+    }
     const style = document.createElement("style");
     style.textContent = `
       .edition-notice { margin: 1rem var(--sl-content-pad-x, 1rem) 0; padding: 0.6rem 1rem; border-radius: 8px;
@@ -50,15 +66,9 @@
       .edition-notice a { color: inherit; font-weight: 600; }
       @media print { .edition-notice { display: none; } }`;
     document.head.append(style);
-    const home = `${root}latest/`;
-    let href = home;
-    try {
-      const r = await fetch(home + rest, { method: "HEAD" });
-      if (r.ok) href = home + rest;
-    } catch {}
     const a = document.createElement("a");
     a.href = href;
-    a.textContent = href === home ? "the latest edition" : "this page in the latest edition";
+    a.textContent = said;
     const box = document.createElement("div");
     box.className = "edition-notice";
     box.setAttribute("role", "status");
@@ -66,7 +76,8 @@
     if (edition === "next") {
       box.append(
         "You are reading Pauta Next: changes waiting for the edition after ", latest, ". They are not an edition " +
-          "yet and may change before one is released. Apps are built and audited to a numbered edition: see ", a, ".",
+          "yet and may change before one is released. Never cite a rule from these pages or audit an app against " +
+          "them: apps are built and audited to a numbered edition. See ", a, ".",
       );
     } else {
       box.append(`You are reading Pauta ${version}, an earlier edition. The latest is `, latest, ": ", a, ".");

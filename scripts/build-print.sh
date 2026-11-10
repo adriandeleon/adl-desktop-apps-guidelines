@@ -22,10 +22,12 @@ today=$(python3 -I -c 'import json;print(json.load(open("package.json"))["guidel
 site=$(python3 -I -c 'import json;print(json.load(open("package.json"))["guidelines"]["url"])')
 folder=$version
 label=$version
+after= # next/ only: the edition the batch follows, which puts the "not an edition" notice on the PDF's cover
 if [ "${PAUTA_PATH:-}" = next ]; then
   folder=next
   label="Next (unreleased, after $version)"
   today=$(date -u +%F)
+  after=$version
 fi
 export PAUTA_PRINT_FOLDER=$folder
 # The tree as a file: URL, for the screenshots, the fonts and the page Chrome prints. Percent-encoded: with a space
@@ -34,7 +36,10 @@ export PAUTA_PRINT_FOLDER=$folder
 here=$(python3 -I -c 'import pathlib, sys; print(pathlib.Path(sys.argv[1]).as_uri())' "$PWD")
 
 # 1. One Markdown file, pages in pages.json order: each page's title becomes an H2, its headings move down a level.
-python3 -I "$tools/combine.py" pages.json src/content/docs "$today" "$version" "$site" "$folder" "$label" > "$out/adl-desktop-apps-guidelines.md"
+#    The pages draw their mockups in HTML. The PDF prints them, so the file it is made from keeps them; the download
+#    gets each as the text its page's own Markdown gives it (scripts/download-markdown.mjs).
+python3 -I "$tools/combine.py" pages.json src/content/docs "$today" "$version" "$site" "$folder" "$label" > "$work/combined.md"
+node "$tools/download-markdown.mjs" "$work/combined.md" "$out/adl-desktop-apps-guidelines.md"
 
 # 2. The screenshots as JPEG, for print only: Chrome embeds a PNG uncompressed and a JPEG as it is, so the PDF is a
 #    fraction of the size (scripts/print-shots.mjs).
@@ -43,11 +48,11 @@ node "$tools/print-shots.mjs" src/assets/shots "$work/shots"
 
 # 3. HTML for print (the masthead carries the title and intro, so the combined file's preamble is dropped). Fonts come
 #    from the site's own npm packages (node_modules), never the network.
-sed -n '/^## /,$p' "$out/adl-desktop-apps-guidelines.md" \
+sed -n '/^## /,$p' "$work/combined.md" \
   | sed -E "s#https://raw.githubusercontent.com/adriandeleon/adl-desktop-apps-guidelines/[^/]+/src/assets/shots/([^)\" ]+)\.png#$here/$work/shots/\1.jpg#g" \
   | pandoc -f gfm -t html5 --toc --toc-depth=2 --template="$tools/print-template.html" \
       --variable fonts="$here/node_modules" \
-      --metadata date="$today" --metadata version="$label" --metadata site="$site" --metadata title="Pauta" --no-highlight -o "$work/raw.html"
+      --metadata date="$today" --metadata version="$label" --metadata site="$site" --metadata after="$after" --metadata title="Pauta" --no-highlight -o "$work/raw.html"
 python3 -I "$tools/print-markup.py" "$work/raw.html" "$work/guide.html" src/styles/templates.css
 
 # 4. PDF, with bookmarks from the headings.

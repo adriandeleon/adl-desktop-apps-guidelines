@@ -1,6 +1,7 @@
 ---
 // Starlight's footer plus the edition: version and date from package.json, the Changelog, and this page's address in
 // the latest edition or at its permanent, numbered one. In next/ it names the edition the batch follows instead.
+// The 404 page is no page of any edition, so there the link leads to the edition's first page.
 import Default from "@astrojs/starlight/components/Footer.astro";
 import pkg from "../../package.json";
 import { siteRoot, editionOf, longDate, NEXT } from "../lib/site.mjs";
@@ -9,12 +10,13 @@ const date = longDate(pkg.guidelines.date);
 const root = siteRoot(pkg);
 const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
 const here = editionOf(base, root);
-const rest = Astro.url.pathname.startsWith(base) ? Astro.url.pathname.slice(base.length) : "";
+const missing = Astro.locals.starlightRoute.entry.id === "404"; // Starlight's own 404 route, or a 404.md
+const rest = !missing && Astro.url.pathname.startsWith(base) ? Astro.url.pathname.slice(base.length) : "";
 const changelog = `${base}changelog/`;
 const next = here === NEXT;
 const other = here === "latest"
-  ? { href: `${root}${pkg.version}/${rest}`, text: `Permanent link to this page in ${pkg.version}` }
-  : { href: `${root}latest/${rest}`, text: "This page in the latest edition" };
+  ? { href: `${root}${pkg.version}/${rest}`, text: missing ? `Pauta ${pkg.version} at its permanent address` : `Permanent link to this page in ${pkg.version}` }
+  : { href: `${root}latest/${rest}`, text: missing ? "The latest edition" : "This page in the latest edition" };
 ---
 
 <Default><slot /></Default>

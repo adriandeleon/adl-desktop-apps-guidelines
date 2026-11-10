@@ -1,0 +1,34 @@
+---
+// Starlight's banner (a page's own `banner`, which no page sets today), and in next/ the notice that these pages are
+// not an edition (AGENTS.md, "Pauta Next"). It is in the page's own HTML, so it is there for a reader without
+// scripts, a crawler and a coding agent that fetches the page. public/versions.js writes the notice of an earlier
+// edition, which no page can know at build time; in next/ it only points this one's link at the same page in latest/
+// when latest/ has that page.
+import Default from "@astrojs/starlight/components/Banner.astro";
+import pkg from "../../package.json";
+import { siteRoot, editionOf, NEXT } from "../lib/site.mjs";
+
+const root = siteRoot(pkg);
+const next = editionOf(import.meta.env.BASE_URL.replace(/\/?$/, "/"), root) === NEXT;
+---
+
+<Default />
+{
+  next && (
+    <div class="edition-notice" role="note" data-pagefind-ignore>
+      You are reading <strong>Pauta Next</strong>: changes waiting for the edition after <strong>{pkg.version}</strong>.
+      They are not an edition yet and may change before one is released. Never cite a rule from these pages or audit an
+      app against them: apps are built and audited to a numbered edition. See <a href={`${root}latest/`}>the latest edition</a>.
+    </div>
+  )
+}
+
+<style>
+  .edition-notice {
+    margin: 1rem var(--sl-content-pad-x, 1rem) 0; padding: 0.6rem 1rem; border-radius: 8px;
+    background: var(--sl-color-accent-low, #133a36); color: var(--sl-color-white, #fff);
+    font-size: var(--sl-text-sm, 0.875rem); line-height: 1.5; text-wrap: balance;
+  }
+  .edition-notice strong { font-variant-numeric: tabular-nums; }
+  .edition-notice a { color: inherit; font-weight: 600; }
+</style>

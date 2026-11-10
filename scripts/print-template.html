@@ -59,6 +59,7 @@ a:focus-visible { outline: 2px solid var(--brace); outline-offset: 2px; border-r
 .eyebrow .caret { display: inline-block; width: 2px; height: 1em; background: var(--caret); vertical-align: -2px; margin-right: 8px; }
 .masthead h1 { font-size: var(--step-3); line-height: 1.15; margin: 0; letter-spacing: -0.02em; text-wrap: balance; }
 .masthead p { margin: 0; max-width: 68ch; color: var(--ink-muted); font-size: var(--step-1); }
+.masthead p.not-edition { color: var(--ink); border-left: 3px solid var(--amber); background: var(--amber-soft); padding: 8px 12px; font-size: var(--step-0); }
 .apps { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
 .apps span {
   font-size: 0.82rem; font-weight: 600; padding: 3px 10px; border-radius: 999px;
@@ -177,7 +178,10 @@ ul:has(> li > input[type="checkbox"]) { padding-left: 0; }
   <div class="masthead-inner">
     <div class="eyebrow"><span class="caret"></span>The adl desktop apps guidelines · Version $version$ · $date$</div>
     <h1 class="brand"><img src="../../branding/pauta-icon.svg" alt="">Pauta</h1>
-    <p>UI, UX and platform rules for adl's JavaFX desktop apps. Editora is the reference implementation; every rule names the class or file to copy from.</p>
+    <p>UI, UX and platform rules for adl's JavaFX desktop apps. Editora is the reference implementation; nearly every rule names the class or file to copy from.</p>
+$if(after)$
+    <p class="not-edition"><strong>Not an edition.</strong> This is Pauta Next: the changes waiting for the edition after $after$, which may still change before it is released. Never cite a rule from it or audit an app against it; use <a href="$site$">the latest edition</a>.</p>
+$endif$
     <p><strong>Starting a new app?</strong> Use <a href="https://github.com/adriandeleon/adl-desktop-app-template">adl-desktop-app-template</a>, a GitHub template repository built to the edition its README names: click <strong>Use this template</strong>, run <code>scripts/rename.sh &lt;AppName&gt; &lt;package&gt;</code>, then add any rule from a later edition.</p>
     <div class="apps"><span class="ref"><img src="../../public/icons/editora.svg" alt="">Editora · reference</span><span><img src="../../public/icons/torrenta.svg" alt="">Torrenta</span><span><img src="../../public/icons/termina.svg" alt="">Termina</span><span><img src="../../public/icons/modula.svg" alt="">Modula</span><span><img src="../../public/icons/mirada.svg" alt="">Mirada</span><span><img src="../../public/icons/nux.svg" alt="">nux</span></div>
     <div class="legend"><span><span class="lvl lvl-must">MUST</span> release blocker for a new app</span><span><span class="lvl lvl-should">SHOULD</span> expected unless the app says why not</span><span><span class="lvl lvl-may">MAY</span> copy when the app grows into it</span></div>

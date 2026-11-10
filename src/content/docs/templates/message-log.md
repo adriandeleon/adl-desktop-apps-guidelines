@@ -67,33 +67,47 @@ Every app keeps one, session-only and bounded, newest first, with Esc to close a
 
 ## Behavior
 
-- **MLOG-02 · SHOULD.** A click on the unread-error count opens the log too, and so does the `view.messageLog`
-  command.
+- **MLOG-02 · SHOULD.** A click on the status bar's unread-error count opens the Message Log, as a click on the
+  echo area does ([WIN-01](../../window-shell/#win-01)), and so does the `view.messageLog` command.
   - *Check (code):* the unread-error count runs `view.messageLog` on a click, and the command is registered.
   - *Reference:* Editora [`StatusBar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusBar.java) (`echo`, `unreadErrors`), [`StatusBar.showMessageLog`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusBar.java).
-- **MLOG-03 · SHOULD.** The active keymap's cancel chord or a click outside closes the log too, as Esc does.
-  - *Check (code):* the log closes on the chord the active keymap binds to its cancel command, not on a fixed
+- **MLOG-03 · SHOULD.** The active keymap's cancel chord or a click outside closes the Message Log, as Esc does.
+  - *Check (code):* the Message Log closes on the chord the active keymap binds to its cancel command, not on a fixed
     `Ctrl+G`, and the overlay's backdrop hides it on a press.
   - *Reference:* Editora [`OverlayHost`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java), which hides the card on a press on its backdrop and on [`PickerKeys.isCancel`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java): Esc,
     or the chord the keymap binds to `edit.cancel` (Editora's id; `C-g` in its Emacs keymap). Its [`MessageLogPopup`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java)
-    also closes on `Ctrl+G` and `Alt+G` whatever the keymap, though the CUA keymap binds `C-g` to `nav.goToLine`.
+    also closes on `Ctrl+G` whatever the keymap, though the CUA keymap binds `C-g` to `nav.goToLine`; its handler
+    reads `Alt+G` too, which the Emacs keymap's `M-g` prefix takes first.
     Elsewhere the chord is fixed: `Ctrl+G` in the app template ([`ui/OverlayHost.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/OverlayHost.java)), Termina
     ([`ui/MessageLogWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MessageLogWindow.java)) and Mirada ([`ui/MessageLogView.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MessageLogView.java)), and Esc alone in Torrenta
     ([`ui/MessageLogPopup.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MessageLogPopup.java)).
-- **MLOG-04 · SHOULD.** `Ctrl+C` (`Cmd+C` on macOS) copies the selected entries.
-  - *Check (code):* the card's key handler copies the selection on the shortcut-down C.
-  - *Reference:* Editora [`MessageLogPopup.copySelection`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java).
+- **MLOG-04 · SHOULD.** The Message Log copies the selected entries on the platform's copy chord, `Ctrl+C`
+  (`Cmd+C` on macOS), in every keymap, and on the active keymap's copy chord too.
+  - *Check (code):* the Message Log's key handling copies the selected entries on C with the platform's shortcut
+    modifier down (`isShortcutDown`), whatever the active keymap binds to copy, and also on the chord the active
+    keymap binds to its copy command (`M-w` in an Emacs keymap), read from the keymap and not written into the
+    handler.
+  - *Reference:* for the platform's chord, Editora [`MessageLogPopup.copySelection`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java), on a fixed shortcut-down C, and
+    the Message Logs of Torrenta ([`ui/MessageLogPopup.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MessageLogPopup.java)), Termina ([`ui/MessageLogWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MessageLogWindow.java)), Mirada
+    ([`ui/MessageLogView.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MessageLogView.java)) and the app template ([`ui/MessageLogView.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MessageLogView.java)), each the same way. For the
+    keymap's chord, no app yet: none of the five reads the keymap's copy binding in its log, and Editora's Emacs
+    keymap binds copy to `M-w`, which its log does not read. Editora doesn't hold the first half under that keymap
+    on Windows and Linux either: the keymap starts longer chords with `C-c`, a prefix the window's key dispatcher
+    ([`command/KeyDispatcher.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/KeyDispatcher.java)) consumes in a scene filter, ahead of the log's own.
 - **MLOG-05 · SHOULD.** A message's severity comes from its key: a `status.*` key whose last segment contains `fail`
   or `error` is an error, one containing `cannot` or `invalid` a warning. Name new keys accordingly, or report through
   the error channel directly.
-  - *Check (test):* a severity test classifies keys by those rules.
+  - *Check (code):* one function gives a message's severity from its key by those rules (Editora's
+    `StatusSeverity.ofKey`). A test that asserts it is the surest evidence.
   - *Reference:* Editora [`ui/StatusSeverity.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusSeverity.java) (`ofKey`), [`StatusSeverityTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StatusSeverityTest.java).
-- **MLOG-06 · SHOULD.** Opening the log, or clearing it, resets the unread-error count.
-  - *Check (code):* opening the log marks it read, and `clear` zeroes the count.
+- **MLOG-06 · SHOULD.** Opening the Message Log, or clearing it, resets the unread-error count.
+  - *Check (code):* opening the Message Log marks it read, and clearing it zeroes the count (Editora's `markRead`
+    and `clear`).
   - *Reference:* Editora [`MessageLog.markRead`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLog.java), [`MessageLog.clear`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLog.java), [`StatusBar.showMessageLog`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusBar.java).
-- **MLOG-07 · SHOULD.** An unread error is never evicted silently: the count keeps it even when the entry drops off
-  the end.
-  - *Check (test):* an error pushed past the capacity still counts as unread.
+- **MLOG-07 · SHOULD.** An unread error is never evicted from the Message Log silently: the unread-error count
+  keeps it even when the entry drops off the end.
+  - *Check (code):* the Message Log counts unread errors apart from the entries it holds, so dropping an unread
+    error at the cap leaves the count as it was. A test that asserts it is the surest evidence.
   - *Reference:* Editora [`MessageLogSeverityTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/MessageLogSeverityTest.java) (`anEvictedErrorStillCounts`).
 
 ## Copy

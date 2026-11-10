@@ -72,6 +72,10 @@ print("through the New app checklist.\n")
 print("**MUST** is a release blocker for a new app. **SHOULD** is expected unless the app has a stated reason.")
 print("**MAY** is a pattern worth copying when the app grows into it.\n")
 print(f"**Version {label} · {today}** · Web version: <{site}>\n")
+if folder == "next":
+    # next/ is the batch waiting for its release, and every file of it says so (AGENTS.md, "Pauta Next").
+    print(f"**Not an edition.** This is Pauta Next: the changes waiting for the edition after {version}, which may still")
+    print(f"change before it is released. Never cite a rule from it or audit an app against it; use <{site.rstrip('/')}/latest/>.\n")
 
 for group in groups:
     for slug in group["items"]:

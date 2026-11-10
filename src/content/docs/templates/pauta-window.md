@@ -11,41 +11,51 @@ not apply, the ones it does differently on purpose, and the ones still pending. 
 
 ## Rules
 
-- **PWIN-01 · MUST.** Every app has a Pauta window, opened by the `help.pauta` command: from the Command Palette like
-  every command, from the Help menu's *Pauta Conformance* row just above About, and from About's *Pauta conformance* link.
-  - *Check (code):* `help.pauta` is registered, the Help `MenuSpec` lists it before `help.about`, and About's *Pauta
-    conformance* link runs it through the registry.
-  - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`ui/Commands.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Commands.java) (`help.pauta`), [`ui/AppMenus.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AppMenus.java) (before `help.about` in Help) and [`ui/AboutDialog.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AboutDialog.java).
-- **PWIN-02 · MUST.** The window shows the edition, the conformance with one sentence that says what it means, a count of
-  exceptions by kind, and every exception: the rule's ID, its level (MUST or SHOULD), the kind, the reason, and for a deviation or a
-  pending exception its link.
-  - *Check (by hand):* open the window and compare it with `pauta.json`, entry by entry.
+- **PWIN-01 · MUST.** Every app has a Pauta window, opened by the `help.pauta` command: from the Command Palette
+  like every command, and from a *Pauta Conformance* row in the Help menu where the app has a Help menu (the Help
+  menu of a menu bar, or a Help submenu of the app's main menu). The row's place in that menu is
+  [DOCS-07](../../documentation/#docs-07), and About's *Pauta conformance* link, which runs the same command, is
+  [ABOUT-09](../about/#about-09).
+  - *Check (code):* a command with the id `help.pauta` is registered and opens the Pauta window, and where the app
+    has a Help menu, a row inside that menu runs the command (the app template's Help menu is a list of command
+    ids that holds `help.pauta`). A row beside a Help submenu is not in it.
+  - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`ui/Commands.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Commands.java) (`help.pauta`, which runs `openPauta`) and [`ui/AppMenus.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AppMenus.java) (`help.pauta` in
+    `menu.help`, just above `help.about`). No released app has a Pauta window yet.
+- **PWIN-02 · MUST.** The Pauta window shows the edition, the conformance with one sentence that says what it
+  means, a count of exceptions by kind, and every exception: the rule's ID, its level (MUST or SHOULD), the kind,
+  the reason, and for a deviation or a pending exception its link.
+  - *Check (by hand):* open the Pauta window and compare it with the app's `pauta.json`, entry by entry.
   - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`ui/PautaWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/PautaWindow.java).
-- **PWIN-03 · MUST.** It reads the exceptions from `pauta.json` and the edition from the build, as About does
-  ([ABOUT-08](../about/#about-08); `AppInfo` in the template), and takes the conformance from the same helper as
-  About ([PAUTA-02](../../conformance/#pauta-02)). Nothing in it is written in the window's code.
-  - *Check (code):* the window loads the exceptions through one loader and calls the conformance helper; it holds no
-    rule IDs or conformance names of its own.
+- **PWIN-03 · MUST.** The Pauta window reads the exceptions from `pauta.json` and the edition from the build, as
+  About does ([ABOUT-08](../about/#about-08); `AppInfo` in the template), and takes the conformance from the same
+  helper as About ([PAUTA-02](../../conformance/#pauta-02)). No edition, conformance or exception is written in
+  the window's own code.
+  - *Check (code):* the Pauta window loads the exceptions through the one loader of `pauta.json`, reads the edition
+    where About reads it, and calls the conformance helper; its code holds no rule ID, edition number or conformance
+    name of its own.
   - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`ui/PautaWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/PautaWindow.java) (`PautaConformance.of`).
-- **PWIN-04 · MUST.** Every link opens a fixed address: the edition at `https://pauta-project.dev/<edition>/`, each
-  rule ID at its address in that edition (the entry's `url`), never `latest/`. The edition's link, here and in
-  About, runs the `help.pautaRules` command, so the palette reaches it too.
+- **PWIN-04 · MUST.** Every link in the Pauta window opens a fixed address, never one under `latest/`: the
+  edition's link opens the edition's own address, the one [ABOUT-06](../about/#about-06) gives About's link, and
+  each rule ID opens the rule's address in that edition (the entry's `url` in `pauta.json`). The edition's link, in
+  the Pauta window and in About, runs the `help.pautaRules` command, so the palette reaches it too.
   - *Why:* an app built to an edition answers to that edition's rules; `latest/` moves on.
-  - *Check (code):* `help.pautaRules` is registered and builds the edition URL from `pauta.version`; the edition's
-    link in the Pauta window and in About runs it; rule links use each entry's `url`.
+  - *Check (code):* `help.pautaRules` is registered and opens the edition's address, built from `pauta.version`;
+    the edition's link in the Pauta window and the one in About both run that command; and each rule ID in the
+    Pauta window opens its entry's `url`.
   - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`ui/Commands.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Commands.java) (`help.pautaRules`, which opens `AppInfo.pautaUrl()`), run by the edition's link in [`ui/PautaWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/PautaWindow.java) and
-    [`ui/AboutDialog.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AboutDialog.java); `PautaWindow` opens each rule ID at its entry's `url`. The address is [ABOUT-06](../about/#about-06)'s.
-- **PWIN-05 · SHOULD.** Pending exceptions come first, then deviations, then app-only (in a template), then
-  not-applicable; within a kind, MUSTs before SHOULDs, then by ID.
+    [`ui/AboutDialog.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AboutDialog.java); `PautaWindow` opens each rule ID at its entry's `url`.
+- **PWIN-05 · SHOULD.** The Pauta window lists pending exceptions first, then deviations, then app-only (in a
+  template), then not-applicable; within a kind, MUSTs before SHOULDs, then by ID.
   - *Why:* what the app still owes is what a reader came to find.
-  - *Check (test):* a unit test of the sort.
+  - *Check (code):* the list the Pauta window draws is sorted by kind in that order, then MUSTs before SHOULDs,
+    then by rule ID (the app template's `PautaConformance.sorted`). A test that asserts it is the surest evidence.
   - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`PautaConformance.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/PautaConformance.java) (`sorted`), tested by [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java).
     Its `Kind` has three kinds, pending, deviation and not-applicable: it sorts those and cannot read `app-only` yet.
-- **PWIN-06 · SHOULD.** *Copy as text* copies the edition, the conformance and the list as Markdown, one line per exception,
-  and leaves the window open; its label becomes "Copied".
+- **PWIN-06 · SHOULD.** The Pauta window's *Copy as text* button copies the edition, the conformance and the list
+  as Markdown, one line per exception, and leaves the window open; its label becomes "Copied".
   - *Check (code):* the button's handler copies the edition, the conformance and one line per exception as Markdown
-    and sets the button's label to the copied text (`pauta.copied`); the button sits in the content, not the button
-    bar, like About's *Copy details*, so pressing it can't close the window.
+    and sets the button's label to the copied text (the template's `pauta.copied`); the button sits in the content,
+    not the button bar, like About's *Copy details*, so pressing it can't close the window.
   - *Reference:* the app template's [`ui/PautaWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/PautaWindow.java) (`pauta.copy`, `pauta.copied`), built
     like Editora's About *Copy details*.
 - **PWIN-07 · SHOULD.** A *Conformance in the docs* link runs the `help.pautaDocs` command, which opens the app's
@@ -56,9 +66,10 @@ not apply, the ones it does differently on purpose, and the ones still pending. 
     Documentation.
   - *Reference:* the app template's [`AppInfo.pautaDocsUrl()`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/AppInfo.java), registered as
     `help.pautaDocs` in [`ui/Commands.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Commands.java).
-- **PWIN-08 · SHOULD.** With no exceptions, the list's place says so in one line, "No exceptions: Mirada meets every
-  MUST and SHOULD of Pauta x.y.z.", and the copy button still works.
-  - *Check (by hand):* with an empty `exceptions` array, open the window.
+- **PWIN-08 · SHOULD.** With no exceptions, the Pauta window says so in one line where the list would be, naming
+  the app and the edition (for an app called Mirada, "No exceptions: Mirada meets every MUST and SHOULD of Pauta
+  x.y.z."), and its copy button still works.
+  - *Check (by hand):* with an empty `exceptions` array in `pauta.json`, open the Pauta window.
   - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`ui/PautaWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/PautaWindow.java) (`pauta.none`).
 
 ## Anatomy
@@ -76,7 +87,7 @@ not apply, the ones it does differently on purpose, and the ones still pending. 
 <div class="m-pw-group">Deviation</div>
 <div class="m-pw-item"><span class="m-link m-pw-id">KBD-12</span><span class="m-pw-level">SHOULD</span><span class="m-grow">Mirada has no keymap editor: you change a key in keymap.json, which Settings opens for you. <span class="m-link">Decision 0004</span></span><span class="pin">6</span></div>
 <div class="m-pw-group">Not applicable</div>
-<div class="m-pw-item"><span class="m-link m-pw-id">SET-14</span><span class="m-pw-level">MUST</span><span class="m-grow">Mirada never asks for a password or token.</span></div>
+<div class="m-pw-item"><span class="m-link m-pw-id">DIAG-07</span><span class="m-pw-level">SHOULD</span><span class="m-grow">Mirada depends on no outside tool, so a Doctor page has nothing to check.</span></div>
 </div>
 <div style="display:flex;flex-direction:column;gap:2px"><span class="m-row"><span class="m-link">Pauta x.y.z rules</span><span class="pin">7</span></span><span class="m-link">Conformance in the docs</span></div>
 <div class="m-footer-row"><span class="m-row"><span class="m-btn">Copy as text</span><span class="pin">8</span></span><span class="m-row"><span class="pin">9</span><span class="m-btn primary">Close</span></span></div>

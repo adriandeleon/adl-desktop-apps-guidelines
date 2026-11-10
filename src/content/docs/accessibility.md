@@ -20,7 +20,8 @@ and state on their own. What the app builds itself does not: a row drawn from an
 segment that acts as a button, a map painted on a `Canvas`. The rules below are about those.
 
 The menus have no mnemonics (`_File`): `Alt` and `Option` chords belong to the keymaps (`M-x` in Emacs). The keyboard
-reaches every menu command through the Command Palette, which lists them all ([KBD-05](../keyboard/#kbd-05)).
+reaches every menu command through the Command Palette ([KBD-05](../keyboard/#kbd-05)), which lists them all
+([PAL-02](../templates/command-palette/#pal-02)).
 
 ## Covered on other pages
 
@@ -44,9 +45,10 @@ reaches every menu command through the Command Palette, which lists them all ([K
 
 - **ACC-01 · MUST.** Every control a person can reach with Tab or the mouse has an accessible name: its own text, a
   `Label` whose `labelFor` is the control, or `setAccessibleText`. A row drawn from a graphic (a `CustomMenuItem`, a
-  list cell that lays out its own nodes) carries its text too.
+  list cell that lays out its own nodes) carries its text too. A test holds it.
   - *Why:* a screen reader announces an unnamed control as "button", or says nothing.
-  - *Check (test):* an FX test opens each window and dialog and fails on a focus-traversable node that has no text,
+  - *Check (test):* an FX test opens each window and dialog and fails on a control (a button, a toggle, a field, a
+    combo box or any other `Control` a person can focus or click, in the Tab order or out of it) that has no text,
     no accessible text and no label pointing at it, and on a list cell or menu row that reads as nothing. JavaFX
     names a `CustomMenuItem` row from its content's accessible text, and a cell from its text or its graphic's, so a
     row that lays out its own nodes sets `setAccessibleText` on them.
@@ -54,10 +56,11 @@ reaches every menu command through the Command Palette, which lists them all ([K
     ([`NamedControlsFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/NamedControlsFxTest.java)),
     and sets each row's text on the macOS system menu bar. Its in-window command rows, each a `CustomMenuItem` that draws an icon,
     a title and a chord ([`ui/MainMenuBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java)), carry no text and no accessible text yet;
-    its submenus keep their own. No app has the test that sweeps every window for every focus-traversable node yet.
+    its submenus keep their own. No app has the test that sweeps every window for every control yet.
     Termina's [`IconOnlyButtonsFxTest.java`](https://github.com/adriandeleon/Termina/blob/master/src/test/java/com/termina/ui/IconOnlyButtonsFxTest.java) comes nearest: it opens the main window, the menus, Settings and About and
-    fails an icon-only button with no name, and no other kind of control. Torrenta sets an accessible text once in
-    the whole app, and Modula never.
+    fails an icon-only button with no name, and no other kind of control. Torrenta's one call to
+    `setAccessibleText` is in a helper ([`ui/Icons.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/Icons.java), `name`) that names every button of its main toolbar and the
+    Search view's Clear button, and no other control; Modula never calls it.
 - **ACC-02 · SHOULD.** A control the app builds from panes or draws itself says what it is and does what its role
   offers: `setAccessibleRole` with the role it acts as (`BUTTON`, `TOGGLE_BUTTON`, `LIST_VIEW`, `TREE_ITEM`), its
   state answered from `queryAccessibleAttribute` (selected, expanded, checked), `notifyAccessibleAttributeChanged`
@@ -73,9 +76,11 @@ reaches every menu command through the Command Palette, which lists them all ([K
 - **ACC-03 · SHOULD.** An app that paints content on a `Canvas` (a map, a strip of images, a terminal grid) gives it
   to the screen reader: an accessible text that sums it up and, where a person moves through items in it, one
   accessible node for each item on screen.
-  - *Check (test):* a test reads the canvas's accessible text, or the roles and names of the nodes it exposes.
+  - *Check (code):* the canvas, or the node that stands for it, sets an accessible text, and where a person moves
+    through items it exposes a node with a role and a name for each item on screen. A test that reads the
+    accessible text, or the roles and names of those nodes, is the surest evidence.
   - *Reference:* Editora [`ui/MapAccessibleRows.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MapAccessibleRows.java) (the Project Map's rows on screen, as `TREE_ITEM`
-    nodes under a `TREE_VIEW`).
+    nodes under a `TREE_VIEW`), read by [`MapAccessibleRowsFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/MapAccessibleRowsFxTest.java).
 - **ACC-04 · SHOULD.** Motion follows the OS: while `Platform.getPreferences().isReducedMotion()` is true, an
   animation jumps to its end, and a change to the setting applies at once.
   - *Why:* sliding and fading can make a person dizzy or sick, and they turned motion off in the OS for that reason.
@@ -89,27 +94,36 @@ reaches every menu command through the Command Palette, which lists them all ([K
   - *Why:* about one man in twelve can't tell red from green.
   - *Check (by hand):* look at a grayscale screenshot of each window and find every state still told apart.
   - *Reference:* Editora's echo area colors an error and also says what failed
-    ([WIN-01](../window-shell/#win-01)).
-- **ACC-06 · SHOULD.** A command moves focus to the next region of the window (the content, each open panel), and
-  another to the previous one, and every keymap binds both.
+    ([`ui/StatusBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusBar.java); [WIN-01](../window-shell/#win-01)).
+- **ACC-06 · SHOULD.** In an app whose window has more than one region (the content and at least one panel beside
+  it), a command moves focus to the next region, another moves it to the previous one, and every keymap binds
+  both.
   - *Why:* Tab walks through every control inside a region; with several panels open, a keyboard user needs a way to
     jump between them.
   - *Check (code):* the two commands are registered and bound in each bundled keymap.
-  - *Reference:* Editora's `window.other` ("Cycle focus between the editor and tool windows"), bound only in the
-    Emacs keymap (`C-x o`). `F6`, the Windows convention, is taken in Editora's other keymaps.
+  - *Reference:* Editora's `window.other` ("Cycle focus between the editor and tool windows",
+    [`ui/WindowCommandRegistrar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowCommandRegistrar.java)), one command that cycles, bound only in the Emacs keymap (`C-x o`,
+    [`keymaps/emacs.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/emacs.json)). `F6`, the Windows convention, is taken in
+    every other Editora keymap: CUA and VS Code bind it to `debug.pause`, IntelliJ to `lsp.move` and Sublime to
+    `view.toggleSpellCheck`.
 - **ACC-07 · SHOULD.** Before a release, a person makes a pass with the screen reader on Windows and on macOS: with
   Narrator and with VoiceOver, open the Command Palette, run a command, and move through Settings, hearing each
   control's name and role. It is a step of its own in `docs/release.md` ([REPO-07](../repository/#repo-07)): the
   smoke test of [REL-29](../release/#rel-29) is a CI step, with nobody there to listen.
-  - *Check (by hand):* `docs/release.md` has the step, and someone did it for this release.
-  - *Reference:* no app yet.
+  - *Check (by hand):* `docs/release.md` has the step, naming Narrator and VoiceOver, and someone made the pass for
+    this release. The file settles the first half: with no such step the rule is unmet, whoever listened. The pass
+    itself is a person's to record, as a `checked` entry that carries the app's `version`
+    ([PAUTA-18](../conformance/#pauta-18)).
+  - *Reference:* no app yet. No app's `docs/release.md` names either screen reader, and Modula and nux have no
+    `docs/release.md`.
 - **ACC-08 · SHOULD.** In an overlay list that keeps focus in its text field (the Command Palette, QuickOpen), the
   row the arrow keys select is announced, with its state: the list tells the screen reader its focused item moved
   (`notifyAccessibleAttributeChanged(FOCUS_ITEM)`), and a row that can't run says so in its accessible text.
   - *Why:* the arrows move the highlight, not the focus, so a screen reader stays on the text field and reads
     nothing as the user moves through the list.
-  - *Check (test):* a test moves the selection with the arrow keys and reads the list's `FOCUS_ITEM` and that row's
-    accessible text.
+  - *Check (code):* the code that moves the selection calls
+    `notifyAccessibleAttributeChanged(AccessibleAttribute.FOCUS_ITEM)` on the list, the list answers `FOCUS_ITEM`
+    with the selected row, and a row that can't run says so in its accessible text.
   - *Reference:* no app yet. Editora's palette rows are graphics with no text
     ([`ui/CommandPalette.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java)).
 - **ACC-09 · SHOULD.** In Windows' high-contrast mode the app switches to a high-contrast theme, and back when the

@@ -12,13 +12,14 @@
 // What a Command may hold:
 //   - the commands in READS and BUILTINS, a function it defines itself (`has() { …; }`, under a name no shell and no
 //     list here uses), `cd` inside `( )` or `$( )`, and the commands in HELD in the forms that only read (`sed -n`
-//     with a script of p, d, q, = and s; `sort` without -o; `find` with the tests and actions listed there, and -exec
-//     only for a command in READS; `xargs` only for a command in READS; `uniq` on one input);
+//     with a script of p, d, q, = and s; `sort` with the options listed there, which leaves out -o, -T and every
+//     option that takes a value in one sort and none in another; `find` with the tests and actions listed there, and
+//     -exec only for a command in READS; `xargs` only for a command in READS; `uniq` on one input);
 //   - `if`, `while`, `until`, `for`, `{ }`, `( )`, `!`, `&&`, `||`, `|`, `;`, `$( )` and backticks, `$(( ))` over
 //     numbers and the variables the Command itself sets to numbers;
 //   - `var=value` for names of its own, in lowercase (`IFS=` and `LC_ALL=C` are the two others): an uppercase name is
 //     the shell's or a program's, and PATH, IFS, ENV, BASH_ENV, LD_PRELOAD and their kind change what a command runs;
-//   - the redirects `< file`, `>/dev/null`, `2>/dev/null`, `2>&1` and `>&2`.
+//   - the redirects `< file`, `>/dev/null`, `>>/dev/null`, `2>/dev/null`, `2>&1` and `>&2`.
 // Anything else fails, with what was found: a command given as `$c`, `'rm'`, `\rm` or a path, `case`, a here-document,
 // a comment, a redirect from `/dev/tcp/…` or from a variable that could hold it, an expansion left unquoted where its
 // value could turn into an option. Adding a program means adding it here, after checking that no option of it writes
@@ -289,7 +290,8 @@ const whole = (w) => !w.wild && !w.many && !w.loose.length;
 const PATHLIKE = /^[A-Za-z0-9._]/;
 
 /**
- * The redirects that write nothing and open nothing but a file: `< file`, `>/dev/null`, `2>/dev/null`, `2>&1`, `>&2`.
+ * The redirects that write nothing and open nothing but a file: `< file`, `>/dev/null` and `>>/dev/null` (of the
+ * output or of the errors, `2>/dev/null`), `2>&1`, `>&2`.
  * bash opens `/dev/tcp/host/port` and `/dev/udp/…` as a connection, in any redirect and after expanding the word, so
  * a file read through a variable is let through only when the variable can't hold that.
  */
@@ -310,7 +312,7 @@ function redirect({ redirect: op, fd, target }, ctx) {
   }
   if ((op === ">" || op === ">>") && to === "/dev/null" && ["", "1", "2"].includes(fd)) return;
   if (op === ">&" && ((fd === "2" && to === "1") || ((fd === "" || fd === "1") && to === "2"))) return; // 2>&1, >&2
-  refuse(`the redirect ${said}; only < file, >/dev/null, 2>/dev/null, 2>&1 and >&2 are let through`);
+  refuse(`the redirect ${said}; only < file, >/dev/null, >>/dev/null, 2>/dev/null, 2>&1 and >&2 are let through`);
 }
 
 /** The program `find -exec` or `xargs` runs: one of READS, named plainly. */
@@ -413,6 +415,22 @@ const FIND_VALUE = new Set(
     "-mtime -mmin -atime -amin -ctime -cmin -perm -user -group -links -inum -samefile -lname -ilname").split(" "),
 );
 
+// sort's options that only say how to compare, check or merge, and the two that take a value: a key and a separator.
+// Each letter is the same in GNU, BSD (FreeBSD and macOS, OpenBSD, NetBSD), busybox and toybox sort: none of SORT_FLAGS
+// takes a value in any of them, and -k and -t take one in all. That is what lets this reader tell an option from a
+// value and from the "--" that ends the options: a letter that takes a value in one sort and none in another (-S, a
+// size in GNU and a flag in NetBSD; -R and -z the other way round, in NetBSD and Solaris) would have each read the
+// words after it differently, so none is on the list. Nor are -o and --output, which write the file they name, -T,
+// which names a folder for sort's temporary files, and --compress-program, which runs a program. A long option is
+// written in full: GNU takes any unambiguous start of one (--outp), and which starts are unambiguous differs.
+const SORT_FLAGS = "bCcdfghiMmnrsuV";
+const SORT_VALUE = "kt";
+const SORT_LONG = new Set(
+  ("check dictionary-order general-numeric-sort human-numeric-sort ignore-case ignore-leading-blanks ignore-nonprinting " +
+    "merge month-sort numeric-sort reverse stable unique version-sort").split(" "),
+);
+const SORT_LONG_VALUE = new Set(["key", "field-separator"]);
+
 /** The commands that read only in some forms, each given its arguments and what check() keeps of the Command. */
 const HELD = {
   // -n, and a script this check can read to its end (sedReads). Never -i, --in-place or -f.
@@ -445,13 +463,47 @@ const HELD = {
       if (!sedReads(s)) refuse(`a sed script that goes beyond addresses, p, d, q, = and s///[gp] (w, r and e write, read or run): ${s}`);
     }
   },
-  // -o and --output write the file they name; --compress-program runs one.
+  // Options from SORT_FLAGS, SORT_VALUE, SORT_LONG and SORT_LONG_VALUE, each value-taking one with its value, read as
+  // sort reads them: wherever they stand among the inputs, up to a "--" that is not itself an option's value.
   sort(args) {
-    for (const a of args) {
+    const known = `-${[...SORT_FLAGS].join(" -")}, -k and -t, and their long names written in full`;
+    for (let k = 0; k < args.length; k++) {
+      const a = args[k];
       if (!whole(a)) refuse(`sort with ${a.raw}, expanded outside double quotes; quote it`);
-      if (!a.dynamic && a.lit === "--") return;
       if (maybeOption(a)) refuse(`sort with ${a.raw}, which could turn out to be an option; put -- before it`);
-      if (!a.dynamic && (/^--(?:o|co)/.test(a.lit) || /^-[^-]*o/.test(a.lit))) refuse(`sort ${a.lit}`);
+      const t = a.lit;
+      if (a.dynamic || t === "-" || !t.startsWith("-")) continue; // an input
+      if (t === "--") return; // the end of the options: every word after it is an input, whatever it holds
+      // The option's value when it is the next word. Every sort takes that word whatever it is, "--" and "-o"
+      // included; one that starts with "-" is refused all the same, so that passing never rests on that alone.
+      const value = (option, joined) => {
+        const v = args[++k];
+        if (!v) refuse(`sort ${option} without its value`);
+        if (!whole(v) || maybeOption(v)) refuse(`sort ${option} with the value ${v.raw}, which could turn out to be an option; write the value out`);
+        if (!v.dynamic && v.lit.startsWith("-")) refuse(`sort ${option} ${v.lit}: a value that starts with - is written in the option's own word (${joined}${v.lit})`);
+      };
+      if (t.startsWith("--")) {
+        const [name, ...given] = t.slice(2).split("=");
+        if (SORT_LONG_VALUE.has(name)) {
+          if (!given.length) value(`--${name}`, `--${name}=`);
+        } else if (/^o/.test(name)) refuse(`sort ${t}; --output writes the file it names`);
+        else if (/^co/.test(name)) refuse(`sort ${t}; --compress-program runs the program it names`);
+        else if (!SORT_LONG.has(name) || (given.length && name !== "check")) refuse(`sort ${t}; it is let through with ${known}`);
+        continue;
+      }
+      // "-un", "-t:", "-uk2,2": letters that take no value, then at most one that takes the rest of the word as its
+      // value, or the next word when nothing is left of this one.
+      for (let j = 1; j < t.length; j++) {
+        const c = t[j];
+        if (SORT_FLAGS.includes(c)) continue;
+        if (SORT_VALUE.includes(c)) {
+          if (j === t.length - 1) value(`-${c}`, `-${c}`);
+          break;
+        }
+        if (c === "o") refuse(`sort ${t}; -o writes the file it names`);
+        if (c === "T") refuse(`sort ${t}; -T names a folder for sort to write its temporary files in`);
+        refuse(`sort ${t}; it is let through with ${known} (-S, -R, -z and their kind take a value in one sort and none in another, which would hide the words after them)`);
+      }
     }
   },
   // Its second file is the one it writes: options, each with its number where it takes one, then one input at most.
@@ -578,7 +630,9 @@ function tests(name, args, ctx) {
     args = args.slice(0, -1);
   }
   for (const a of args) {
-    if (a.wild || a.many) refuse(`${name} with ${a.raw}, expanded outside double quotes: its value could turn out to be an operator; quote it`);
+    // "$( … | wc -l )" alone is one number even unquoted, as a variable set to it is ([ $n -gt 3 ]).
+    const count = a.kinds.length === 1 && a.kinds[0] === "sub" && a.lit === "" && !a.many && counts(a.subs[0]);
+    if ((a.wild && !count) || a.many) refuse(`${name} with ${a.raw}, expanded outside double quotes: its value could turn out to be an operator; quote it`);
     for (const v of a.loose) ctx.wants.push({ name: v, need: "number", what: `${name} … $${v}, outside double quotes` });
     if (!a.dynamic && (a.lit === "-v" || a.lit === "-R")) refuse(`${name} ${a.lit}; in bash -v evaluates what follows it`);
   }

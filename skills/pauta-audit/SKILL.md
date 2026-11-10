@@ -87,7 +87,7 @@ use. An older edition has less:
 | 4.3.0 | Adds `retired[]`. |
 | 4.3.1 to 4.5.0 | Adds `statuses`, `audit`, `pages[]` and each rule's `appliesTo`; the edition serves `audit.schema.json`, each page as `.md` and this skill. |
 | 5.0.0 | Adds `check.command` on some code checks. |
-| After 5.0.0 | Adds each rule's `changed`; `pauta.json` may hold a `checked` list (PAUTA-18). |
+| After 5.0.0 | Adds each rule's `changed` and the status `not-checked`; `pauta.json` may hold a `checked` list (PAUTA-18). |
 
 Whatever the edition, the report uses this skill's statuses and format.
 The rules in scope:
@@ -101,19 +101,24 @@ jq -r --arg p "KBD" '.rules[]
 
 When a rule leans on its page (a template's mockup or spec table), read the page as Markdown at the page's
 address with `.md` in place of the trailing `/` (`https://pauta-project.dev/<edition>/templates/about.md`, from
-4.3.1 on), or its HTML page.
+4.3.1 on), or its HTML page. A rule whose `text` or `check.text` links a section of its own page leans on it too:
+`rules.json` carries the link and not what it points at (OS-01 and OS-04 are judged against the rows of the table
+their statements link). Open the rule's `url`, or the page's `.md`, and read that section before you judge the
+rule.
 
 ## 3. Read the app's exceptions
 
 Read `src/main/resources/com/<app>/pauta.json` (Conformance, PAUTA-09). Each entry names a `rule`, its `kind`
 (`not-applicable`, `deviation`, `pending`, or in a template `app-only`), a `reason` and, for a deviation or pending
-entry, a `link`. `"template": true` marks a template repository. No file is a finding on PAUTA-01, and every unmet
-rule is then `fail`.
+entry, a `link`. `"template": true` marks a template repository. No file is a finding on PAUTA-01 and PAUTA-09, and
+every unmet rule is then `fail`.
 
 Beside `exceptions` the file may hold `checked` (PAUTA-18): the by-hand rules a person checked in the running app
 and found met, each with its `rule`, the `edition` it was checked against and the `date`. It is a record, not an
-exception: a by-hand rule with no entry needs none, and the conformance does not count it. An edition up to 5.0.0
-has no such list.
+exception: a by-hand rule with no entry needs none, and the conformance does not count it. The list is the app's to
+keep or not. PAUTA-18 governs only the entries that are there (each well formed and not stale), so an app with no
+`checked` list, or an empty one, passes PAUTA-18; the `manual` results still say which by-hand rules are not
+recorded. An edition up to 5.0.0 has no such list.
 
 ## 4. Judge each rule
 
@@ -135,11 +140,13 @@ Earlier editions say nothing about names, so there an equivalent meets the rule.
 Then, in this order:
 
 1. **Limited.** A rule is limited when its own text names the apps it covers ("An app with user documents…", "An app
-   with a tray icon…"), when it has an `appliesTo` (its page or section opens with an **Applies to** line), or when
+   that stores a secret…"), when it has an `appliesTo` (its page or section opens with an **Applies to** line), or when
    it details a rule that is limited (the rules after a limited one on the same subject). Decide from the code
    whether this app is one of them. If it isn't, the status is **`limited`**, and the evidence names what the app
    lacks ("no tray: no `SystemTray` or `TrayIcon` in `src/`"). A limited rule needs no exception; a `pauta.json`
-   entry for one is a problem (PAUTA-05).
+   entry for one is a problem (PAUTA-05). Those three are the only places a scope is written. When none of them
+   limits the rule, it covers this app: never infer a scope from what the app lacks (*Nothing to judge*, below,
+   says what such a rule gets).
 2. **Met?** Check it as its kind says:
    - **`code`.** When the rule has a `check.command`, run it with `sh -c` from the repository root (POSIX sh: Linux,
      macOS, Git Bash or WSL). Exit 0: the check passes; still read the rest of the rule and cite the `file:line`
@@ -149,26 +156,58 @@ Then, in this order:
      `check.text` says (a name of the app's own code that only the check gives is Editora's spelling: find this
      app's equivalent; a name of a required kind in the rule's `text`, and a platform API, is as written, as
      above). It is met only if everything the check names is there. Evidence is the `file:line` that satisfies it;
-     for an unmet rule, the closest place it should be and what is missing.
-   - **`test`.** The check names a test as Editora calls it. Find that test or this app's equivalent in `src/test/`,
+     for an unmet rule, the closest place it should be and what is missing. A `code` check that ends "A test that
+     asserts it is the surest evidence" does not require the test: the behavior shown in the code meets the rule,
+     with the test or without it. Cite the test when the app has one, and never fail the rule for lacking it.
+
+     A search written as a code span inside `check.text` (the `grep` in PERF-01, PERF-02, PERF-03, PERF-08 and
+     OS-04) is not a `check.command`. Run it from the app's root: it lists candidate lines, and you judge each
+     line it prints as the text says. Its exit code is no verdict: it exits 0 with candidates and non-zero with
+     none. Only `check.command` settles a rule by its exit code. Where the candidates are too many to read in one
+     audit (thousands of lines, in a large app), say in the evidence how far you read. Report the rule as unmet
+     only on a violation you found, and cite it; with none found in what you read, report `pass` and say what you
+     read.
+   - **`test`.** The rule requires a test (from the edition after 5.0.0 its statement says so: "A test holds it.", or the rule is itself about a test),
+     and the check names it as Editora calls it. Find that test or this app's equivalent in `src/test/`,
      read it to confirm it asserts what the rule says (a test with the right name that checks something else does not
      meet it), and confirm `./mvnw verify` runs it: not `@Disabled`, not excluded by the Surefire configuration in
      `pom.xml` (`excludes`, `excludedGroups`, `groups`). Evidence is the test's `file:line`.
-   - **`by hand`.** Source alone can't settle it, so the audit does not judge it:
+   - **`by hand`.** The source alone can't confirm it, so the audit never passes it on the source's word. The
+     source can still refute it:
      - When `pauta.json` has an exception for the rule, the app itself says it does not meet it: the status is the
        entry's kind and the evidence its `reason`, as in step 4. It is not `manual`.
-     - When the source shows the feature isn't there at all, it is unmet, not manual: step 4 or 5.
-     - Otherwise the status is **`manual`**, and the evidence says what to look at in the running app (from
-       `check.text`) and the `file:line` of the code involved, if any. Then look the rule up in `pauta.json`'s
-       `checked` list (Conformance, PAUTA-18). An entry gives the result its `checked` field: the entry's `edition`
-       and `date`, and its `version` when it has one. With no entry, leave the field out and end the evidence with "not recorded": nobody has
-       recorded checking the rule. That is not a failure of the app and not a `problem`, it needs no exception,
-       and it does not change the conformance. Never write a `checked` entry yourself, and don't offer an
-       exception for the rule: the entry is for the person who checks it in the running app.
+     - When the source plainly shows the rule unmet, it is unmet, not manual: step 4 or 5, with the `file:line`
+       as evidence. The feature isn't there at all, or the code plainly does otherwise: a Settings window built as
+       a `TabPane` with no search field cannot have the sidebar of pages and the search field its rule asks for.
+     - Otherwise, where the source leaves it open, the status is **`manual`**, and the evidence says what to look at in
+       the running app (from `check.text`) and the `file:line` of the code involved, if any. Then look the rule up in
+       `pauta.json`'s `checked` list (Conformance, PAUTA-18). An entry gives the result its `checked` field: the entry's
+       `edition` and `date`, and its `version` when it has one. With no entry, leave the field out and end the evidence
+       with "not recorded": nobody has recorded checking the rule. That is not a failure of the app and not a `problem`,
+       it needs no exception, and it does not change the conformance. Never write a `checked` entry yourself, and don't
+       offer an exception for the rule: the entry is for the person who checks it in the running app.
      - A `checked` entry is stale when its `edition` is older than the rule's `changed` in `rules.json`, and only
        then: the rule's level, scope or statement changed after the check. Give the result its `checked` field all
        the same, and say in `problem` that the entry is stale, since which edition, and that it is to be removed
        and the rule checked again. Report in `problem` too an entry for a rule that also has an exception.
+   - **Out of the checkout's reach.** A few checks need what the app's checkout does not hold: another repository (the
+     app's website, for DOCS-01, DOCS-02, PAUTA-13 and a few more) or what the repository's host keeps and no file shows
+     (a repository setting, such as the checks REL-19 has the default branch require; whether the issue PAUTA-07 asks
+     for is open). The Check says so, and names `not-checked`. First judge the part of the Check the checkout does hold:
+     if that part is unmet, the rule is unmet (step 4 or 5). Then, if you can reach the rest (the website's repository
+     is checked out beside the app, as `../<app>-website`; `gh` answers for this repository), read it and judge the rule
+     like any `code` rule. If you can't, and `pauta.json` has no exception for the rule, the status is
+     **`not-checked`**: not a finding and not a pass. The evidence says what was read, what was not, and what would
+     settle it ("ci.yml:3 and :9 have both triggers and both jobs; whether the default branch requires them is a
+     repository setting: read its branch protection on GitHub"). `not-checked` is for these cases only, and only where
+     the rule's Check names it. What needs the running app is `manual`, and a `code` or `test` rule the source merely
+     doesn't show is unmet (below).
+   - **Judged last.** PAUTA-04 and ABOUT-07 have the audit itself as their Check. Judge them after every other
+     rule in scope, from those results, as each Check says: PAUTA-04 passes when no MUST or SHOULD is `fail` and
+     no result reports an entry for a rule that passes, and its evidence names the rules that fail. A `manual` or
+     `not-checked` result does not fail either of them. In an audit of part of the edition, judge them from the
+     rules in scope and say so in the evidence. Only the rules of the edition the app names settle ABOUT-07: an
+     audit run against another edition says so in its evidence.
 
    Partly met is unmet: say which part is missing. Don't guess: when the source doesn't settle a `code` or `test`
    rule, say what you searched for and treat it as unmet, with "not found" in the evidence.
@@ -177,11 +216,31 @@ Then, in this order:
    `app-only`) and the evidence is the entry's `reason`. Report in `problem` a deviation on a MUST, a deviation or
    pending entry with no `link`, an `app-only` entry outside a template, and a `level` or `url` that differs from the
    edition's.
-5. **Unmet, and not listed:** **`fail`**, for a MUST or SHOULD. A rule whose subject this app doesn't have at all
-   (no password or token it asks for, no files to give icons to) is still `fail` when the rule reads as applying
-   to every app: the fix is a `not-applicable` entry, so say so in the evidence. A missing part that a rule
-   *requires* (the Command Palette, a status bar, About) fails that rule and every rule about how it behaves. An
-   unmet MAY is `fail` with no consequence and needs no entry.
+5. **Unmet, and not listed:** **`fail`**, for a MUST or SHOULD. An unmet MAY is `fail` with no consequence and
+   needs no entry.
+
+**Nothing to judge.** When the app has nothing of what a rule is about, the rule's own words say what it gets. Take
+the first of these that fits, and don't guess between them:
+
+- **The rule is limited** (step 1: its text, its `appliesTo`, or the rule it details) and the app is outside it:
+  `limited`.
+- **The rule is about a part another rule requires** (the Command Palette, a status bar, About, the Debug Log's
+  find bar, the Pauta window): how the part behaves, or what it shows. Without the part the rule is unmet. It fails
+  with the rule that requires the part, and its evidence names that rule ("no Pauta window: fails with PWIN-01"),
+  so the reader sees one cause and not several findings. Where FIND-01 asks for a find bar and the app has none,
+  the rules on how a find bar searches, steps and closes fail with FIND-01; with no Pauta window, the rules on
+  what it shows and reads fail with PWIN-01.
+- **The rule constrains things an app may have or not.** It says what every entry, row or file of a kind does, or
+  what none does, and no rule requires the app to have one ("every `deviation` entry names a SHOULD", "a Chinese,
+  Japanese or Korean catalog comes with a font fallback"). With none of that kind in the app, nothing breaks the
+  rule: `pass`, and the evidence says there is none ("no `deviation` entry in `pauta.json`"). So with no
+  `pauta.json` at all, PAUTA-05 to PAUTA-08 and PAUTA-18 pass, and the missing file is PAUTA-01's and PAUTA-09's
+  finding. This holds for a by-hand rule too: with nothing of the kind in the source, there is nothing for a
+  person to look at.
+- **Anything else.** The rule reads as applying to every app, none of the three places limits it, and it asks for
+  something this app has no use for (a Doctor page that checks the environment, in an app that depends on no
+  outside tool or library). It is `fail`, and the fix is a `not-applicable` entry in `pauta.json`: say so in the
+  evidence.
 
 `pauta.json` entries that name an ID the edition does not have go in the report's `problems`: for one in the
 edition's `retired` list, name the rule in its `see`. So does a `checked` entry for a rule that is not checked by
@@ -212,10 +271,11 @@ Replace any earlier report: it is a snapshot, regenerated rather than edited by 
   "rules": "https://pauta-project.dev/<edition>/rules.json",
   "results": [
     { "id": "KBD-07", "level": "MUST", "status": "pass", "evidence": "src/main/java/com/example/app/ui/CommandPalette.java:57" },
-    { "id": "KBD-15", "level": "MUST", "status": "manual", "evidence": "Tab through every window: src/main/java/com/example/app/ui/MainWindow.java:120", "checked": { "edition": "<edition>", "date": "2026-11-02" } },
+    { "id": "SET-02", "level": "MUST", "status": "manual", "evidence": "Open Settings and find the sidebar of pages, the open page and the search field: src/main/java/com/example/app/ui/SettingsWindow.java:120", "checked": { "edition": "<edition>", "date": "2026-11-02" } },
     { "id": "MENU-14", "level": "MUST", "status": "pending", "evidence": "Some menu rows have no icon yet." },
-    { "id": "MENU-08", "level": "MUST", "status": "manual", "evidence": "Press Escape on a right-click menu: src/main/java/com/example/app/ui/RowMenus.java:44; not recorded" },
-    { "id": "TRAY-01", "level": "MUST", "status": "limited", "evidence": "no tray: no SystemTray or TrayIcon in src/" }
+    { "id": "PWIN-02", "level": "MUST", "status": "manual", "evidence": "Open the Pauta window and compare it with pauta.json, entry by entry: src/main/java/com/example/app/ui/PautaWindow.java:55; not recorded" },
+    { "id": "TRAY-01", "level": "MUST", "status": "limited", "evidence": "no tray: no SystemTray or TrayIcon in src/" },
+    { "id": "PAUTA-13", "level": "MUST", "status": "not-checked", "evidence": "needs the website's repository (example-website, not checked out beside the app): its src/content/docs/ has a Pauta conformance page that lists the rules of pauta.json" }
   ],
   "problems": []
 }
@@ -232,13 +292,13 @@ edition's `audit.schema.json`. Check the report against it if a validator is at 
 <App name> at <short commit SHA>, audited against [Pauta <edition>](https://pauta-project.dev/<edition>/)
 on <YYYY-MM-DD>. Scope: <every rule | the prefixes, pages or IDs given>. Rules from <URL or local path>.
 
-|        | pass | fail | manual | pending | deviation | not-applicable | app-only | limited |
-|--------|-----:|-----:|-------:|--------:|----------:|---------------:|---------:|--------:|
-| MUST   |      |      |        |         |           |                |          |         |
-| SHOULD |      |      |        |         |           |                |          |         |
-| MAY    |      |      |        |         |           |                |          |         |
+|        | pass | fail | manual | not-checked | pending | deviation | not-applicable | app-only | limited |
+|--------|-----:|-----:|-------:|------------:|--------:|----------:|---------------:|---------:|--------:|
+| MUST   |      |      |        |             |         |           |                |          |         |
+| SHOULD |      |      |        |             |         |           |                |          |         |
+| MAY    |      |      |        |             |         |           |                |          |         |
 
-A failed MUST blocks a release.
+A failed MUST blocks a release. A `manual` or `not-checked` MUST does not: it is reported until someone settles it.
 
 ## Failed MUSTs
 
@@ -255,7 +315,12 @@ A failed MUST blocks a release.
 ## Manual checks
 
 (Each with the edition and date it was recorded as checked, or "not recorded"; a stale entry says so. A rule not
-recorded is not a failure.)
+recorded is not a failure, of the rule or of PAUTA-18.)
+
+## Not checked
+
+(Each with what would settle it: the other repository to read, or the repository setting to look up. Not a
+failure, and not a pass.)
 
 ## Exceptions
 
@@ -281,5 +346,9 @@ without a yes. For each fix:
 - A rule the app will not meet now is recorded instead: `pending` with an issue, or for a SHOULD a `deviation` with
   a decision record (Conformance, PAUTA-06 and PAUTA-07).
 - Re-run the audit for the fixed IDs only (`/pauta-audit TBAR-01 WIN-03`) and update their results.
+
+List the `not-checked` rules too, each with what would settle it, and offer to settle the ones you could reach with
+help: the website's repository checked out beside the app, or `gh` signed in for the repository's settings and
+issues.
 
 Failed SHOULDs are worth fixing too; offer them separately, after the MUSTs.

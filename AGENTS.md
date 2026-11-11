@@ -125,7 +125,8 @@ Editora (`../Editora`) is the reference implementation.
   number, runs `node scripts/rule-changes.mjs`, which records in `rule-changes.json` the edition each rule's level,
   scope or statement last changed in (`changed` in `rules.json`; no network, and never edited by hand or outside a
   release), and runs `node scripts/pin-references.mjs`, which records in `pins.json` the commit at the head of every
-  repository the pages link into. `ruleHash` (`src/lib/rules.mjs`) hashes a rule's level, scope and
+  repository the pages link into (`Repo=<sha>` arguments pin a repository at the commit named instead, for one that
+  has moved on since the edition's References and gaps were read against it). `ruleHash` (`src/lib/rules.mjs`) hashes a rule's level, scope and
   statement as words alone (a link is its label; emphasis marks and backticks are dropped), so a markup-only edit
   re-dates no rule. The record of 5.0.0 was made with an older hash that kept the markup: `sameRule` accepts
   either until the release of 6.0.0 has rewritten the record, after which `legacyHash` can be removed. What the edition serves (pages, agent files, downloads) links those commits

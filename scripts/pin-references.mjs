@@ -4,6 +4,12 @@
 // its links (src/lib/pins.mjs), and scripts/check-edition.mjs fails a release whose pins.json names another edition.
 //
 //   node scripts/pin-references.mjs        after setting the release's version; needs network access to GitHub
+//   node scripts/pin-references.mjs Editora=<sha> ...
+//                                           the same, with the named repositories pinned at the commit given (all 40
+//                                           hex digits) and not at their heads: for a repository that has moved on
+//                                           since the edition's References and gaps were read against it, so the
+//                                           edition's links show the code its text describes. The commit must be in
+//                                           the repository and hold every linked path, like any other pin.
 import { execFileSync } from "node:child_process";
 import { mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -25,11 +31,22 @@ const text = ["src", "skills"].flatMap(files).map((f) => readFileSync(f, "utf8")
 const env = { ...process.env, GIT_TERMINAL_PROMPT: "0" };
 const gitIn = (args, opts = {}) => execFileSync("git", args, { encoding: "utf8", env, timeout: 120_000, ...opts }).trim();
 
-const repos = {};
+// Repositories the release pins at a commit it names, not at their heads: `Repo=<40 hex digits>` arguments.
+const given = new Map();
 const problems = [];
+for (const arg of process.argv.slice(2)) {
+  const m = arg.match(/^([A-Za-z0-9_.-]+)=([0-9a-f]{40})$/);
+  if (m) given.set(m[1], m[2]);
+  else problems.push(`${arg}: write a repository and a full commit SHA, as Editora=<40 hex digits, lower case>`);
+}
+const repos = {};
 for (const [repo, branches] of [...linkedRepos(text)].sort(([a], [b]) => a.localeCompare(b))) {
   if (branches.length > 1) {
     problems.push(`${repo} is linked on ${branches.join(" and ")}; use its default branch everywhere`);
+    continue;
+  }
+  if (given.has(repo)) {
+    repos[repo] = given.get(repo); // fetched below, which fails if the repository has no such commit
     continue;
   }
   const out = gitIn(["ls-remote", `https://github.com/${OWNER}/${repo}.git`, `refs/heads/${branches[0]}`]);
@@ -37,6 +54,7 @@ for (const [repo, branches] of [...linkedRepos(text)].sort(([a], [b]) => a.local
   if (!/^[0-9a-f]{40}$/.test(sha)) problems.push(`${repo}: no branch ${branches[0]} on GitHub`);
   else repos[repo] = sha;
 }
+for (const repo of given.keys()) if (!Object.hasOwn(repos, repo)) problems.push(`${repo}: no page links into it, so there is nothing to pin`);
 // Every linked path must exist at its pinned commit, or the edition would carry a link that 404s forever. Each
 // repository's tree is fetched without file contents (a partial, shallow fetch) and listed.
 const linked = new Map();
@@ -49,7 +67,12 @@ try {
   for (const [repo, paths] of linked) {
     const dir = join(scratch, repo);
     gitIn(["init", "--quiet", "--bare", dir]);
-    gitIn(["-C", dir, "fetch", "--quiet", "--depth=1", "--filter=blob:none", `https://github.com/${OWNER}/${repo}.git`, repos[repo]]);
+    try {
+      gitIn(["-C", dir, "fetch", "--quiet", "--depth=1", "--filter=blob:none", `https://github.com/${OWNER}/${repo}.git`, repos[repo]]);
+    } catch {
+      problems.push(`${repo}: no commit ${repos[repo]} on GitHub`);
+      continue;
+    }
     const tree = new Set(gitIn(["-C", dir, "ls-tree", "-r", "-t", "--name-only", repos[repo]], { maxBuffer: 64 << 20 }).split("\n"));
     for (const path of paths) if (!tree.has(path)) problems.push(`${repo}: ${path} is linked but not at ${repos[repo].slice(0, 12)}`);
   }
@@ -63,7 +86,8 @@ if (problems.length) {
 
 const pins = {
   comment:
-    "The commit of each repository the pages link into, when this edition was released (scripts/pin-references.mjs). " +
+    "The commit of each repository the pages link into that this edition describes: its head when the edition was " +
+    "released, or the commit the release named for it (scripts/pin-references.mjs). " +
     "The edition's pages, agent files and downloads link these commits instead of the branches (src/lib/pins.mjs).",
   edition: pkg.version,
   date: pkg.guidelines.date,
@@ -71,4 +95,4 @@ const pins = {
 };
 writeFileSync("pins.json", JSON.stringify(pins, null, 2) + "\n");
 console.log(`pins.json: ${Object.keys(repos).length} repositories pinned for ${pkg.version}`);
-for (const [repo, sha] of Object.entries(repos)) console.log(`  ${repo} ${sha.slice(0, 12)}`);
+for (const [repo, sha] of Object.entries(repos)) console.log(`  ${repo} ${sha.slice(0, 12)}${given.has(repo) ? "  (named by the release, not its head)" : ""}`);

@@ -1,6 +1,6 @@
 {
   "comment": "The edition in which each rule's level, scope or statement last changed (rules.json's `changed`), with a hash of the three as of `edition`, the last release; and every ID retired by then. scripts/rule-changes.mjs rewrites it at a release and nothing else edits it (scripts/check-edition.mjs). A rule whose hash no longer matches is new or changed since that release: it reads `next` in next/ (src/lib/rules.mjs).",
-  "edition": "6.0.0",
+  "edition": "6.0.1",
   "rules": {
     "ABOUT-01": { "changed": "6.0.0", "hash": "eb4d27edc8a9" },
     "ABOUT-02": { "changed": "6.0.0", "hash": "794a4ad3e6b0" },
@@ -401,7 +401,7 @@
     "WIN-04": { "changed": "6.0.0", "hash": "339bb0da989f" },
     "WIN-08": { "changed": "6.0.0", "hash": "300bdd9db0cd" },
     "WIN-09": { "changed": "6.0.0", "hash": "fbe3531feda3" },
-    "WIN-10": { "changed": "6.0.0", "hash": "65602e053b4d" },
+    "WIN-10": { "changed": "6.0.1", "hash": "f4127e8d4955" },
     "WIN-11": { "changed": "6.0.0", "hash": "22c285f82b76" },
     "WIN-12": { "changed": "6.0.0", "hash": "3b9d0b5a87c9" },
     "WIN-13": { "changed": "6.0.0", "hash": "49637d2e387d" },

@@ -1,10 +1,10 @@
 {
   "comment": "The commit of each repository the pages link into that this edition describes: its head when the edition was released, or the commit the release named for it (scripts/pin-references.mjs). The edition's pages, agent files and downloads link these commits instead of the branches (src/lib/pins.mjs).",
-  "edition": "6.0.0",
-  "date": "2026-11-10",
+  "edition": "6.0.1",
+  "date": "2026-11-11",
   "repos": {
-    "adl-desktop-app-template": "b1ba438e61bce02fcbc389f1775f34a7def1ee31",
-    "Editora": "c9a28545f5be0b1411dc07ab7ca07bed010d13fd",
+    "adl-desktop-app-template": "b5cbc21ce60b1e7aee0b8af224b0fa6d8c49e73f",
+    "Editora": "f314ca3b117829d25dbaa63be6ba2353fd898fd8",
     "editora-website": "1b6390c20c7a8aa3fc6af394b68c11454478d69d",
     "Mirada": "a3a84ec5e8227b1886e3dd920ab2b030aa3a2ba1",
     "Modula": "518300a4c2114909315fbd3a73acc999fb4c16b5",

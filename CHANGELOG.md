@@ -8,6 +8,19 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 
 ## [Unreleased]
 
+## [6.0.0] - 2026-11-10
+
+Three reviews of 5.0.0 and a confirmation pass land as one edition. A rule about something an app lacks now says which
+apps it covers, a test is part of a requirement only where the statement says "A test holds it", and an audit has a
+result for what it cannot see from the app's checkout, so the same rule gives the same verdict in an app unlike Editora.
+28 new rules, 17 of them MUSTs, among them a UI zoom (WIN-12), one quit method and a Quit in every app (WIN-13, WIN-14),
+a default button that is never the red one (CONF-13), every dialog's buttons worded from the catalog (CONF-14), nothing
+that differs by OS outside the table that allows it (OS-04) and an unknown command-line option refused (CLI-12);
+ICON-09 and REL-20 raised to MUSTs, PLAT-02 and QUAL-05 lowered to SHOULDs; five rules retired. A major because it asks
+an app that met 5.0.0 to redo work: dialog buttons in one order with Cancel on the left, keys read from the active
+keymap, tooltips that name a command by its title, and the rest of the first list below. *Gaps per app* was rebuilt
+from audits of every app, and `changed` on each rule in `rules.json` says which rules to read again.
+
 One entry per rule, grouped by page, in four parts: Added, Changed, Removed, Fixed. Changed holds every rule that asks
 something else than it did in 5.0.0; Fixed holds what changed without changing what a rule asks. Since 5.0.0 the guide
 went from 382 rules to 405 (195 MUST, 201 SHOULD, 9 MAY): 28 are new, 17 of them MUSTs; five are retired; PLAT-02 and

@@ -173,10 +173,11 @@ own.
     keymap change (`refresh`, from [`ui/MainWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MainWindow.java)). Termina's [`MacAppMenu.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MacAppMenu.java) adds About
     only. Editora, Torrenta, Modula and nux add nothing to that menu.
 - **WIN-10 · MAY.** The window has modes that change how much chrome it shows: Zen shows none, Expert keeps only
-  the menu bar and the status bar, and Simple shows fewer menus, for new users.
+  the status bar, and Simple shows fewer menus, for new users.
   - *Check (code):* each mode is a command, and one truth table decides which chrome each mode shows.
   - *Reference:* Editora [`ui/WindowChromeCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowChromeCoordinator.java) (`toggleZen`, `toggleExpert`, `applySimpleMode`) over the truth
-    table in [`ui/Chrome.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Chrome.java), where Expert hides the toolbar, the tabs, the breadcrumb and the tool stripes.
+    table in [`ui/Chrome.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Chrome.java), where Expert hides the menu bar, the toolbar, the tabs, the breadcrumb and the tool stripes
+    (`menuBar` keys on both focus modes; in an extended window the title and the window buttons stay).
 
 The rest of the window has its own pages. Light and dark themes switched at run time, the "follow the system" choice
 and what the state colors mean are [ICON-15](../icons-and-color/#icon-15), [ICON-16](../icons-and-color/#icon-16) and

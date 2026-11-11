@@ -106,8 +106,13 @@ tray icon's menu) show text only; there the chord is appended to the title ([MEN
     a tray icon's menu. A test that binds a command, opens a right-click menu that lists it, finds its chord, and
     finds the new chord after a keymap switch is the surest evidence.
   - *Reference:* Editora [`MainMenuBar.rowContent`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java) and `alignChordColumns`, `.menu-item-chord` in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css), for
-    the menu bar. Editora's right-click menus show no chords yet: a row there is a plain `MenuItem`, not the menu
-    bar's row. The app template's right-click menus show them: [`ui/CommandMenu.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/CommandMenu.java) draws each row as the menu
+    the menu bar. Its editor, editor tab, preview and output-console right-click menus show them too: a row tagged
+    with the command it does ([`editor/MenuChords.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/editor/MenuChords.java), `tag`) carries that command's chord as an
+    accelerator that only displays, re-read from the active keymap each time a right-click menu opens (`refresh`),
+    and `.accelerator-text` in its `app.css` draws it in `-state-key` at 11 px ([`MenuChordsTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/editor/MenuChordsTest.java),
+    [`ContextMenuFontFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ContextMenuFontFxTest.java)). Editora doesn't meet the rule yet: its other right-click menus and its drop-downs
+    tag no row, so the Copy, Select All, Add Bookmark and Add Note of a Project Map card's menu show no chord
+    ([`ui/ProjectMapPreview.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ProjectMapPreview.java)). The app template's right-click menus show them: [`ui/CommandMenu.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/CommandMenu.java) draws each row as the menu
     bar's ([`AppMenus.inWindowRow`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AppMenus.java)) and re-reads its chord on every showing (`refresh`), in `-state-key` at
     11 px (`.menu-item-chord` in its [`app.css`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/styles/app.css)); its [`MenuLookFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/MenuLookFxTest.java)
     (`aRightClickMenuShowsEachChordInTheKeyColorAndFollowsTheKeymap`) opens a right-click menu, reads the chord

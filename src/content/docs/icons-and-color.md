@@ -131,7 +131,7 @@ pill, a row tint and a hover state come from the same place. `.state-pill` is th
     which fails a component rule that names a danger, warning or success role). Termina meets it too: its
     [`styles/app.css`](https://github.com/adriandeleon/Termina/blob/master/src/main/resources/com/termina/styles/app.css) declares `-state-red`, `-state-amber` and `-state-green` on `.root`, and no component rule of
     its stylesheets names the role behind one. The other five apps don't yet. Editora's [`styles/app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css)
-    declares its tokens the same way (`.root`), but Editora doesn't hold the last clause: 78 declarations in that
+    declares its tokens the same way (`.root`), but Editora doesn't hold the last clause: 79 declarations in that
     file's component rules name `-color-danger-fg`, `-color-warning-fg` or `-color-success-fg`
     directly, errors among them (`.crontab-error`, `.md-math-error`). Torrenta's tokens are on `.root` too
     (`-torrenta-*`), and two of its component rules write out the ladder of `-torrenta-up` again
@@ -171,7 +171,7 @@ pill, a row tint and a hover state come from the same place. `.state-pill` is th
     `-scrim` and `-shadow` on `.root` in its [`styles/app.css`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/styles/app.css), used by `.overlay-backdrop` and the cards' shadows, with no test that
     holds it. Editora's
     [`StyleContrastTest.severityAndDebugColoursComeFromTheStateTokens`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java) holds six selectors it names, and Editora
-    doesn't yet pass the whole check: `.breakpoint-marker`, `.exec-arrow`, `.view-mode-bar`, `.recent-remove`,
+    doesn't yet pass the whole check: `.breakpoint-marker`, `.debug-menu-logpoint`, `.exec-arrow`, `.view-mode-bar`, `.recent-remove`,
     `.personal-note-tooltip-content`, the fold-gutter markers and the default editor and Markdown preview palettes in
     [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) still carry fixed hexes, other rules an `rgba()` (the scrim of `.overlay-backdrop`, the diff and merge
     tints and shadows among them), and `.breakpoint-condition-mark` a fixed `white`. Torrenta doesn't either: `.speed-graph-up` and

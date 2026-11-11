@@ -41,12 +41,15 @@ export const icon = (app) => `${base}icons/${app}.svg`;
 
 ## Where to start
 
-There are two ways to implement Pauta. A new app starts from
-[adl-desktop-app-template](https://github.com/adriandeleon/adl-desktop-app-template), a GitHub template repository: a small
-runnable app with its tests, CI and release workflows and every repository document, built to the edition its README
-names. Click **Use this template**, run `scripts/rename.sh <AppName> <package>`, then add any rule from a later
-edition. An existing app works through the [New app checklist](checklist/) and its own list under
-[Gaps per app](family/gaps/).
+There are two ways to implement Pauta, depending on whether the app exists yet:
+
+- **A new app starts from the template.**
+  [adl-desktop-app-template](https://github.com/adriandeleon/adl-desktop-app-template) is a GitHub template
+  repository: a small app that runs, with its tests, CI and release workflows and every repository document, built to
+  the edition its README names. Click **Use this template** and run `scripts/rename.sh <AppName> <package>`. If the
+  template's edition is older than this one, add the rules the later editions brought.
+- **An existing app closes its gaps.** It works through the [New app checklist](checklist/) and through its own list
+  of what it still misses under [Gaps per app](family/gaps/).
 
 <CardGrid>
   <LinkCard title="Principles" href={`${base}principles/`} description="The thirteen rules every other page follows from." />

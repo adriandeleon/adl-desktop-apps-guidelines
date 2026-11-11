@@ -7,9 +7,9 @@
 export const STATUSES = {
   fail: "Not met, and pauta.json records no exception for it. A finding; a failed MUST blocks a release.",
   manual:
-    "Checked by hand: the source leaves it open, so a person checks it in the running app, and may record a rule found met in pauta.json's `checked` list. Not a finding, recorded or not: the result carries the entry, or its evidence ends \"not recorded\".",
+    "Checked by hand: the source leaves it open, so a person checks it, in the running app or where the Check sends them (the repository's pull requests), and may record a rule found met in pauta.json's `checked` list. Not a finding, recorded or not: the result carries the entry, or its evidence ends \"not recorded\".",
   "not-checked":
-    "The Check needs something an audit of the app's checkout cannot see: another repository (the website's), or what the repository's host keeps and no file shows (a repository setting, an issue's state). Not a finding and not a pass; the evidence says what would settle it.",
+    "The Check needs something the audit could not read: another repository (the website's), what the repository's host keeps and no file shows (a repository setting, an issue's state), or the rules of the edition the app names, in an audit run against another (ABOUT-07). Not a finding and not a pass; the evidence says what would settle it.",
   pending: "Not met; pauta.json records it as pending, with an issue.",
   deviation: "A SHOULD the app does differently on purpose; pauta.json records it, with a decision record.",
   "not-applicable": "The rule reads as applying to every app, but its subject does not exist in this one; pauta.json records it.",
@@ -63,7 +63,7 @@ export function auditSchema(base) {
               type: "string",
               minLength: 1,
               description:
-                "Where the verdict comes from, as path/File.java:123 from the repository root, and what is missing for a fail. For an exception, its pauta.json reason; for limited, the feature the app lacks; for manual, what to look at in the running app, ending \"not recorded\" when pauta.json has no `checked` entry for the rule; for not-checked, what would settle it.",
+                "Where the verdict comes from, as path/File.java:123 from the repository root, and what is missing for a fail. For an exception, its pauta.json reason; for limited, the feature the app lacks; for manual, what to look at, in the running app or where the Check says, ending \"not recorded\" when pauta.json has no `checked` entry for the rule; for not-checked, what would settle it.",
             },
             checked: {
               type: "object",

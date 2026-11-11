@@ -60,8 +60,9 @@ rules in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/mai
 **Applies to:** an app whose main window holds documents or sessions in tabs the user opens and closes, as
 Editora's files and Termina's terminals are. The pages of a Settings window (nux's `TabPane`), the fixed sections
 of a detail pane (Torrenta's) and a strip that switches the window between views (Torrenta's Transfers, Search and
-RSS) are not such tabs: the user neither opens nor closes them. The Tabs rules cover the tabs of the main window's
-content, not tabs inside a tool window (those of Editora's Terminal and Build Output panels).
+RSS) are not such tabs: the user neither opens nor closes them. The Tabs rules cover every tab of the main window's
+strip, whatever it shows (Editora's image, hex and PDF viewer tabs as much as its editor tabs), not tabs inside a
+tool window (those of Editora's Terminal and Build Output panels).
 
 - **TABS-01 · MUST.** Every tab operation is a command, so it can be bound to a chord, is in the palette and has a
   menu row: close, close others, close all, close unmodified, close to the left and right, pin, reopen closed, next
@@ -69,32 +70,39 @@ content, not tabs inside a tool window (those of Editora's Terminal and Build Ou
   are never saved or unsaved, so a terminal app has no close unmodified, and closing its window closes all its
   tabs, so it needs no close all; the other operations are its commands too.
   - *Check (code):* the registry holds a command for each operation, each has a row in the menu bar or in the
-    tab's right-click menu, and that menu (Editora's `TabContextMenu`) lists the ones that act on a tab; in a
-    terminal app, each operation but close unmodified and close all.
+    tab's right-click menu, and that menu (Editora's `TabContextMenu`), on every tab of the strip, lists the ones
+    that act on a tab; in a terminal app, each operation but close unmodified and close all.
   - *Reference:* Editora [`ui/WindowCommandRegistrar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowCommandRegistrar.java) (`buffer.close`, `buffer.closeOthers`, `buffer.closeAll`,
     `buffer.closeUnmodified`, `buffer.closeLeft`, `buffer.closeRight`, `buffer.togglePin`, `buffer.reopenClosed`,
-    `buffer.next`), [`ui/TabContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabContextMenu.java). Editora has no previous-tab command yet. Termina
+    `buffer.next`), [`ui/TabContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabContextMenu.java). Editora has no previous-tab command yet, and
+    its image, hex and PDF viewer tabs have no right-click menu: `openImageTab`, `openHexTab` and `openPdfTab` in
+    [`ui/FileWorkflowCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/FileWorkflowCoordinator.java) install none, and `installTabMenu` in [`ui/MainController.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java) is called for
+    an editor's tab alone. Termina
     [`ui/TerminalWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalWindow.java) (`closeTab`, `closeOtherTabs`, `closeTabsToTheLeft`, `closeTabsToTheRight`, `pinTab`,
     `reopenClosedTab`, `nextTab` and `previousTab` in `menuCommands`; the tab's menu in `buildTabMenu`). Its File
     menu closes the tab, the others, the ones to either side, or the window, which is its close all
     ([`ui/MenuBarModel.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MenuBarModel.java)).
 - **TABS-02 · MUST.** The header is the title: the Tab's own text stays empty, and a graphic header carries the
-  file-type glyph, the markers and the title in a label of its own (Editora's style class for it is `tab-title`).
-  The tooltip is the full path. A terminal app's tab shows no file: its header has no file-type glyph, its title
-  names the tab (the user's own name for it, the title the shell set, the running program or the working folder),
-  and its tooltip is the working folder's full path.
+  file-type glyph, the markers and the title in a label of its own (Editora's style class for it is `tab-title`). The
+  tooltip is the full path, in which `~` may stand for the home folder. A terminal app's tab shows no file: its header
+  has no file-type glyph, its title names the tab (the user's own name for it, the title the shell set, the running
+  program or the working folder), and its tooltip is the working folder's full path.
   - *Why:* the graphic is what makes the header a drag handle and lets each state set its own color.
-  - *Check (code):* every editor tab gets `setText("")` and a graphic that holds the title in a label of its own
-    (Editora's `.tab-title`); its tooltip is the file's path. In a terminal app: every tab's own text is empty, its
-    graphic holds the title label, and the tooltip is the working folder of the tab's active pane.
-  - *Reference:* Editora [`ui/TabHeaders.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabHeaders.java). Termina [`TerminalWindow.addTab`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalWindow.java) (a `tab-title` label as the tab's
-    graphic, and `installDirectoryTooltip`) over [`ui/TerminalTitle.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalTitle.java) (`tab`, `tooltip`).
-- **TABS-03 · MUST.** A tab's header, the one graphic header of [TABS-02](#tabs-02), carries the tab's states: a
-  `• ` prefix in amber italic for unsaved, a pin and bold for pinned, muted italic for read-only. A terminal app's
-  tab is never unsaved or read-only, and its header says in their place what the tab is doing: the title is the
-  running program's name while one runs, unless the user or the shell named the tab, and a mark beside the title
-  says what happened while the tab was not selected (a notification, a bell, or output after a quiet spell),
-  cleared when the tab is selected. A pinned terminal tab is drawn as any other.
+  - *Check (code):* every tab that shows a file, an editor's or a viewer's, gets `setText("")` and a graphic that
+    holds the file-type glyph and the title in a label of its own (Editora's `.tab-title`); its tooltip is the
+    file's path. In a terminal app: every tab's own text is empty, its graphic holds the title label and no
+    file-type glyph, and the tooltip is the working folder of the tab's active pane. A path that writes the home
+    folder as `~` is a full path.
+  - *Reference:* Editora [`ui/TabHeaders.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabHeaders.java), for its editor tabs (`bufferHeader`, `tooltip`). Its image, hex and PDF
+    viewer tabs don't yet: `contentHeader`, which builds their header, sets no tooltip. Termina [`TerminalWindow.addTab`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalWindow.java) (a `tab-title` label as the tab's
+    graphic, and `installDirectoryTooltip`) over [`ui/TerminalTitle.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalTitle.java) (`tab`, and `tooltip`, which writes the
+    home folder as `~`).
+- **TABS-03 · MUST.** A tab's header, the one graphic header of [TABS-02](#tabs-02), carries the tab's states: a `• `
+  prefix in amber italic for unsaved, a pin and bold for pinned, muted italic for read-only. A terminal app's tab is
+  never unsaved or read-only, and its header says in their place what the tab is doing: the title is the running
+  program's name while one runs, unless the user or the shell named the tab, and a mark beside the title says what
+  happened while the tab was not selected (a notification, a bell, or output after a quiet spell), cleared when the
+  tab is selected. A pinned terminal tab is drawn as any other pinned tab, with a pin and a bold title.
   - *Check (code):* the code that builds a tab's header marks it unsaved, pinned or read-only (Editora's style
     classes `dirty`, `pinned` and `read-only` on `.tab-header`) and adds the `• ` prefix and the pin, and the
     stylesheet gives each mark the look the rule names. In a terminal app: the stylesheet styles the pinned title,
@@ -128,11 +136,14 @@ content, not tabs inside a tool window (those of Editora's Terminal and Build Ou
   scrollback.
   - *Why:* the process is gone, and pretending otherwise would be worse than saying so.
   - *Check (code):* each window keeps a list of the tabs it closed, newest first and no longer than twenty; the
-    command takes the newest entry and opens it. In an app whose tabs hold files, an entry is the file and its
-    caret, closing a file again replaces its earlier entry, and reopening puts the caret back. In a terminal app,
-    an entry holds the tab's panes with each one's shell and directory, their arrangement, the names the user gave
-    them and the tab's place in the strip, and no scrollback. A test over the list is the surest evidence.
-  - *Reference:* Editora [`ui/ClosedTabs.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ClosedTabs.java), [`ClosedTabsTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ClosedTabsTest.java); `C-S-t` in the CUA keymap. Termina
+    command takes the newest entry and opens it. In an app whose tabs hold files, an entry is the file, whether an
+    editor's tab or a viewer's showed it, with the caret where the tab has one; closing a file again replaces its
+    earlier entry, and reopening puts the caret back. In a terminal app, an entry holds the tab's panes with each
+    one's shell and directory, their arrangement, the names the user gave them and the tab's place in the strip, and
+    no scrollback. A test over the list is the surest evidence.
+  - *Reference:* Editora [`ui/ClosedTabs.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ClosedTabs.java), [`ClosedTabsTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ClosedTabsTest.java); `C-S-t` in the CUA keymap. Editora
+    doesn't yet for its image, hex and PDF viewer tabs: `rememberClosed` in [`ui/MainController.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java) records
+    the file of an editor's tab alone, so a closed viewer tab does not come back. Termina
     [`ui/ClosedTabs.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/ClosedTabs.java) and [`ClosedTabsTest`](https://github.com/adriandeleon/Termina/blob/master/src/test/java/com/termina/ui/ClosedTabsTest.java), on `Ctrl+Shift+Z` (`Cmd+Z` on macOS).
 - **TABS-07 · SHOULD.** Tabs reorder by dragging, with this feedback: the dragged header dimmed and an
   accent line on the edge where it will land.
@@ -165,8 +176,11 @@ content, not tabs inside a tool window (those of Editora's Terminal and Build Ou
     [`SwitcherFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/SwitcherFxTest.java). In Editora's Emacs keymap `C-x C-b` opens it (`switcher.show`), `C-n` and `C-p` move, `C-g`
     cancels and `C-d` closes the file ([`keymaps/emacs.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/emacs.json)); no other Editora keymap binds `switcher.show`.
 - **TABS-12 · SHOULD.** A command hides the tab bar.
-  - *Check (code):* a registered command toggles the tab header.
-  - *Reference:* Editora `view.toggleTabBar`, `.tab-pane.no-tab-header` in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css).
+  - *Check (code):* a registered command hides the tab header, with any number of tabs open. One that hides it
+    only while the window has a single tab does not meet the rule.
+  - *Reference:* Editora `view.toggleTabBar`, `.tab-pane.no-tab-header` in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css). Termina doesn't yet: the
+    nearest it has is a setting, with a palette command that toggles it, that hides the strip only while the window
+    has one tab (`settings.hideTabBar` in [`ui/SettingCommands.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/SettingCommands.java)).
 
 Termina's `HeaderBar` holds the menu bar and the window title
 ([`ui/TerminalWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalWindow.java), `buildHeaderBar`), and its tab strip is the row under it.
@@ -179,7 +193,8 @@ Termina's `HeaderBar` holds the menu bar and the window title
 under the content, that the user shows and hides as a whole, the content taking its room while it is hidden. A
 sidebar, a detail pane, an info panel and a thumbnail strip are tool panels, on a stripe or not. A section that
 folds in place and leaves its heading showing is content (nux's All variables table, a `TitledPane` under its
-dashboard), and so are a terminal's split panes: neither is a tool panel.
+dashboard), and so are a terminal's split panes: neither is a tool panel. Nor is a bar of the window's chrome
+that a command hides (a toolbar, a status bar, a tab strip).
 
 - **TABS-13 · MUST.** Every tool panel has a command that shows and hides it, with the id `tool.<id>`, as
   Editora's `tool.project` is, and where the app has a stripe, the panel's stripe button runs that command. In the
@@ -192,14 +207,16 @@ dashboard), and so are a terminal's split panes: neither is a tool panel.
     `emacs.json`, in an app that ships one, binds `M-1`, `M-2` and on through `M-0` to those commands, one for
     each panel up to ten.
   - *Reference:* Editora registers a `tool.<id>` command for each of its tool windows
-    ([`ui/WindowCommandRegistrar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowCommandRegistrar.java)) and binds ten of them to `M-1` … `M-0` ([`keymaps/emacs.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/emacs.json)).
-    It doesn't meet the stripe clause yet: [`ToolWindowManager.register`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolWindowManager.java) gives each stripe button the
-    manager's own `toggle`, not the command, so the button skips what some commands do first (`tool.remote`
-    refreshes its panel; `tool.project` and `tool.notes` test that the feature is on). Torrenta and Mirada don't
-    meet the rule yet. Torrenta has no `tool.<id>` command: its two panels' commands are `toggle-sidebar` and
-    `toggle-detail` ([`ui/MainWindow.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java)), and it ships no keymap file, so it owes no chord. Mirada's two are
-    `view.properties` and `view.thumbnails` ([`ui/Command.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Command.java)), and its [`keymaps/emacs.json`](https://github.com/adriandeleon/Mirada/blob/main/src/main/resources/com/mirada/keymaps/emacs.json) binds them to `i` and
-    `t`, where the rule requires `M-1` and `M-2`.
+    ([`ui/WindowCommandRegistrar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowCommandRegistrar.java)) and binds ten of them to `M-1` … `M-0` ([`keymaps/emacs.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/emacs.json)). It doesn't
+    meet the stripe clause yet: [`ToolWindowManager.register`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolWindowManager.java) gives each stripe button the manager's own `toggle`,
+    not the command, so the button skips what some commands do first (`tool.remote` refreshes its panel;
+    `tool.project` and `tool.notes` test that the feature is on). Nor does every one of its commands hide a panel that
+    shows: `tool.gitLog`, for one, only opens its panel (`openGitLog` in [`ui/GitWindowCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/GitWindowCoordinator.java)), and so do
+    the `tool.<id>` commands of its build tools (`registerCommands` in [`ui/BuildCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/BuildCoordinator.java)). Torrenta and
+    Mirada don't meet the rule yet. Torrenta has no `tool.<id>` command: its two panels' commands are `toggle-sidebar`
+    and `toggle-detail` ([`ui/MainWindow.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java)), and it ships no keymap file, so it owes no chord. Mirada's two are
+    `view.properties` and `view.thumbnails` ([`ui/Command.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Command.java)), and its [`keymaps/emacs.json`](https://github.com/adriandeleon/Mirada/blob/main/src/main/resources/com/mirada/keymaps/emacs.json) binds them to `i`
+    and `t`, where the rule requires `M-1` and `M-2`.
 - A panel's content is built on first use: [PERF-14](../performance/#perf-14).
 - **TABS-15 · SHOULD.** Panel state is restored: which panels are open, where each sits and every divider position
   go to the session-state file ([SET-08](../settings/#set-08); Editora's is `workspace-state.json`) and come back
@@ -245,8 +262,8 @@ them; these cover what only a docking system has.
     the context offers the window now, shows the button only when both hold, and never writes the first when the
     second changes. A test that asserts it is the surest evidence.
   - *Reference:* Editora [`ui/ToolWindowVisibility.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolWindowVisibility.java), [`ToolWindowVisibilityTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ToolWindowVisibilityTest.java).
-- **TABS-21 · SHOULD.** A bottom window that is unusable at the default height asks for more on its first open;
-  the user's own size wins afterwards.
+- **TABS-21 · SHOULD.** A tool window whose content needs more room than the default share of its side can ask for
+  more on its first open (Editora's Debug window asks for 42 %); the user's own size wins afterwards.
   - *Check (code):* a tool window can ask for a larger share of the side on its first open (Editora's
     `setFirstOpenShare`), the docking code grants it only while the user has set no size for that window, and the
     other windows keep the side's size. A test that asserts it is the surest evidence.

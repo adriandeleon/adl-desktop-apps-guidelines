@@ -10,10 +10,13 @@ description: "Commands, the Command Palette, keymaps, focus and accessibility."
   - *Check (code):* what a menu item, a toolbar button, a palette row or a key binding does is a registered command:
     the control runs the command's id through the registry, or calls what the command's runnable calls. No button,
     menu row or key handler does work no command can reach.
-  - *Reference:* Editora [`command/Command.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/Command.java), [`command/CommandRegistry.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/CommandRegistry.java).
-    Editora doesn't hold the rule everywhere yet: the Clear button of its Message Log ([`ui/MessageLogPopup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java)) empties the log in its own handler, and the
-    Previous Run and Save Output buttons of its build console ([`ui/BuildToolPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/BuildToolPanel.java)) work the same way, with no
-    command behind any of the three.
+  - *Reference:* Editora [`command/Command.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/Command.java), [`command/CommandRegistry.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/CommandRegistry.java). Editora doesn't hold the rule
+    everywhere yet: the Clear button of its Message Log ([`ui/MessageLogPopup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java)) empties the log in its own
+    handler, and the Previous Run and Save Output buttons of its build console ([`ui/BuildToolPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/BuildToolPanel.java)) work the
+    same way, with no command behind any of the three. Termina doesn't either. These buttons, among others, do their
+    work in handlers of their own with no command behind them: Clear in its Message Log
+    ([`ui/MessageLogWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MessageLogWindow.java)), Refresh, Copy, Export and Clear in its Debug Log ([`ui/DebugLogWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/DebugLogWindow.java)), and
+    Import theme in Settings ([`ui/SettingsWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/SettingsWindow.java)).
 - **KBD-02 · SHOULD.** Command ids are dotted and grouped by area, as in `file.open`, `view.toggleStatusBar`
   and `help.reportProblem`. A rule that names a command's id requires that id; these three are examples.
   - *Check (code):* every registered id is two or more names joined by dots, and the first is the area the command
@@ -37,12 +40,14 @@ description: "Commands, the Command Palette, keymaps, focus and accessibility."
 ## Command Palette
 
 - **KBD-05 · MUST.** The Command Palette opens with `M-x` in the Emacs keymap and `Ctrl+Shift+P` (`Cmd+Shift+P` on
-  macOS) in the others; the IntelliJ keymap may use IntelliJ's own Find Action chord, `Ctrl+Shift+A`
-  (`Cmd+Shift+A`), instead. An app with one key table and no Emacs keymap, which is a terminal app's own keymap
-  ([KBD-09](#kbd-09)) or the built-in table of an app that ships no keymap files, counts as one of the others: it
-  binds `Ctrl+Shift+P` (`Cmd+Shift+P` on macOS).
+  macOS) in the others; the IntelliJ keymap may use IntelliJ's own Find Action chord, `Ctrl+Shift+A` (`Cmd+Shift+A`),
+  instead. An app with one key table and no Emacs keymap, which is a terminal app's own keymap ([KBD-09](#kbd-09)) or
+  the built-in table of an app that ships no keymap files, counts as one of the others: it binds `Ctrl+Shift+P`
+  (`Cmd+Shift+P` on macOS). An app that ships no keymap files owes this chord and fails KBD-09 all the same: KBD-09
+  requires the files of every app.
   - *Check (code):* each bundled keymap binds that chord to the palette command, and so does the one key table of an
-    app that has no keymap files.
+    app that has no keymap files. An app whose chord opens the palette from a handler, with no palette command
+    registered, passes this rule and fails [PAL-01](../templates/command-palette/#pal-01) for the missing command.
   - *Reference:* Editora [`keymaps/emacs.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/emacs.json) (`M-x`), [`cua.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/cua.json) and [`vscode.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/vscode.json) (`C-S-p`), [`cua.mac.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/cua.mac.json)
     (`Cmd-S-p`), all to `palette.show`; [`intellij.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/intellij.json) binds `C-S-a`. Termina's one keymap binds
     `Shortcut+Shift+P`, which is `Ctrl+Shift+P` in [`keymap.json`](https://github.com/adriandeleon/Termina/blob/master/src/main/resources/com/termina/keymaps/keymap.json) and `Cmd+Shift+P` in [`keymap.mac.json`](https://github.com/adriandeleon/Termina/blob/master/src/main/resources/com/termina/keymaps/keymap.mac.json), and nux,
@@ -53,15 +58,16 @@ description: "Commands, the Command Palette, keymaps, focus and accessibility."
   keywords; the description is shown, not matched. A query that names a command's title outranks a fuzzy hit. Each
   row shows the command's binding in the active keymap. See the
   [Command Palette template](../templates/command-palette/).
-  - *Check (code):* the palette's matcher scores a title match first, finds a command by a word of its id or a
-    keyword that its title doesn't carry, and ranks that hit below every title match; the description is drawn and
-    never matched, and each row draws the binding the active keymap gives the command. A ranking test that asserts
-    the order is the surest evidence.
+  - *Check (code):* the palette's matcher matches the query fuzzily against each command's title and finds a command
+    by a word of its id or a keyword that its title doesn't carry; a query that spells a command's title ranks that
+    command above the fuzzy hits; the description is drawn and never matched, and each row draws the binding the
+    active keymap gives the command. A ranking test that asserts the order is the surest evidence.
   - *Reference:* Editora [`ui/CommandPalette.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java) (`orderedMatches`), [`search/FuzzyMatch.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/search/FuzzyMatch.java). It scores the
-    title first; when the title doesn't match, the id's namespace word as a keyword ([`Command.keywords`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/Command.java)); then the names
-    IntelliJ and VS Code give the command ([`command/OtherIdeNames.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/OtherIdeNames.java)). It doesn't match the rest of the id or the
-    description, which is shown under the list. [`CommandPaletteRankTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/CommandPaletteRankTest.java) holds the order
-    (`aCommandIsFoundByItsNamespaceWhenItsTitleDoesNotCarryIt`, `aKeywordMatchRanksBelowEveryTitleMatch`).
+    title first; when the title doesn't match, the id's namespace word as a keyword ([`Command.keywords`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/Command.java)); then the
+    names IntelliJ and VS Code give the command ([`command/OtherIdeNames.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/OtherIdeNames.java)). It doesn't match the rest of the id
+    or the description, which is shown under the list. [`CommandPaletteRankTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/CommandPaletteRankTest.java) holds the order
+    (`aCommandIsFoundByItsNamespaceWhenItsTitleDoesNotCarryIt`, `aKeywordMatchRanksBelowEveryTitleMatch`, and for a
+    typed title `anExactTitleLeadsAnotherCommandsAlias` and `aWholeOneWordTitleLeads`).
 - **KBD-07 · MUST.** The palette and every picker (a card that lists choices to filter and pick one from:
   [QOPEN-01](../templates/quick-open/#qopen-01)) are in-scene overlays in the window's root `StackPane`, never a
   `javafx.stage.Popup`.
@@ -112,9 +118,9 @@ Every other list choice (recent files, themes, keymaps, a setting's values) uses
   differ, to put `Cmd` where the other has `Ctrl`, to follow the macOS keymap of the editor it copies, or where
   macOS keeps the chord for itself (`Cmd+Space`, `Cmd+Tab`). See [Same on every OS](../same-on-every-os/).
   - *Why:* a command with no chord on one OS is a command that user never finds from the keyboard.
-  - *Check (code):* each keymap file and its `.mac.json` variant bind the same set of command ids: no command is
-    bound in one and missing from the other. A test that loads both and compares the commands they bind is the
-    surest evidence.
+  - *Check (code):* each keymap file and its `.mac.json` variant bind the same set of command ids: no command is bound
+    in one and missing from the other. An app that ships no keymap files has no pair to compare and fails with
+    [KBD-09](#kbd-09). A test that loads both and compares the commands they bind is the surest evidence.
   - *Reference:* Editora [`KeymapsTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/command/KeymapsTest.java) (`guiKeymapsBindSameCommandSetOnBothPlatforms`), Termina's [`KeymapTest`](https://github.com/adriandeleon/Termina/blob/master/src/test/java/com/termina/ui/KeymapTest.java)
     (`bothPlatformsBindTheSameCommands`) and the app template's [`KeybindingsTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/command/KeybindingsTest.java)
     (`cuaHasAMacVariantWhereCmdReplacesCtrl`). Mirada's [`cua.json`](https://github.com/adriandeleon/Mirada/blob/main/src/main/resources/com/mirada/keymaps/cua.json) and [`cua.mac.json`](https://github.com/adriandeleon/Mirada/blob/main/src/main/resources/com/mirada/keymaps/cua.mac.json) bind the same commands, with no
@@ -149,38 +155,43 @@ Every other list choice (recent files, themes, keymaps, a setting's values) uses
 ## Focus and accessibility
 
 - **KBD-15 · MUST.** Every interactive control is reachable with Tab and operable with Space or Enter. A control is
-  the exception when the keyboard does what it does another way: toolbar buttons stay out of the Tab order
-  ([TBAR-02](../toolbars-and-tooltips/#tbar-02)), and the find-bar and filter controls that
+  the exception when the keyboard does what it does another way: the buttons of a toolbar stay out of the Tab order
+  ([TBAR-02](../toolbars-and-tooltips/#tbar-02), which says what a toolbar is: a bar of labeled buttons is not one,
+  and its buttons are held to this rule), and the find-bar and filter controls that
   [FIND-16](../templates/find-bar/#find-16) names may leave it. See [Accessibility](../accessibility/).
   - *Why:* a control that Tab can't reach is one a keyboard-only or screen-reader user can't use at all.
-  - *Check (by hand):* first in the source, find every control the keyboard cannot focus: one the app takes out of the Tab order
-    (`setFocusTraversable(false)` in the code, `-fx-focus-traversable: false` in a stylesheet), and a label or a
-    pane that acts on a click. The keyboard does all that each one does another way: it is a toolbar button
-    ([TBAR-02](../toolbars-and-tooltips/#tbar-02)), a control [FIND-16](../templates/find-bar/#find-16) names, a
-    list whose text field moves its selection with the arrow keys, or a control whose every action, the rows of its
-    right-click menu included, a registered command also runs. A control only the mouse can work fails the rule,
-    and the source alone shows it. Then in the running app, Tab reaches every other control of each window and
-    dialog, and Space or Enter works it.
+  - *Check (by hand):* first in the source, find every control the keyboard cannot focus: one the app takes out of the
+    Tab order (`setFocusTraversable(false)` in the code, `-fx-focus-traversable: false` in a stylesheet), and a label
+    or a pane that acts on a click. The keyboard does all that each one does another way: it is a button of a toolbar
+    as [The toolbar](../toolbars-and-tooltips/#the-toolbar) defines one ([TBAR-02](../toolbars-and-tooltips/#tbar-02);
+    a bar of labeled buttons, such as nux's, is not one), a find-bar or filter control that
+    [FIND-16](../templates/find-bar/#find-16) lets leave the Tab order (one that fails FIND-16, such as an option's
+    toggle that no command toggles, fails here too), a list whose text field moves its selection with the arrow keys,
+    or a control whose every action, the rows of its right-click menu included, a registered command also runs. A
+    control only the mouse can work fails the rule, and the source alone shows it. Then in the running app, Tab
+    reaches every other control of each window and dialog, and Space or Enter works it.
   - *Reference:* the app template, where each control the keyboard cannot focus has its other way: the status bar's
     echo area, error count and update notice run commands (`view.messageLog`, `help.openNewRelease`:
     [`ui/StatusBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/StatusBar.java)), the Debug Log find bar's buttons are [FIND-16](../templates/find-bar/#find-16)'s
-    ([`ui/DebugLogFindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DebugLogFindBar.java)), and the picker's list is moved from its field ([`ui/Picker.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Picker.java)). Editora
-    doesn't hold the rule everywhere yet: the Clear button of its Message Log ([`ui/MessageLogPopup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java)) and the
-    Previous Run and Save Output buttons of its build console ([`ui/BuildToolPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/BuildToolPanel.java)) are out of the Tab
-    order with no command and no key behind them. Modula doesn't either: it takes every control of its window out
-    of the Tab order ([`RadioPane.keepOutOfFocus`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/RadioPane.java)) and gives most of what they do a key or a palette row, but a
-    preset's Rename and Remove are rows of its chip's right-click menu alone ([`ui/PresetBar.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/PresetBar.java)).
-- **KBD-16 · MUST.** Every control shows the focus ring when the keyboard focuses it. The ring is one layer of
-  `:focus-visible` rules in the app stylesheet, after every rule that sets a border or background on the same
-  controls, since rules of equal specificity are decided by order. Its color and contrast are
-  [ICON-12](../icons-and-color/#icon-12).
+    ([`ui/DebugLogFindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DebugLogFindBar.java)), and the picker's list is moved from its field ([`ui/Picker.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Picker.java)). Editora doesn't
+    hold the rule everywhere yet: the Clear button of its Message Log ([`ui/MessageLogPopup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java)) and the Previous
+    Run and Save Output buttons of its build console ([`ui/BuildToolPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/BuildToolPanel.java)) are out of the Tab order with no
+    command and no key behind them. Modula doesn't either: it takes every control of its window out of the Tab order
+    ([`RadioPane.keepOutOfFocus`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/RadioPane.java)) and gives most of what they do a key or a palette row, but a preset's Rename and
+    Remove are rows of its chip's right-click menu alone ([`ui/PresetBar.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/PresetBar.java)). Termina doesn't either: the
+    regular-expression toggle of its find bar is out of the Tab order, and no command and no key toggles it
+    ([`ui/SearchBar.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/SearchBar.java); [FIND-16](../templates/find-bar/#find-16) fails for it too).
+- **KBD-16 · MUST.** Every button, toggle, menu button, link, combo box, check box, radio button and text field shows
+  the focus ring when the keyboard focuses it. The ring is one layer of `:focus-visible` rules in the app stylesheet,
+  after every rule that sets a border or background on the same controls, since rules of equal specificity are decided
+  by order. Its color and contrast are [ICON-12](../icons-and-color/#icon-12).
   - *Why:* a keyboard user who can't see where focus is can't use the window; the ring's color is a MUST, and so is
     drawing it.
-  - *Check (code):* the app stylesheet holds the ring as one block of `:focus-visible` rules that covers every kind
-    of control the app uses (buttons, toggles, menu buttons, links, combo boxes, check boxes, radio buttons, text
-    fields), and no rule after the block, of the same or higher specificity, sets again what the block sets on
-    those controls (the border; on a text field, the background insets). A test that tabs to each control family
-    and asserts the ring is the surest evidence.
+  - *Check (code):* the app stylesheet holds the ring as one block of `:focus-visible` rules that covers each of these
+    kinds of control the app uses (buttons, toggles, menu buttons, links, combo boxes, check boxes, radio buttons,
+    text fields), and no rule after the block, of the same or higher specificity, sets again what the block sets on
+    those controls (the border; on a text field, the background insets). A test that tabs to each control family and
+    asserts the ring is the surest evidence.
   - *Reference:* Editora [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) (*Keyboard focus*, one layer for every control), held by
     [`FocusRingFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/FocusRingFxTest.java), which tabs to each control family. Termina's [`app.css`](https://github.com/adriandeleon/Termina/blob/master/src/main/resources/com/termina/styles/app.css) and Mirada's
     [`mirada.css`](https://github.com/adriandeleon/Mirada/blob/main/src/main/resources/com/mirada/styles/mirada.css) end with a layer of the same kind; neither app has a test that tabs to a control.
@@ -206,8 +217,9 @@ Every other list choice (recent files, themes, keymaps, a setting's values) uses
 - **KBD-18 · SHOULD.** A row that turns a setting on or off (in Settings, a panel or a dialog) uses a switch the
   keyboard operates: it takes focus, Space toggles it, and its accessible role is `TOGGLE_BUTTON`.
   - *Why:* a bare AtlantaFX `ToggleSwitch` is mouse-only.
-  - *Check (code):* the app has one switch class that takes focus, toggles on Space and sets
-    `AccessibleRole.TOGGLE_BUTTON` (Editora's `SettingSwitch`), and no `new ToggleSwitch` appears outside it.
+  - *Check (code):* every row that turns a setting on or off uses a switch that takes focus, toggles on Space and sets
+    `AccessibleRole.TOGGLE_BUTTON` (Editora has one class for it, `SettingSwitch`); a row that uses AtlantaFX's
+    `ToggleSwitch` as it comes fails.
   - *Reference:* Editora [`ui/SettingSwitch.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingSwitch.java).
 
 Related rules on other pages: every icon-only button gets its name from one helper,

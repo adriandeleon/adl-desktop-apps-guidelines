@@ -6,7 +6,8 @@ description: "The family's question before a destructive action: it names the th
 One question before anything the user made is removed, deleted, discarded or overwritten, asked the same way
 everywhere: the text names the thing and what happens to it, the confirming button is the action's own verb in red,
 and Cancel is the way out and the default button. An action that can be taken back needs no question
-([CONF-01](#conf-01), [CONF-07](#conf-07)).
+([CONF-01](#conf-01), [CONF-07](#conf-07)). One rule here reaches past the question before a destructive action:
+[CONF-14](#conf-14), on where the buttons' words come from, covers every dialog with two or more buttons.
 
 ## Rules
 
@@ -19,10 +20,12 @@ and Cancel is the way out and the default button. An action that can be taken ba
     [`ui/RadioPane.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/RadioPane.java)) and nux's Profiles → Delete (`withProfileRemoved`, called from [`App.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/App.java)) remove
     at once, with no question and no undo.
 - **CONF-02 · MUST.** In an app that asks before a destructive action (before it removes, deletes, discards or
-  overwrites something, ends a running program, or runs a command that cannot be taken back), the question names
-  the thing and what happens to it. A question that warns before something is run or pasted and destroys nothing
-  (Termina's before a multi-line paste), and a question before a harmless command (nux's before a UPS command it
-  does not count as risky), are not questions before a destructive action.
+  overwrites something, ends a running program, or runs a command that cannot be taken back), the question names the
+  thing and what happens to it. A question that warns before something is run or pasted and destroys nothing
+  (Termina's before a multi-line paste), and a question before a harmless command (nux's before a UPS command it does
+  not count as risky), are not questions before a destructive action. This list says which questions the rules on a
+  question's form cover; it is wider than what [CONF-01](#conf-01) requires a question or an undo for, which is only
+  what the user made.
   - *Check (code):* the string of every question before a destructive action names the thing, by an argument for
     its name or count or in its own words ("Quit Editora?"), and says what happens to it.
   - *Reference:* Editora `dialog.unsaved.header`, `dialog.discard.tracked`; Torrenta [`RemoveConfirm.question`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/RemoveConfirm.java),
@@ -35,43 +38,80 @@ and Cancel is the way out and the default button. An action that can be taken ba
     red danger style (the `danger` style class in Editora). Where the buttons' words come from is
     [CONF-14](#conf-14)'s.
   - *Reference:* Torrenta [`RemoveConfirm.ask`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/RemoveConfirm.java) meets it: the action is named with its verb and styled `danger`. Four other
-    questions of Torrenta's, in [`ui/SettingsWindow.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/SettingsWindow.java) (connecting sync, disconnecting it, Reset to Defaults and
-    resetting the keys), don't yet: the confirming button says OK and is not red. Termina's [`ui/Confirm.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/Confirm.java),
+    questions of Torrenta's, in [`ui/SettingsWindow.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/SettingsWindow.java) (disconnecting sync, Reset to Defaults, Reset All
+    Shortcuts and taking a shortcut back from another command), don't yet: the confirming button says OK and is
+    not red. Its question before connecting sync is not one of them: it destroys nothing (what the repository
+    holds comes to this machine, and a value that differs here is kept), like Editora's
+    ([`ui/SettingsSyncPage.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsSyncPage.java)). Termina's [`ui/Confirm.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/Confirm.java),
     Mirada's [`ui/Confirm.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Confirm.java) and the app template's [`ui/Confirm.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Confirm.java) meet it too: the action is named
     with its verb and styled `danger`. Editora meets it in some questions and not in others.
     [`GitCoordinator.confirmDestructive`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/GitCoordinator.java), which every destructive Git action asks through,
     [`MainController.styleUnsavedChangesButtons`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java) and `styleQuitButtonAsDanger` name and style the action, and so do
-    its Local History purges ([`ui/HistoryCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/HistoryCoordinator.java)). It doesn't yet where the answer is OK: the Project
-    panel's file delete (`confirmDelete` in [`ui/ProjectPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ProjectPanel.java)), deleting a project ([`ui/MainController.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java)),
-    deleting a note ([`ui/NotesCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/NotesCoordinator.java)) and Replace in Files ([`ui/SearchCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SearchCoordinator.java)); nor where the
-    action is named and not red: deleting a remote site ([`ui/RemoteSitesPane.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/RemoteSitesPane.java)), deleting a TODO pattern
-    ([`ui/TodoSettingsPane.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TodoSettingsPane.java)) and resetting the settings ([`ui/SettingsResetFlow.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsResetFlow.java)). nux's risky-command question
+    its Local History purges ([`ui/HistoryCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/HistoryCoordinator.java)). It doesn't yet where the answer is the stock OK, as in
+    these among others: the Project panel's file delete (`confirmDelete` in [`ui/ProjectPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ProjectPanel.java)), deleting a project ([`ui/MainController.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java)),
+    deleting a note ([`ui/NotesCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/NotesCoordinator.java)), deleting a macro ([`ui/MacroSettingsPane.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MacroSettingsPane.java)), Replace in Files
+    ([`ui/SearchCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SearchCoordinator.java)), and Revert and overwriting a file from Save As (`confirmRevertDialog` and
+    `confirmOverwrite` in [`ui/FileWorkflowCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/FileWorkflowCoordinator.java)); nor where the
+    action is named and not red, as in: deleting a remote site ([`ui/RemoteSitesPane.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/RemoteSitesPane.java)), deleting a TODO pattern
+    ([`ui/TodoSettingsPane.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TodoSettingsPane.java)), resetting the settings ([`ui/SettingsResetFlow.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsResetFlow.java)), discarding recovery records
+    ([`ui/RecoveryCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/RecoveryCoordinator.java)) and removing a plugin ([`ui/PluginDialogs.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PluginDialogs.java)). nux's risky-command question
     names Run, with no red ([`ui/CommandConfirmation.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/CommandConfirmation.java)).
-- **CONF-14 · MUST.** In an app that asks before a destructive action, the question's buttons are `ButtonType`s
-  named from the message catalog, never JavaFX's stock OK, Yes, No or Cancel, which are worded in the JVM's locale.
+- **CONF-14 · MUST.** Every dialog with two or more buttons words each button from the message catalog, never with
+  JavaFX's stock OK, Yes, No, Cancel, Apply or Close, which are worded in the JVM's locale. That is every JavaFX
+  `Dialog` the app shows, whatever it is for: a question, before a destructive action ([CONF-02](#conf-02)) or not,
+  a text prompt, a pick from a list, a form. Only a message with one button is outside the rule. Like
+  [CONF-08](#conf-08) and [CONF-12](#conf-12), it reaches past the question before a destructive action.
   - *Why:* a stock button is labeled from JavaFX's own resources, in the JVM's locale, so under menus in the language
-    chosen in Settings a question can still say "Cancel" in another.
-  - *Check (code):* in every question before a destructive action ([CONF-02](#conf-02) says which those are), each
-    button is a `ButtonType` built with a string from the message catalog: none is `ButtonType.OK`,
-    `ButtonType.YES`, `ButtonType.NO` or `ButtonType.CANCEL`, and none is a button an `Alert` of type
-    `CONFIRMATION` comes with, which are the stock OK and Cancel. A dialog whose stock buttons are swapped for
-    catalog-worded ones before it is shown passes (Torrenta's `StockButtons.translate`).
+    chosen in Settings a dialog can still say "Cancel" in another.
+  - *Check (code):* in every `Dialog` the app shows with two or more buttons (an `Alert` of any type, a
+    `TextInputDialog`, a `ChoiceDialog`, a `Dialog` the app fills itself), each button shows a string from the
+    message catalog: its `ButtonType` is built with one, or its button's text is set from the catalog before the
+    dialog is shown. None is left as `ButtonType.OK`, `ButtonType.YES`, `ButtonType.NO`, `ButtonType.CANCEL`,
+    `ButtonType.APPLY` or `ButtonType.CLOSE`, and none is the stock OK or Cancel that an `Alert` of type
+    `CONFIRMATION`, a `TextInputDialog` and a `ChoiceDialog` come with. A dialog whose stock buttons are swapped
+    for catalog-worded ones before it is shown passes (Torrenta's `StockButtons.translate`). A dialog with one
+    button is not judged. An app that shows no dialog with two or more buttons has nothing to judge, and passes.
   - *Reference:* Torrenta: [`RemoveConfirm.ask`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/RemoveConfirm.java) names the action from the catalog and takes Cancel from its
-    [`StockButtons`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/StockButtons.java) (`cancel()`, the catalog's word on the `CANCEL_CLOSE` role), and its four Settings questions
-    ([`ui/SettingsWindow.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/SettingsWindow.java)) go through `StockButtons.translate`, which swaps the stock OK and Cancel for the
-    catalog's. Termina's [`ui/Confirm.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/Confirm.java), Mirada's [`ui/Confirm.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Confirm.java) and the app template's
-    [`ui/Confirm.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Confirm.java) name both buttons from the catalog. Editora doesn't yet. Its unsaved-changes and Quit questions
+    [`StockButtons`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/StockButtons.java) (`cancel()`, the catalog's word on the `CANCEL_CLOSE` role), and every other dialog of two
+    buttons goes through `StockButtons.translate`, which swaps the stock OK and Cancel for the catalog's: the four
+    alerts that ask in its Settings ([`ui/SettingsWindow.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/SettingsWindow.java): connecting and disconnecting sync, Reset to
+    Defaults and the shortcuts), its nine text prompts and its two picks from a list ([`ui/MainWindow.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java),
+    [`ui/DetailPane.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/DetailPane.java) and `ui/SettingsWindow.java`). Modula's one dialog is a message with one button, so it
+    has nothing to judge. Termina, Mirada and the app template meet it in their questions and not in their text
+    prompts. Termina's [`ui/Confirm.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/Confirm.java), which its removals, its close-running-program question and its
+    multi-line paste warning ask through, names both buttons from the catalog, and so does its Import configuration
+    question ([`ui/ConfigTransfer.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/ConfigTransfer.java)); its Rename Tab prompt words OK from the catalog and keeps the stock
+    Cancel (`askForTabName` in [`ui/TerminalWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalWindow.java)), and the prompt its setting commands ask a value
+    through (`settingHost` in the same file) and its Create on GitHub prompt (`createSyncRepositoryOnGitHub` in
+    [`ui/SettingsWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/SettingsWindow.java)) are `TextInputDialog`s with the stock OK and Cancel. Mirada's [`ui/Confirm.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Confirm.java)
+    and its note form ([`ui/NoteDialog.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/NoteDialog.java)) name both buttons from the catalog; its Rename prompt (`rename` in
+    [`ui/ViewerWindow.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/ViewerWindow.java)) is a `TextInputDialog` with the stock OK and Cancel. The app template's
+    [`ui/Confirm.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Confirm.java) names both from the catalog; its text prompts ([`ui/Prompts.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Prompts.java), and
+    `promptCreateOnGitHub` in [`ui/SettingsWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/SettingsWindow.java)) keep the stock OK and Cancel, and its Report a Problem
+    form names Submit beside a stock `ButtonType.CANCEL` ([`ui/ReportProblemWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/ReportProblemWindow.java)). Editora doesn't
+    yet. Its unsaved-changes and Quit questions
     name every button from the catalog (`unsavedAlert` and `confirmQuit` in [`ui/CloseCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CloseCoordinator.java)), but of its
-    64 `CONFIRMATION` alerts, questions before a destructive action and others, 26 keep the stock OK and Cancel, the
-    Project panel's file delete (`confirmDelete` in [`ui/ProjectPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ProjectPanel.java)) and Replace in Files
-    ([`ui/SearchCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SearchCoordinator.java)) among them, and 21 more name the action beside a stock `ButtonType.CANCEL`, among
-    them [`GitCoordinator.confirmDestructive`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/GitCoordinator.java), which every destructive Git action asks through. nux doesn't
-    either: its risky-command question names Run beside a stock `ButtonType.CANCEL`
-    ([`ui/CommandConfirmation.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/CommandConfirmation.java)).
+    64 `CONFIRMATION` alerts, 26 keep the stock OK and Cancel, the Project panel's file delete (`confirmDelete` in [`ui/ProjectPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ProjectPanel.java)) and Replace in Files
+    ([`ui/SearchCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SearchCoordinator.java)) among them, and 22 more name the action beside a stock `ButtonType.CANCEL`, among
+    them [`GitCoordinator.confirmDestructive`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/GitCoordinator.java), which every destructive Git action asks through. Its warnings
+    that ask do the same: the four trust questions of [`ui/TrustPrompts.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TrustPrompts.java) name the action beside a stock
+    Cancel, and the question before its MCP server is enabled (`confirmEnableMcp` in [`ui/MainController.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java))
+    keeps the stock OK and Cancel. So do its prompts and forms, these among them: the Create on GitHub prompt
+    ([`ui/SettingsSyncPage.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsSyncPage.java)), the reset-mode and revert-merge picks ([`ui/GitWindowCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/GitWindowCoordinator.java)), the
+    pick of a settings backup ([`ui/SettingsResetFlow.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsResetFlow.java)), a macro's command picker ([`ui/MacroSettingsPane.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MacroSettingsPane.java))
+    and the Java cleanups form ([`ui/JavaCleanupsDialog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/JavaCleanupsDialog.java)) keep the stock OK and Cancel, and the login form
+    ([`ui/RemoteCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/RemoteCoordinator.java)) and the forms that export and import the configuration
+    ([`ui/ExportConfigDialog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ExportConfigDialog.java), [`ui/ConfigImportFlow.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ConfigImportFlow.java)) name the action beside a stock
+    `ButtonType.CANCEL`. nux doesn't in any of its four dialogs of two buttons: the question before a risky command
+    names Run beside a stock `ButtonType.CANCEL`, the one before a harmless command is a `CONFIRMATION` alert
+    with the stock OK and Cancel ([`ui/CommandConfirmation.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/CommandConfirmation.java)), its credentials form adds `ButtonType.OK` and
+    `ButtonType.CANCEL` ([`ui/CredentialsDialog.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/CredentialsDialog.java)), and its Save Profile prompt is a `TextInputDialog` with the
+    stock pair (`saveCurrentAsProfile` in [`App.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/App.java)).
 - **CONF-04 · MUST.** In an app that asks before a destructive action, Cancel is the way out of the question:
   Escape and the window's close button both answer Cancel, and nothing is lost on a dismissal.
-  - *Check (code):* in every confirmation, Cancel has the `CANCEL_CLOSE` role, and the result defaults to Cancel
-    when the dialog closes any other way (`showAndWait().orElse(cancel)`).
+  - *Check (code):* in every question before a destructive action ([CONF-02](#conf-02) says which those are),
+    Cancel has the `CANCEL_CLOSE` role, and the result defaults to Cancel when the dialog closes any other way
+    (`showAndWait().orElse(cancel)`).
   - *Reference:* Editora [`GitCoordinator.confirmDestructive`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/GitCoordinator.java), [`CloseCoordinator.unsavedAlert`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CloseCoordinator.java); Torrenta
     [`RemoveConfirm.ask`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/RemoveConfirm.java).
 - **CONF-13 · MUST.** In an app that asks before a destructive action, every such question has one default button,
@@ -87,17 +127,24 @@ and Cancel is the way out and the default button. An action that can be taken ba
     each OS. With Cancel as the default one difference is left, and it is JavaFX's: once Tab has put the focus on the
     red button, Enter runs it on Windows and Linux and answers Cancel on macOS. Space is the key that does the same
     everywhere.
-  - *Check (code):* the confirmation helper calls `setDefaultButton(false)` on the action and
-    `setDefaultButton(true)` on Cancel, or on Save in the unsaved-changes question; no confirmation leaves the red
-    action, or no button at all, as the default.
+  - *Check (code):* in every question before a destructive action ([CONF-02](#conf-02) says which those are), the
+    code calls `setDefaultButton(true)` on Cancel, or on Save in the unsaved-changes question, and
+    `setDefaultButton(false)` on the destructive action, so that one is not left a default button too, and it does
+    both before the dialog is shown. JavaFX gives the opening focus to the first button that is a default button, so
+    with one default button the dialog opens with the focus on it. No such question leaves the red action, or no
+    button at all, as the default.
   - *Reference:* Termina [`ui/Confirm.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/Confirm.java) (`Options.cancelIsDefault`, which its close-running-program question sets) and nux
-    [`ui/CommandConfirmation.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/CommandConfirmation.java) (a risky UPS command). Editora does it in about twenty of its questions, each by
-    hand: deleting from the project tree ([`ProjectPanel.cancelByDefault`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ProjectPanel.java)), closing a terminal with a program running
+    [`ui/CommandConfirmation.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/CommandConfirmation.java) (a risky UPS command): each unsets the action's default and sets Cancel's as it
+    builds the dialog, before it is shown. Editora does it in about twenty of its questions, each by
+    hand: deleting for good what the trash cannot take ([`ProjectPanel.cancelByDefault`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ProjectPanel.java)), closing a terminal with a program running
     ([`ui/TerminalCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TerminalCoordinator.java)), resetting settings ([`ui/SettingsResetFlow.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsResetFlow.java)), trusting a folder
-    ([`ui/TrustPrompts.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TrustPrompts.java)) among them. The rest don't yet: Editora's Git confirmations, Torrenta's `RemoveConfirm`,
-    Mirada's `Confirm`, the app template's `Confirm` and Termina's removals leave the red action as the default, so
-    Enter runs it; Torrenta's four Settings questions ([CONF-03](#conf-03)) leave OK as the default; Editora's
-    unsaved-changes and Quit questions have no default button. nux's question before a command it does not count
+    ([`ui/TrustPrompts.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TrustPrompts.java)) among them. The rest don't yet: Editora's Git confirmations and Local History
+    purges ([`ui/HistoryCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/HistoryCoordinator.java)), Torrenta's `RemoveConfirm`, Mirada's `Confirm`, the app template's `Confirm`, and
+    Termina's removals and its Import configuration question leave the red action as the default, so Enter runs it;
+    Torrenta's four Settings questions ([CONF-03](#conf-03)) leave OK as the default, and so do questions of
+    Editora's that keep the stock OK, its delete to the trash (`confirmDelete` in [`ui/ProjectPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ProjectPanel.java), which
+    moves the default only when a file cannot go to the trash), its Revert and its Save As overwrite among them;
+    Editora's unsaved-changes and Quit questions have no default button. nux's question before a command it does not count
     as risky leaves the stock OK as the default too, but it is not a question before a destructive action
     ([CONF-02](#conf-02)).
 
@@ -131,19 +178,20 @@ and Cancel is the way out and the default button. An action that can be taken ba
 </div>
 </div>
 
-- **CONF-05 · SHOULD.** When saving is an option the question has three answers, drawn in this order: Cancel, Save
-  in green and Discard in red (Editora's style classes for the two are `success` and `danger`), with Cancel to the
-  left of the actions as in every dialog ([WIN-11](../../window-shell/#win-11)). A Save that fails leaves the tab
-  open.
+- **CONF-05 · SHOULD.** A question before unsaved changes are lost, where saving is an option, has three answers,
+  drawn in this order: Cancel, Save in green and Discard in red (Editora's style classes for the two are `success`
+  and `danger`), with Cancel to the left of the actions as in every dialog
+  ([WIN-11](../../window-shell/#win-11)). A Save that fails leaves the tab open.
   - *Check (code):* the unsaved-changes alert draws Cancel, Save and Discard in that order, on the `ButtonBar`'s one
-    fixed order and not the order its `ButtonType`s were added in, and styles Save and Discard.
+    fixed order and not the order its `ButtonType`s were added in, and styles Save and Discard; and when Save is
+    chosen and the save fails, the close is abandoned, so the tab stays open.
   - *Reference:* Editora [`CloseCoordinator.unsavedAlert`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CloseCoordinator.java), [`MainController.styleUnsavedChangesButtons`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java), for
     the three answers and their styles; it still draws them Save, Discard, Cancel.
 - **CONF-06 · SHOULD.** A question about ending a running program, which is not the user's data, words the button
   Close, in red like every confirming button ([CONF-03](#conf-03)). Cancel is its default button, as in every
   question with a red action ([CONF-13](#conf-13)), so dismissing the dialog by any route keeps the program alive.
-  - *Check (code):* the close-running-program alert names its action Close and gives it the red danger style (the
-    `danger` style class in Editora and Termina).
+  - *Check (code):* the close-running-program alert names its action Close. Its red and its default button are
+    [CONF-03](#conf-03)'s and [CONF-13](#conf-13)'s to judge.
   - *Reference:* Termina [`ui/TerminalWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalWindow.java) (`dialog.closeAnyway`), through [`ui/Confirm.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/Confirm.java).
 - **CONF-07 · SHOULD.** Where the action can be taken back, the app asks nothing and offers Undo instead.
   - *Check (by hand):* close a clean tab and reopen it with Reopen Closed Tab; in Mirada, trash an image and undo.
@@ -165,11 +213,16 @@ and Cancel is the way out and the default button. An action that can be taken ba
 
 ## Behavior
 
-- **CONF-08 · SHOULD.** A confirmation question comes before anything changes, and the action runs only on the
-  action button.
-  - *Check (code):* the confirmation helper returns true on the action button alone, and the caller acts only on
-    true.
-  - *Reference:* Torrenta [`RemoveConfirm.ask`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/RemoveConfirm.java); Editora [`GitCoordinator.confirmDestructive`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/GitCoordinator.java).
+- **CONF-08 · SHOULD.** Every confirmation question, whether or not it is before a destructive action, comes before
+  anything changes, and its action runs only on the action button. For a question before a destructive action both
+  are MUSTs already ([CONF-01](#conf-01), [CONF-04](#conf-04)); what this rule adds is every other question, such
+  as a warning before something is pasted or run.
+  - *Check (code):* every confirmation helper returns true on the action button alone, and its caller acts only on
+    true, for the questions that are not before a destructive action as for those that are.
+  - *Reference:* Torrenta [`RemoveConfirm.ask`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/RemoveConfirm.java); Editora [`GitCoordinator.confirmDestructive`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/GitCoordinator.java). For a question
+    that is not before a destructive action: Termina's multi-line paste warning, asked through [`ui/Confirm.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/Confirm.java),
+    whose `ask` is true for the action button alone, and nux's question before a harmless command
+    ([`ui/CommandConfirmation.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/CommandConfirmation.java), `confirmed`).
 - **CONF-09 · SHOULD.** One gesture asks one question. An action on many things asks once with the count ("Remove these
   3 torrents?", Torrenta's "Apply to many torrents" for a bulk command). Closing every tab asks per unsaved buffer,
   selecting each tab first so the user sees what the question is about, and remembers a Discard answer for exactly
@@ -185,8 +238,8 @@ and Cancel is the way out and the default button. An action that can be taken ba
   - *Check (code):* the force path is reached only from the safe command's failure result.
   - *Reference:* Editora [`GitBranchCoordinator.offerAfterRejection`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/GitBranchCoordinator.java) (Force with Lease after a rejected push),
     `confirmForceDelete` (Delete Anyway after `NOT_FULLY_MERGED`).
-- **CONF-12 · SHOULD.** The question can be tested without a screen: its words come from pure code, and a capture hook
-  answers the dialog, so a UI test never presses a native button.
+- **CONF-12 · SHOULD.** A confirmation question can be tested without a screen: its words come from pure code, and a
+  capture hook answers the dialog, so a UI test never presses a native button.
   - *Check (code):* the header and the question of every kind are built by pure functions, which need no dialog to
     call, and the confirmation helper has a hook that answers the dialog in a test without showing it. A test that
     asserts it is the surest evidence.
@@ -213,13 +266,13 @@ Editora asks for unsaved changes, Quit with busy terminals, pinned tabs, Git dis
 History purges through `Alert` with named buttons. Not all of its questions do yet: 26 of its confirmations still offer
 JavaFX's stock OK and Cancel, among them the Project panel's file delete ([`ui/ProjectPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ProjectPanel.java), `confirmDelete`)
 and Replace in Files ([`ui/SearchCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SearchCoordinator.java)), which [CONF-03](#conf-03) and
-[CONF-14](#conf-14) do not allow, and 21 more, the Git confirmations' helper among them, name the action but keep
+[CONF-14](#conf-14) do not allow, and 22 more, the Git confirmations' helper among them, name the action but keep
 JavaFX's stock Cancel, which CONF-14 does not allow. Torrenta's [`RemoveConfirm`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/RemoveConfirm.java) serves the
 torrent list, feeds, rules, watched folders, search providers, engine profiles, categories, tags and saved views with
 one shape. Termina asks before closing a tab with a running program and before a multi-line paste. Mirada's
 [`Confirm`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Confirm.java) asks before removing a bookmark or discarding an edit, with a named red button; its trash is undoable. nux
 asks before a risky UPS command with a named Run button and Cancel as the default, though not in red, and its Cancel
-is JavaFX's stock one. Modula asks nothing: the Remove row of a preset's right-click menu removes it at once, with
+is JavaFX's stock one; its question before a harmless command keeps the stock OK and Cancel. Modula asks nothing: the Remove row of a preset's right-click menu removes it at once, with
 no undo, which [CONF-01](#conf-01) does not allow; nor does it allow nux's Profiles → Delete, which also asks
-nothing. Four of Torrenta's questions in Settings (connecting and disconnecting sync, Reset to Defaults, resetting
-the keys) are answered with a catalog-worded OK, not the action's verb in red.
+nothing. Four of Torrenta's questions in Settings (disconnecting sync, Reset to Defaults, Reset
+All Shortcuts and taking a shortcut back) are answered with a catalog-worded OK, not the action's verb in red.

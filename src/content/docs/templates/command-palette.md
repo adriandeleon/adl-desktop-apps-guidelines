@@ -3,29 +3,36 @@ title: "Command Palette"
 description: "The family's command palette: a 620 px in-scene card that finds and runs any command from the keyboard."
 ---
 
-One palette per window lists every registered command, so a command that exists is a command people can find. The
+One palette per main window lists every registered command, so a command that exists is a command people can find. The
 pure parts (`FuzzyMatch`, `MatchText`, the key helper, `PickerKeys` in Editora and `PaletteKeys` in the copies, and the
 caret-key helper, `TextInputKeymap` in Editora and `TextInputKeys` in the copies) are shared with Termina and Mirada.
 Torrenta shares [`MatchText`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MatchText.java) and ranks with its own [`CommandMatcher`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/CommandMatcher.java).
 
 ## Rules
 
-- **PAL-01 · MUST.** Every app has one Command Palette per window, opened by the `palette.show` command. Its chords,
-  `M-x` in the Emacs keymap and `Ctrl+Shift+P` (`Cmd+Shift+P` on macOS) in the others (`Ctrl+Shift+A` allowed in the
-  IntelliJ keymap), are
+- **PAL-01 · MUST.** Every app has a Command Palette, one in each main window, opened by the `palette.show` command.
+  A Settings, About or log window needs none of its own. Its chords, `M-x` in the Emacs keymap and `Ctrl+Shift+P`
+  (`Cmd+Shift+P` on macOS) in the others (`Ctrl+Shift+A` allowed in the IntelliJ keymap), are
   [KBD-05](../../keyboard/#kbd-05).
-  - *Check (code):* each window builds one palette, and the command registered as `palette.show` opens it (in
-    Editora the window controller builds one `CommandPalette`).
+  - *Check (code):* each main window builds one palette, and the command registered as `palette.show` opens it (in
+    Editora the window controller builds one `CommandPalette`). A window that is not a main window (Settings,
+    About, a log, a history or events window) is not judged.
   - *Reference:* Editora [`ui/CommandPalette.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java), built once in [`MainController`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java).
 - **PAL-02 · MUST.** The palette lists every registered command, with its title and description
   ([KBD-03](../../keyboard/#kbd-03)).
   - *Check (code):* the palette's rows come from the whole registry, filtered only by the query; a command that
-    cannot run stays listed, grayed.
+    cannot run stays listed, grayed; each row shows its command's title; and the palette shows the description of
+    the command under the cursor, in the row or in a line of the card. A palette that shows no description fails
+    this rule; that every command has one is [KBD-03](../../keyboard/#kbd-03)'s.
   - *Reference:* Editora [`CommandPalette.filter`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java) (`registry.all()`), [`MessagesTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/i18n/MessagesTest.java); the page's [Spec](#spec).
-    Torrenta's and Modula's palettes don't yet. Torrenta's lists only the commands that can run now: `show` in
+    Torrenta's, Modula's and nux's palettes don't yet. Torrenta's lists only the commands that can run now: `show` in
     [`ui/CommandPalette.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/CommandPalette.java) drops every disabled command, after `offeredCommands` in [`ui/MainWindow.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java) has
-    dropped what the engine cannot run and what Simple mode hides. Modula's leaves out one (`stereo`, while its
-    control is disabled, in [`ui/RadioPane.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/RadioPane.java)).
+    dropped what the engine cannot run and what Simple mode hides; and it shows no description, since its
+    [`Command`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/Command.java) has none. Modula's leaves out one (`stereo`, while its
+    control is disabled, in [`ui/RadioPane.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/RadioPane.java)), and its rows show a title and a shortcut, with no description
+    ([`ui/CommandPalette.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/CommandPalette.java)). nux's lists its whole registry, and each row shows the title and the
+    command's id, with no description: its commands have none ([`ui/CommandPalette.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/CommandPalette.java), `CommandCell`;
+    [`command/CommandRegistry.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/command/CommandRegistry.java)).
 
 - **PAL-10 · SHOULD.** The palette is 620 px wide, its rows 36 px high with 8 visible before the list scrolls, at
   the default zoom ([WIN-12](../../window-shell/#win-12)), and its field's prompt reads "Run command…", in words
@@ -83,7 +90,7 @@ The palette is an in-scene overlay in the window's root `StackPane`, over a fain
 | Rows | 36 px high, 8 visible before the list scrolls ([PAL-10](#pal-10)) | `ROW_HEIGHT`, `VISIBLE_ROWS` |
 | Card | `-color-bg-overlay`, 1 px `-color-border-default`, radius 12, padding 6, one wide drop shadow | `.command-palette` in `app.css` |
 | Row text | 12.5 px; padding 7 × 16 | `.command-palette .list-cell` |
-| Scrim | `rgba(0,0,0,0.18)`; a click on it closes the palette | `.overlay-backdrop` |
+| Scrim | `rgba(0,0,0,0.18)`, the value of a token defined on `.root` ([ICON-08](../../icons-and-color/#icon-08)); a click on it closes the palette | `.overlay-backdrop` |
 | Content | Every registered command: title from `command.<id>`, description from `command.<id>.desc` | `CommandRegistry`, `MessagesTest` |
 | Ranking | Editora scores the title; when the title does not match, the id's namespace word (`markdown` for `markdown.tableAddRow`, "Table: Add Row"), then the names other IDEs give the command. The description is shown, not matched. A query that names a title outranks a fuzzy hit. The app template scores the title and the description | `FuzzyMatch`, `Command.keywords`, `OtherIdeNames`, `titlePhraseScore`; the template's [`ui/Picker.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Picker.java) |
 
@@ -114,11 +121,14 @@ The palette is an in-scene overlay in the window's root `StackPane`, over a fain
 - **PAL-07 · SHOULD.** The active keymap's cancel chord, Esc or a click on the scrim cancels the palette, and focus
   returns to where it was. In Editora the chord is that of its `edit.cancel` command, `C-g` in the Emacs keymap.
   - *Check (code):* Esc, the chord the active keymap binds to the cancel command, and a press on the backdrop all
-    hide the overlay, and hiding focuses the node that had focus before it opened.
+    hide the overlay, and hiding focuses the node that had focus before it opened. In an app with one key table (a
+    terminal app's keymap, or the built-in table of an app that ships no keymap files), the chord is the one that
+    table binds to a cancel command; where it binds none, Esc and the backdrop are all there is to test.
   - *Reference:* Editora [`PickerKeys`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java) (`isCancel`), [`OverlayHost`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java) (`previousFocus`), the only one that asks the
     keymap for the chord. `Ctrl+G` is fixed in the app template's [`ui/OverlayHost.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/OverlayHost.java) and in the `EMACS` table
-    of Termina's [`ui/PaletteKeys.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/PaletteKeys.java) and Mirada's [`ui/PaletteKeys.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/PaletteKeys.java); Torrenta's, Modula's and nux's palettes
-    cancel on Esc alone.
+    of Termina's [`ui/PaletteKeys.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/PaletteKeys.java) and Mirada's [`ui/PaletteKeys.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/PaletteKeys.java). Torrenta's, Modula's and nux's
+    palettes cancel on Esc and on a press on the backdrop: none of the three apps has a keymap or a cancel command, so the
+    chord asks nothing more of them.
 - **PAL-08 · SHOULD.** In the palette, a help chord opens the selected command's page in the docs on the website,
   for the running version. The chord is the first of `Ctrl+H`, `F1` and `Shift+F1` that the active keymap leaves
   free. It is the same on macOS, where `Ctrl+H` is the Control key and has no `Cmd` form (`C-h` in Emacs notation).

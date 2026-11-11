@@ -79,8 +79,8 @@ Editora (`../Editora`) is the reference implementation.
   secret…") or by an Applies to, so an app without it is `limited` and owes no exception: test the scope against nux
   and Modula, the apps least like Editora, and if either would have to guess, the scope is not written yet. A rule
   that leans on a Help menu says "where the app has a Help menu (the Help menu of a menu bar, or a Help submenu of
-  the app's main menu)". `Check (test)` is only for a rule whose statement requires a test ("A test holds it.");
-  any other Check describes the behavior to find, Editora's member in parentheses after it, and may end "A test that
+  the app's main menu, which WIN-14 defines)", with WIN-14 linked. `Check (test)` is only for a rule whose statement
+  requires a test ("A test holds it."); any other Check describes the behavior to find, Editora's member in parentheses after it, and may end "A test that
   asserts it is the surest evidence." A Check that needs another repository or what the repository's host keeps
   ends "An audit run from the app's checkout alone reports the rule as `not-checked` and says what would settle
   it." A search that only lists candidates for a person to judge goes inside the Check's own sentence as a code

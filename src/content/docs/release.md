@@ -256,21 +256,27 @@ The certificate renews before 2027-11-30; the Apple membership before 2027-10-31
     on one of its steps does not stand for it. A job with `uses:` and no `steps:` is not judged.
   - *Reference:* every job of Editora's five workflows ([`ci.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/ci.yml), [`full-tests.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/full-tests.yml), [`release.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/release.yml) and
     the rest), of the template's three, Termina's two and Mirada's five sets one; the template's `full-tests` job
-    in [`release.yml`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/.github/workflows/release.yml), which calls `full-tests.yml`, carries none, as the rule says. Torrenta, Modula and nux don't
+    in [`release.yml`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/.github/workflows/release.yml), which calls `full-tests.yml`, carries none, as the rule says, and nor does the `winget` job of
+    Mirada's [`release.yml`](https://github.com/adriandeleon/Mirada/blob/main/.github/workflows/release.yml), which calls `winget.yml`. Torrenta, Modula and nux don't
     yet: the two jobs of Torrenta's [`ci.yml`](https://github.com/adriandeleon/torrenta/blob/master/.github/workflows/ci.yml) and the one of its [`engine-soak.yml`](https://github.com/adriandeleon/torrenta/blob/master/.github/workflows/engine-soak.yml) set none (its `release.yml`
     does); no job in Modula's three workflows ([`build.yml`](https://github.com/adriandeleon/Modula/blob/master/.github/workflows/build.yml), [`release.yml`](https://github.com/adriandeleon/Modula/blob/master/.github/workflows/release.yml), [`notify-catalog.yml`](https://github.com/adriandeleon/Modula/blob/master/.github/workflows/notify-catalog.yml)) or in
     nux's two ([`ci.yml`](https://github.com/adriandeleon/nux/blob/master/.github/workflows/ci.yml), [`release.yml`](https://github.com/adriandeleon/nux/blob/master/.github/workflows/release.yml)) sets one: each app has it on one step only, the one that notarizes.
 - **REL-31 · MUST.** Every workflow that runs on pull requests has a `concurrency` group that cancels a superseded
   pull-request run, and never a run on the default branch.
-  - *Check (code):* every workflow with a `pull_request` trigger has a `concurrency` block whose
-    `cancel-in-progress` is true for a pull-request run: true, or an expression that is true there. And in that
-    workflow `cancel-in-progress` is never true for a run that a push to the default branch starts: it is an
-    expression that is false there, and it may be plain true only in a workflow that no push to the default branch
-    starts. A workflow with no `pull_request` trigger is not judged.
-  - *Reference:* Editora [`ci.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/ci.yml) and [`full-tests.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/full-tests.yml) (`cancel-in-progress: ${{ github.event_name == 'pull_request' }}`) and
-    [`terminal-image.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/terminal-image.yml) (true: it runs on pull requests, on pushes to `probe/**` and by hand). The template's
+  - *Check (code):* every workflow with a `pull_request` trigger has a `concurrency` block whose `group` is shared
+    by the runs of one pull request and by no run on the default branch (keyed by `github.ref`, or by the pull
+    request's number), and whose `cancel-in-progress` is true for a pull-request run: true, or an expression that
+    is true there. And in that workflow `cancel-in-progress` is never true for a run on the default branch,
+    whatever starts it (a push, a schedule, or a run started by hand, which `workflow_dispatch` allows on any
+    branch): it is an expression that is false there, and it may be plain true only in a workflow that nothing
+    can start on the default branch. A workflow with no `pull_request` trigger is not judged.
+  - *Reference:* Editora [`ci.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/ci.yml) and [`full-tests.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/full-tests.yml) (`cancel-in-progress: ${{ github.event_name == 'pull_request' }}`,
+    in a group keyed by the pull request's number). The template's
     ([`ci.yml`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/.github/workflows/ci.yml), [`full-tests.yml`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/.github/workflows/full-tests.yml)), Termina's ([`ci.yml`](https://github.com/adriandeleon/Termina/blob/master/.github/workflows/ci.yml)) and Mirada's ([`ci.yml`](https://github.com/adriandeleon/Mirada/blob/main/.github/workflows/ci.yml)) pull-request workflows
-    use the same expression. Torrenta, Modula and nux don't yet: Modula's [`build.yml`](https://github.com/adriandeleon/Modula/blob/master/.github/workflows/build.yml) and nux's [`ci.yml`](https://github.com/adriandeleon/nux/blob/master/.github/workflows/ci.yml) run on
+    use the same expression, Termina's and Mirada's in a group keyed by `github.ref`. Editora's third pull-request
+    workflow, [`terminal-image.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/terminal-image.yml), doesn't yet: its `cancel-in-progress` is plain true, and beside pull requests and
+    pushes to `probe/**` it can be started by hand, so a second run started on `master` cancels the first.
+    Torrenta, Modula and nux don't either: Modula's [`build.yml`](https://github.com/adriandeleon/Modula/blob/master/.github/workflows/build.yml) and nux's [`ci.yml`](https://github.com/adriandeleon/nux/blob/master/.github/workflows/ci.yml) run on
     pull requests with no `concurrency` block, so they cancel nothing, and Torrenta's [`ci.yml`](https://github.com/adriandeleon/torrenta/blob/master/.github/workflows/ci.yml) sets
     `cancel-in-progress: true` for its pushes to `master` as well.
 - **REL-27 · MUST.** A CI run leaves its results where they can be read without running it again: it uploads the

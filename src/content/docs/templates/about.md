@@ -8,10 +8,10 @@ Torrenta ([`AboutDialog`](https://github.com/adriandeleon/torrenta/blob/master/s
 
 ## Rules
 
-- **ABOUT-01 · MUST.** Every app has an About window, reached by the `help.about` command, by Help → About where
-  the app has a Help menu (the Help menu of a menu bar, or a Help submenu of the app's main menu), and on macOS by
-  the About item of the application menu, the one macOS names after the app. The app adds that item itself: JavaFX
-  builds the menu with Hide and Quit and no About.
+- **ABOUT-01 · MUST.** Every app has an About window, reached by the `help.about` command, by Help → About where the
+  app has a Help menu (the Help menu of a menu bar, or a Help submenu of the app's main menu, which
+  [WIN-14](../../window-shell/#win-14) defines), and on macOS by the About item of the application menu, the one macOS
+  names after the app. The app adds that item itself: JavaFX builds the menu with Hide and Quit and no About.
   - *Why:* on macOS that menu is where every app keeps About, so it is one of the places
     [the OS's way wins](../../same-on-every-os/#where-the-oss-way-wins).
   - *Check (code):* `help.about` is registered and opens the About window; where the app has a Help menu, a row
@@ -23,16 +23,28 @@ Torrenta ([`AboutDialog`](https://github.com/adriandeleon/torrenta/blob/master/s
     public API for that menu, so both insert the item into the one Glass keeps (`MacApplication.getAppleMenu`).
     Neither is the whole rule: Termina's command is `about`, not `help.about`, and Mirada's About row sits beside
     the Help submenu of its main menu, not in it ([`ui/TitleBar.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/TitleBar.java), `finish`).
-- **ABOUT-02 · MUST.** About shows the version and build, the runtime, the license, links, and the result of the last
-  update check. The Pauta edition is [ABOUT-05](#about-05).
-  - *Check (code):* the About window shows the version and the build as the build recorded them, from the one
-    place `--version` reads them (Editora's `AppInfo`); the Java and JavaFX versions; the license; its links (the
-    home page, and the source code and releases); and the update checker's last answer whatever it was (an update,
-    up to date, a failed check or not checked yet), not only an update that is available.
-  - *Reference:* Editora [`ui/AboutDialog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/AboutDialog.java), [`AppInfo`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/AppInfo.java); the page's [Spec](#spec). Modula's About
-    ([`ui/AboutWindow.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/AboutWindow.java)) doesn't yet: it has no Java or JavaFX line, and it shows the update check only when an update
-    is available. nux's ([`ui/AboutWindow.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/AboutWindow.java)) has the runtime lines and shows the update check the same way,
-    only when there is a newer version.
+- **ABOUT-02 · MUST.** About shows the version and build, the runtime, the license, links to the app's home page,
+  its source code and its releases, and the result of the last update check. The Pauta edition is
+  [ABOUT-05](#about-05).
+  - *Check (code):* the About window shows the version and the build as the build recorded them (in Editora both
+    come from `AppInfo`, which `--version` prints from too); the Java and JavaFX versions; the license; a link that
+    opens the app's home page (its website, or its repository's page on the host where About links no website),
+    one that opens its source code (the repository) and one that opens its releases (the repository's releases
+    page or its latest release), each there whatever the update check answered; and the update checker's last
+    answer whatever it was (an update, up to date, a failed check or not checked yet), not only an update that is
+    available. One link meets two of the three when the page it opens is both: the repository's page is the home
+    page and the source code where About links no website, and a releases page of the repository holds its source
+    too (Editora's "Source code and releases"). A link to the running build's release notes, and a link shown only
+    when an update is available, are not the link to the releases.
+  - *Reference:* Editora [`ui/AboutDialog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/AboutDialog.java), [`AppInfo`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/AppInfo.java) (`HOMEPAGE`, its website, and `RELEASES_PAGE`, the
+    repository's latest release, behind "Source code and releases"); the page's [Spec](#spec). Four apps lack a
+    link. Termina's About ([`ui/AboutWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/AboutWindow.java)) links its website and not its source code, and its releases
+    only when an update is available. Mirada's ([`ui/AboutWindow.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/AboutWindow.java)) links its repository and the running build's
+    release notes, and its releases only when an update is available. Modula's About
+    ([`ui/AboutWindow.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/AboutWindow.java)) links its repository and never its releases; it also shows no Java version, and it
+    shows the update check only when an update is available. nux's ([`ui/AboutWindow.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/AboutWindow.java)) has the runtime lines
+    and links its repository; it shows the update check, and with it the link to its releases, only when there is
+    a newer version.
 - **ABOUT-03 · SHOULD.** About's *Copy details* button copies the environment block and leaves the window open; its
   label becomes "Copied".
   - *Check (code):* the button's handler puts the environment block's text on the clipboard and sets the button's
@@ -49,7 +61,8 @@ Torrenta ([`AboutDialog`](https://github.com/adriandeleon/torrenta/blob/master/s
   and `-state-red`).
   - *Why:* in the accent every link wears, the one line that asks for action reads as one more link.
   - *Check (code):* the style of About's update-available line (the app template's `.about-update-available`) is
-    bold in the amber token, and no other About style uses that token.
+    bold in the amber token, and no other About style uses that token; the up-to-date line is in the green token,
+    a failed check in the red and the last-checked line in the muted color, and the links keep the accent.
   - *Reference:* the [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s `.about-update-available` in [`styles/app.css`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/styles/app.css), set by [`ui/AboutDialog.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AboutDialog.java).
     No released app does yet: Editora's `.about-update` in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) is `-state-accent`, the links' color.
 
@@ -104,18 +117,21 @@ edition but not their conformance.
 - **ABOUT-06 · MUST.** About's edition link ([ABOUT-05](#about-05)) opens the edition's own address,
   `https://pauta-project.dev/<edition>/`, which never changes, not `latest/`, which moves on to newer editions.
   - *Check (code):* the URL About's edition link opens is built from the edition number (`pauta.version`) and never
-    contains `latest`.
+    contains `latest`. An About with no edition link has nothing to open: the rule fails with
+    [ABOUT-05](#about-05), which requires the link, and the evidence names that rule.
   - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`AppInfo.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/AppInfo.java) (`pautaUrl`); Termina's [`AppInfo.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/AppInfo.java) (`pautaUrl`);
     Mirada's [`AppInfo.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/AppInfo.java) (`pautaUrl`).
 - **ABOUT-07 · MUST.** The Pauta edition About names is the edition the app meets, not the newest. Moving to a
   newer edition means reading its changelog for new or stronger MUSTs, meeting them, then changing the number. An
   app at Partial names the edition it is working toward instead, and says so ([ABOUT-09](#about-09)).
   - *Check (code):* read which words About uses for the edition ([ABOUT-09](#about-09)). *Working toward* meets
-    the rule. *Built to* is judged last, from the audit's other results: audited against the edition the app names
-    (`pauta.version`), with that edition's own rules (`https://pauta-project.dev/<edition>/rules.json`), not the
-    newest edition's, the app has no MUST that is `fail` or `pending`. The evidence names the MUSTs that are. An
+    the rule. An About that names no edition claims none: this rule has nothing to judge and passes, and the
+    missing edition is [ABOUT-05](#about-05)'s finding. *Built to* is judged last, from the audit's other results:
+    audited against the edition the app names (`pauta.version`), with that edition's own rules
+    (`https://pauta-project.dev/<edition>/rules.json`), not the newest edition's, the app has no MUST that is `fail` or `pending`. The evidence names the MUSTs that are. An
     audit of part of the edition judges the rule from the MUSTs in its scope and says so. Only the rules of the
-    edition the app names settle this rule: an audit run against another edition says so in the evidence.
+    edition the app names settle a *Built to*: an audit run against another edition reports the rule as
+    `not-checked` and names the edition whose rules would settle it.
   - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template), which is at Partial: its About says *Working toward Pauta 4.1.0*
     ([`ui/AboutDialog.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AboutDialog.java), `editionKey`) and so does its README. Termina and Mirada don't meet it yet.
     Termina's About says "Built to Pauta 2.0.2" ([`pom.xml`](https://github.com/adriandeleon/Termina/blob/master/pom.xml), `pauta.version`), an edition that already

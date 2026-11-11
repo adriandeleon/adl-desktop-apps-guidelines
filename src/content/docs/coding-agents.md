@@ -68,7 +68,8 @@ rule is:
 - **`level`** is MUST (a release blocker for a new app), SHOULD (expected unless the app has a stated reason) or
   MAY (worth copying when the app grows into it).
 - **`check.kind`** says how the rule is verified: `code` by reading or searching the source, `test` by a named test
-  the build runs, `by hand` in the running app, which source alone can't settle. A rule has a `test` check only
+  the build runs, `by hand` by a person, in the running app or where the check sends them (DOCS-16 reads the
+  repository's pull requests), which source alone can't settle. A rule has a `test` check only
   when its statement requires the test ("A test holds it.", or a rule that is itself about a test). A `code` check may end "A test that asserts it is the
   surest evidence": that test is evidence, and an app without it still meets the rule by the behavior its code
   shows. A check that reads what the app's checkout does not hold, the website's repository or a repository
@@ -191,8 +192,8 @@ Every report uses the same statuses, which `rules.json` also lists:
 |---|---|---|
 | `pass` | Met. | No; an entry for it is stale. |
 | `fail` | Not met, and `pauta.json` doesn't list it. A failed MUST blocks a release; a failed MAY has no consequence. | A MUST or SHOULD, yes: this is what the audit is for. A MAY, no. |
-| `manual` | Checked by hand: the source leaves it open. A person checks it in the running app, and may record it in `pauta.json`'s `checked` list once it is met; the report gives that entry, or says "not recorded". | No, recorded or not. Found unmet by the person who checks, it gets one, and its status is that kind from then on. |
-| `not-checked` | The Check needs something an audit of the app's checkout cannot see: another repository (the website's), or what the repository's host keeps and no file shows (a repository setting, an issue's state). Not a finding and not a pass; the evidence says what would settle it. It does not block a release. | No. Found unmet by whoever settles it, it gets one. |
+| `manual` | Checked by hand: the source leaves it open. A person checks it, in the running app or where the Check sends them (the repository's pull requests, for DOCS-16), and may record it in `pauta.json`'s `checked` list once it is met; the report gives that entry, or says "not recorded". | No, recorded or not. Found unmet by the person who checks, it gets one, and its status is that kind from then on. |
+| `not-checked` | The Check needs something the audit could not read: another repository (the website's), what the repository's host keeps and no file shows (a repository setting, an issue's state), or the rules of the edition the app names, in an audit run against another ([ABOUT-07](../templates/about/#about-07)). Not a finding and not a pass; the evidence says what would settle it. It does not block a release. | No. Found unmet by whoever settles it, it gets one. |
 | `pending`, `deviation`, `not-applicable`, `app-only` | Not met, and `pauta.json` lists it as that kind. | It has one. |
 | `limited` | The rule covers apps with a feature this one lacks. | No; an entry for it is wrong. |
 
@@ -223,7 +224,8 @@ MENU-14  MUST    pending  pauta.json: issue #212
   (`<page>.md`) is a small read for one pass.
 - **Check the evidence.** A verdict without `file:line` is a guess. Open a sample of the passes as well as the
   failures before you act on the report.
-- **Manual means a person.** A *by hand* check needs the running app, often on a particular OS. The agent lists
+- **Manual means a person.** A *by hand* check needs the running app, often on a particular OS, or in a few rules
+  a look at the repository's pull requests ([DOCS-16](../documentation/#docs-16)). The agent lists
   them; someone runs them and may record each one met in `pauta.json`'s `checked` list
   ([PAUTA-18](../conformance/#pauta-18)), which the next audit reads back. One with no entry is reported as not
   recorded: that is not a failure, it needs no exception, and it leaves the conformance as it is. One the person
@@ -233,10 +235,16 @@ MENU-14  MUST    pending  pauta.json: issue #212
   ([DOCS-01](../documentation/#docs-01), [PAUTA-13](../conformance/#pauta-13)) or a repository setting
   ([REL-19](../release/#rel-19)). An audit run from the app's checkout alone reports them as `not-checked` and
   says what would settle each; with the website checked out beside the app, or `gh` signed in, it judges them.
+  The checkout still settles what it holds: an app whose repository and About name no website fails DOCS-01,
+  [DOCS-02](../documentation/#docs-02) and PAUTA-13 outright, with no website to read. And an audit run against
+  an edition other than the one the app names reports [ABOUT-07](../templates/about/#about-07) as `not-checked`
+  when About says *Built to*: only the app's own edition's rules settle it.
 - **Nothing to judge is not a guess.** A rule about how a required part behaves (the find bar of a log shown as
   text, the Pauta window) fails with the rule that requires the part, and its evidence names that rule, so a
-  missing find bar reads as one cause. A rule that constrains things an app may have or not (every entry, row or
-  file of a kind) passes in an app that has none. The skill's step 4 has the order.
+  missing find bar reads as one cause. So does a rule that limits every item of a kind some rule requires: with
+  no keymap file, the rule on a keymap's macOS variant fails with the rule that requires the files. A rule that
+  constrains things no rule requires an app to have (every entry, row or file of a kind) passes in an app that
+  has none. The skill's step 4 has the order.
 - **Gaps per app** on this site is the same audit, done by hand for the six apps. An agent's report for one of them
   should agree with [Gaps per app](../family/gaps/); where it doesn't, one of them is wrong.
 

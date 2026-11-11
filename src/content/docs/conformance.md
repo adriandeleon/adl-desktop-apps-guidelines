@@ -50,7 +50,8 @@ moved to a newer one with new MUSTs. A new app is not released at Partial.
     and Complete otherwise, and deviation, not-applicable and app-only entries leave its result alone. About and
     the Pauta window call it, and nothing in the app's code stores a conformance. A test fails when the README's badge
     or line names another conformance than the helper returns: the statement requires that one. A unit test of
-    the helper that covers all three results is the surest evidence for the rest.
+    the helper that covers all three results is the surest evidence for the rest. That the docs page shows the
+    same conformance is read with the page itself, in the website's repository ([PAUTA-13](#pauta-13)).
   - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`PautaConformance.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/PautaConformance.java) (`of`, which takes the exceptions alone, and `conformance`), tested by [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java),
     whose `theReadmeNamesTheEditionAndTheConformanceAndLinksTheDocsPage` holds the README. Its `Kind` has no
     `app-only` yet, so the test covers deviation and not-applicable entries and MAYs.
@@ -122,8 +123,8 @@ an app, and a fourth for a template repository; each one asks for something diff
 - **PAUTA-08 · MUST.** Each exception's `reason` is one plain sentence for the person using the app, in English like
   the changelog: what is different and, for a deviation, what they get instead. No rule text, no class names.
   - *Check (by hand):* read each reason in the Pauta window as a user would. The source settles two cases: a
-    reason that carries rule text or a class name fails the rule, and with no exception there is no reason to
-    read and the rule is met.
+    reason that runs to more than one sentence, or carries rule text or a class name, fails the rule, and with no
+    exception there is no reason to read and the rule is met.
   - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java) (`eachKindHasWhatItNeeds`: a reason ends with a period and names no rule ID).
 - **PAUTA-16 · MUST.** A template repository, one that new apps are made from, sets `"template": true` in its
   `pauta.json` and records as `app-only` the rules that only an app made from it can meet. `app-only` leaves the
@@ -136,9 +137,12 @@ an app, and a fourth for a template repository; each one asks for something diff
     inherit its template's issues as its own. A build that failed the moment the app was made would fail its first
     step; the release is where it has to be settled ([PAUTA-03](#pauta-03)).
   - *Check (code):* in a template, `pauta.json` has `"template": true` and the script that makes an app from it
-    sets it to `false`; in an app made from a template, the release build runs the test of [PAUTA-10](#pauta-10)
-    with `app-only` entries and `pending` links to another repository treated as failures. An app whose
-    `pauta.json` holds neither, and that no template's script made, is outside the rule.
+    sets it to `false`. Outside a template, an `app-only` entry or a `pending` link to another repository is what
+    a template left behind: the test of [PAUTA-10](#pauta-10) lists each one in the everyday build, and the
+    release build runs it with them treated as failures, so no released app keeps an `app-only` entry. An app
+    whose `pauta.json` has no `template` field, no `app-only` entry and no `pending` link to another repository,
+    or that has no `pauta.json`, shows nothing inherited from a template: it is outside the rule, and an audit
+    reports it as `limited`.
   - *Reference:* no app yet. The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`pauta.json`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/pauta.json) has no `template` field, its `Kind` no `app-only`, and its
     [`scripts/rename.sh`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/scripts/rename.sh) sets none; its [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java) accepts a `pending` link to the template's own
     repository in an app made from it, in every build.
@@ -161,11 +165,11 @@ an app, and a fourth for a template repository; each one asks for something diff
     of the conformance because nothing in the code tells an unchecked rule from a met one: counting it would make
     an app record as pending what it may well meet.
   - *Check (code):* every `checked` entry has a `rule`, an `edition` and a `date`; the rule is one of the edition's
-    whose check is by hand (`check.kind` in `rules.json`); the edition is no newer than `pauta.version` and no
-    older than the rule's `changed`; no rule is listed twice, and none has an exception as well. With no `checked`
-    list, or an empty one, there is no entry to fail and the rule is met: the audit's `manual` results say which
-    by-hand rules are not recorded, and that is no failure of this rule. That a person looked is the entry's own
-    claim, which the code can't show.
+    whose check is by hand (`check.kind` in `rules.json`); the edition is no older than the rule's `changed`
+    (one newer than `pauta.version`, and a rule listed twice, are for the test of [PAUTA-10](#pauta-10) to fail);
+    and no rule has an exception as well. With no `checked` list, or an empty one, there is no entry to fail and the
+    rule is met: the audit's `manual` results say which by-hand rules are not recorded, and that is no failure of
+    this rule. That a person looked is the entry's own claim, which the code can't show.
   - *Reference:* no app records a by-hand check yet, so each meets the rule with nothing to hold: the
     [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`pauta.json`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/pauta.json) has no `checked` list, its [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java) reads none, and
     the six apps have no `pauta.json`.
@@ -212,14 +216,13 @@ a test keeps the copies honest.
 
 - **PAUTA-09 · MUST.** An app's exceptions and its record of by-hand checks have one source: `pauta.json`, bundled
   with the app's resources (`src/main/resources/com/<app>/pauta.json`) and laid out as [The file](#the-file) shows.
-  Its `exceptions` list has `rule`, `level`, `url`, `kind` and `reason` on every entry,
-  `link` on every deviation and pending entry, and one entry per rule. Its `checked` list
-  ([PAUTA-18](#pauta-18)) is the app's to keep or not: an app that records no by-hand check leaves it out or empty.
-  Where it has entries, each has `rule`, `edition` and `date`, and `version` where the app records it, with one
-  entry per rule. `"template": true` stands beside the two lists only in a template repository (PAUTA-16).
-  - *Check (code):* `pauta.json` is among the app's bundled resources, under `src/main/resources/`; each exception
-    has the fields its kind needs and no rule has two; and each `checked` entry, where there is one, has its three
-    fields. A file with no `checked` list passes.
+  Its `exceptions` list has `rule`, `level`, `url`, `kind` and `reason` on every entry, `link` on every deviation and
+  pending entry, and one entry per rule. Its `checked` list is the app's to keep or not: an app that records no
+  by-hand check leaves it out or empty, and what an entry of it holds is [PAUTA-18](#pauta-18)'s. `"template": true`
+  stands beside the two lists only in a template repository (PAUTA-16).
+  - *Check (code):* `pauta.json` is among the app's bundled resources, under `src/main/resources/`; each exception has
+    the fields its kind needs and no rule has two. The entries of the `checked` list are [PAUTA-18](#pauta-18)'s to
+    judge, and a file with no `checked` list passes.
   - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`pauta.json`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/pauta.json), read by [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java) (`parsesEveryField`, `everyEntryNamesARuleOfTheEditionWithItsLevelAndAddress`).
     The file has no `checked` list, which the rule allows.
 - **PAUTA-10 · MUST.** A test reads `pauta.json` against a copy of the edition's `rules.json` in
@@ -263,16 +266,24 @@ menu and the Command Palette ([PWIN-01](../templates/pauta-window/#pwin-01)) and
   ([DOCS-02](../documentation/#docs-02)) with the edition, the conformance and every exception, grouped by kind, each with
   its rule ID linked to the edition's rule, its reason and its link. The Pauta window's link to it is
   [PWIN-07](../templates/pauta-window/#pwin-07).
-  - *Check (code):* the `src/content/docs/` of the app's website repository (`<app>-website`,
-    [DOCS-02](../documentation/#docs-02)) has the page, and it lists the same rules as the app's `pauta.json`. An
-    audit run from the app's checkout alone reports the rule as `not-checked` and says what would settle it.
+  - *Check (code):* the app names a website for its user docs ([DOCS-01](../documentation/#docs-01)): an app
+    whose repository and About name none has nowhere to carry the page, and fails the rule from the app's
+    checkout. The rest is in the website's repository (`<app>-website`, [DOCS-02](../documentation/#docs-02)):
+    its docs (the files of `src/content/docs/` in editora-website) have the page, and the page gives the edition
+    `pauta.version` names, the conformance the app's exceptions give, and every exception of the app's
+    `pauta.json` under its kind, each with its rule ID linked to the edition's rule, its reason and its link. A
+    page that lists other rules than the file fails. With no `pauta.json`, which is
+    [PAUTA-01](#pauta-01)'s and [PAUTA-09](#pauta-09)'s failure, there is no list to compare, and the page is
+    judged on being there with the edition. An audit run from the app's checkout alone reports the rule as
+    `not-checked` and says what would settle it.
   - *Reference:* no app yet.
 - **PAUTA-14 · SHOULD.** The website's *Pauta conformance* page ([PAUTA-13](#pauta-13)) is generated from the
   app's `pauta.json`, like the Commands page ([DOCS-04](../documentation/#docs-04)), so it cannot list a different
   set from the app.
-  - *Check (code):* the `scripts/` of the app's website repository has a generator that reads the app's
-    `pauta.json`, and its output is committed. An audit run from the app's checkout alone reports the rule as
-    `not-checked` and says what would settle it.
+  - *Check (code):* the app's website repository has a generator that reads the app's `pauta.json` (beside the
+    others in `scripts/`, in editora-website's layout), and its output is committed. An app that names no website
+    has no page to generate: the rule fails with [PAUTA-13](#pauta-13). An audit run from the app's checkout
+    alone reports the rule as `not-checked` and says what would settle it.
   - *Reference:* no app yet; editora-website's [`scripts/GenCommands.java`](https://github.com/adriandeleon/editora-website/blob/master/scripts/GenCommands.java) is the pattern.
 - **PAUTA-15 · MUST.** An app's README shows its conformance: the README's Pauta badge
   ([README badges](../repository/#readme-badges-in-this-order)) and its "Built to" line (at Partial, "Working

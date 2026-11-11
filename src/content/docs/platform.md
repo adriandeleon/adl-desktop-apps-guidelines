@@ -5,23 +5,26 @@ description: "JDK, JavaFX, AtlantaFX, NullAway, Maven Wrapper, tests and coverag
 
 - **PLAT-01 · MUST.** The app builds on **JDK 25 or newer**. `maven.compiler.release` 25 is the floor, not the
   ceiling: a newer JDK builds the app too, so no enforcer rule refuses one, in the main build or in any profile
-  that turns itself on (an `<activation>` by JDK version, OS, property or file; a profile turned on only by name,
-  with `-P`, is not counted). CI builds every app on JDK 25, the current LTS: every workflow step that sets up a
-  JDK sets up release 25, and the runtime an installer carries ([PLAT-02](#plat-02)) is that JDK's. A leg that
-  builds a native image carries no JDK: it sets up a GraalVM 25 release instead, 25.0 or any later 25.x. The
-  family moves to the next LTS together, in an edition of Pauta.
+  that turns itself on (an `<activation>` by JDK version, OS, property or file, or one that is `activeByDefault`;
+  a profile turned on only by name, with `-P`, is not counted). CI builds every app on JDK 25, the current LTS:
+  every workflow step that sets up a JDK sets up release 25, and the runtime an installer carries
+  ([PLAT-02](#plat-02)) is that JDK's. A leg that builds a native image carries no JDK: it sets up a GraalVM 25
+  release instead, 25.0 or any later 25.x. The family moves to the next LTS together, in an edition of Pauta.
   - *Check (code):* `pom.xml` sets `maven.compiler.release` to 25 or later. Every enforcer `requireJavaVersion`
-    rule that counts has the open-ended range `[25,)`: it starts at 25 and has no upper bound. The rules that count
+    rule that counts refuses no JDK from 25 up: its range has no upper bound and starts at 25 or below, as the
+    open-ended `[25,)` does, or a bare `25`, which the enforcer reads as 25 or newer. The rules that count
     are those of the main build and those inside a profile that turns itself on, one whose `<activation>` holds a
-    `<jdk>`, an `<os>`, a `<property>` or a `<file>`: such a profile is on without being asked for, so its rule is
-    the build's rule wherever it activates. A rule in a profile turned on only by name with `-P` is not counted,
-    and an app with no rule that counts passes. In the workflows, every step that uses a `setup-java` or `setup-graalvm`
-    action (`actions/setup-java`, `graalvm/setup-graalvm`) names 25 or a 25.x release in its `java-version`, or in
-    the `version` a GraalVM step may give instead. The Command reads a workflow line by line, not as YAML: a step
-    ends at the next line that opens a list item. A version it cannot read as a number (an expression such as
+    `<jdk>`, an `<os>`, a `<property>` or a `<file>`, or an `<activeByDefault>` that is `true`: such a profile is
+    on without being asked for, so its rule is the build's rule wherever it activates. A rule in a profile turned
+    on only by name with `-P` is not counted, and an app with no rule that counts passes. In the workflows, every
+    step that uses a `setup-java` or `setup-graalvm` action (`actions/setup-java`, `graalvm/setup-graalvm`) names
+    25 or a 25.x release in its `java-version`, and in the `version` a GraalVM step may give beside it or instead.
+    The Command reads the pom as text, with its XML comments left out, and a workflow line by line, not as YAML: a
+    step ends at the next line that opens a list item. A version it cannot read as a number (an expression such as
     `${{ matrix.java }}`, a `java-version-file`) it prints as not judged and does not fail: read the matrix or the
-    file it names.
-  - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; r=$(sed -n 's:.*<maven.compiler.release>\([0-9]*\)<.*:\1:p' pom.xml | head -n 1); p=$(tr -d ' \t\r\n' < pom.xml | tr '<' '\n'); j=$({ printf '%s\n' "$p" | sed -n '/^profiles>/,/^\/profiles>/!p'; printf '%s\n' "$p" | sed -n '/^profile>/,/^\/profile>/{/^profile>/h;/^profile>/!H;/^\/profile>/{x;/\nactivation>.*\njdk>.*\n\/activation>/{p;d;};/\nactivation>.*\nos>.*\n\/activation>/{p;d;};/\nactivation>.*\nproperty>.*\n\/activation>/{p;d;};/\nactivation>.*\nfile>.*\n\/activation>/{p;d;};};}'; } | sed -n '/^requireJavaVersion>/,/^\/requireJavaVersion>/s/^version>//p'); w=$(for f in .github/workflows/*.yml .github/workflows/*.yaml; do [ -f "$f" ] || continue; for n in $(grep -nE '^[^#]*uses:[^#]*/setup-(java|graalvm)@' "$f" | cut -d: -f1); do v=$(tail -n +"$n" "$f" | sed -n '1d;/^ *- /q;p' | grep -E '^ *(java-)?version:' | head -n 1 | cut -d: -f2- | cut -d'#' -f1 | tr -d " '\"\r"); if printf '%s\n' "$v" | grep -qE '^25([.+-].*)?$'; then :; elif printf '%s\n' "$v" | grep -q '^[0-9]'; then echo "$f:$n sets up JDK $v"; else echo "not judged: $f:$n version ${v:-not given}" >&2; fi; done; done); [ "${r:-0}" -ge 25 ] && ! echo "$j" | grep -vxF '[25,)' | grep -q . && [ -z "$w" ] || { echo "maven.compiler.release ${r:-none}; requireJavaVersion in the main build and in profiles that turn themselves on:" ${j:-none}; [ -z "$w" ] || echo "$w"; false; }`
+    file it names. An enforcer range held in a property (`${…}`) it cannot follow: it prints the property and
+    fails, so read the property's value.
+  - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; r=$(sed -n 's:.*<maven.compiler.release>\([0-9]*\)<.*:\1:p' pom.xml | head -n 1); p=$(tr -d ' \t\r\n' < pom.xml | tr '<' '\n' | sed -n '/^!--.*-->/!p' | sed -n '/^!--/,/-->/!p'); j=$({ printf '%s\n' "$p" | sed -n '/^profiles>/,/^\/profiles>/!p'; printf '%s\n' "$p" | sed -n '/^profile>/,/^\/profile>/{/^profile>/h;/^profile>/!H;/^\/profile>/{x;/\nactivation>.*\njdk>.*\n\/activation>/{p;d;};/\nactivation>.*\nos>.*\n\/activation>/{p;d;};/\nactivation>.*\nproperty>.*\n\/activation>/{p;d;};/\nactivation>.*\nfile>.*\n\/activation>/{p;d;};/\nactivation>.*\nactiveByDefault>true\n.*\/activation>/{p;d;};};}'; } | sed -n '/^requireJavaVersion>/,/^\/requireJavaVersion>/s/^version>//p'); w=$(for f in .github/workflows/*.yml .github/workflows/*.yaml; do [ -f "$f" ] || continue; for n in $(grep -nE '^[^#]*uses:[^#]*/setup-(java|graalvm)@' "$f" | cut -d: -f1); do c=0; for v in $(tail -n +"$n" "$f" | sed -n '1d;/^ *- /q;p' | grep -E '^ *(java-)?version:' | cut -d: -f2- | cut -d'#' -f1 | tr -d " '\"\r"); do c=1; if printf '%s\n' "$v" | grep -qE '^25([.+-].*)?$'; then :; elif printf '%s\n' "$v" | grep -q '^[0-9]'; then echo "$f:$n sets up release $v"; else echo "not judged: $f:$n version $v" >&2; fi; done; [ "$c" -eq 1 ] || echo "not judged: $f:$n version not given" >&2; done; done); [ "${r:-0}" -ge 25 ] && ! echo "$j" | grep -vxE '\[(1?[0-9]|2[0-5])([.][0-9]+)*,\)|(1?[0-9]|2[0-5])([.][0-9]+)*' | grep -q . && [ -z "$w" ] || { echo "maven.compiler.release ${r:-none}; requireJavaVersion in the main build and in profiles that turn themselves on:" ${j:-none}; [ -z "$w" ] || echo "$w"; false; }`
   - *Reference:* the app template's [`pom.xml`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/pom.xml) (one enforcer rule, `[25,)`) and [`.github/workflows/ci.yml`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/.github/workflows/ci.yml)
     (`java-version: '25'`); Termina's and Mirada's rules have the same range, and Modula and nux have no enforcer
     rule. Editora doesn't yet: beside the `[25,)` rule of its main build, its [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml) has a profile,
@@ -29,7 +32,8 @@ description: "JDK, JavaFX, AtlantaFX, NullAway, Maven Wrapper, tests and coverag
     a plain build on JDK 26 or newer stops unless it is told to skip the format check. Torrenta doesn't either: the
     rule in its main build has the range `[25,26)`. Mirada's profile of the same name skips the format check on
     those JDKs, says so, and refuses nothing ([`pom.xml`](https://github.com/adriandeleon/Mirada/blob/main/pom.xml)). No app's profile that activates by OS, property or
-    file holds an enforcer rule (Termina's `os-windows` and `git-commit` and Modula's `app-image` among them).
+    file holds an enforcer rule (Termina's `os-windows` and `git-commit` and Modula's `app-image` among them), and
+    no app has a profile that is `activeByDefault`.
     Every app's workflows set up 25. Mirada's native legs
     set up Oracle GraalVM with `version: '25.4'`, a GraalVM 25 release
     ([`.github/workflows/release.yml`](https://github.com/adriandeleon/Mirada/blob/main/.github/workflows/release.yml)); its jlink leg sets up JDK 25.
@@ -54,7 +58,7 @@ description: "JDK, JavaFX, AtlantaFX, NullAway, Maven Wrapper, tests and coverag
   [ICON-15](../icons-and-color/#icon-15).
   - *Check (code):* `pom.xml` depends on `atlantafx-base` 3.x.
   - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml), [`ui/Themes.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Themes.java).
-- Colors come from AtlantaFX's `-color-*` tokens and the state tokens built on them, never a fixed hex in a
+- Colors come from AtlantaFX's `-color-*` tokens and the state tokens built on them, never a fixed color in a
   component rule: [ICON-08](../icons-and-color/#icon-08).
 - **PLAT-08 · MUST.** The build is **Maven** with the **Maven Wrapper** committed (`mvnw`, `mvnw.cmd`,
   `.mvn/wrapper/`), so `./mvnw` works on a clean machine.
@@ -73,7 +77,8 @@ description: "JDK, JavaFX, AtlantaFX, NullAway, Maven Wrapper, tests and coverag
   - *Why:* a check bound to a build phase fails in the same job as the tests, so the failed job does not say which
     of the two is wrong.
   - *Check (code):* the spotless plugin configures `palantirJavaFormat`, and in a workflow that runs on pull
-    requests a job runs `spotless:check` and neither builds nor tests: no Maven `compile`, `test-compile`, `test`,
+    requests, which is where [REL-19](../release/#rel-19) has CI run and so where an unformatted change is
+    failed, a job runs `spotless:check` and neither builds nor tests: no Maven `compile`, `test-compile`, `test`,
     `package`, `verify`, `integration-test`, `install` or `deploy` in the same job. The plugin's `check` goal bound
     to a phase (`./mvnw verify`) does not meet it alone.
     The Command reads a workflow line by line, not as YAML: a job is what lies between two keys at the indentation
@@ -98,10 +103,11 @@ description: "JDK, JavaFX, AtlantaFX, NullAway, Maven Wrapper, tests and coverag
   rule is about the pom's profiles, not about where CI runs the gate: a workflow that runs the tests on some of
   its runners with JaCoCo skipped is the workflow's choice and passes. The branch floor and each package's own
   floor are [QUAL-03](../quality/#qual-03).
-  - *Check (code):* the `jacoco-check` execution is bound to `verify` with `BUNDLE` limits of 0.90 `LINE` and
-    0.90 `METHOD`. Where a limit is a property (`${coverage.bundle.line}` in Termina), its value is 0.90 or more
-    in the main `<properties>` and in every profile that sets it and activates by OS or by JDK version (an
-    `<activation>` with an `<os>` or a `<jdk>`), and no such profile sets `jacoco.skip` or the check's `<skip>`.
+  - *Check (code):* an execution of the JaCoCo plugin's `check` goal, whatever its id (Editora's is
+    `jacoco-check`), is bound to `verify` with `BUNDLE` limits of 0.90 `LINE` and 0.90 `METHOD`. Where a limit is
+    a property (`${coverage.bundle.line}` in Termina), its value is 0.90 or more in the main `<properties>` and
+    in every profile that sets it and activates by OS or by JDK version (an `<activation>` with an `<os>` or a
+    `<jdk>`), and no such profile sets `jacoco.skip` or the check's `<skip>`.
     A `-Djacoco.skip` on a workflow's command line is not judged.
   - *Reference:* Editora [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml) `jacoco-check`, with no profile that touches it; the template's and Mirada's are the
     same. Editora's [`full-tests.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/full-tests.yml) runs its tests on the other OSes with `-Djacoco.skip=true`, which the rule

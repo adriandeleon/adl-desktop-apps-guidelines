@@ -148,12 +148,13 @@ icons and chords do not apply here. The rows come in the mockup's order: the sta
 - A start-at-login call may block on the file system or `reg.exe`, so it runs off the FX thread like any other I/O:
   [PERF-01](../performance/#perf-01). Torrenta's run on their own threads (`autostart-read`, `autostart-write`,
   `autostart-refresh`), as does nux's (`nux-autostart`).
-- **TRAY-12 · MAY.** A dock badge: Torrenta puts the download rate on the macOS dock icon through AWT's `Taskbar`
-  and a count on a Linux launcher that honors Unity's `LauncherEntry` signal (KDE, Dash to Dock); nothing on
-  Windows, whose taskbar badges only AWT's own windows. It is cleared when nothing downloads and has its own switch.
-  - *Check (code):* the badge is set through AWT's `Taskbar` on macOS and through the `LauncherEntry` signal on
-    Linux, and not at all on Windows; the code clears it when nothing downloads; and a setting of its own turns it
-    off. A test of the badge's state is the surest evidence.
+- **TRAY-12 · MAY.** A dock badge: an app may put a figure of its own on the macOS dock icon through AWT's `Taskbar`
+  and on a Linux launcher that honors Unity's `LauncherEntry` signal (KDE, Dash to Dock); nothing on Windows, whose
+  taskbar badges only AWT's own windows. The badge is cleared when there is nothing to show and has its own switch.
+  Torrenta's is the download rate on the dock and a count on the launcher, cleared when nothing downloads.
+  - *Check (code):* the badge is set through AWT's `Taskbar` on macOS and through the `LauncherEntry` signal on Linux,
+    and not at all on Windows; the code clears it when there is nothing to show (in Torrenta, when nothing downloads);
+    and a setting of its own turns it off. A test of the badge's state is the surest evidence.
   - *Reference:* Torrenta [`os/Badges.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/os/Badges.java), [`BadgeState`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/os/BadgeState.java), [`BadgeStateTest`](https://github.com/adriandeleon/torrenta/blob/master/src/test/java/com/torrenta/os/BadgeStateTest.java).
 - **TRAY-13 · SHOULD.** A second launch brings the hidden window forward: the
   [single-instance hand-off](../command-line/) shows a window hidden to the tray before it opens what it was given.
@@ -184,26 +185,31 @@ for their own events, Editora and Termina for a program's OSC 9 and OSC 777.
   reads), never as part of a script. It runs off the FX thread, and the call times out after ten seconds or less;
   a failure is logged and never breaks the app.
   - *Why:* text from a torrent name or a remote shell then cannot run anything.
-  - *Check (code):* one class builds every notification's command line: `notify-send` on Linux, `osascript` on
-    macOS, PowerShell on Windows. Each carries the title and the message as arguments or environment variables of
-    their own, and the script it runs is fixed and never has the text concatenated into it. The program runs on a
-    background thread with a timeout of ten seconds or less that kills it, and an exception from starting it or
-    waiting for it is caught and written to the app's log: never thrown further, never dropped. A test of each
-    platform's command line is the surest evidence.
-  - *Reference:* Torrenta [`automation/Notifiers.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/automation/Notifiers.java), [`ProcessNotifier`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/automation/ProcessNotifier.java), [`NotifierTest`](https://github.com/adriandeleon/torrenta/blob/master/src/test/java/com/torrenta/automation/NotifierTest.java) (it ships [`toast.ps1`](https://github.com/adriandeleon/torrenta/blob/master/src/main/resources/com/torrenta/automation/toast.ps1),
-    which takes the title and message as parameters); on Linux it runs `notify-send` and has no fallback. It runs
-    each on a virtual thread with a ten-second ceiling and reports a failure to its event log, the first of a
-    session only: the ones after it are dropped ([`automation/Automation.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/automation/Automation.java), `notify`). Termina's [`ui/DesktopNotifier.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/DesktopNotifier.java) meets it on every OS: the text is an
-    argument of `notify-send` and of `osascript` (a fixed `on run argv` script), a GVariant string for `gdbus`, and
-    on Windows two environment variables that a fixed PowerShell script (`-EncodedCommand`) reads; the program is
-    killed after five seconds and a failure to run it is logged ([`DesktopNotifierTest`](https://github.com/adriandeleon/Termina/blob/master/src/test/java/com/termina/ui/DesktopNotifierTest.java)). Editora's
-    [`terminal/DesktopNotifier.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/terminal/DesktopNotifier.java) builds the same command lines with the same five seconds, but doesn't meet
-    the rule yet: its `post` catches a failure and drops it, with nothing logged. Both fall back to `gdbus`, and so
-    does nux. nux's [`service/Notifier`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/service/Notifier.java) has no PowerShell toast: on Windows it hands the
-    notification to the tray, which shows AWT's balloon ([`tray/AwtTray.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/tray/AwtTray.java), `displayMessage`). nux doesn't meet the rule
-    on macOS yet: it escapes the title and the message into an AppleScript string (`appleScriptEscape`) and passes
-    the whole script to `osascript -e`. It logs no failure either: a tool that is missing or fails hands the
-    notification to the tray, or to nothing. Its timeout is in the measure: it kills the tool after five seconds.
+  - *Check (code):* one class builds every notification's command line: `notify-send` on Linux, `osascript` on macOS,
+    PowerShell on Windows. Each carries the title and the message as arguments or environment variables of their own,
+    and the script it runs is fixed and never has the text concatenated into it. The program runs on a background
+    thread with a timeout of ten seconds or less that kills it, and a failure is written to the app's log, never
+    thrown further and never dropped: an exception from starting the program or waiting for it, a program that is not
+    there to run, the timeout, and an exit code that is not zero. A test of each platform's command line is the surest
+    evidence.
+  - *Reference:* Torrenta [`automation/Notifiers.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/automation/Notifiers.java), [`ProcessNotifier`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/automation/ProcessNotifier.java), [`NotifierTest`](https://github.com/adriandeleon/torrenta/blob/master/src/test/java/com/torrenta/automation/NotifierTest.java) (it ships
+    [`toast.ps1`](https://github.com/adriandeleon/torrenta/blob/master/src/main/resources/com/torrenta/automation/toast.ps1), which takes the title and message as parameters); on Linux it runs `notify-send` and has no
+    fallback. It runs each on a virtual thread with a ten-second ceiling and reports a failure to its event log, the
+    first of a session only: the ones after it are dropped ([`automation/Automation.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/automation/Automation.java), `notify`), so Torrenta
+    doesn't meet the last clause yet. Termina's [`ui/DesktopNotifier.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/DesktopNotifier.java) builds its command lines as the rule asks
+    on every OS: the text is an argument of `notify-send` and of `osascript` (a fixed `on run argv` script), a
+    GVariant string for `gdbus`, and on Windows two environment variables that a fixed PowerShell script
+    (`-EncodedCommand`) reads; the program is killed after five seconds and an exception from running it is logged
+    ([`DesktopNotifierTest`](https://github.com/adriandeleon/Termina/blob/master/src/test/java/com/termina/ui/DesktopNotifierTest.java)). Termina doesn't meet the last clause in full yet: `post` logs nothing when it finds no
+    tool to run (on Linux, neither `notify-send` nor `gdbus`), when it kills the tool at the timeout, or when the tool
+    exits with an error. Editora's [`terminal/DesktopNotifier.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/terminal/DesktopNotifier.java) builds the same command lines with the same five
+    seconds, but doesn't meet the rule yet: its `post` catches a failure and drops it, with nothing logged. Both fall
+    back to `gdbus`, and so does nux. nux doesn't meet the rule on Windows yet: its [`service/Notifier`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/service/Notifier.java) has no
+    PowerShell toast, and hands the notification to the tray, which shows AWT's balloon ([`tray/AwtTray.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/tray/AwtTray.java),
+    `displayMessage`). Nor does it on macOS: it escapes the title and the message into an AppleScript string
+    (`appleScriptEscape`) and passes the whole script to `osascript -e`. It logs no failure either: a tool that is
+    missing or fails hands the notification to the tray, or to nothing. Its timeout is in the measure: it kills the
+    tool after five seconds.
 - **TRAY-10 · MUST.** Desktop notifications are for what happened while the window was away: the app posts none
   for an event whose window, or whose tab, is the one in front. Each kind of event has a switch of its own, and
   where the app notifies of several kinds, most of the switches start off.

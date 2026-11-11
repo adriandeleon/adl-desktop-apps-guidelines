@@ -11,11 +11,11 @@ not apply, the ones it does differently on purpose, and the ones still pending. 
 
 ## Rules
 
-- **PWIN-01 · MUST.** Every app has a Pauta window, opened by the `help.pauta` command: from the Command Palette
-  like every command, and from a *Pauta Conformance* row in the Help menu where the app has a Help menu (the Help
-  menu of a menu bar, or a Help submenu of the app's main menu). The row's place in that menu is
-  [DOCS-07](../../documentation/#docs-07), and About's *Pauta conformance* link, which runs the same command, is
-  [ABOUT-09](../about/#about-09).
+- **PWIN-01 · MUST.** Every app has a Pauta window, opened by the `help.pauta` command: from the Command Palette like
+  every command, and from a *Pauta Conformance* row in the Help menu where the app has a Help menu (the Help menu of a
+  menu bar, or a Help submenu of the app's main menu, which [WIN-14](../../window-shell/#win-14) defines). The row's
+  place in that menu is [DOCS-07](../../documentation/#docs-07), and About's *Pauta conformance* link, which runs the
+  same command, is [ABOUT-09](../about/#about-09).
   - *Check (code):* a command with the id `help.pauta` is registered and opens the Pauta window, and where the app
     has a Help menu, a row inside that menu runs the command (the app template's Help menu is a list of command
     ids that holds `help.pauta`). A row beside a Help submenu is not in it.

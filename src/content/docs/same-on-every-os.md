@@ -58,6 +58,9 @@ fixed:
   puts the title on the left on Windows only ([OS-04](#os-04)).
 - Editora keeps the user's own key bindings apart by OS, `keybindings` for Windows and Linux and `keybindingsMac`
   for macOS, so a chord rebound on one is not rebound on the other ([OS-04](#os-04)).
+- Termina's Settings Sync keeps the user's key bindings in one file for macOS and another for Windows and Linux,
+  so a chord rebound on a Mac is not rebound on a Linux or Windows computer that syncs with it
+  ([OS-04](#os-04)).
 - Editora runs a folder's tools inside its WSL distribution on Windows only: it registers the WSL targets inside
   an OS check ([OS-04](#os-04)).
 - No app fixes the order of a dialog's buttons, so Editora, Torrenta, Termina, Mirada and nux draw them in JavaFX's
@@ -105,7 +108,9 @@ Everything else, and in particular:
   - *Check (code):* no command, menu row or settings row is registered or added inside an OS check, and no default
     in the settings model depends on the OS, unless a row of the table under
     [Where the OS's way wins](#where-the-oss-way-wins) gives that difference: the rows of the macOS application
-    menu, a default chord in its macOS form. A row the OS can't serve calls `setDisable` and carries its reason
+    menu, a default chord in its macOS form. An OS check is a test whose answer can differ among Windows, macOS
+    and Linux; a gate that holds on all three alike (a command registered only when the app finds its own
+    launcher, whatever the OS) is not one. A row the OS can't serve calls `setDisable` and carries its reason
     ([KBD-04](../keyboard/#kbd-04) for a command).
   - *Reference:* Editora [`ui/SettingsWindow.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsWindow.java) (the extended-window row, disabled on macOS
     "rather than hidden, so its note still explains why"). Editora doesn't hold the rule everywhere yet: its
@@ -156,14 +161,19 @@ Everything else, and in particular:
     the app's own. Read each place. It passes when what it changes is what a row of the table under
     [Where the OS's way wins](#where-the-oss-way-wins) gives that OS, or is nothing a user can see or do (the path
     of a binary, a process's arguments, a line ending). It fails when it changes anything else a user can see or
-    do: what a command, a key or a click does, where something sits, how it is drawn or what it says.
+    do: what a command, a key or a click does, where something sits, how it is drawn or what it says. A place
+    that gives an OS something other than what its row gives is judged by the rule that row links, where that
+    rule covers it: a Windows notification raised as the tray's balloon and not a toast fails
+    [TRAY-09](../tray-and-background/#tray-09), not this rule. It fails this rule when the row links no rule, or
+    the rule it links does not cover the difference (a menu bar on one OS and a menu button on the others).
   - *Reference:* no app has been read through for it yet. The differences found so far, each on no row or short of its row: Mirada
     closes its window on Escape on Linux only ([`Command.escapeCloses`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Command.java)), follows the OS's accent color on macOS and
     Windows only ([`Theme.followsAccent`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Theme.java)), puts its title on the left on Windows only ([`TitleBar.Layout`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/TitleBar.java)) and has a
     menu bar on macOS only ([`ui/MacMenus.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MacMenus.java)); Editora deletes a file for good on Windows ([`io/Trash.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/io/Trash.java)),
     keeps the user's key bindings apart by OS (`keybindings` and `keybindingsMac` in [`config/Settings.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/Settings.java)) and
     registers its WSL targets on Windows only ([`App`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java)); Termina believes the folder a shell reports for itself on
-    Windows only ([`ProcessCwd.reportedDirectoryWins`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/pty/ProcessCwd.java)). On a row, and passing: a click that takes `Cmd` on macOS
+    Windows only ([`ProcessCwd.reportedDirectoryWins`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/pty/ProcessCwd.java)), and its Settings Sync keeps the user's key bindings in one
+    file for macOS and another for Windows and Linux ([`sync/KeybindingsFile.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/sync/KeybindingsFile.java)). On a row, and passing: a click that takes `Cmd` on macOS
     and `Ctrl` elsewhere (Editora's [`editor/EditorBuffer.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/editor/EditorBuffer.java), Termina's [`link/LinkGesture.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/link/LinkGesture.java)), and the
     profiles Termina lists on Windows only, Command Prompt, PowerShell, Git Bash and the WSL distributions
     ([`shell/ShellDiscovery.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/shell/ShellDiscovery.java)).

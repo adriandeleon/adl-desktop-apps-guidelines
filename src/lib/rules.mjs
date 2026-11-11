@@ -230,7 +230,7 @@ export function readRules(root = process.cwd()) {
   const since = process.env.PAUTA_PATH === "next" ? "next" : version;
   for (const r of pages.flatMap((p) => p.rules)) {
     const was = record?.rules?.[r.id];
-    r.changed = was && was.hash === ruleHash(r) ? was.changed : since;
+    r.changed = sameRule(was, r) ? was.changed : since;
   }
   const live = new Set(pages.flatMap((p) => p.rules.map((r) => r.id)));
   const known = new Set([...(record?.retired ?? []), ...Object.keys(record?.rules ?? {})]); // every ID an edition had
@@ -275,24 +275,41 @@ const ID = /^[A-Z]{2,6}-\d{2,3}$/;
 export const CHANGES = "rule-changes.json";
 
 /**
- * What `changed` watches in a rule, as twelve hex digits: its level, its scope (`appliesTo`) and its statement. Why,
- * Check, Command and Reference are how a rule is explained and verified, not what it asks. Line breaks and where a
- * link points are left out, so rewrapping a paragraph or moving a page changes no rule; any other edit to the words
- * does, a typo fixed included, and so does an edit to the Markdown around them: emphasis added or taken off, a name
- * newly linked or put in backticks, a link's label reworded. What it does not see is anything the statement only
+ * What `changed` watches in a rule, as twelve hex digits: its level, its scope (`appliesTo`) and its statement, as
+ * words alone. Why, Check, Command and Reference are how a rule is explained and verified, not what it asks. Line
+ * breaks, where a link points and the Markdown around the words are left out: a link is its label, and emphasis marks
+ * and backticks are dropped. So rewrapping a paragraph, moving a page, linking a name or putting it in italics changes
+ * no rule; any edit to the words does, a typo fixed included. What it does not see is anything the statement only
  * points at: a value in a spec table, the rule it hands a requirement to.
  * The record (rule-changes.json) keeps each rule's hash and not its text, made by this function at the last release.
  * So a change to what is hashed makes every rule it touches read as changed until a release rewrites the record, and
- * that release would date them all with its own number: change this only in a release, with the record's hashes made
- * again from the edition before it, or keep the old function beside the new one until the record holds the new one's.
- * Decided for the next release, and not done before it: that release switches this function to a hash of the
- * statement's words alone (no emphasis marks, no link brackets), and for that one release scripts/rule-changes.mjs
- * and scripts/check-edition.mjs accept a stored hash that matches either function, the old or the new, so the switch
- * re-dates no rule.
+ * that release would date them all with its own number: change this only with the function before it kept beside
+ * it, as `legacyHash` is below, until a release has rewritten the record.
  */
 export function ruleHash(rule) {
+  const words = (s) =>
+    (s ?? "")
+      .replace(/!?\[((?:[^\]\\]|\\.)*)\]\((?:[^()]|\([^)]*\))*\)/g, "$1")
+      .replace(/[`*]|(?<![\p{L}\p{N}])_+|_+(?![\p{L}\p{N}])/gu, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  return createHash("sha256").update(JSON.stringify([rule.level, words(rule.appliesTo), words(rule.text)])).digest("hex").slice(0, 12);
+}
+
+/**
+ * The hash the records up to edition 5.0.0 hold: link targets dropped, the Markdown around the words kept. Nothing
+ * writes it. It is read so that the record of 5.0.0 still recognizes a rule that has not changed since, and the
+ * switch to `ruleHash`'s words alone re-dates no rule. Once a release has rewritten the record (6.0.0), no stored
+ * hash is of this kind and this function and its use in `sameRule` can go.
+ */
+function legacyHash(rule) {
   const flat = (s) => (s ?? "").replace(/\]\([^)]*\)/g, "]").replace(/\s+/g, " ").trim();
   return createHash("sha256").update(JSON.stringify([rule.level, flat(rule.appliesTo), flat(rule.text)])).digest("hex").slice(0, 12);
+}
+
+/** Whether a record's entry (`{ changed, hash }`, or nothing) is this rule as it reads now. */
+export function sameRule(entry, rule) {
+  return !!entry && (entry.hash === ruleHash(rule) || entry.hash === legacyHash(rule));
 }
 
 /** rule-changes.json under `root`: `{ edition, rules: { ID: { changed, hash } }, retired: [ID] }`, or null. */
@@ -315,7 +332,7 @@ export function freshChanges(was, rules, version) {
   const entries = [...rules].sort((a, b) => a.prefix.localeCompare(b.prefix) || a.number - b.number).map((r) => {
     const hash = ruleHash(r);
     const before = was?.rules?.[r.id];
-    return [r.id, { changed: before?.hash === hash ? before.changed : version, hash }];
+    return [r.id, { changed: sameRule(before, r) ? before.changed : version, hash }];
   });
   const live = new Set(rules.map((r) => r.id));
   const retired = [...new Set([...(was?.retired ?? []), ...Object.keys(was?.rules ?? {}).filter((id) => !live.has(id))])].sort();

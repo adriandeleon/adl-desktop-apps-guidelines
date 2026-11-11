@@ -32,7 +32,9 @@ description: "The flags every app accepts and the single-instance hand-off."
     new-issue page. A test that runs the report command in a folder and finds the redacted report there, with its
     path printed, is the surest evidence.
   - *Reference:* Editora [`report/ReportCommand.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/report/ReportCommand.java) ([`ReportCommandTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/report/ReportCommandTest.java)); Torrenta's
-    [`ReportCommand.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/report/ReportCommand.java) does the same. The app template and Mirada write theirs beside the settings, and Termina
+    [`ReportCommand.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/report/ReportCommand.java) does the same, and so does the app template's [`report/ReportCommand.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/report/ReportCommand.java)
+    ([`ReportTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/report/ReportTest.java), `theReportGoesInTheCurrentFolderAndItsPathIsPrinted` and
+    `aCurrentFolderThatCantBeWrittenSendsTheReportToTheTempFolder`). Mirada writes its report beside the settings, and Termina
     prints its report without writing a file ([`ReportCommand.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/report/ReportCommand.java)).
 - **CLI-12 · MUST.** An option the app does not know stops the launch: it names the option on standard error, says
   how to get help, and exits with status 2 before the GUI starts. That holds for an option with one dash as for one
@@ -54,10 +56,11 @@ description: "The flags every app accepts and the single-instance hand-off."
     find. And the parser skips `--add-exports`, `--add-opens` and `-p` with their values, in both forms a launcher
     writes (`--add-exports <value>` and `--add-exports=<value>`), with no error and no file. A test that hands the
     parser each of these arguments is the surest evidence.
-  - *Reference:* no app does all of it yet. The app template's [`cli/CommandLine.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/cli/CommandLine.java) comes nearest: it refuses an
+  - *Reference:* the app template's [`cli/CommandLine.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/cli/CommandLine.java) does all of it: it refuses an
     unknown option with one dash or two ([`Main.run`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/Main.java) prints the message and returns 2) and takes `-` and whatever
-    follows `--` for files ([`CommandLineTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/cli/CommandLineTest.java)), but it refuses `--add-exports`, in either form, as it does any
-    other. Termina's [`cli/CommandLine.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/cli/CommandLine.java) and Torrenta's [`cli/CommandLine.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/cli/CommandLine.java)
+    follows `--` for files, and skips `--add-exports`, `--add-opens` and `-p` with their values in both forms
+    ([`CommandLineTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/cli/CommandLineTest.java), `reportsMistakes`, `acceptsTheEqualsFormAndDoubleDash` and
+    `skipsTheLaunchersJvmOptionsAndTakesCapitalVForVersion`). No other app does all of it yet. Termina's [`cli/CommandLine.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/cli/CommandLine.java) and Torrenta's [`cli/CommandLine.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/cli/CommandLine.java)
     refuse both kinds of unknown option with status 2, and the launcher's options with them. Torrenta, which opens
     the `.torrent` files and magnet links named on its command line, also refuses `-` and `--`: anything that
     starts with a dash and is not a magnet link. Termina opens no files from its command line, so that part of the
@@ -74,8 +77,8 @@ description: "The flags every app accepts and the single-instance hand-off."
   `--version`.
   - *Check (code):* the command-line parser takes `-h` for `--help`, and `-v` and `-V` for `--version`.
   - *Reference:* Termina's [`cli/CommandLine.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/cli/CommandLine.java) and Torrenta's [`cli/CommandLine.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/cli/CommandLine.java); the `--help` text of both
-    lists `-h` and `-v` and leaves `-V` out. Editora takes `-h` and `-V` but not `-v`, the app template `-h` and
-    `-v` but not `-V`, Mirada has no short flags, and Modula and nux take neither flag in any form.
+    lists `-h` and `-v` and leaves `-V` out. The app template's [`cli/CommandLine.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/cli/CommandLine.java) takes all three, and its
+    `--help` text lists them. Editora takes `-h` and `-V` but not `-v`, Mirada has no short flags, and Modula and nux take neither flag in any form.
 - **CLI-11 · MUST.** On Windows, `--help`, `--version` and `--report` print in the console they were typed in, and
   so does the message that refuses an unknown option ([CLI-12](#cli-12)). A GUI launcher has no console, so the
   installer also carries a console launcher (jpackage's `win-console`) that runs the same entry point, or `main`
@@ -91,7 +94,10 @@ description: "The flags every app accepts and the single-instance hand-off."
     module and main class. The launcher's own `arguments=--headless` applies only when the person gives none (its
     [`CLAUDE.md`](https://github.com/adriandeleon/torrenta/blob/master/CLAUDE.md) says so), so `torrenta-nox --help`, `--version`, `--report` and an option it does not know reach
     `main` as typed, and `main` refuses the unknown option and answers the three flags before it looks for
-    `--headless` ([`App.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/App.java)). No other app has a `win-console` launcher or calls `AttachConsole`. Mirada's
+    `--headless` ([`App.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/App.java)). The app template does it the same way: its `os-windows` profile in
+    [`pom.xml`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/pom.xml) adds a second launcher, `exampleapp-cli`, whose [`packaging/windows/exampleapp-cli.properties`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/packaging/windows/exampleapp-cli.properties)
+    sets `win-console=true` and nothing else, so it runs the same main class with the arguments as typed. No other
+    app has a `win-console` launcher or calls `AttachConsole`. Mirada's
     one Windows executable is its native image, copied over jpackage's launcher ([`native-app-image.sh`](https://github.com/adriandeleon/Mirada/blob/main/scripts/native-app-image.sh)); whether it prints in
     the console depends on how that image is linked, which Mirada's files do not say, and no Windows run has
     confirmed it.

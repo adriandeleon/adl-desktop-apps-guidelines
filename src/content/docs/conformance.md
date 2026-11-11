@@ -53,8 +53,8 @@ moved to a newer one with new MUSTs. A new app is not released at Partial.
     the helper that covers all three results is the surest evidence for the rest. That the docs page shows the
     same conformance is read with the page itself, in the website's repository ([PAUTA-13](#pauta-13)).
   - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`PautaConformance.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/PautaConformance.java) (`of`, which takes the exceptions alone, and `conformance`), tested by [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java),
-    whose `theReadmeNamesTheEditionAndTheConformanceAndLinksTheDocsPage` holds the README. Its `Kind` has no
-    `app-only` yet, so the test covers deviation and not-applicable entries and MAYs.
+    whose `theReadmeNamesTheEditionAndTheConformanceAndLinksTheDocsPage` holds the README and whose
+    `deviationsAppOnlyAndNotApplicableEntriesAndMaysLeaveTheConformanceAlone` covers the entries that leave it alone.
 - **PAUTA-03 · MUST.** A new app, one that has made no release yet, makes its first release at Core or Complete:
   the [New app checklist](../checklist/)'s MUSTs are release blockers, and recording one as pending does not lift
   that. An app with a release behind it is not covered: it may be at Partial, and says so
@@ -91,8 +91,9 @@ an app, and a fourth for a template repository; each one asks for something diff
     `manual` result with no `checked` entry is reported as not recorded (PAUTA-18), and a `not-checked` one as
     out of the audit's reach: neither is a failure of the app, and neither fails this check. An audit of part of
     the edition judges it from the rules in its scope and says so.
-  - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`pauta.json`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/pauta.json), the only list of exceptions so far. The template carries no audit report
-    (`docs/pauta-audit.json`) to show that the list is whole.
+  - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`pauta.json`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/pauta.json), the only list of exceptions so far, beside the audit report that shows it whole:
+    [`docs/pauta-audit.json`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/docs/pauta-audit.json) and [`docs/pauta-audit.md`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/docs/pauta-audit.md), where
+    every SHOULD the template does not meet is `pending` with an entry and no MUST or SHOULD fails.
 - **PAUTA-05 · MUST.** A rule limited to apps with a feature needs no entry in an app without that feature. A rule is
   limited when its own text says so ("An app that stores a secret…"), when its page or
   section opens with an **Applies to** line (the [Tray and background](../tray-and-background/) page; `appliesTo` in
@@ -101,7 +102,8 @@ an app, and a fourth for a template repository; each one asks for something diff
   `not-applicable` is for a rule that reads as applying to every app.
   - *Check (code):* no `not-applicable` entry names a rule whose text, page, section or parent rule already limits
     it.
-  - *Reference:* no app yet.
+  - *Reference:* the [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`pauta.json`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/pauta.json) has no `not-applicable` entry, so it meets the
+    rule with nothing to hold; the six apps have no `pauta.json`.
 - **PAUTA-06 · MUST.** A `deviation` is a choice, not a gap, and only a SHOULD can have one: a SHOULD is expected
   unless the app has a stated reason, and the deviation is that reason. It links a decision record in
   `docs/decisions/` ([DOCS-13](../documentation/#docs-13)) that gives the context, what the app does instead, and what
@@ -143,9 +145,12 @@ an app, and a fourth for a template repository; each one asks for something diff
     whose `pauta.json` has no `template` field, no `app-only` entry and no `pending` link to another repository,
     or that has no `pauta.json`, shows nothing inherited from a template: it is outside the rule, and an audit
     reports it as `limited`.
-  - *Reference:* no app yet. The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`pauta.json`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/pauta.json) has no `template` field, its `Kind` no `app-only`, and its
-    [`scripts/rename.sh`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/scripts/rename.sh) sets none; its [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java) accepts a `pending` link to the template's own
-    repository in an app made from it, in every build.
+  - *Reference:* the [app template](https://github.com/adriandeleon/adl-desktop-app-template): its [`pauta.json`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/pauta.json) has `"template": true` and nine `app-only`
+    entries, its [`scripts/rename.sh`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/scripts/rename.sh) sets `"template": false`, and its
+    [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java) holds both (`onlyATemplateRecordsWhatOnlyAnAppCanMeet`) and, outside a template, lists the
+    `app-only` entries and the `pending` links to another repository in every build and fails on them when the
+    `dist` profile sets `pauta.release` (`theAppListsWhatItInherited`; [`pom.xml`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/pom.xml)). No app has been made
+    from it yet.
 - **PAUTA-18 · MUST.** `pauta.json`'s `checked` list is the record of the rules checked by hand, and this rule
   governs only the entries an app chooses to record: each one is well formed and not stale. An app that records
   none, with no `checked` list or an empty one, meets it. An entry is there
@@ -171,8 +176,8 @@ an app, and a fourth for a template repository; each one asks for something diff
     rule is met: the audit's `manual` results say which by-hand rules are not recorded, and that is no failure of
     this rule. That a person looked is the entry's own claim, which the code can't show.
   - *Reference:* no app records a by-hand check yet, so each meets the rule with nothing to hold: the
-    [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`pauta.json`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/pauta.json) has no `checked` list, its [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java) reads none, and
-    the six apps have no `pauta.json`.
+    [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`pauta.json`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/pauta.json) has no `checked` list, though its [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java) would hold one
+    (`eachCheckedEntryIsWellFormedAndCurrent`), and the six apps have no `pauta.json`.
 
 ## The file
 
@@ -238,8 +243,11 @@ a test keeps the copies honest.
     test turns each stale entry into a failure.
   - *Check (test):* `PautaConformanceTest`, or the app's equivalent, runs in the build and has a case for each
     failure the rule lists.
-  - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java) and its copy of the edition's rules, [`pauta-rules.json`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/resources/pauta-rules.json). Two parts aren't built yet: the template's (`app-only`, inherited links) and everything about `checked`. The
-    test reads the `exceptions` list only.
+  - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java) and its copy of the edition's rules, [`pauta-rules.json`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/resources/pauta-rules.json). It has a case
+    for each failure: `theRulesCopyIsTheEditionThePomNames`, `everyEntryNamesARuleOfTheEditionWithItsLevelAndAddress`
+    (an unknown rule, a level or `url` that differs, a rule twice), `eachKindHasWhatItNeeds` (a deviation on a MUST,
+    a missing `link`), `eachCheckedEntryIsWellFormedAndCurrent` (the `checked` list) and `theAppListsWhatItInherited`
+    (what a template left, failed when `pauta.release` is set).
 - **PAUTA-11 · SHOULD.** Moving to a newer edition is one change: replace `pauta-rules.json` with the new edition's,
   and the app's copy of the audit skill where it keeps one (the app template's is
   `.claude/skills/pauta-audit/SKILL.md`); remove the `checked` entries the new `rules.json` makes stale
@@ -312,6 +320,8 @@ menu and the Command Palette ([PWIN-01](../templates/pauta-window/#pwin-01)) and
   - *Reference:* the app template's [`AGENTS.md`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/AGENTS.md), Termina's [`AGENTS.md`](https://github.com/adriandeleon/Termina/blob/master/AGENTS.md) and Mirada's [`AGENTS.md`](https://github.com/adriandeleon/Mirada/blob/main/AGENTS.md) have the
     section, each under the heading "Pauta".
     Termina's [`AppInfoTest`](https://github.com/adriandeleon/Termina/blob/master/src/test/java/com/termina/AppInfoTest.java) (`agentsAndReadmeNameTheSameEdition`) asserts the edition and the `llms.txt` link; the
-    template's [`EditionTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/EditionTest.java) and Mirada's [`EditionTest`](https://github.com/adriandeleon/Mirada/blob/main/src/test/java/com/mirada/EditionTest.java) (`theReadmeAndAgentsNameTheSameEdition` in both) assert the
-    edition the file names and not its links. Editora's and nux's `AGENTS.md` have no such section, and Torrenta
+    template's [`EditionTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/EditionTest.java) asserts the edition (`theReadmeAndAgentsNameTheSameEdition`) and both links at
+    that edition's address, with no `latest/` and no other edition (`agentsLinksTheEditionsRulesForCodingAgents`).
+    Mirada's [`EditionTest`](https://github.com/adriandeleon/Mirada/blob/main/src/test/java/com/mirada/EditionTest.java) (`theReadmeAndAgentsNameTheSameEdition`) asserts the edition the file names and not its
+    links. Editora's and nux's `AGENTS.md` have no such section, and Torrenta
     and Modula have no `AGENTS.md`.

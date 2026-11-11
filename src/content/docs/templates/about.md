@@ -18,10 +18,11 @@ Torrenta ([`AboutDialog`](https://github.com/adriandeleon/torrenta/blob/master/s
     inside that menu runs the command (a row beside a Help submenu is not in it); and on macOS the app inserts an
     About item into the application menu that opens the same window.
   - *Reference:* Editora [`ui/AboutDialog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/AboutDialog.java) and [`ui/MenuBarModel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java) (`help.about` ends the Help menu), and the
-    app template's [`ui/Commands.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Commands.java) and [`ui/AppMenus.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AppMenus.java), do the Help row and the command. Neither adds the macOS item
-    yet, and nor do Torrenta, Modula and nux. Termina ([`ui/MacAppMenu.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MacAppMenu.java)) and Mirada ([`os/MacAppMenu.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/os/MacAppMenu.java)) do: JavaFX has no
-    public API for that menu, so both insert the item into the one Glass keeps (`MacApplication.getAppleMenu`).
-    Neither is the whole rule: Termina's command is `about`, not `help.about`, and Mirada's About row sits beside
+    app template's [`ui/Commands.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Commands.java) and [`ui/AppMenus.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AppMenus.java), do the Help row and the command, and the template's
+    [`ui/MacAppMenu.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MacAppMenu.java) inserts the macOS item, which runs `help.about`, so the template meets the whole rule.
+    Editora doesn't add the macOS item yet, and nor do Torrenta, Modula and nux. Termina ([`ui/MacAppMenu.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MacAppMenu.java)) and Mirada ([`os/MacAppMenu.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/os/MacAppMenu.java)) add it too: JavaFX has no
+    public API for that menu, so the three insert the item into the one Glass keeps (`MacApplication.getAppleMenu`).
+    Neither of those two is the whole rule: Termina's command is `about`, not `help.about`, and Mirada's About row sits beside
     the Help submenu of its main menu, not in it ([`ui/TitleBar.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/TitleBar.java), `finish`).
 - **ABOUT-02 · MUST.** About shows the version and build, the runtime, the license, links to the app's home page,
   its source code and its releases, and the result of the last update check. The Pauta edition is
@@ -132,8 +133,9 @@ edition but not their conformance.
     audit of part of the edition judges the rule from the MUSTs in its scope and says so. Only the rules of the
     edition the app names settle a *Built to*: an audit run against another edition reports the rule as
     `not-checked` and names the edition whose rules would settle it.
-  - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template), which is at Partial: its About says *Working toward Pauta 4.1.0*
-    ([`ui/AboutDialog.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AboutDialog.java), `editionKey`) and so does its README. Termina and Mirada don't meet it yet.
+  - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template), at Core: its About says *Built to Pauta 6.0.0*
+    ([`ui/AboutDialog.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AboutDialog.java), `editionKey`) and so does its README, and its audit against 6.0.0's own rules finds no
+    MUST that is `fail` or `pending` ([`docs/pauta-audit.md`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/docs/pauta-audit.md)). Termina and Mirada don't meet it yet.
     Termina's About says "Built to Pauta 2.0.2" ([`pom.xml`](https://github.com/adriandeleon/Termina/blob/master/pom.xml), `pauta.version`), an edition that already
     required a find bar in its Debug Log, the UI font on every scene and the command ids `help.about` and
     `palette.show`, none of which it has. Mirada's says "Built to Pauta 4.0.1", an edition that already required

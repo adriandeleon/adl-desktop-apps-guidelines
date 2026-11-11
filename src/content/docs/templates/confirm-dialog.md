@@ -77,18 +77,18 @@ and Cancel is the way out and the default button. An action that can be taken ba
     alerts that ask in its Settings ([`ui/SettingsWindow.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/SettingsWindow.java): connecting and disconnecting sync, Reset to
     Defaults and the shortcuts), its nine text prompts and its two picks from a list ([`ui/MainWindow.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java),
     [`ui/DetailPane.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/DetailPane.java) and `ui/SettingsWindow.java`). Modula's one dialog is a message with one button, so it
-    has nothing to judge. Termina, Mirada and the app template meet it in their questions and not in their text
-    prompts. Termina's [`ui/Confirm.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/Confirm.java), which its removals, its close-running-program question and its
+    has nothing to judge. The app template meets it: every dialog it shows goes through
+    [`Dialogs.styled`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Dialogs.java), which words the stock OK, Cancel, Yes, No, Apply and Close from the catalog before the dialog is
+    shown and again when its buttons change, and its [`ui/Confirm.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Confirm.java) names the action from the catalog
+    ([`DialogsFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/DialogsFxTest.java), `everyDialogHasOneButtonOrderAndCatalogWords`). Termina and Mirada meet it in their questions
+    and not in their text prompts. Termina's [`ui/Confirm.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/Confirm.java), which its removals, its close-running-program question and its
     multi-line paste warning ask through, names both buttons from the catalog, and so does its Import configuration
     question ([`ui/ConfigTransfer.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/ConfigTransfer.java)); its Rename Tab prompt words OK from the catalog and keeps the stock
     Cancel (`askForTabName` in [`ui/TerminalWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalWindow.java)), and the prompt its setting commands ask a value
     through (`settingHost` in the same file) and its Create on GitHub prompt (`createSyncRepositoryOnGitHub` in
     [`ui/SettingsWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/SettingsWindow.java)) are `TextInputDialog`s with the stock OK and Cancel. Mirada's [`ui/Confirm.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Confirm.java)
     and its note form ([`ui/NoteDialog.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/NoteDialog.java)) name both buttons from the catalog; its Rename prompt (`rename` in
-    [`ui/ViewerWindow.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/ViewerWindow.java)) is a `TextInputDialog` with the stock OK and Cancel. The app template's
-    [`ui/Confirm.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Confirm.java) names both from the catalog; its text prompts ([`ui/Prompts.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Prompts.java), and
-    `promptCreateOnGitHub` in [`ui/SettingsWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/SettingsWindow.java)) keep the stock OK and Cancel, and its Report a Problem
-    form names Submit beside a stock `ButtonType.CANCEL` ([`ui/ReportProblemWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/ReportProblemWindow.java)). Editora doesn't
+    [`ui/ViewerWindow.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/ViewerWindow.java)) is a `TextInputDialog` with the stock OK and Cancel. Editora doesn't
     yet. Its unsaved-changes and Quit questions
     name every button from the catalog (`unsavedAlert` and `confirmQuit` in [`ui/CloseCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CloseCoordinator.java)), but of its
     64 `CONFIRMATION` alerts, 26 keep the stock OK and Cancel, the Project panel's file delete (`confirmDelete` in [`ui/ProjectPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ProjectPanel.java)) and Replace in Files
@@ -133,13 +133,14 @@ and Cancel is the way out and the default button. An action that can be taken ba
     both before the dialog is shown. JavaFX gives the opening focus to the first button that is a default button, so
     with one default button the dialog opens with the focus on it. No such question leaves the red action, or no
     button at all, as the default.
-  - *Reference:* Termina [`ui/Confirm.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/Confirm.java) (`Options.cancelIsDefault`, which its close-running-program question sets) and nux
+  - *Reference:* Termina [`ui/Confirm.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/Confirm.java) (`Options.cancelIsDefault`, which its close-running-program question sets), the app template's
+    [`ui/Confirm.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Confirm.java) (`dialog`, which every destructive question of the template asks through) and nux
     [`ui/CommandConfirmation.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/CommandConfirmation.java) (a risky UPS command): each unsets the action's default and sets Cancel's as it
     builds the dialog, before it is shown. Editora does it in about twenty of its questions, each by
     hand: deleting for good what the trash cannot take ([`ProjectPanel.cancelByDefault`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ProjectPanel.java)), closing a terminal with a program running
     ([`ui/TerminalCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TerminalCoordinator.java)), resetting settings ([`ui/SettingsResetFlow.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsResetFlow.java)), trusting a folder
     ([`ui/TrustPrompts.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TrustPrompts.java)) among them. The rest don't yet: Editora's Git confirmations and Local History
-    purges ([`ui/HistoryCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/HistoryCoordinator.java)), Torrenta's `RemoveConfirm`, Mirada's `Confirm`, the app template's `Confirm`, and
+    purges ([`ui/HistoryCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/HistoryCoordinator.java)), Torrenta's `RemoveConfirm`, Mirada's `Confirm`, and
     Termina's removals and its Import configuration question leave the red action as the default, so Enter runs it;
     Torrenta's four Settings questions ([CONF-03](#conf-03)) leave OK as the default, and so do questions of
     Editora's that keep the stock OK, its delete to the trash (`confirmDelete` in [`ui/ProjectPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ProjectPanel.java), which

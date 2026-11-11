@@ -129,7 +129,9 @@ Everything else, and in particular:
     the spellings it is given: when the Command passes, still read for a test that stands in for the OS some other
     way, such as a separator compared as a string or an environment variable only one OS sets.
   - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; n=$(grep -rl '"os.name"' src/main/java | wc -l); s=$(grep -rlE "eparatorChar *[!=]= *'" src/main/java | wc -l); u=$(grep -rlE "\"os[.]name\"|eparatorChar *[!=]= *'" src/main/java | wc -l); [ "$n" -eq 1 ] && [ "$u" -eq 1 ] || { echo "$n files read os.name (one Os class should):"; grep -rl '"os.name"' src/main/java; echo "$s files compare a file or path separator with a character (only that class may):"; grep -rlE "eparatorChar *[!=]= *'" src/main/java; false; }`
-  - *Reference:* no app yet. Every app reads `os.name` in several classes, Editora in about fifty, and eleven of
+  - *Reference:* the app template's [`Os.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/Os.java), the one class that reads `os.name` (`current`, `isWindows`, `isMac`,
+    `isLinux`, and `description` for About and a problem report); the Command passes on it. Each of the six apps
+    reads `os.name` in several classes, Editora in about fifty, and eleven of
     Editora's classes tell Windows apart by a separator, eight of them without reading `os.name`
     ([`lsp/JavaRuntimes.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/lsp/JavaRuntimes.java),
     [`dap/DapManager.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/dap/DapManager.java),
@@ -141,7 +143,9 @@ Everything else, and in particular:
   - *Why:* CI runs the FX tests on one or two OSes ([REL-20](../release/#rel-20)); with the override, the
     comparison runs on every pull request on Linux alone.
   - *Check (test):* a test sets each OS in turn through the override and compares the three lists.
-  - *Reference:* no app yet. Editora's [`KeymapsTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/command/KeymapsTest.java)
+  - *Reference:* the app template's [`Os.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/Os.java) (`override`, and the `exampleapp.os` property) and
+    [`SameOnEveryOsFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/SameOnEveryOsFxTest.java) (`theCommandsTheMenusAndSettingsAreTheSameOnEveryOs`), which starts the app as each OS and compares
+    the command ids, the menu bar's rows and every Settings page's rows. Editora's [`KeymapsTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/command/KeymapsTest.java)
     (`guiKeymapsBindSameCommandSetOnBothPlatforms`) does it for the keymaps.
 - **OS-04 · MUST.** No behavior or layout of an app differs by OS: what a command, a key or a click does, where a
   control sits and how a window is drawn are the same on Windows, macOS and Linux. The only exceptions are the rows
@@ -166,7 +170,11 @@ Everything else, and in particular:
     rule covers it: a Windows notification raised as the tray's balloon and not a toast fails
     [TRAY-09](../tray-and-background/#tray-09), not this rule. It fails this rule when the row links no rule, or
     the rule it links does not cover the difference (a menu bar on one OS and a menu button on the others).
-  - *Reference:* no app has been read through for it yet. The differences found so far, each on no row or short of its row: Mirada
+  - *Reference:* the app template, read through: every place it tests the OS calls its [`Os.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/Os.java), and each is
+    on a row or changes nothing a user sees: the macOS form of the keymap's chords (`Keymap`, `KeyDispatcher`,
+    `AppServices`), the system menu bar and its application menu (`MainWindow`, `Chrome`, `MacAppMenu`), and a
+    program's path and arguments (`Executables`, `Browser`). No other app has been read through for it yet. The
+    differences found so far, each on no row or short of its row: Mirada
     closes its window on Escape on Linux only ([`Command.escapeCloses`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Command.java)), follows the OS's accent color on macOS and
     Windows only ([`Theme.followsAccent`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Theme.java)), puts its title on the left on Windows only ([`TitleBar.Layout`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/TitleBar.java)) and has a
     menu bar on macOS only ([`ui/MacMenus.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MacMenus.java)); Editora deletes a file for good on Windows ([`io/Trash.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/io/Trash.java)),

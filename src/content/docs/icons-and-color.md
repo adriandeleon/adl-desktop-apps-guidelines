@@ -167,17 +167,18 @@ pill, a row tint and a hover state come from the same place. `.state-pill` is th
   - *Reference:* Termina's [`AppCssColorsTest`](https://github.com/adriandeleon/Termina/blob/master/src/test/java/com/termina/ui/AppCssColorsTest.java) (`componentRulesUseTokensNotLiteralColours`) and Mirada's
     [`StyleContrastTest`](https://github.com/adriandeleon/Mirada/blob/main/src/test/java/com/mirada/ui/StyleContrastTest.java) (`noRuleAfterTheTokenBlockHoldsAFixedColour`) fail a fixed color outside the `.root` block:
     a hex, an `rgb()` or an `hsb()` value, a shadow's color included, and in Mirada's a named color too. Both apps
-    keep the scrim behind an overlay and their shadows' colors as tokens on `.root`. Editora's
+    keep the scrim behind an overlay and their shadows' colors as tokens on `.root`, and so does the app template:
+    `-scrim` and `-shadow` on `.root` in its [`styles/app.css`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/styles/app.css), used by `.overlay-backdrop` and the cards' shadows, with no test that
+    holds it. Editora's
     [`StyleContrastTest.severityAndDebugColoursComeFromTheStateTokens`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java) holds six selectors it names, and Editora
     doesn't yet pass the whole check: `.breakpoint-marker`, `.exec-arrow`, `.view-mode-bar`, `.recent-remove`,
     `.personal-note-tooltip-content`, the fold-gutter markers and the default editor and Markdown preview palettes in
     [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) still carry fixed hexes, other rules an `rgba()` (the scrim of `.overlay-backdrop`, the diff and merge
     tints and shadows among them), and `.breakpoint-condition-mark` a fixed `white`. Torrenta doesn't either: `.speed-graph-up` and
     `.speed-graph-legend-up` in its [`styles/app.css`](https://github.com/adriandeleon/torrenta/blob/master/src/main/resources/com/torrenta/styles/app.css) hold a ladder of two hexes, and `.palette-backdrop` and two
-    shadows an `rgba()`. Modula, nux and the app template write the palette's scrim as an `rgba()` background in a
+    shadows an `rgba()`. Modula and nux write the palette's scrim as an `rgba()` background in a
     component rule, and a shadow's color the same way (`.palette-backdrop` and `.palette-card` in [`modula.css`](https://github.com/adriandeleon/Modula/blob/master/src/main/resources/com/modula/modula.css) and
-    [`nux.css`](https://github.com/adriandeleon/nux/blob/master/src/main/resources/com/nux/nux.css), `.overlay-backdrop` and `.command-palette` in the template's [`styles/app.css`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/styles/app.css)), so none of the
-    three meets the rule yet; nux also sets `-fx-text-fill: white` on `.status-pill` and `.update-badge`.
+    [`nux.css`](https://github.com/adriandeleon/nux/blob/master/src/main/resources/com/nux/nux.css)), so neither meets the rule yet; nux also sets `-fx-text-fill: white` on `.status-pill` and `.update-badge`.
 - **ICON-09 · MUST.** Readable text uses `-color-fg-muted` or stronger, which is 4.5:1 on the default, subtle and
   overlay grounds in both flagship themes, Editora Light and Editora Dark: a line of UI text is `-color-fg-default`
   and secondary text `-color-fg-muted`. `-color-fg-subtle` (2.7:1 to 3.9:1, under 3:1 on Editora Light's subtle and
@@ -189,12 +190,14 @@ pill, a row tint and a hover state come from the same place. `.state-pill` is th
     fill (`-fx-text-fill`, or `-fx-fill` on text) to `-color-fg-subtle` unless its selector is on a list the test
     names, of disabled and decorative selectors only. A test that checks a list of readable selectors instead passes
     every selector it doesn't name.
-  - *Reference:* no app's test walks every rule yet. Editora's
+  - *Reference:* only the app template's test walks every rule. Editora's
     [`StyleContrastTest.textThatMustBeReadUsesTheMutedRoleNotSubtle`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java) computes the ratios and checks six selectors it names (the palette's
     and the switcher's hints, an unbound shortcut, the line numbers of the notes and structure trees, the blame
     date), so it passes while `.encryption-locked-hint` and `.pom-version-unknown` in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) set text a
     person reads in `-color-fg-subtle`. The app template's test of the same name
-    ([`StyleContrastTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/StyleContrastTest.java)) checks fifteen named selectors the same way. Mirada's [`StyleContrastTest`](https://github.com/adriandeleon/Mirada/blob/main/src/test/java/com/mirada/ui/StyleContrastTest.java) has no
+    ([`StyleContrastTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/StyleContrastTest.java)) walks every rule of its `app.css` and both themes and fails a text fill in
+    `-color-fg-subtle` on any selector but the disabled and decorative ones it lists (`SUBTLE_TEXT`), and computes
+    the muted role's ratio on the grounds of both themes. Mirada's [`StyleContrastTest`](https://github.com/adriandeleon/Mirada/blob/main/src/test/java/com/mirada/ui/StyleContrastTest.java) has no
     test for this rule, and Termina, Torrenta, Modula and nux have no contrast test of their stylesheets.
 - **ICON-10 · MUST.** Text in a role's tint (the theme's `-color-<role>-fg`, for the accent, success, warning and
   danger roles) reaches 4.5:1 on that role's subtle fill (`-color-<role>-subtle`) and on the default and subtle
@@ -243,7 +246,8 @@ pill, a row tint and a hover state come from the same place. `.state-pill` is th
     starts no toolkit: none is an FX test.
   - *Reference:* the app template's [`StyleContrastTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/StyleContrastTest.java) and Mirada's
     [`StyleContrastTest`](https://github.com/adriandeleon/Mirada/blob/main/src/test/java/com/mirada/ui/StyleContrastTest.java): each reads the stylesheets as text and uses `javafx.scene.paint.Color` for the arithmetic
-    alone. Mirada's [`AccentTest`](https://github.com/adriandeleon/Mirada/blob/main/src/test/java/com/mirada/ui/AccentTest.java) is pure too, over the accent it derives from the system's, and so is Termina's
+    alone. The template doesn't meet the rule yet all the same: its [`MenuLookFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/MenuLookFxTest.java)
+    (`theKeyColorReadsOnBothThemesGrounds`) computes the key color's contrast on rendered labels. Mirada's [`AccentTest`](https://github.com/adriandeleon/Mirada/blob/main/src/test/java/com/mirada/ui/AccentTest.java) is pure too, over the accent it derives from the system's, and so is Termina's
     [`ThemeTest`](https://github.com/adriandeleon/Termina/blob/master/src/test/java/com/termina/ui/ThemeTest.java), which holds the colors of its terminal schemes and not the chrome's stylesheet. Editora's
     [`StyleContrastTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java) is pure as well, but Editora doesn't meet the rule yet: FX tests compute contrast ratios on
     rendered nodes too, [`ChordChipThemeFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ChordChipThemeFxTest.java), [`DebugValuePopupThemeFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/DebugValuePopupThemeFxTest.java) and

@@ -53,7 +53,9 @@ rules in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/mai
     projects, what stands in for them, or the app's name alone.
   - *Reference:* Editora [`MainController.updateWindowTitle`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java). Termina's title follows the selected tab
     ([`TerminalTitle.window`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalTitle.java): the name the user gave the tab, the title the shell set or the working folder's path, and the
-    app's name when it knows none). The app template, Modula and nux show the app's name.
+    app's name when it knows none). The app template names the file, its sample project and the app, with the `●` prefix
+    (`windowTitle` in [`ui/DocumentTabs.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DocumentTabs.java); [`TabsAndPanelsTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/TabsAndPanelsTest.java), `theWindowTitleNamesTheFileTheProjectAndTheApp`).
+    Modula and nux show the app's name.
 
 ## Tabs
 
@@ -164,7 +166,9 @@ tool window (those of Editora's Terminal and Build Output panels).
   - *Reference:* for the colors, Editora [`ui/TabGitStatus.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabGitStatus.java), [`TabGitStatusTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/TabGitStatusTest.java). For the tooltip, no app
     yet: Editora's tab tooltip is the file's full path (`tooltip` in [`ui/TabHeaders.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabHeaders.java)), so the tint is
     the tab's only sign of the status. Its Project tree adds a letter to the color; its tabs add no word, glyph
-    or shape.
+    or shape. The app template meets both halves for its sample files: [`ui/TabGitStatus.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/TabGitStatus.java) gives a tab the class its
+    Documents window gives the file's row ([`TabsAndPanelsTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/TabsAndPanelsTest.java), `aChangedFileWearsTheDocumentsWindowsClass`), and
+    [`ui/TabHeaders.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/TabHeaders.java) adds the status in words to the tab's tooltip, after the path.
 - **TABS-09 · SHOULD.** An app whose tabs hold files has a switcher that lists the open files in tab order. A
   command opens it; the arrows or the active keymap's line chords move, Enter or releasing Ctrl (the Control key,
   on macOS too) activates, Esc or the keymap's cancel chord cancels, and Backspace, Delete or the keymap's

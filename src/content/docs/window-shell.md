@@ -46,8 +46,10 @@ description: "Status bar, themes, title bar, dialogs, Welcome, About, window sta
     pane's `ButtonBar` with one order string, the same on every OS, in which `C` (`CANCEL_CLOSE`) comes before the
     letter of every action button the dialogs use (`O` for `OK_DONE`, `Y`, `N`, `A`, `U` for `OTHER`).
     `BUTTON_ORDER_WINDOWS` on every OS fails: it puts `Y`, `N` and `O` before `C`.
-  - *Reference:* no app yet. Editora's Git confirmations give their buttons the `OK_DONE` and `CANCEL_CLOSE` roles
-    and leave the order to JavaFX.
+  - *Reference:* the app template's [`ui/Dialogs.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Dialogs.java) (`BUTTON_ORDER`, `L_HE+CUYNBXIAO_R`, set by `styled`, which
+    every dialog of the template goes through), held by [`DialogsFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/DialogsFxTest.java)
+    (`everyDialogHasOneButtonOrderAndCatalogWords`). Editora's Git confirmations give their buttons the `OK_DONE`
+    and `CANCEL_CLOSE` roles and leave the order to JavaFX.
 - **WIN-08 · SHOULD.** The main window's size, position and maximized state are restored on the next launch, and
   in an app that opens documents or sessions, so are the items that were open. `--no-session` skipping the restore
   is [CLI-04](../command-line/#cli-04).
@@ -82,9 +84,14 @@ description: "Status bar, themes, title bar, dialogs, Welcome, About, window sta
     content zoom they are three more commands, with ids that are not the content zoom's (Mirada's `view.zoomIn` and
     Termina's `zoomIn` zoom the content), and the keymaps bind `=`, `-` and `0` with `Ctrl` (`Cmd` on macOS) to the
     content zoom's commands; in an app without, to the UI zoom's.
-  - *Reference:* no app yet. Editora, Termina and Mirada zoom their content only (`view.textZoomIn`, `zoomIn`,
-    `view.zoomIn`), and Editora writes its menu font as absolute pixels ([`MainMenuBar.UI_FONT_SIZE`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java), `.context-menu`
-    in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css)). Torrenta, Modula, nux and the app template have no zoom command.
+  - *Reference:* the app template's [`ui/UiZoom.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/UiZoom.java) and [`ui/Themes.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Themes.java)
+    (`zoom`): one setting, `uiZoom` in [`config/Settings.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/Settings.java), scales every pixel size of the stylesheets, the root
+    font size among them, and the sizes the code fixes are bound to the zoom; a change restyles every open window
+    at once. Its commands are `view.uiZoomIn`, `view.uiZoomOut` and `view.uiZoomReset` ([`ui/Commands.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Commands.java)), on
+    `Ctrl+Alt+=`, `Ctrl+Alt+-` and `Ctrl+Alt+0` (`Cmd+Alt` on macOS) in its CUA keymaps, which leave `Ctrl+=` to the content zoom it
+    doesn't have yet ([WIN-09](#win-09)); [`UiZoomTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/UiZoomTest.java) holds the scaling. Editora, Termina and Mirada zoom their
+    content only (`view.textZoomIn`, `zoomIn`, `view.zoomIn`), and Editora writes its menu font as absolute pixels ([`MainMenuBar.UI_FONT_SIZE`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java), `.context-menu`
+    in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css)). Torrenta, Modula and nux have no zoom command.
 - **WIN-13 · MUST.** Every quit entry point an app has runs one quit method: the Quit row and the `app.quit` command
   ([WIN-14](#win-14) says which of them an app must have), and the system's own Quit, which on macOS is the
   application menu's and the Dock's. That method asks what the [Confirm dialog](../templates/confirm-dialog/) rules
@@ -151,8 +158,10 @@ description: "Status bar, themes, title bar, dialogs, Welcome, About, window sta
   - *Reference:* Mirada [`MacAppMenu.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/os/MacAppMenu.java) adds the item, and it runs `app.settings`. It doesn't show the keymap's chord yet: it
     creates the item with the native key equivalent `Cmd+,` (`createMenuItem(…, ',', COMMAND)`), which stays
     whatever the keymap binds, and Mirada's Emacs keymap binds `C-,`
-    ([`keymaps/emacs.json`](https://github.com/adriandeleon/Mirada/blob/main/src/main/resources/com/mirada/keymaps/emacs.json)). Termina's [`MacAppMenu.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MacAppMenu.java) adds About only. Editora, the app template, Torrenta, Modula
-    and nux add nothing to that menu.
+    ([`keymaps/emacs.json`](https://github.com/adriandeleon/Mirada/blob/main/src/main/resources/com/mirada/keymaps/emacs.json)). The app template's [`ui/MacAppMenu.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MacAppMenu.java) meets it: it inserts a Settings item that runs
+    `app.settings`, created with no key equivalent, whose title carries the keymap's chord and is written again on a
+    keymap change (`refresh`, from [`ui/MainWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MainWindow.java)). Termina's [`MacAppMenu.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MacAppMenu.java) adds About
+    only. Editora, Torrenta, Modula and nux add nothing to that menu.
 - **WIN-10 · MAY.** The window has modes that change how much chrome it shows: Zen shows none, Expert keeps only
   the menu bar and the status bar, and Simple shows fewer menus, for new users.
   - *Check (code):* each mode is a command, and one truth table decides which chrome each mode shows.

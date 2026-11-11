@@ -78,7 +78,9 @@ tray icon's menu) show text only; there the chord is appended to the title ([MEN
     and the right-click menus of a tab, an editor, a list row and the toolbar, and fails on a visible row with no
     glyph, is the surest evidence.
   - *Reference:* Editora [`ui/MenuBarIcons.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarIcons.java), [`editor/MenuIcons.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/editor/MenuIcons.java), [`ui/TabContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabContextMenu.java); Termina's tab
-    menu has an icon on every row. Mirada's [`MenusFxTest`](https://github.com/adriandeleon/Mirada/blob/main/src/test/java/com/mirada/ui/MenusFxTest.java) (`everyRowOfEveryMenuHasAGlyph`) opens its header
+    menu has an icon on every row. The app template builds every row of its menus with the command's glyph
+    (`inWindowRow` in [`ui/AppMenus.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AppMenus.java), from `BY_COMMAND` in [`ui/Icons.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Icons.java)), and its
+    [`NamedControlsFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/NamedControlsFxTest.java) (`everyMenuRowReadsAsItsTitleAndWearsAGlyph`) fails on a row without one. Mirada's [`MenusFxTest`](https://github.com/adriandeleon/Mirada/blob/main/src/test/java/com/mirada/ui/MenusFxTest.java) (`everyRowOfEveryMenuHasAGlyph`) opens its header
     menu, its zoom menu and the image's right-click menu and fails on a row with no glyph. Editora doesn't yet
     pass: about half its menu-bar rows have no glyph, and
     [`MenuBarIconsTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/MenuBarIconsTest.java) holds that a command without a fitting glyph gets none, which this rule reverses; many
@@ -106,10 +108,11 @@ tray icon's menu) show text only; there the chord is appended to the title ([MEN
   - *Reference:* Editora [`MainMenuBar.rowContent`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java) and `alignChordColumns`, `.menu-item-chord` in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css), for
     the menu bar. Editora's right-click menus show no chords yet: a row there is a plain `MenuItem`, not the menu
     bar's row. The app template's right-click menus show them: [`ui/CommandMenu.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/CommandMenu.java) draws each row as the menu
-    bar's ([`AppMenus.inWindowRow`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AppMenus.java)) and re-reads its chord on every showing (`refresh`). The template doesn't
-    meet the rule either: it colors the chord `-color-fg-muted`, not a keyboard color (`.menu-item-chord` in its
-    [`app.css`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/styles/app.css)), and so does Termina's menu bar ([`app.css`](https://github.com/adriandeleon/Termina/blob/master/src/main/resources/com/termina/styles/app.css)). No app has a test that opens a right-click menu
-    and reads a chord from it.
+    bar's ([`AppMenus.inWindowRow`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AppMenus.java)) and re-reads its chord on every showing (`refresh`), in `-state-key` at
+    11 px (`.menu-item-chord` in its [`app.css`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/styles/app.css)); its [`MenuLookFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/MenuLookFxTest.java)
+    (`aRightClickMenuShowsEachChordInTheKeyColorAndFollowsTheKeymap`) opens a right-click menu, reads the chord
+    and reads the new one after a keymap switch. Termina's menu bar colors its chords `-color-fg-muted`, not a
+    keyboard color ([`app.css`](https://github.com/adriandeleon/Termina/blob/master/src/main/resources/com/termina/styles/app.css)).
 - **MENU-16 · MUST.** Every menu the app draws itself (the in-window menu bar, right-click menus, the drop-down of a
   menu button or a split button, the toolbar's overflow) draws its titles in Inter 14 px regular and its chords in
   Inter 11 px at the default zoom, scaled by the UI zoom ([WIN-12](../window-shell/#win-12)), whatever node it was
@@ -127,6 +130,9 @@ tray icon's menu) show text only; there the chord is appended to the title ([MEN
   - *Reference:* Editora `.context-menu` and `.menu-item-chord` in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css), [`MainMenuBar.UI_FONT_SIZE`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java),
     [`ToolbarMenuFontFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ToolbarMenuFontFxTest.java) and [`ContextMenuFontFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ContextMenuFontFxTest.java). Editora writes 14 px and 11 px as absolute pixels and has no UI
     zoom yet ([WIN-12](../window-shell/#win-12)), so its menus keep their size whatever opens them but don't scale.
+    The app template meets it: `.context-menu` and its rows' labels in its [`app.css`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/styles/app.css) are pinned to Inter 14 px and
+    the chord to 11 px, in pixels, which its UI zoom multiplies ([`ui/UiZoom.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/UiZoom.java)), and its
+    [`MenuLookFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/MenuLookFxTest.java) (`everyMenuDrawsInInterFourteenWhateverOpenedIt`, `theUiZoomScalesEveryMenu`) holds both.
 - **MENU-18 · SHOULD.** At the default zoom a menu row is 34 px high (padding 8 × 12), its icon column is 22 px wide
   with 8 px to the title, and its chord starts at least 18 px after the title column. The popup's card has a radius
   of 8 and a shadow of radius 16 at offset Y 16: the offset is at least the radius.
@@ -136,12 +142,13 @@ tray icon's menu) show text only; there the chord is appended to the title ([MEN
   - *Check (code):* the stylesheet sets the row's padding and the popup's radius and shadow, with the shadow's
     offset no smaller than its radius; the row's layout sets the icon column's width and the chord's margin.
   - *Reference:* Editora `.menu-item` and `.context-menu` in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css), and [`MainMenuBar.ICON_COLUMN`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java) and
-    `rowContent`; [`MenuPopupBoundsFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/MenuPopupBoundsFxTest.java) holds the shadow below the popup. No other
-    app draws that card. Termina, Torrenta and the app template get the row's padding from the Editora themes
+    `rowContent`; [`MenuPopupBoundsFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/MenuPopupBoundsFxTest.java) holds the shadow below the popup. The app
+    template draws the same card and row: `.context-menu` in its [`app.css`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/styles/app.css) (radius 8, a shadow of radius 16 at
+    offset Y 16, rows padded 8 × 12) and `inWindowRow` in its [`ui/AppMenus.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AppMenus.java) (a 22 px icon column, `ICON_SLOT`, 8 px
+    to the title and an 18 px chord margin). Termina and Torrenta get the row's padding from the Editora themes
     they ship, and keep those themes' popup: a radius of 4 and a shadow of radius 6 (8 in the dark theme) at offset
     Y 2 (`.menu-item` and `.context-menu` in each one's `editora-light.css` and `editora-dark.css`). Termina's [`ui/MenuRows.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MenuRows.java) has
-    the same 22 px column and 18 px chord margin; the app template's [`ui/AppMenus.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AppMenus.java) has an 18 px icon column
-    (`ICON_SLOT`) and a 16 px chord margin. Mirada and nux write no radius or shadow for `.context-menu` and take
+    the same 22 px column and 18 px chord margin. Mirada and nux write no radius or shadow for `.context-menu` and take
     their AtlantaFX theme's popup (Cupertino, Primer). Modula's [`modula.css`](https://github.com/adriandeleon/Modula/blob/master/src/main/resources/com/modula/modula.css) gives `.context-menu` a radius of 8 and
     a shadow of radius 20 at offset Y 6, and its rows a padding of 4 × 8.
 
@@ -250,9 +257,10 @@ no right-click menu.
     that only switches what its window shows (a Settings sidebar, a list of pages), the overlay list of a picker
     or a palette and a plain text area in a dialog are not judged.
   - *Reference:* the app template's [`ui/CommandMenu.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/CommandMenu.java), which builds each menu from registered command ids and
-    runs a row through the registry (`onRow` for a list row, `onConsole` for a read-only console, its Debug Log
-    among them: [`ui/DebugLogWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DebugLogWindow.java);
-    [`RightClickMenusFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/RightClickMenusFxTest.java)). Editora's [`ui/TabContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabContextMenu.java) and [`ui/ConsoleContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ConsoleContextMenu.java) are menus this
+    runs a row through the registry (`onRow` for a list row, `onConsole` for a text area): the tabs and the editor
+    ([`ui/DocumentTabs.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DocumentTabs.java)), the Output console ([`ui/MainWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MainWindow.java)), the Debug Log
+    ([`ui/DebugLogWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DebugLogWindow.java)), the Documents list, the Message Log's rows and Settings' pages and key bindings
+    ([`RightClickMenusFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/RightClickMenusFxTest.java)). Editora's [`ui/TabContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabContextMenu.java) and [`ui/ConsoleContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ConsoleContextMenu.java) are menus this
     rule describes ([`ui/RowContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/RowContextMenu.java) builds none: it sends the keyboard's request to the selected row's own
     menu), but their rows are built by hand and call the window's methods, not a command id, so nothing holds that
     each row has a command. Editora, Termina, Mirada, Torrenta and Modula don't meet the rule yet, in these places

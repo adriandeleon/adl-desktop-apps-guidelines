@@ -56,8 +56,11 @@ reaches every menu command through the Command Palette ([KBD-05](../keyboard/#kb
     ([`NamedControlsFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/NamedControlsFxTest.java)),
     and sets each row's text on the macOS system menu bar. Its in-window command rows, each a `CustomMenuItem` that draws an icon,
     a title and a chord ([`ui/MainMenuBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java)), carry no text and no accessible text yet;
-    its submenus keep their own. No app has the test that sweeps every window for every control yet.
-    Termina's [`IconOnlyButtonsFxTest.java`](https://github.com/adriandeleon/Termina/blob/master/src/test/java/com/termina/ui/IconOnlyButtonsFxTest.java) comes nearest: it opens the main window, the menus, Settings and About and
+    its submenus keep their own. The app template has the test that sweeps every window for every control:
+    [`NamedControlsFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/NamedControlsFxTest.java) (`everyControlInEveryWindowHasAName`, and
+    `everyMenuRowReadsAsItsTitleAndWearsAGlyph` for the menu rows, which [`AppMenus.inWindowRow`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AppMenus.java) names from their title
+    and chord) opens the main window and its panels, the find bars, the Message Log, Settings, About, the Pauta
+    window, the Debug Log and Report a Problem, the palette, the switcher, a question and a prompt. Termina's [`IconOnlyButtonsFxTest.java`](https://github.com/adriandeleon/Termina/blob/master/src/test/java/com/termina/ui/IconOnlyButtonsFxTest.java) comes nearest: it opens the main window, the menus, Settings and About and
     fails an icon-only button with no name, and no other kind of control. Torrenta's one call to
     `setAccessibleText` is in a helper ([`ui/Icons.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/Icons.java), `name`) that names every button of its main toolbar and the
     Search view's Clear button, and no other control; Modula never calls it.
@@ -86,7 +89,10 @@ reaches every menu command through the Command Palette ([KBD-05](../keyboard/#kb
   - *Why:* sliding and fading can make a person dizzy or sick, and they turned motion off in the OS for that reason.
   - *Check (code):* every `Transition`, `Timeline` or `AnimationTimer` that moves, fades or flashes part of the UI
     starts through one helper that reads `reducedMotionProperty()`.
-  - *Reference:* no app yet. Mirada fades its on-screen controls in and out
+  - *Reference:* no app reads the setting yet. The app template animates nothing, so it has nothing to judge: its
+    timelines and pauses are timers that move, fade or flash no part of the UI (the Output sample's lines in
+    [`ui/SamplePanels.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/SamplePanels.java), the debounce of [`ui/Debounce.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Debounce.java), the sync interval and the update check's delay).
+    Mirada fades its on-screen controls in and out
     ([`ui/OnScreenControls.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/OnScreenControls.java), a `FadeTransition`), and Editora's Project Map flashes a revealed row for 900 ms
     ([`ui/MapSurface.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MapSurface.java), an `AnimationTimer`); neither reads a motion setting.
 - **ACC-05 · SHOULD.** Color is never the only signal: a state shown in color (an error, a changed line, a status)
@@ -125,7 +131,9 @@ reaches every menu command through the Command Palette ([KBD-05](../keyboard/#kb
   - *Check (code):* the code that moves the selection calls
     `notifyAccessibleAttributeChanged(AccessibleAttribute.FOCUS_ITEM)` on the list, the list answers `FOCUS_ITEM`
     with the selected row, and a row that can't run says so in its accessible text.
-  - *Reference:* no app yet. Editora's palette rows are graphics with no text
+  - *Reference:* the app template's [`ui/Picker.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Picker.java), behind its palette and pickers: `select` moves the list's focus
+    model and calls `notifyAccessibleAttributeChanged(FOCUS_ITEM)`, and a row's accessible text is its title, its
+    keys and, for a row that can't run, the reason. Editora's palette rows are graphics with no text
     ([`ui/CommandPalette.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java)).
 - **ACC-09 · SHOULD.** In Windows' high-contrast mode the app switches to a high-contrast theme, and back when the
   mode ends: it follows `Platform.getPreferences()`'s `Windows.SPI.HighContrast`.

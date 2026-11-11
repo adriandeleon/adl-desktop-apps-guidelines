@@ -54,19 +54,19 @@ every change on a hot path there must honor.
     `Application.stop()` then waits for the writer once more on the FX thread (`Running.close` in
     [`ui/Startup.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Startup.java)), which the second exception allows; Termina's
     [`WindowManager.closeAll`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/WindowManager.java), run from `Application.stop()`, flushes its settings on the FX thread, which the second
-    exception allows. No app has been read through for the rule yet, and none holds it everywhere. Found so far:
+    exception allows. The app template does its start's file work off the FX thread: `prepare` in
+    [`ui/Startup.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Startup.java), which refuses the FX thread and runs on a thread of its own while the toolkit starts, opens the
+    Debug Log's session file, reads the settings, the catalog and `pauta.json` and binds the single-instance socket;
+    `start()` then registers its first fonts, which the first exception allows (`Fonts.load`), and the remaining
+    font is registered off the FX thread after the first frame (`Fonts.loadDeferred`). No app has been read through
+    for the rule yet, and none holds it everywhere. Found so far:
     Editora's `start()`, in that `App.java`, does on the FX thread, before its first window is shown, what no
     exception covers: its calls to `DebugLog.attachFile` (the Debug Log's session file),
     `SharedConfig.claimInstance` (the lock on a file in the config folder), `ProcessRegistry.reapOrphans` (the
     ledger of the servers it started), `McpServer.reapStaleEndpoint` (a stale `mcp-endpoint.json`) and
     `Themes.loadUserThemes` (the user themes' folders). Some of its handlers still touch the disk too, for example
     `renameFileTo` (`Files.exists`, `Files.move`) and `openPersonalDictionary` (`Files.writeString`) in [`ui/MainController.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java)
-    and the new-folder prompt in [`ui/ProjectPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ProjectPanel.java) (`Files.createDirectories`). The app template's `start()`
-    registers its fonts and reads its catalog, which the exception allows (`Fonts.load`, `Messages.init`), and
-    opens the Debug Log's session file on the FX thread, which it does not (`DebugLog.attachFile`, all called from
-    [`ui/Startup.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Startup.java)); once the window is shown it deletes a stale socket file and binds the socket for
-    later launches there ([`SingleInstance.listen`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/instance/SingleInstance.java)), and after the first frame it registers its remaining font on
-    the FX thread (`Fonts.loadDeferred`), neither of which an exception covers. Torrenta's `start()` reads its
+    and the new-folder prompt in [`ui/ProjectPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ProjectPanel.java) (`Files.createDirectories`). Torrenta's `start()` reads its
     catalog, which the exception allows, and opens that file the same way (`DebugLog.attachFile` in its [`App.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/App.java));
     its main window's constructor, before the window is shown, reads six stores of the user's (the profiles, the
     labels, the watch folders, the search providers, their definitions and the RSS feeds, in [`ui/MainWindow.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java)),
@@ -325,7 +325,9 @@ in Termina the terminal grid, in Mirada stepping between images.
     (`readSettings`, joined by `settings()`) does the same in the native image, which enters through `Launcher`; its
     jlink image's main class is `App` itself, so there the toolkit is up before the read starts. Termina reads its
     settings in `Application.init()` (`prepare` in its [`App.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/App.java)): off the FX thread, so `start()` waits for
-    nothing, but after the toolkit has started. The template (`ConfigStore.open` in [`ui/Startup.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Startup.java)), Torrenta
+    nothing, but after the toolkit has started. The app template meets it: its [`Main.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/Main.java), not the `Application`
+    subclass, starts `Startup.readAhead` on a thread of its own before `launch`, and `App.init` takes the result
+    (`takePrepared` in [`ui/Startup.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Startup.java)), so `start()` reads no settings file. Torrenta
     ([`App.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/App.java)), Modula ([`ModulaApp.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ModulaApp.java)) and nux ([`App.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/App.java), which also reads the file once in
     `main` for the language) load their settings inside `start()`. Torrenta's `main` reads the file once as well, on the main thread, for its
     tray and badge settings.

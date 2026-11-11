@@ -3,6 +3,13 @@ title: "Diagnostics and support"
 description: "Message Log, Debug Log, update notification, Report a Problem, Doctor and crash recovery."
 ---
 
+When something goes wrong, the user and the developer need the same evidence, and every app keeps it the same way.
+The [Message Log](../templates/message-log/) holds what the status bar said this session; the Debug Log holds every
+log record and uncaught exception, and keeps the previous session's file so a crash leaves its trace; the update check
+says when a newer version is out; and Report a Problem turns the evidence into a redacted GitHub issue the user reads
+and edits before it is sent. Two SHOULDs complete it: a Doctor page that checks the environment, and, in an app with
+user documents, unsaved work offered back after a crash.
+
 - **DIAG-01 · MUST.** The **Message Log** is a session-only, bounded history of every echo-area message with
   `HH:mm:ss` times, newest first. Esc closes it; Clear empties it. What opens it, a click on the echo area, is
   [WIN-01](../window-shell/#win-01)'s to require; the [Message Log template](../templates/message-log/) has the rest.

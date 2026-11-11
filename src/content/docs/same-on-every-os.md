@@ -6,7 +6,8 @@ description: "The one list of places where Windows, macOS and Linux may differ, 
 The family exists so that one app can be used the same way on Windows, macOS and Linux ([principle
 1](../principles/)). This page says where an app may follow the OS's own way and where it may not, and its rules
 keep other differences out. Each difference is easy to add on its own: an `if (isMac)` that hides a menu row, a
-JavaFX default that orders buttons one way on Windows and another on macOS.
+JavaFX default that orders buttons one way on Windows and another on macOS. Together they make an app the user
+has to learn again on each OS.
 
 ## Where the OS's way wins
 

@@ -3,6 +3,13 @@ title: "Keyboard first"
 description: "Commands, the Command Palette, keymaps, focus and accessibility."
 ---
 
+Every app can be used from the keyboard alone ([principle 2](../principles/)), and that rests on one idea: every
+action is a command with an id ([principle 3](../principles/)). Menus, toolbar buttons, the Command Palette and key
+bindings all run commands, so whatever the mouse can do, the palette or a chord can do too. Keymaps bind chords to
+those commands in layers, with the user's own bindings on top, and every control the keyboard reaches shows where
+the focus is. The palette's own shape is the [Command Palette](../templates/command-palette/) template; what a
+screen reader and the OS's accessibility settings need is [Accessibility](../accessibility/).
+
 ## Commands
 
 - **KBD-01 · MUST.** Every user-facing action is a command (an id, a title and a runnable) registered in one

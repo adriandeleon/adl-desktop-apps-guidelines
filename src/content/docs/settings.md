@@ -3,6 +3,14 @@ title: "Settings"
 description: "The Settings window with search, live apply, versioned config and Git/GitHub sync."
 ---
 
+The Settings window is built the same way in every app: pages in a sidebar, a search field that finds any row, and
+changes that apply as they are made, each also reachable as a palette command. Behind it, the settings live in a
+config folder in the user's home, in versioned files the app never trusts when it reads them, writes whole, and can
+export and import; a secret the user gives the app goes to the operating system's keychain, never into those files.
+An app with user data worth carrying between computers keeps it in step through
+[Settings Sync](../templates/settings-sync/). Before any of that, ask whether the setting should exist at all
+([Before adding a setting](#before-adding-a-setting)).
+
 ## The Settings window
 
 - **SET-01 · MUST.** The Settings window opens from a palette command, bound to `Ctrl+,` (`Cmd+,` on macOS) in the

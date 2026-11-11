@@ -3,9 +3,10 @@ title: "New app checklist"
 description: "Every MUST a new app meets before its first release, and the SHOULDs worth doing first, grouped by area."
 ---
 
-Each group links to the page with the rules and the Editora code to copy, and each line names its rules. Every MUST of
-this edition is on a line; a line marked SHOULD holds only SHOULDs. A rule's level is the one on its own page, and
-`npm run check` fails when a line here disagrees with it.
+The rules of this edition, cut down to what a new app meets before its first release: every MUST, grouped by area, and
+the SHOULDs worth doing first. Each group links to the page with the rules and the Editora code to copy, and each line
+names its rules. Every MUST of this edition is on a line; a line marked SHOULD holds only SHOULDs. A rule's level is
+the one on its own page, and `npm run check` fails when a line here disagrees with it.
 
 **Start from the template.** [adl-desktop-app-template](https://github.com/adriandeleon/adl-desktop-app-template) is a GitHub template repository: a
 small runnable app with its tests, CI and release workflows and every repository document, made toward the edition its

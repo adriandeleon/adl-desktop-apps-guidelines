@@ -8,6 +8,13 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 
 ## [Unreleased]
 
+## [6.0.1] - 2026-11-11
+
+A patch: an app built to 6.0.0 does nothing to move to it. Every page now opens with a short paragraph saying what it
+covers, and the References follow the app template, now Complete, and Editora to the code they describe. One
+statement changed: WIN-10, a MAY, says Expert mode keeps only the status bar, as Editora's now does; a MAY obliges no
+app, so it is fixed here as a fact about Editora. Still 405 rules, none added, retired or re-leveled.
+
 ### Changed
 
 - **Every page opens by saying what it covers.** Platform baseline, Repository documents, Code quality gates,

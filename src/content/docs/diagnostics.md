@@ -133,7 +133,9 @@ description: "Message Log, Debug Log, update notification, Report a Problem, Doc
 - **DIAG-07 · SHOULD.** A **Doctor** page checks the environment (external tools, versions, permissions, paths),
   with a status per row and a fix or link for each failure.
   - *Check (by hand):* open the Doctor with a tool missing and find its row failed, with what to install.
-  - *Reference:* Editora `doctor/*`, [`ui/DoctorPane.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/DoctorPane.java).
+  - *Reference:* the app template's [`sync/Doctor.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/sync/Doctor.java) and [`ui/DoctorWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DoctorWindow.java), opened by `help.doctor` and from Settings: a row
+    for each tool it uses, `git` failed with what to install and a link when it is missing ([`DoctorTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/sync/DoctorTest.java),
+    `aMissingToolFailsItsRowWithWhatToInstall`). Editora `doctor/*`, [`ui/DoctorPane.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/DoctorPane.java).
 - **DIAG-08 · SHOULD.** An app with user documents snapshots unsaved work off the FX thread and offers it back after
   a crash.
   - *Check (code):* unsaved documents are written to snapshot files from a background thread while the user works,

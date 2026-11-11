@@ -397,7 +397,9 @@ The mockup is an editor tab's menu, shortened; Editora's has twenty-one rows.
   [CONF-03](../templates/confirm-dialog/#conf-03): it asks first with a button that names it, or is undoable).
   - *Check (code):* rows that delete, discard or reset carry the style class that colors their text `-color-danger-fg`
     (Editora's `danger`). Whether the action asks first is judged under CONF-01 and CONF-03, not here.
-  - *Reference:* Editora `.menu-item.danger` in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css), [`ui/BranchPopup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/BranchPopup.java).
+  - *Reference:* Editora `.menu-item.danger` in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css), [`ui/BranchPopup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/BranchPopup.java); the app template's [`ui/AppMenus.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AppMenus.java) (`DESTRUCTIVE`: the rows
+    that clear a log, reset a binding or import a configuration take `danger`), held by [`RightClickMenusFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/RightClickMenusFxTest.java)
+    (`destructiveRowsAreStyledAsDangerous`).
 - **MENU-13 · MAY.** In a terminal view, a program that grabbed the mouse owns the right-click;
   `Shift`+right-click always opens the menu, and the keyboard request is never contested.
   - *Check (code):* the terminal view decides whether to show its menu from the mouse mode, Shift and the

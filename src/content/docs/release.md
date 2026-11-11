@@ -139,7 +139,8 @@ configured, waiting for the token. Mirada's first winget submission
     committed key yet.
 - **REL-17 · SHOULD.** The Windows `.msi` is signed with Authenticode, once the certificate is chosen.
   - *Check (code):* the Windows leg signs the `.msi` before it is uploaded.
-  - *Reference:* no app yet. **Open decision**: SignPath Foundation (free for OSS), a Certum Open Source
+  - *Reference:* no app signs one yet. The app template's [`release.yml`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/.github/workflows/release.yml) has the step: once the repository
+    holds a certificate (`WINDOWS_CERT_PFX`), it signs each `.msi` with `signtool` before the upload. **Open decision**: SignPath Foundation (free for OSS), a Certum Open Source
     certificate, or Azure Trusted Signing. Until then MSIs are unsigned and SmartScreen warns.
 - **REL-18 · MUST.** Every download has a GitHub **build provenance attestation**
   (`actions/attest-build-provenance`), which `gh attestation verify` checks.

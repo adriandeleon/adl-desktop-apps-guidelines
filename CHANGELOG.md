@@ -19,8 +19,13 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
   MENU-16, MENU-18, ABOUT-01, ABOUT-07, CONF-13, CONF-14, FIND-01, FIND-02, FIND-04 to FIND-07, FIND-16, PAL-07,
   QOPEN-07, MLOG-03, MLOG-04, ICON-08, ICON-09, ICON-14, TBAR-14, TABS-08, TABS-10, PERF-01, PERF-16, SET-07,
   SET-09, SET-22, CLI-05, CLI-11, CLI-12, CLI-13, INTL-14, PLAT-11, REL-25 and REPO-01 say what its code at its head
-  does, and the Pauta window's catalog note, the README badge note and *Gaps per app* follow. ICON-14 now says the
-  template doesn't meet it: one of its FX tests computes the key color's contrast. No rule changed.
+  does, and the Pauta window's catalog note, the README badge note and *Gaps per app* follow. No rule changed.
+- **And to Complete.** The template then met every SHOULD too (its PR 38), and the References of the 35 rules it
+  had pending say so: ACC-05, ACC-06, ACC-09, CLI-10, DIAG-07, FIND-05, FIND-09, ICON-14, KBD-04, KBD-06, KBD-10,
+  MENU-12, PAL-06, PAL-08, PAL-09, PERF-09, PERF-10, PERF-17, PERF-19, PERF-20, QOPEN-02, QOPEN-04, QOPEN-06,
+  QOPEN-12, QUAL-13, REL-17 (the signing step, waiting for a certificate), SET-08, SET-18, SET-20, WELC-03, WELC-04,
+  WELC-05, WELC-11, WIN-08 and WIN-09. PAUTA-04, PAUTA-07, ABOUT-07, OS-04, WIN-12, SET-09, SET-22, the palette's
+  ranking row and the README badge note follow it from Core to Complete.
 
 ## [6.0.0] - 2026-11-10
 

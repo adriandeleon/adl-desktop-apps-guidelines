@@ -99,15 +99,18 @@ reaches every menu command through the Command Palette ([KBD-05](../keyboard/#kb
   also shows a word, a glyph or a shape.
   - *Why:* about one man in twelve can't tell red from green.
   - *Check (by hand):* look at a grayscale screenshot of each window and find every state still told apart.
-  - *Reference:* Editora's echo area colors an error and also says what failed
-    ([`ui/StatusBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusBar.java); [WIN-01](../window-shell/#win-01)).
+  - *Reference:* Editora's echo area colors an error and also says what failed ([`ui/StatusBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusBar.java); [WIN-01](../window-shell/#win-01)). The app
+    template gives a file's Git status its letter beside the color, on a tab ([`ui/TabHeaders.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/TabHeaders.java); [`TabsAndPanelsFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/TabsAndPanelsFxTest.java),
+    `aTabShowsItsGitStatusAsALetter`) and on the file's row in its Documents window ([`ui/SamplePanels.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/SamplePanels.java)).
 - **ACC-06 · SHOULD.** In an app whose window has more than one region (the content and at least one panel beside
   it), a command moves focus to the next region, another moves it to the previous one, and every keymap binds
   both.
   - *Why:* Tab walks through every control inside a region; with several panels open, a keyboard user needs a way to
     jump between them.
   - *Check (code):* the two commands are registered and bound in each bundled keymap.
-  - *Reference:* Editora's `window.other` ("Cycle focus between the editor and tool windows",
+  - *Reference:* the app template's `window.focusNextRegion` and `window.focusPreviousRegion` ([`ui/Commands.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Commands.java), `focusRegion`
+    in [`ui/ToolWindowManager.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/ToolWindowManager.java)), on `F6` and `Shift+F6` in its CUA keymaps and `C-x o` and `C-x S-o` in Emacs, bound in
+    every keymap it ships ([`TabsAndPanelsFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/TabsAndPanelsFxTest.java), `theRegionCommandsWalkTheDocumentsAndTheOpenToolWindows`). Editora's `window.other` ("Cycle focus between the editor and tool windows",
     [`ui/WindowCommandRegistrar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowCommandRegistrar.java)), one command that cycles, bound only in the Emacs keymap (`C-x o`,
     [`keymaps/emacs.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/emacs.json)). `F6`, the Windows convention, is taken in
     every other Editora keymap: CUA and VS Code bind it to `debug.pause`, IntelliJ to `lsp.move` and Sublime to
@@ -140,4 +143,6 @@ reaches every menu command through the Command Palette ([KBD-05](../keyboard/#kb
   - *Why:* JavaFX applies its own high-contrast stylesheet only over its built-in Modena theme, which AtlantaFX
     replaces, so without this the app ignores a setting the person turned on to read the screen at all.
   - *Check (code):* a listener on the preference switches the theme, and the theme list has a high-contrast theme.
-  - *Reference:* no app yet.
+  - *Reference:* the app template's [`ui/Themes.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Themes.java) (`WINDOWS_HIGH_CONTRAST`, a listener on `Platform.getPreferences()` that applies its
+    `HIGH_CONTRAST` theme while the mode is on and the chosen one when it ends), held by [`StyleContrastTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/StyleContrastTest.java)
+    (`theOsHighContrastModeWinsWhileItIsOn`, `theHighContrastThemeReadsAtSevenToOne`). No app does it yet.

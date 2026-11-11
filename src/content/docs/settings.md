@@ -112,8 +112,9 @@ keymap, a theme, a language), not when the developer could not decide.
   - *Reference:* Editora [`config/ConfigManager.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/ConfigManager.java) (`SETTINGS_FILE_NAME`, `WORKSPACE_FILE_NAME`), [`config/WorkspaceState.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/WorkspaceState.java);
     Termina [`config/Settings.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/config/Settings.java), which writes the same two names and sorts each key into one of them (`isStateKey`).
     Torrenta and Mirada keep the window's bounds in their preferences file (`ui.window.bounds` and `window.bounds`
-    in `settings.properties`), and the app template keeps them in `settings.json`
-    ([`config/Settings.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/Settings.java), `window`).
+    in `settings.properties`). The app template meets it: the window and the open documents go to
+    `session.json`, beside `settings.json` and never in it (`SESSION_FILE` in [`config/ConfigStore.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/ConfigStore.java); its
+    [`config/Migrations.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/Migrations.java) moves them out of an older `settings.json`).
 - **SET-09 · MUST.** Every config file the app writes and reads back carries a schema version, and each version has
   a `v → v+1` migration step. A purely additive field uses an identity step. Which files are config files is in
   [SET-22](#set-22); a plain list with one item to a line, such as a word list, has no shape to version and is
@@ -126,8 +127,10 @@ keymap, a theme, a language), not when the developer could not decide.
     kind of list the rule exempts. Termina ([`config/ConfigJson.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/config/ConfigJson.java), for `settings.json` and
     `workspace-state.json`) and Mirada ([`settings/Migrations.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/settings/Migrations.java), for `settings.properties` and
     `bookmarks.properties`) do it too, and so does the app template for `settings.json`
-    ([`config/Migrations.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/Migrations.java)) and for Settings Sync's `base.json` and `keybindings.json`
-    ([`sync/SyncData.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/sync/SyncData.java), `SCHEMA_VERSION` and `migrate`). Nor does Termina for the color schemes it
+    ([`config/Migrations.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/Migrations.java)) and for `session.json` (`SESSION_SCHEMA` in
+    [`config/ConfigStore.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/ConfigStore.java)), Settings Sync's `base.json` and `keybindings.json`
+    ([`sync/SyncData.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/sync/SyncData.java), `SCHEMA_VERSION` and `migrate`) and the account it pins (`account.json`,
+    [`sync/AccountPin.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/sync/AccountPin.java)). Nor does Termina for the color schemes it
     imports: each is a file Termina writes whole, in a format of its own, and reads back at start
     (`themes/<name>.properties`, [`theme/ThemeFile.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/theme/ThemeFile.java)), so a config file by [SET-22](#set-22), and it carries no
     version. Torrenta's files ([`store/Settings.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/store/Settings.java) and
@@ -183,10 +186,11 @@ keymap, a theme, a language), not when the developer could not decide.
     launch (`reapStaleEndpoint`). Every other
     app's settings store does it too: Torrenta [`store/Settings.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/store/Settings.java) (`save`), Termina [`config/Settings.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/config/Settings.java) (`writeOne`,
     `moveIntoPlace`), Mirada [`settings/Settings.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/settings/Settings.java) (`write`), Modula [`config/ConfigStore.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/config/ConfigStore.java) (`writeAtomically`), nux
-    [`config/ConfigStore.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/config/ConfigStore.java) (`save`) and the app template's [`config/ConfigStore.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/ConfigStore.java) (`writePending`). The template's other
-    whole-file writes go the same way, through [`config/ConfigFiles.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/ConfigFiles.java) (`write`): an import ([`config/ConfigImport.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/ConfigImport.java),
-    `apply`) and Settings Sync's `base.json`, the merge base it keeps beside the clone ([`sync/SyncData.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/sync/SyncData.java),
-    `write`). Termina's [`sync/SyncEngine.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/sync/SyncEngine.java) and Torrenta's [`sync/SyncEngine.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/sync/SyncEngine.java) write in place only inside
+    [`config/ConfigStore.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/config/ConfigStore.java) (`save`) and the app template's [`config/ConfigStore.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/ConfigStore.java) (`writePending`, for `settings.json` and
+    `session.json`). The template's other whole-file writes go the same way, through [`config/ConfigFiles.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/ConfigFiles.java)
+    (`write`): an import ([`config/ConfigImport.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/ConfigImport.java), `apply`), Settings Sync's `base.json`, the merge base it
+    keeps beside the clone ([`sync/SyncData.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/sync/SyncData.java), `write`), and the account it pins there
+    ([`sync/AccountPin.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/sync/AccountPin.java)). Termina's [`sync/SyncEngine.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/sync/SyncEngine.java) and Torrenta's [`sync/SyncEngine.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/sync/SyncEngine.java) write in place only inside
     the clone, and keep their merge base as a Git ref (`refs/termina/base`, `refs/torrenta/base`).
 - **SET-12 · MUST.** Export configuration writes a timestamped `.zip` of the config folder; Import restores from
   one.
@@ -278,7 +282,9 @@ it; an app without it owes them nothing.
     `gh`; and the sync code finds which of the signed-in GitHub accounts can read the repository, records it with
     the clone, and uses that account for the clone from then on. A test that remembers the first account that can
     read the repository and uses it without asking again is the surest evidence.
-  - *Reference:* Editora [`sync/SyncAccount.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/sync/SyncAccount.java), [`SyncAccountTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/sync/SyncAccountTest.java), [`ui/SettingsSyncPage.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsSyncPage.java).
+  - *Reference:* Editora [`sync/SyncAccount.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/sync/SyncAccount.java), [`SyncAccountTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/sync/SyncAccountTest.java), [`ui/SettingsSyncPage.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsSyncPage.java). The app template's
+    [`sync/AccountPin.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/sync/AccountPin.java) finds the first signed-in `gh` account whose token can read the repository, records it beside the
+    clone and passes it to every fetch and push from then on ([`AccountPinTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/sync/AccountPinTest.java), `theFirstAccountThatCanReadIsPinnedAndKept`).
 - **SET-19 · SHOULD.** Settings Sync runs automatically (on change and at start) and on demand. Machine-local keys
   (window size, paths) never sync.
   - *Check (code):* a sync starts by itself after startup and after a local change, and a command starts one on
@@ -291,7 +297,9 @@ it; an app without it owes them nothing.
   - *Check (code):* the merge keeps this machine's value for an entry both sides changed, and the sync copies the
     local files to a backup before it replaces them. A merge test where both sides changed one entry is the surest
     evidence.
-  - *Reference:* Editora [`sync/SyncMerge.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/sync/SyncMerge.java), [`SyncMergeTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/sync/SyncMergeTest.java).
+  - *Reference:* Editora [`sync/SyncMerge.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/sync/SyncMerge.java), [`SyncMergeTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/sync/SyncMergeTest.java); the app template's [`sync/SyncMerge.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/sync/SyncMerge.java) and
+    [`ui/SyncController.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/SyncController.java) (`backUp`, which copies `settings.json` to `backups/` before a merge replaces the local bindings;
+    [`SyncControllerFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/SyncControllerFxTest.java), `aSyncThatReplacesLocalSettingsBacksThemUpFirst`).
 - **SET-21 · SHOULD.** Settings Sync shows its status as a pill in Settings and as echo messages; its failures go to
   the Message Log.
   - *Check (by hand):* point Sync at a repository that does not exist: the pill in Settings shows the failure, the

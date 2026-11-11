@@ -93,7 +93,7 @@ an app, and a fourth for a template repository; each one asks for something diff
     the edition judges it from the rules in its scope and says so.
   - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`pauta.json`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/pauta.json), the only list of exceptions so far, beside the audit report that shows it whole:
     [`docs/pauta-audit.json`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/docs/pauta-audit.json) and [`docs/pauta-audit.md`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/docs/pauta-audit.md), where
-    every SHOULD the template does not meet is `pending` with an entry and no MUST or SHOULD fails.
+    no MUST or SHOULD fails and its nine `app-only` entries are the only exceptions.
 - **PAUTA-05 · MUST.** A rule limited to apps with a feature needs no entry in an app without that feature. A rule is
   limited when its own text says so ("An app that stores a secret…"), when its page or
   section opens with an **Applies to** line (the [Tray and background](../tray-and-background/) page; `appliesTo` in
@@ -121,7 +121,8 @@ an app, and a fourth for a template repository; each one asks for something diff
     edition is read from the issue itself (`gh issue view <number>`), which is on GitHub and not in the checkout.
     An audit that cannot read the issues reports the rule as `not-checked` and says what would settle it. With no
     `pending` entry there is nothing to read, and the rule is met.
-  - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java) (`eachKindHasWhatItNeeds`), whose pending entries link issues in the template's own repository.
+  - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java) (`eachKindHasWhatItNeeds`), which fails a pending link that is not an issue in the app's repository or the template's.
+    The template has no `pending` entry left, so it meets the rule with nothing to read.
 - **PAUTA-08 · MUST.** Each exception's `reason` is one plain sentence for the person using the app, in English like
   the changelog: what is different and, for a deviation, what they get instead. No rule text, no class names.
   - *Check (by hand):* read each reason in the Pauta window as a user would. The source settles two cases: a

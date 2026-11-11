@@ -98,17 +98,22 @@ Editora's [`ui/WelcomeText.java`](https://github.com/adriandeleon/Editora/blob/m
   - *Check (code):* those three paths open the one Welcome tab, and where the app has a Help menu, a row inside it
     runs `view.welcome`; a startup that goes straight to a view holds a flag that skips the page.
   - *Reference:* Editora [`MainController.addWelcomeTab`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java), `showWelcomeIfNoTabs`; [`WindowSessionCoordinator`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowSessionCoordinator.java)
-    (`suppressWelcome`). Editora's menu row is in View, not in Help yet ([`MenuBarModel`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java)).
+    (`suppressWelcome`). Editora's menu row is in View, not in Help yet ([`MenuBarModel`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java)). The app template shows
+    the page when there is no session to restore ([`ui/DocumentTabs.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DocumentTabs.java)), registers `view.welcome` ([`ui/Commands.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Commands.java)) and lists it in
+    the Help menu ([`ui/AppMenus.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AppMenus.java); [`SessionAndWelcomeFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/SessionAndWelcomeFxTest.java), `theWelcomePageIsInHelpClosesAloneAndIsRebuiltWhenShown`); it has no
+    project swap and no view to start straight into.
 - **WELC-04 · SHOULD.** Closing the last tab does not bring the Welcome page back. The empty content area shows its
   own quiet hint instead: the app's ways in, each with its chord (in Editora: Open File, Open Folder, Command Palette
   and Welcome Page), and takes focus so chords still reach the window.
   - *Check (code):* closing the last tab shows the hint in the empty content area, not the Welcome page, and gives
     it the focus; opening a tab hides it. A test that asserts it is the surest evidence.
-  - *Reference:* Editora [`ui/EditorEmptyState.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/EditorEmptyState.java), [`EditorEmptyStateFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/EditorEmptyStateFxTest.java).
+  - *Reference:* Editora [`ui/EditorEmptyState.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/EditorEmptyState.java), [`EditorEmptyStateFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/EditorEmptyStateFxTest.java); the app template's [`ui/DocumentTabs.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DocumentTabs.java) (`emptyHint`,
+    which lists its ways in with their chords and takes focus when the last tab closes).
 - **WELC-05 · SHOULD.** The page is rebuilt on every show, so the recents, the Projects and Git toggles, the keymap and
   the theme are current. A refresh keeps the focus where it was.
   - *Check (code):* showing the page calls `refresh`, which re-requests focus when the page had it.
-  - *Reference:* Editora [`WelcomePane.refresh`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WelcomePane.java).
+  - *Reference:* Editora [`WelcomePane.refresh`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WelcomePane.java); the app template's `refreshWelcome`
+    ([`ui/MainWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MainWindow.java)), run on every show ([`SessionAndWelcomeFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/SessionAndWelcomeFxTest.java), `theWelcomePageIsInHelpClosesAloneAndIsRebuiltWhenShown`).
 - **WELC-06 · SHOULD.** The recent lists offer no file that no longer exists and no project whose root is gone. Remote
   files are kept unchecked.
   - *Check (code):* the recent files pass through the same filter as the toolbar's dropdown; projects are kept only
@@ -134,7 +139,8 @@ Editora's [`ui/WelcomeText.java`](https://github.com/adriandeleon/Editora/blob/m
 - **WELC-11 · SHOULD.** The Welcome tab is not a document: its menu is Close only, with no Save, Rename or Pin, and the
   title bar shows the app or project name, not a file.
   - *Check (code):* the Welcome tab's context menu holds one Close item.
-  - *Reference:* Editora [`MainController.addWelcomeTab`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java).
+  - *Reference:* Editora [`MainController.addWelcomeTab`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java); the app template's [`ui/DocumentTabs.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DocumentTabs.java),
+    whose Welcome tab's menu holds `buffer.close` alone, is not pinned, and leaves the title to the project and the app.
 
 ## Copy
 

@@ -35,7 +35,9 @@ description: "Commands, the Command Palette, keymaps, focus and accessibility."
 - **KBD-04 · SHOULD.** A command that cannot run in the current context is shown grayed, with a tooltip that says
   why, not hidden.
   - *Check (code):* the palette and menus list a disabled command with a reason, rather than filtering it out.
-  - *Reference:* Editora [`ui/Chrome.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Chrome.java) (`paletteEnabled`, `disabledReason`).
+  - *Reference:* Editora [`ui/Chrome.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Chrome.java) (`paletteEnabled`, `disabledReason`). The app template's menu
+    rows of a command that can't run stay, grayed, with the reason as their tooltip ([`ui/AppMenus.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AppMenus.java), `showAvailability`;
+    [`RightClickMenusFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/RightClickMenusFxTest.java), `anUnavailableRowStaysAndSaysWhy`), and its palette lists such a command with the reason.
 
 ## Command Palette
 
@@ -67,7 +69,9 @@ description: "Commands, the Command Palette, keymaps, focus and accessibility."
     names IntelliJ and VS Code give the command ([`command/OtherIdeNames.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/OtherIdeNames.java)). It doesn't match the rest of the id
     or the description, which is shown under the list. [`CommandPaletteRankTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/CommandPaletteRankTest.java) holds the order
     (`aCommandIsFoundByItsNamespaceWhenItsTitleDoesNotCarryIt`, `aKeywordMatchRanksBelowEveryTitleMatch`, and for a
-    typed title `anExactTitleLeadsAnotherCommandsAlias` and `aWholeOneWordTitleLeads`).
+    typed title `anExactTitleLeadsAnotherCommandsAlias` and `aWholeOneWordTitleLeads`). The app template's [`ui/Picker.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Picker.java) (`rank`, with `idWords`) matches the title fuzzily
+    and the id's words, never the description, and puts a title that holds the query first ([`PickerFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/PickerFxTest.java),
+    `ranksTitlesFirstAndSkipsUnavailableRows`).
 - **KBD-07 · MUST.** The palette and every picker (a card that lists choices to filter and pick one from:
   [QOPEN-01](../templates/quick-open/#qopen-01)) are in-scene overlays in the window's root `StackPane`, never a
   `javafx.stage.Popup`.
@@ -112,7 +116,8 @@ Every other list choice (recent files, themes, keymaps, a setting's values) uses
     ([KBD-09](#kbd-09)), needs none of them.
   - *Command:* `[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; has() { find src/main/resources -name "$1" | grep -q .; }; if has keymap.json && has keymap.mac.json && ! has emacs.json && ! has cua.json; then exit 0; fi; ! for k in intellij vscode sublime; do for f in "$k.json" "$k.mac.json"; do has "$f" || echo "missing $f"; done; done | grep .`
   - *Reference:* Editora [`src/main/resources/com/editora/keymaps/`](https://github.com/adriandeleon/Editora/tree/master/src/main/resources/com/editora/keymaps). Termina ships the terminal's two files only
-    ([`keymaps/`](https://github.com/adriandeleon/Termina/tree/master/src/main/resources/com/termina/keymaps)). The app template and Mirada ship Emacs and CUA and none of these three yet; Torrenta, Modula
+    ([`keymaps/`](https://github.com/adriandeleon/Termina/tree/master/src/main/resources/com/termina/keymaps)). The app template ships all five, each IDE keymap with its `.mac.json` (`PRESETS` in
+    [`command/Keymap.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/command/Keymap.java)). Mirada ships Emacs and CUA and none of these three yet; Torrenta, Modula
     and nux ship no keymap file.
 - **KBD-21 · MUST.** A keymap's `.mac.json` variant binds the same commands as the keymap it varies. A chord may
   differ, to put `Cmd` where the other has `Ctrl`, to follow the macOS keymap of the editor it copies, or where

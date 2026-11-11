@@ -237,11 +237,14 @@ in Termina the terminal grid, in Mirada stepping between images.
   - *Check (code):* the per-frame and per-keystroke code allocates no new arrays or images when the size has not
     changed.
   - *Reference:* Editora [`editor/minimap/Minimap.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/editor/minimap/Minimap.java) (the snapshot image reused at the same size),
-    [`MinimapRows.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/editor/minimap/MinimapRows.java).
+    [`MinimapRows.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/editor/minimap/MinimapRows.java). The app template's palette cells keep their
+    text runs, chord chip and tooltip and relabel them as the query changes, making a new run only when a title needs
+    more than the cell had ([`ui/Picker.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Picker.java)).
 - **PERF-10 · SHOULD.** CSS stays cheap: no `applyCss()` on a large subtree, stable style classes, and spans of the
   same style merged before they are applied.
   - *Check (code):* `applyCss()` is called only on small nodes; style classes are not toggled per keystroke.
-  - *Reference:* Editora `SpanMerger` in [`editor/highlight/TextMateHighlighter.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/editor/highlight/TextMateHighlighter.java), [`docs/gotchas.md`](https://github.com/adriandeleon/Editora/blob/master/docs/gotchas.md).
+  - *Reference:* Editora `SpanMerger` in [`editor/highlight/TextMateHighlighter.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/editor/highlight/TextMateHighlighter.java), [`docs/gotchas.md`](https://github.com/adriandeleon/Editora/blob/master/docs/gotchas.md). The app template's palette
+    draws a title as one text run per change of style, not a node per letter ([`ui/Picker.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Picker.java)).
 
 ## Memory and size
 
@@ -334,8 +337,9 @@ in Termina the terminal grid, in Mirada stepping between images.
 - **PERF-17 · SHOULD.** The app ships precompiled stylesheets (`.bss`). The AOT cache, the other half of a fast
   start, is [REL-10](../release/#rel-10).
   - *Check (code):* the build converts the app's `.css` files to `.bss`, and the packaged app carries them.
-  - *Reference:* Editora [`scripts/css2bss.java`](https://github.com/adriandeleon/Editora/blob/master/scripts/css2bss.java), run by the `css-to-bss` execution in [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml). No other app
-    converts its own stylesheets yet.
+  - *Reference:* Editora [`scripts/css2bss.java`](https://github.com/adriandeleon/Editora/blob/master/scripts/css2bss.java), run by the `css-to-bss` execution in [`pom.xml`](https://github.com/adriandeleon/Editora/blob/master/pom.xml). The app template's `dist` profile runs its [`ui/StyleCompiler.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/StyleCompiler.java) over the built stylesheets, which writes a `.bss` beside
+    each `.css`, and [`ui/Themes.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Themes.java) loads the `.bss` where there is one ([`StyleCompilerTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/StyleCompilerTest.java)). No other app converts its
+    own stylesheets yet.
 
 ## Measure, don't guess
 
@@ -346,11 +350,13 @@ in Termina the terminal grid, in Mirada stepping between images.
 - **PERF-19 · SHOULD.** Start-up is measured by a script that takes the median of several cold launches, and by
   phase marks in the app.
   - *Check (code):* the repository has the script, and `main` and the first paint record phase marks.
-  - *Reference:* `scripts/measure-startup.sh` in Editora, Termina and Mirada; Editora [`perf/Startup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/perf/Startup.java).
+  - *Reference:* `scripts/measure-startup.sh` in Editora, Termina, Mirada and the app template, whose marks are recorded
+    by [`StartupMarks.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/StartupMarks.java) from `main` and the first paint; Editora [`perf/Startup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/perf/Startup.java).
 - **PERF-20 · SHOULD.** The app can sample its FX thread when something stalls.
   - *Check (code):* an environment variable or property turns on a sampler of the FX thread's stack.
   - *Reference:* Editora [`perf/Startup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/perf/Startup.java) (`EDITORA_PERF_SAMPLE=1`, with `EDITORA_PERF=1`); Mirada [`perf/FxSampler.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/perf/FxSampler.java)
-    (`MIRADA_PERF_SAMPLE=1`).
+    (`MIRADA_PERF_SAMPLE=1`); the app template's [`ui/FxSampler.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/FxSampler.java)
+    (`-Dexampleapp.fxSampler=<ms>` or `EXAMPLEAPP_FX_SAMPLER`, logging the FX thread's stack on a stall; [`FxSamplerTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/FxSamplerTest.java)).
 - **PERF-21 · SHOULD.** Each hot path that once regressed keeps a headless test.
   - *Check (test):* the fix for a hot-path regression adds a headless test that fails on the old code.
   - *Reference:* Editora [`MinimapDeferredRenderFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/MinimapDeferredRenderFxTest.java).

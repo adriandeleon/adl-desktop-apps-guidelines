@@ -26,7 +26,8 @@ have none ([Uses](#uses)).
   [KBD-07](../../keyboard/#kbd-07).
   - *Check (code):* each picker shows its card through the overlay host the palette uses and sets a title and a
     prompt text.
-  - *Reference:* Editora [`QuickOpen.setOverlayHost`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java), [`ui/OverlayHost.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java); the page's [Spec](#spec).
+  - *Reference:* Editora [`QuickOpen.setOverlayHost`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java), [`ui/OverlayHost.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java); the page's [Spec](#spec). The app template's
+    pickers (theme, keymap, language, Bind Key) are titled cards of its [`ui/Picker.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Picker.java) in its [`ui/OverlayHost.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/OverlayHost.java).
 
 ## Anatomy
 
@@ -82,7 +83,8 @@ have none ([Uses](#uses)).
   files, document order for symbols), with the current value pre-selected when there is one.
   - *Check (code):* a picker's empty query passes the items through unsorted and selects the value in force when
     the picker was given one (Editora's `setCurrentItem`).
-  - *Reference:* Editora [`QuickOpen.filter`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java), `setCurrentItem`.
+  - *Reference:* Editora [`QuickOpen.filter`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java), `setCurrentItem`; the app template's [`ui/Picker.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Picker.java) (`current`),
+    whose theme, keymap and language pickers open on the choice in force ([`PickerFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/PickerFxTest.java), `helpTitleCurrentValueAndTheEnds`).
 - **QOPEN-05 · SHOULD.** Typing in a picker ranks its rows by fuzzy score, and ties keep the supplier's order, so
   rows do not shuffle under the cursor between keystrokes.
   - *Check (code):* the last tiebreak of the picker's sort is the supplier's index.
@@ -96,8 +98,8 @@ have none ([Uses](#uses)).
     and down, and on the fixed keys whatever the keymap; the accept path hides the card before it calls the choice
     handler.
   - *Reference:* Editora [`QuickOpen`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java) (`hide()` then `onChoose`), [`PickerKeys.resolve`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java), the only picker that asks
-    the keymap. The app template's [`ui/Picker.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Picker.java) moves on the arrows, the page keys and a fixed `Ctrl+N` and
-    `Ctrl+P`, and has no `Ctrl+Home` or `Ctrl+End`; Mirada's picker is its palette, whose [`ui/PaletteKeys.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/PaletteKeys.java)
+    the keymap. The app template's [`ui/Picker.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Picker.java) asks the keymap the same way, through its [`ui/PickerKeys.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/PickerKeys.java) (`resolve`), and takes
+    `Ctrl+Home` and `Ctrl+End` (`Cmd` on macOS); Mirada's picker is its palette, whose [`ui/PaletteKeys.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/PaletteKeys.java)
     carries a fixed table of Emacs chords (`EMACS`) beside the fixed keys. Termina, Torrenta, Modula and nux have
     no picker ([Uses](#uses)).
 - **QOPEN-07 · SHOULD.** The active keymap's cancel chord, Esc or a click on the scrim cancels a picker, and the
@@ -147,8 +149,8 @@ have none ([Uses](#uses)).
 
 The relatives: the Open Files `Switcher` lists tabs in tab order, opens on the current one and closes a file with
 `C-d` or Backspace. `FileFinder` is the Emacs `find-file` field with Tab completion. `MultiSelectPicker` ticks several
-rows with Space where exactly one would be wrong. `BranchPopup` and `GitStashPopup` are sectioned pickers with their
-own actions.
+rows with Space where exactly one would be wrong. `BranchPopup` and `GitStashPopup` are sectioned pickers with their own actions. The app template's one relative, its tab switcher
+    ([`ui/Switcher.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Switcher.java)), moves through the same [`ui/PickerKeys.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/PickerKeys.java) and accepts and cancels as its pickers do.
 
 ## Uses
 

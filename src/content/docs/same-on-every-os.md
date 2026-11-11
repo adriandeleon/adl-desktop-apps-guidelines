@@ -172,8 +172,9 @@ Everything else, and in particular:
     the rule it links does not cover the difference (a menu bar on one OS and a menu button on the others).
   - *Reference:* the app template, read through: every place it tests the OS calls its [`Os.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/Os.java), and each is
     on a row or changes nothing a user sees: the macOS form of the keymap's chords (`Keymap`, `KeyDispatcher`,
-    `AppServices`), the system menu bar and its application menu (`MainWindow`, `Chrome`, `MacAppMenu`), and a
-    program's path and arguments (`Executables`, `Browser`). No other app has been read through for it yet. The
+    `AppServices`, and the pickers' keys that `MainWindow` hands `PickerKeys`), the system menu bar and its
+    application menu (`MainWindow`, `Chrome`, `MacAppMenu`), and a program's path, arguments and `PATH`
+    (`Executables`, `Browser`, `ShellPath`). No other app has been read through for it yet. The
     differences found so far, each on no row or short of its row: Mirada
     closes its window on Escape on Linux only ([`Command.escapeCloses`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Command.java)), follows the OS's accent color on macOS and
     Windows only ([`Theme.followsAccent`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Theme.java)), puts its title on the left on Windows only ([`TitleBar.Layout`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/TitleBar.java)) and has a

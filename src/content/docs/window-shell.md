@@ -60,7 +60,9 @@ description: "Status bar, themes, title bar, dialogs, Welcome, About, window sta
     [`ui/WindowSessionCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowSessionCoordinator.java), [`App.noSessionFlag`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java); tests [`AppArgsTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/AppArgsTest.java),
     [`NoSessionStartupFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/NoSessionStartupFxTest.java) and, for the window's geometry, [`WindowManagerLaunchFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/WindowManagerLaunchFxTest.java)
     (`aWindowComesBackAtTheSizeAndPlaceItsSessionRecorded`, `aWindowThatWasMaximizedComesBackMaximized`), which
-    restore a window from a saved `workspace-state.json`. No Editora test saves the geometry and reads it back.
+    restore a window from a saved `workspace-state.json`. No Editora test saves the geometry and reads it back. The app template does both: `saveWindowState` in
+    [`ui/MainWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MainWindow.java) writes the size, place, maximized state and the open documents to `session.json`, and the next launch
+    restores them ([`ui/DocumentTabs.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DocumentTabs.java); [`SessionAndWelcomeFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/SessionAndWelcomeFxTest.java), `theOpenDocumentsComeBackFromTheSessionFile`).
 - **WIN-09 · SHOULD.** In an app with content to zoom (text, an image, a terminal), it zooms from the keyboard
   (`Ctrl+=`, `Ctrl+-` and `Ctrl+0`, with `Cmd` on macOS; `=` is the key that carries `+`), kept across launches.
   The UI zoom is [WIN-12](#win-12).
@@ -69,7 +71,9 @@ description: "Status bar, themes, title bar, dialogs, Welcome, About, window sta
   - *Reference:* Editora `view.textZoomIn`, `view.textZoomOut` and `view.textZoomReset`, kept in
     [`Settings.fontZoom`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/Settings.java) and bound to `C-=`, `C--` and `C-0`
     ([`keymaps/cua.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/cua.json)); Termina's `zoomIn`, `zoomOut` and `actualSize`, on `Shortcut+Equals`, `Shortcut+Minus` and
-    `Shortcut+0` ([`keymaps/keymap.json`](https://github.com/adriandeleon/Termina/blob/master/src/main/resources/com/termina/keymaps/keymap.json)), kept in `font.zoom` ([`config/Settings.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/config/Settings.java)).
+    `Shortcut+0` ([`keymaps/keymap.json`](https://github.com/adriandeleon/Termina/blob/master/src/main/resources/com/termina/keymaps/keymap.json)), kept in `font.zoom` ([`config/Settings.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/config/Settings.java)); the app template's
+    `view.zoomIn`, `view.zoomOut` and `view.zoomReset` for its documents' text, bound to `Ctrl+=`, `Ctrl+-` and `Ctrl+0` (`Cmd` on macOS) in every keymap it ships
+    and kept in `textZoom` ([`config/Settings.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/Settings.java); [`SessionAndWelcomeFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/SessionAndWelcomeFxTest.java), `theDocumentsTextZoomsOnItsOwn`).
 - **WIN-12 · MUST.** The app has a UI zoom: one setting scales the whole chrome, the menus
   ([MENU-16](../menus/#menu-16)), toolbar, tabs and status bar included. It applies at once, is kept across
   launches, and three commands zoom it in, out and back to the default. In an app with content of its own to zoom
@@ -88,8 +92,7 @@ description: "Status bar, themes, title bar, dialogs, Welcome, About, window sta
     (`zoom`): one setting, `uiZoom` in [`config/Settings.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/Settings.java), scales every pixel size of the stylesheets, the root
     font size among them, and the sizes the code fixes are bound to the zoom; a change restyles every open window
     at once. Its commands are `view.uiZoomIn`, `view.uiZoomOut` and `view.uiZoomReset` ([`ui/Commands.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Commands.java)), on
-    `Ctrl+Alt+=`, `Ctrl+Alt+-` and `Ctrl+Alt+0` (`Cmd+Alt` on macOS) in its CUA keymaps, which leave `Ctrl+=` to the content zoom it
-    doesn't have yet ([WIN-09](#win-09)); [`UiZoomTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/UiZoomTest.java) holds the scaling. Editora, Termina and Mirada zoom their
+    `Ctrl+Alt+=`, `Ctrl+Alt+-` and `Ctrl+Alt+0` (`Cmd+Alt` on macOS) in its CUA keymaps, which leave `Ctrl+=`, `Ctrl+-` and `Ctrl+0` to its documents' text zoom ([WIN-09](#win-09)); [`UiZoomTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/UiZoomTest.java) holds the scaling. Editora, Termina and Mirada zoom their
     content only (`view.textZoomIn`, `zoomIn`, `view.zoomIn`), and Editora writes its menu font as absolute pixels ([`MainMenuBar.UI_FONT_SIZE`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java), `.context-menu`
     in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css)). Torrenta, Modula and nux have no zoom command.
 - **WIN-13 · MUST.** Every quit entry point an app has runs one quit method: the Quit row and the `app.quit` command

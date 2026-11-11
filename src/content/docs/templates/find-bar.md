@@ -25,15 +25,16 @@ see the [QuickOpen template](../quick-open/).
     Editora doesn't meet it in every console yet: the build console has the bar
     ([`ui/BuildToolPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/BuildToolPanel.java)); the Run, External Tools and Debug consoles ([`ui/RunPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/RunPanel.java), [`ui/ExternalToolPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ExternalToolPanel.java),
     [`ui/DebugPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/DebugPanel.java)) are read-only text areas with none.
-    Over a log window, the app template's [`ui/DebugLogFindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DebugLogFindBar.java), a row in its Debug Log window. No released
-    app's Debug Log has a find bar yet. Editora's Message Log ([`ui/MessageLogPopup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java)) and Torrenta's log
+    The app template's [`ui/FindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/FindBar.java) is one bar over a text area, a row in the window: over each document
+    ([`ui/DocumentView.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DocumentView.java)), over the Output console ([`ui/SamplePanels.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/SamplePanels.java)) and over its Debug Log
+    ([`ui/DebugLogWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DebugLogWindow.java)). No released app's Debug Log has a find bar yet. Editora's Message Log ([`ui/MessageLogPopup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java)) and Torrenta's log
     window ([`ui/LogWindow.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/LogWindow.java)) are lists, which [FIND-03](#find-03) covers.
 - **FIND-02 · MUST.** A find bar searches as its query is typed and shows a match count.
   - *Check (code):* in each find bar the app has, the query field's text listener runs the search and updates the
     count label. A view where [FIND-01](#find-01) asks for a find bar and the app has none fails this rule with
     FIND-01, and so does an app with no find bar and no Debug Log window at all; the evidence names that rule.
   - *Reference:* Editora [`FindReplaceBar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/FindReplaceBar.java) (`debounce`, `find.count`); Termina [`SearchBar`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/SearchBar.java) (`search.count`); the
-    app template's [`ui/DebugLogFindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DebugLogFindBar.java) (`searching`, `find.count`).
+    app template's [`ui/FindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/FindBar.java) (`searching`, `find.count`), in each of its three bars.
 - **FIND-03 · MUST.** A list is narrowed by a filter box where text is searched by a find bar. In an app whose main
   content is a list, a filter box over that list takes the place of a find bar there, with the same field and the same
   Escape. The main content is a list when it is a list or a table of items that grows without bound and that the user
@@ -139,11 +140,13 @@ read as one family: a lens, the field as the card's own text, the count, a regex
   - *Check (code):* each bundled keymap binds that chord to `find.show`; every other find bar is opened by a
     registered command of its own; and each of these commands, run while its bar is shown, steps to the next match.
   - *Reference:* Editora `keymaps/*.json` and [`MainController.findShowOrNext`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java), which finds the next match while the
-    editor's bar is open. No other bar does both yet. Termina's find command ([`TerminalWindow`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalWindow.java), `menu.find`,
+    editor's bar is open. The app template's bars all do: `find.show`, bound in each of its keymaps, over the
+    documents, `output.find` over the Output console and `debugLog.find` over the Debug Log each open their bar and,
+    run while it is open, step to the next match (`openOrNext` in its [`ui/FindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/FindBar.java); [`ui/Commands.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Commands.java);
+    [`FindBarFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/FindBarFxTest.java)). No other app's bar does both yet. Termina's find command ([`TerminalWindow`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalWindow.java), `menu.find`,
     [`MenuAction.appChord`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MenuAction.java)) runs [`TerminalView.showSearch`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalView.java), which puts the caret back in the field of a bar that is
-    already open. So do Editora's `terminal.find` over its terminal panel ([`TerminalCoordinator.find`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TerminalCoordinator.java)) and the app
-    template's `debugLog.find` over its Debug Log ([`MainWindow.findInDebugLog`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MainWindow.java)), which that window also runs on a
-    fixed `Ctrl/Cmd+F`. Editora's console bar has no command: the find command's chord pressed in the console opens
+    already open. So does Editora's `terminal.find` over its terminal panel ([`TerminalCoordinator.find`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TerminalCoordinator.java)). The
+    template's Debug Log window also runs `debugLog.find` ([`MainWindow.findInDebugLog`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MainWindow.java)) on a fixed `Ctrl/Cmd+F`. Editora's console bar has no command: the find command's chord pressed in the console opens
     it (`ConsoleNav.onCommand` in [`ui/BuildToolPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/BuildToolPanel.java)), as does a button in the panel's header.
 - **FIND-05 · SHOULD.** Typing in a find bar highlights every match, the active one distinctly, and selects and
   scrolls to the match the search starts on. In a document (an editor, a console, a log) that is the first match at
@@ -158,10 +161,10 @@ read as one family: a lens, the field as the card's own text, the count, a regex
   - *Reference:* Editora [`FindReplaceBar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/FindReplaceBar.java) (`searchAnchor`, `recompute`) over the editor. Over a terminal, Editora's
     [`terminal/TerminalView.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/terminal/TerminalView.java) (`startIndex`, `drawSearch`) and Termina's [`TerminalView`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalView.java) (`drawSearchMatches`)
     with [`ScrollbackSearch.initial`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/ScrollbackSearch.java). Editora's [`ConsoleFindBar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ConsoleFindBar.java) and the app template's
-    [`ui/DebugLogFindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DebugLogFindBar.java) don't yet: each searches from the current selection (`refine`), not from an anchor saved
-    when the bar opened. Editora's console is a `CodeArea`, which could paint every match, and its bar paints the
-    active one only. The template's log is a `TextArea`, which draws one selection and nothing else, so its bar
-    rightly shows the active match alone.
+    [`ui/FindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/FindBar.java) don't yet: each searches from the current selection (`refine`, and the template's `found`), not
+    from an anchor saved when the bar opened. Editora's console is a `CodeArea`, which could paint every match, and
+    its bar paints the active one only. The template's documents, Output and Debug Log are each a `TextArea`, which
+    draws one selection and nothing else, so its bar rightly shows the active match alone.
 - **FIND-06 · MUST.** In a find bar, Enter steps to the next match and Shift+Enter to the previous one, wrapping
   around at the ends. In a find bar over a terminal the directions are up and down the scrollback: Enter steps up
   to older output, Shift+Enter down.
@@ -172,8 +175,8 @@ read as one family: a lens, the field as the card's own text, the count, a regex
     Log window at all; the evidence names that rule.
   - *Reference:* Editora [`ConsoleFindBar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ConsoleFindBar.java), [`TerminalFindBar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TerminalFindBar.java); Termina [`SearchBar`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/SearchBar.java). Editora's editor bar
     ([`FindReplaceBar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/FindReplaceBar.java)) does not yet: its field steps forward on Enter, and back only with the previous button,
-    `find.showBackward` (`C-r`, `Shift+F3`) or `find.previous`. Alt+Enter there turns every match into a caret. Over
-    a log window, the app template's [`ui/DebugLogFindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DebugLogFindBar.java) steps and wraps the same way.
+    `find.showBackward` (`C-r`, `Shift+F3`) or `find.previous`. Alt+Enter there turns every match into a caret. The
+    app template's [`ui/FindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/FindBar.java) steps and wraps the same way (`step`), in each of its three bars.
 - **FIND-07 · MUST.** Escape or the close button closes a find bar: its highlights go, a search still pending is
   canceled so nothing moves after the bar is gone, and focus returns to the text the bar searched (the editor, the
   console, the shell or the log). In a find bar over a terminal, the Escape that closes the bar does not reach the
@@ -184,8 +187,8 @@ read as one family: a lens, the field as the card's own text, the count, a regex
     the terminal never sends that key to the shell. A view where [FIND-01](#find-01) asks for a find bar and the
     app has none fails this rule with FIND-01, and so does an app with no find bar and no Debug Log window at all;
     the evidence names that rule.
-  - *Reference:* Editora [`FindReplaceBar.hideBar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/FindReplaceBar.java); over a log window, the app template's
-    [`ui/DebugLogFindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DebugLogFindBar.java) (`close`). Over a terminal, Termina's [`SearchBar`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/SearchBar.java) (`onKey`) and Editora's
+  - *Reference:* Editora [`FindReplaceBar.hideBar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/FindReplaceBar.java); the app template's
+    [`ui/FindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/FindBar.java) (`close`), in each of its three bars. Over a terminal, Termina's [`SearchBar`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/SearchBar.java) (`onKey`) and Editora's
     [`TerminalFindBar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TerminalFindBar.java) each close the bar on Escape and consume the key.
 - **FIND-08 · SHOULD.** A terminal with a find bar keeps its own key and mouse filters off the bar: they leave
   every event aimed at the bar alone, so what is typed or clicked there never reaches the shell. The Escape that
@@ -257,8 +260,9 @@ read as one family: a lens, the field as the card's own text, the count, a regex
   - *Reference:* Editora's [`FindReplaceBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/FindReplaceBar.java) keeps every button and option box in the Tab order, all but the
     clear button inside each field. Its [`ConsoleFindBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ConsoleFindBar.java) and [`TerminalFindBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TerminalFindBar.java) take Previous, Next and Close
     out of it, which Shift+Enter, Enter and Escape in the field do, and leave the field and the match-case toggle
-    in. The app template's [`DebugLogFindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DebugLogFindBar.java) takes the same three out: Previous and Next run
-    `debugLog.findPrevious` and `debugLog.findNext`, Close is the field's Escape, and the Match Case box stays in.
+    in. The app template's [`FindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/FindBar.java) takes the same three out: Previous and Next run its bar's step
+    commands (`find.previous` and `find.next` over a document, `output.findPrevious` and `output.findNext`,
+    `debugLog.findPrevious` and `debugLog.findNext`), Close is the field's Escape, and the Match Case box stays in.
     Torrenta's filter box is out of it and reached by its `filter` command
     ([`MainWindow.buildFilterBar`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java)). In Mirada's [`BookmarksWindow.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/BookmarksWindow.java) the three kind toggles are out of it and
     have a command each (`bookmarks.listAll`, `bookmarks.listBookmarked`, `bookmarks.listNotes`). Termina's
@@ -292,6 +296,7 @@ read as one family: a lens, the field as the card's own text, the count, a regex
 - **Torrenta:** the omnibox above the transfers, which filters, runs commands and adds what is pasted.
 - **Mirada:** no text of its own to search; it finds an image through a picker.
 - **Modula, nux:** no text to search, and no Debug Log yet ([DIAG-03](../../diagnostics/#diag-03)).
-- **The Debug Log:** the app template's has a find bar ([`ui/DebugLogFindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DebugLogFindBar.java), opened by its
-  `debugLog.find` command or `Ctrl/Cmd+F` in that window). Editora's, Termina's, Torrenta's and Mirada's is a
+- **The app template:** one find bar ([`ui/FindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/FindBar.java)) over each document, over the Output console and over its
+  Debug Log, opened by `find.show`, `output.find` and `debugLog.find` (and `Ctrl/Cmd+F` in the Debug Log window).
+- **The Debug Log:** Editora's, Termina's, Torrenta's and Mirada's is a
   read-only text area with no find bar (`ui/DebugLogWindow.java` in each), which [FIND-01](#find-01) asks for.

@@ -8,6 +8,20 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 
 ## [Unreleased]
 
+### Fixed
+
+- **The app template's References follow it to 6.0.0.** The template now meets every MUST of 6.0.0 (Core), and the
+  pages described it as it was before: no `app-only` kind, `template` field or `checked` list, no audit report, no UI
+  zoom, no Settings or About in the macOS application menu, stock dialog buttons in JavaFX's order, `os.name` read in
+  several classes, a find bar over its Debug Log alone (`DebugLogFindBar.java`, now `FindBar.java`), a fixed `Ctrl+G`,
+  and the rest. The References of PAUTA-02, PAUTA-04, PAUTA-05, PAUTA-10, PAUTA-16, PAUTA-17, PAUTA-18, PWIN-05,
+  OS-02, OS-03, OS-04, WIN-11, WIN-12, WIN-15, ACC-01, ACC-04, ACC-08, KBD-15, KBD-22, MENU-05, MENU-14, MENU-15,
+  MENU-16, MENU-18, ABOUT-01, ABOUT-07, CONF-13, CONF-14, FIND-01, FIND-02, FIND-04 to FIND-07, FIND-16, PAL-07,
+  QOPEN-07, MLOG-03, MLOG-04, ICON-08, ICON-09, ICON-14, TBAR-14, TABS-08, TABS-10, PERF-01, PERF-16, SET-07,
+  SET-09, SET-22, CLI-05, CLI-11, CLI-12, CLI-13, INTL-14, PLAT-11, REL-25 and REPO-01 say what its code at its head
+  does, and the Pauta window's catalog note, the README badge note and *Gaps per app* follow. ICON-14 now says the
+  template doesn't meet it: one of its FX tests computes the key color's contrast. No rule changed.
+
 ## [6.0.0] - 2026-11-10
 
 Three reviews of 5.0.0 and a confirmation pass land as one edition. A rule about something an app lacks now says which

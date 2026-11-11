@@ -11,7 +11,7 @@ filled in for a placeholder app, `ExampleApp`. `scripts/rename.sh <AppName> <pac
   which the README links, so the README stays short: at most 250 lines.
   - *Check (code):* `README.md` has each of those parts, links to the website for the rest, and runs to at most 250
     lines (`wc -l README.md`).
-  - *Reference:* Editora [`README.md`](https://github.com/adriandeleon/Editora/blob/master/README.md) (221 lines) and the template's [`README.md`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/README.md) (148); Termina's has 152
+  - *Reference:* Editora [`README.md`](https://github.com/adriandeleon/Editora/blob/master/README.md) (221 lines) and the template's [`README.md`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/README.md) (155); Termina's has 152
     and Mirada's 172. Three are over the 250: Torrenta's runs to 433 lines, Modula's to 364 and nux's to 313.
 - **REPO-02 · MUST.** `CHANGELOG.md` follows [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.0/) and
   SemVer: an `## [Unreleased]` section with Added / Changed / Fixed / Removed, and each entry opens with a bold
@@ -110,8 +110,8 @@ template's: a convention, not a rule. Editora's README has those seven in this o
 The Pauta badge names the edition and the conformance, in green `2ea043` for Complete, blue `5b8def` for Core and
 amber `d29922` for Partial, and links to the app's *Pauta conformance* docs page; a test holds
 it to `pauta.version` and the computed conformance ([Conformance](../conformance/#pauta-15)). The template's badge
-reads `Pauta 4.1.0 · Partial`; "Working toward" is the wording of the README line beside it, which takes the place of
-"Built to" at Partial.
+reads `Pauta 6.0.0 · Core`, in blue, and the README line beside it says "Built to"; at Partial that line says
+"Working toward" instead.
 
 The rest of this section describes Editora's README and is not a rule. Its hero screenshot is a `<picture>` with a
 dark `srcset` under `prefers-color-scheme: dark`, so GitHub shows the screenshot that matches the reader's theme,

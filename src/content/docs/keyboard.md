@@ -172,8 +172,10 @@ Every other list choice (recent files, themes, keymaps, a setting's values) uses
     reaches every other control of each window and dialog, and Space or Enter works it.
   - *Reference:* the app template, where each control the keyboard cannot focus has its other way: the status bar's
     echo area, error count and update notice run commands (`view.messageLog`, `help.openNewRelease`:
-    [`ui/StatusBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/StatusBar.java)), the Debug Log find bar's buttons are [FIND-16](../templates/find-bar/#find-16)'s
-    ([`ui/DebugLogFindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DebugLogFindBar.java)), and the picker's list is moved from its field ([`ui/Picker.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Picker.java)). Editora doesn't
+    [`ui/StatusBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/StatusBar.java)), its toolbar's buttons are [TBAR-02](../toolbars-and-tooltips/#tbar-02)'s
+    (`Icons.toolbarButton` in [`ui/Icons.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Icons.java)), a tool window's header buttons run commands
+    ([`ui/ToolWindowManager.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/ToolWindowManager.java)), the find bars' buttons are [FIND-16](../templates/find-bar/#find-16)'s
+    ([`ui/FindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/FindBar.java)), and the picker's list is moved from its field ([`ui/Picker.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Picker.java)). Editora doesn't
     hold the rule everywhere yet: the Clear button of its Message Log ([`ui/MessageLogPopup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java)) and the Previous
     Run and Save Output buttons of its build console ([`ui/BuildToolPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/BuildToolPanel.java)) are out of the Tab order with no
     command and no key behind them. Modula doesn't either: it takes every control of its window out of the Tab order
@@ -213,7 +215,8 @@ Every other list choice (recent files, themes, keymaps, a setting's values) uses
     same outside ring, and the same text-field rule (Mirada's covers text areas too). Editora alone has the second
     exception: `.tool-stripe-button:focus-visible` draws the ring at `-fx-border-insets: 1` and gives 3 px of
     padding back, since the stripes sit against the window's edge. The app template's
-    [`app.css`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/styles/app.css) sets the ring's color only, so the ring is the theme's own 1 px border.
+    [`app.css`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/styles/app.css) has the same outside ring and text-field rule; its check boxes and radio buttons take the ring around the
+    whole control, label included, not around the box alone.
 - **KBD-18 · SHOULD.** A row that turns a setting on or off (in Settings, a panel or a dialog) uses a switch the
   keyboard operates: it takes focus, Space toggles it, and its accessible role is `TOGGLE_BUTTON`.
   - *Why:* a bare AtlantaFX `ToggleSwitch` is mouse-only.

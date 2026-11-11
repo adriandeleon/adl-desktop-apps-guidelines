@@ -80,8 +80,9 @@ Every app keeps one, session-only and bounded, newest first, with Esc to close a
   - *Reference:* Editora [`OverlayHost`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java), which hides the card on a press on its backdrop and on [`PickerKeys.isCancel`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java): Esc,
     or the chord the keymap binds to `edit.cancel` (Editora's id; `C-g` in its Emacs keymap). Its [`MessageLogPopup`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java)
     also closes on `Ctrl+G` whatever the keymap, though the CUA keymap binds `C-g` to `nav.goToLine`; its handler
-    reads `Alt+G` too, which the Emacs keymap's `M-g` prefix takes first.
-    Elsewhere the chord is fixed: `Ctrl+G` in the app template ([`ui/OverlayHost.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/OverlayHost.java)), Termina
+    reads `Alt+G` too, which the Emacs keymap's `M-g` prefix takes first. The app template's Message Log
+    ([`ui/MessageLogView.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MessageLogView.java)) is shown through its [`ui/OverlayHost.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/OverlayHost.java), which closes it the same way, on the
+    keymap's `edit.cancel` chord (`cancelOn`). Elsewhere the chord is fixed: `Ctrl+G` in Termina
     ([`ui/MessageLogWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MessageLogWindow.java)) and Mirada ([`ui/MessageLogView.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MessageLogView.java)). Torrenta's
     ([`ui/MessageLogPopup.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MessageLogPopup.java)) closes on Esc and on a press on its backdrop: Torrenta has no keymap and no cancel
     command, so the chord asks nothing more of it.
@@ -95,7 +96,9 @@ Every app keeps one, session-only and bounded, newest first, with Esc to close a
     the Message Logs of Torrenta ([`ui/MessageLogPopup.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MessageLogPopup.java)), Termina ([`ui/MessageLogWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MessageLogWindow.java)), Mirada
     ([`ui/MessageLogView.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MessageLogView.java)) and the app template ([`ui/MessageLogView.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MessageLogView.java)), each the same way. For the
     keymap's chord, no app yet: none of the five reads the keymap's copy binding in its log, and Editora's Emacs
-    keymap binds copy to `M-w`, which its log does not read. Editora doesn't hold the first half under that keymap
+    keymap binds copy to `M-w`, which its log does not read. The app template meets the rule all the same: none of its
+    keymaps binds a copy command, so there is no second chord to read, and its key dispatcher steps aside while the
+    log, an overlay, is open (`KeyDispatcher`), so `Ctrl+C` reaches it under the Emacs keymap's `C-c` prefix too. Editora doesn't hold the first half under that keymap
     on Windows and Linux either: the keymap starts longer chords with `C-c`, a prefix the window's key dispatcher
     ([`command/KeyDispatcher.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/KeyDispatcher.java)) consumes in a scene filter, ahead of the log's own.
 - **MLOG-05 · SHOULD.** A message's severity comes from its key: a `status.*` key whose last segment contains `fail`

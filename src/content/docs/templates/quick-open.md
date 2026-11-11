@@ -108,8 +108,9 @@ have none ([Uses](#uses)).
     that previewed a row runs its undo when it is dismissed without a choice. A test that asserts the undo is the
     surest evidence.
   - *Reference:* Editora [`OverlayHost`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java) (`previousFocus`; it cancels on [`PickerKeys.isCancel`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java)),
-    [`QuickOpenPreviewFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/QuickOpenPreviewFxTest.java) (`dismissingRestoresWhatWasPreviewed`). `Ctrl+G` is fixed in the app
-    template's [`ui/OverlayHost.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/OverlayHost.java) and in the `EMACS` table of Mirada's [`ui/PaletteKeys.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/PaletteKeys.java).
+    [`QuickOpenPreviewFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/QuickOpenPreviewFxTest.java) (`dismissingRestoresWhatWasPreviewed`). The app template's
+    [`ui/OverlayHost.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/OverlayHost.java) cancels its pickers on Esc, on the scrim and on the keymap's `edit.cancel` chord (`cancelOn`), and
+    gives the focus back; none of its pickers previews anything. `Ctrl+G` is fixed in the `EMACS` table of Mirada's [`ui/PaletteKeys.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/PaletteKeys.java).
 - **QOPEN-08 · MAY.** A picker previews the highlighted row as the selection moves and undoes the preview on cancel
   (Editora's Recent Locations shows each place and returns to the origin on Esc). A preview without an undo is
   worse than none, and nothing is previewed for the row the picker opens on, only for one the user moved to.

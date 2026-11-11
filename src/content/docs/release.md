@@ -246,8 +246,9 @@ The certificate renews before 2027-11-30; the Apple membership before 2027-10-31
 - **REL-25 · SHOULD.** Every `actions/setup-java` step caches Maven's repository (`cache: maven`). The JDK it sets
   up is [PLAT-01](../platform/#plat-01)'s.
   - *Check (code):* each `setup-java` step has `cache: maven`.
-  - *Reference:* Mirada ([`ci.yml`](https://github.com/adriandeleon/Mirada/blob/main/.github/workflows/ci.yml)), Modula and nux, on every step. Editora ([`ci.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/ci.yml),
-    [`release.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/release.yml)), the app template, Termina and Torrenta each have a `setup-java` step without it. Editora
+  - *Reference:* Mirada ([`ci.yml`](https://github.com/adriandeleon/Mirada/blob/main/.github/workflows/ci.yml)), Modula, nux and the app template ([`ci.yml`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/.github/workflows/ci.yml),
+    [`full-tests.yml`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/.github/workflows/full-tests.yml), [`release.yml`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/.github/workflows/release.yml)), on every step. Editora ([`ci.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/ci.yml),
+    [`release.yml`](https://github.com/adriandeleon/Editora/blob/master/.github/workflows/release.yml)), Termina and Torrenta each have a `setup-java` step without it. Editora
     sets up Temurin for its tests and Liberica for the release build, for linux-aarch64 coverage.
 - **REL-26 · MUST.** Every job that runs steps has `timeout-minutes`. A job that calls a reusable workflow
   (`uses:` in place of `steps:`) takes no `timeout-minutes`: GitHub does not accept the key there, and the called

@@ -130,12 +130,14 @@ says which bars count as one. Reference: Editora's [`ui/Icons.java`](https://git
   - *Check (code):* every `Tooltip` the app creates gets a 400 ms show delay from one place: each is made by one
     factory that calls `setShowDelay`, or the stylesheet's `.tooltip` rule sets `-fx-show-delay: 400ms`. A tooltip
     made with `new Tooltip` outside the factory and given no delay fails, as does any other delay.
-  - *Reference:* no app yet. Termina is nearest: [`ui/IconNames.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/IconNames.java) (`name`, `SHOW_DELAY`) sets 400 ms on every tooltip it makes,
+  - *Reference:* the app template: its [`styles/app.css`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/styles/app.css) sets `-fx-show-delay: 400ms` on `.tooltip`, and the
+    tooltips its code makes get the same from one constant, `TOOLTIP_DELAY` in [`ui/Icons.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Icons.java) (`bindName`, and
+    [`ui/TabHeaders.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/TabHeaders.java) for a tab's). Termina is nearest among the apps: [`ui/IconNames.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/IconNames.java) (`name`, `SHOW_DELAY`) sets 400 ms on every tooltip it makes,
     and [`ui/TerminalWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalWindow.java) sets the same inline on a tab's folder tooltip, but the tooltip on a disabled row of
     its [`ui/CommandPalette.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/CommandPalette.java) sets none. Editora sets 300, 350 or 400 ms on some
     ([`editor/LazyTooltip.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/editor/LazyTooltip.java)'s callers, [`ui/StructurePanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StructurePanel.java), [`ui/MapSurface.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MapSurface.java), [`ui/DiffViewerPane.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/DiffViewerPane.java)) and leaves
-    the rest at JavaFX's second; Mirada sets 250 ms on one ([`ui/MarksBadge.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MarksBadge.java)) and none on the others; the
-    app template, Torrenta, Modula and nux set none. No app's stylesheet sets `-fx-show-delay`.
+    the rest at JavaFX's second; Mirada sets 250 ms on one ([`ui/MarksBadge.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MarksBadge.java)) and none on the others; Torrenta,
+    Modula and nux set none. No app's stylesheet sets `-fx-show-delay`.
 - **TBAR-06 · SHOULD.** The bars an app stacks at the top of its main window are one chrome band: whichever of
   the menu bar, the toolbar and the tab strip it has share `-color-bg-subtle` and draw no hairline between them.
   The bars it stacks at the bottom, whichever of a breadcrumb, a bottom stripe and the status bar it has, do the

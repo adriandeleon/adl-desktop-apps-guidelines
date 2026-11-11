@@ -29,12 +29,12 @@ and Modula's one dialog has a single button. No app has a UI zoom ([WIN-12](../.
 Termina and Mirada zoom their content only (the text, the terminal's font, the image), and Torrenta, Modula and nux
 have no zoom. So no app's menus follow one either ([MENU-16](../../menus/#menu-16)): Editora's and Mirada's, the two
 that set the font on `.context-menu`, write 14 px as a fixed size. And no app meets all of
-[CLI-12](../../command-line/#cli-12): the template comes nearest, and refuses a launcher's JVM options with every
-other unknown one. And no app has the test that sweeps every window for a control with no name
+[CLI-12](../../command-line/#cli-12). And no app has the test that sweeps every window for a control with no name
 ([ACC-01](../../accessibility/#acc-01)): Termina's sweeps icon-only buttons, Editora's and Mirada's each check a few
 named sets of buttons, and Torrenta, Modula and nux have none. Editora's in-window menu rows carry no accessible text;
 Torrenta sets one in a single helper, which names every button of its main toolbar and the Search view's Clear button
-and not its "···" button, and Modula sets none.
+and not its "···" button, and Modula sets none. The app template, which is not one of the six, meets all six
+MUSTs: each rule's Reference says where.
 
 | App | Missing MUSTs |
 |---|---|
@@ -79,7 +79,8 @@ and not its "···" button, and Modula sets none.
   label, not its tooltip.
 - **Settings Sync** ([SYNC-01](../../templates/settings-sync/#sync-01)): Modula, Mirada and nux don't have it.
 - **Copy in the Message Log on the keymap's copy chord** ([MLOG-04](../../templates/message-log/#mlog-04)): Editora's,
-  Torrenta's, Termina's, Mirada's and the template's each copy on the platform's fixed chord alone.
+  Torrenta's, Termina's and Mirada's each copy on the platform's fixed chord alone. The template's does too, and none
+  of its keymaps binds a copy command, so it has no second chord to read.
 - **A tab's Git status in its tooltip** ([TABS-08](../../tabs-and-panels/#tabs-08)): Editora, the one app whose tabs
   hold files, shows the status by the title's color alone; its tab tooltip is the file's path.
 - **The Message Log as an in-scene card** ([MLOG-08](../../templates/message-log/#mlog-08)): Termina's is a separate

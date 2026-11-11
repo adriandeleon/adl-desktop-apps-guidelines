@@ -49,8 +49,8 @@ not apply, the ones it does differently on purpose, and the ones still pending. 
   - *Why:* what the app still owes is what a reader came to find.
   - *Check (code):* the list the Pauta window draws is sorted by kind in that order, then MUSTs before SHOULDs,
     then by rule ID (the app template's `PautaConformance.sorted`). A test that asserts it is the surest evidence.
-  - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`PautaConformance.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/PautaConformance.java) (`sorted`), tested by [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java).
-    Its `Kind` has three kinds, pending, deviation and not-applicable: it sorts those and cannot read `app-only` yet.
+  - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`PautaConformance.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/PautaConformance.java) (`sorted`, by the order of its `Kind`), tested by [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java)
+    (`pendingFirstThenDeviationsThenAppOnlyThenNotApplicableMustsBeforeShouldsThenById`).
 - **PWIN-06 · SHOULD.** The Pauta window's *Copy as text* button copies the edition, the conformance and the list
   as Markdown, one line per exception, and leaves the window open; its label becomes "Copied".
   - *Check (code):* the button's handler copies the edition, the conformance and one line per exception as Markdown
@@ -146,5 +146,5 @@ The entries above show the layout with Mirada's name; they are not Mirada's reco
 
 The reasons themselves come from `pauta.json`, in English ([PAUTA-08](../../conformance/#pauta-08)); the window's
 own words are in the catalogs like every other string. Counts use `MessageFormat`'s `choice` so English reads "1
-SHOULD is pending", not "1 SHOULDs are". A command description takes no arguments, so it says "this app". The app template's catalog has every key
-but the app-only pair, which came with 4.2.0, after the edition the template is built to.
+SHOULD is pending", not "1 SHOULDs are". A command description takes no arguments, so it says "this app". The app template's catalog has every key,
+in each of its six languages.

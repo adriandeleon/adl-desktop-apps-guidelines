@@ -124,8 +124,9 @@ The palette is an in-scene overlay in the window's root `StackPane`, over a fain
     hide the overlay, and hiding focuses the node that had focus before it opened. In an app with one key table (a
     terminal app's keymap, or the built-in table of an app that ships no keymap files), the chord is the one that
     table binds to a cancel command; where it binds none, Esc and the backdrop are all there is to test.
-  - *Reference:* Editora [`PickerKeys`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java) (`isCancel`), [`OverlayHost`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java) (`previousFocus`), the only one that asks the
-    keymap for the chord. `Ctrl+G` is fixed in the app template's [`ui/OverlayHost.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/OverlayHost.java) and in the `EMACS` table
+  - *Reference:* Editora [`PickerKeys`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java) (`isCancel`), [`OverlayHost`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java) (`previousFocus`), and the app template's [`ui/OverlayHost.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/OverlayHost.java) (`cancelOn`, which
+    [`ui/MainWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MainWindow.java) hands the keymap's `edit.cancel` chord, `C-g` in its Emacs keymap, and `hide`, which gives the
+    focus back): the two that ask the keymap for the chord. `Ctrl+G` is fixed in the `EMACS` table
     of Termina's [`ui/PaletteKeys.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/PaletteKeys.java) and Mirada's [`ui/PaletteKeys.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/PaletteKeys.java). Torrenta's, Modula's and nux's
     palettes cancel on Esc and on a press on the backdrop: none of the three apps has a keymap or a cancel command, so the
     chord asks nothing more of them.

@@ -70,7 +70,9 @@ Guard tests that pay for themselves across the family:
   - *Reference:* Editora [`CommandSweepFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/CommandSweepFxTest.java).
 - **QUAL-13 · SHOULD.** A settings round trip shows that every switch, number and choice survives a restart.
   - *Check (test):* one FX test sets every control, reloads the settings and reads each back.
-  - *Reference:* Editora [`SettingsRoundTripFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/SettingsRoundTripFxTest.java).
+  - *Reference:* Editora [`SettingsRoundTripFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/SettingsRoundTripFxTest.java); the app template's [`SettingsRoundTripFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/SettingsRoundTripFxTest.java)
+    (`everyControlSurvivesARestart`), which changes every combo box, switch and field on every Settings page,
+    restarts on the same folder and reads each one back.
 - **QUAL-15 · SHOULD.** A release supply-chain test keeps the signing and attestation steps where they are.
   - *Check (test):* a test reads the workflows and fails when a signing, notarization or attestation step moves or
     goes.

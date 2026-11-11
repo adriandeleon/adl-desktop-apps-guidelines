@@ -133,7 +133,7 @@ edition but not their conformance.
     audit of part of the edition judges the rule from the MUSTs in its scope and says so. Only the rules of the
     edition the app names settle a *Built to*: an audit run against another edition reports the rule as
     `not-checked` and names the edition whose rules would settle it.
-  - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template), at Core: its About says *Built to Pauta 6.0.0*
+  - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template), at Complete: its About says *Built to Pauta 6.0.0*
     ([`ui/AboutDialog.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AboutDialog.java), `editionKey`) and so does its README, and its audit against 6.0.0's own rules finds no
     MUST that is `fail` or `pending` ([`docs/pauta-audit.md`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/docs/pauta-audit.md)). Termina and Mirada don't meet it yet.
     Termina's About says "Built to Pauta 2.0.2" ([`pom.xml`](https://github.com/adriandeleon/Termina/blob/master/pom.xml), `pauta.version`), an edition that already

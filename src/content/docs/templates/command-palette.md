@@ -92,7 +92,7 @@ The palette is an in-scene overlay in the window's root `StackPane`, over a fain
 | Row text | 12.5 px; padding 7 × 16 | `.command-palette .list-cell` |
 | Scrim | `rgba(0,0,0,0.18)`, the value of a token defined on `.root` ([ICON-08](../../icons-and-color/#icon-08)); a click on it closes the palette | `.overlay-backdrop` |
 | Content | Every registered command: title from `command.<id>`, description from `command.<id>.desc` | `CommandRegistry`, `MessagesTest` |
-| Ranking | Editora scores the title; when the title does not match, the id's namespace word (`markdown` for `markdown.tableAddRow`, "Table: Add Row"), then the names other IDEs give the command. The description is shown, not matched. A query that names a title outranks a fuzzy hit. The app template scores the title and the description | `FuzzyMatch`, `Command.keywords`, `OtherIdeNames`, `titlePhraseScore`; the template's [`ui/Picker.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Picker.java) |
+| Ranking | Editora scores the title; when the title does not match, the id's namespace word (`markdown` for `markdown.tableAddRow`, "Table: Add Row"), then the names other IDEs give the command. The description is shown, not matched. A query that names a title outranks a fuzzy hit. The app template scores the title and the words of the id, and shows the description | `FuzzyMatch`, `Command.keywords`, `OtherIdeNames`, `titlePhraseScore`; the template's [`ui/Picker.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Picker.java) |
 
 ## Behavior
 
@@ -112,9 +112,9 @@ The palette is an in-scene overlay in the window's root `StackPane`, over a fain
   - *Check (code):* the palette's key handler looks a press up in the active keymap and moves on the commands it
     binds for a line and a page up and down, not on fixed letters, and on ↑ ↓ and Page Up/Down whatever the keymap;
     the run path hides the card before it calls the registry, and does nothing on a disabled row.
-  - *Reference:* Editora [`CommandPalette.runSelected`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java), [`PickerKeys.resolve`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java), the only palette that asks the
-    keymap. The others move on fixed keys: the app template's [`ui/Picker.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Picker.java) on the arrows, the page keys and
-    `Ctrl+N` and `Ctrl+P` whatever the keymap; Termina's [`ui/PaletteKeys.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/PaletteKeys.java) and Mirada's [`ui/PaletteKeys.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/PaletteKeys.java) on a
+  - *Reference:* Editora [`CommandPalette.runSelected`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java), [`PickerKeys.resolve`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java), and the app template's [`ui/PickerKeys.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/PickerKeys.java) (`resolve`, for its [`ui/Picker.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Picker.java)), which reads the
+    keymap's `nav.lineDown`, `nav.lineUp`, `nav.pageDown` and `nav.pageUp` beside the fixed keys: the two palettes that
+    ask the keymap. The others move on fixed keys: Termina's [`ui/PaletteKeys.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/PaletteKeys.java) and Mirada's [`ui/PaletteKeys.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/PaletteKeys.java) on a
     fixed table of Emacs chords beside them (`EMACS`: `C-n`, `C-p`, `C-v`, `M-v`); Torrenta's
     [`ui/CommandPalette.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/CommandPalette.java) (`onKey`) on the arrows and `Ctrl+N` and `Ctrl+P`, with no page keys; Modula's
     [`ui/CommandPalette.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/CommandPalette.java) and nux's [`ui/CommandPalette.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/CommandPalette.java) on the arrows alone.
@@ -137,11 +137,14 @@ The palette is an in-scene overlay in the window's root `StackPane`, over a fain
     starts a longer chord with, and the URL it opens is built from the app's versioned docs address and the
     selected command's id.
   - *Reference:* Editora [`CommandPalette`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java) ([`PickerKeys.freeChord`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java) over `C-h`, `f1` and `S-f1`; `docsUrl`), [`AppInfo.docsUrl`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/AppInfo.java).
-    No other app's palette has a help chord yet.
+    The app template's [`ui/PickerKeys.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/PickerKeys.java) (`HELP_CHORDS`, `helpChord`) picks the chord the same way, and the
+    palette opens the command's page under its versioned docs ([`PickerFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/PickerFxTest.java), `helpTitleCurrentValueAndTheEnds`). No other
+    app's palette has a help chord yet.
 - **PAL-09 · SHOULD.** A live keymap switch re-renders the palette's key chips, its opener chip and its key legend.
   - *Check (code):* applying a new keymap calls the palette's rebind method, which rebuilds the opener, the legend and
     the rows.
-  - *Reference:* Editora [`CommandPalette.refreshBindings`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java), called from [`SettingsReapply`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsReapply.java).
+  - *Reference:* Editora [`CommandPalette.refreshBindings`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/CommandPalette.java), called from [`SettingsReapply`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsReapply.java); the app template's `Picker.rebind`
+    ([`ui/Picker.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Picker.java)), which its palette runs on a keymap change with the new opener, rows and legend ([`ui/MainWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MainWindow.java)).
 
 ## Copy
 

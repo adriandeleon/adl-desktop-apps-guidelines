@@ -149,4 +149,6 @@ description: "The flags every app accepts and the single-instance hand-off."
   - *Check (code):* on macOS and Linux, every process the app starts gets a `PATH` that includes the login
     shell's. An app that starts no external tool is outside the rule.
   - *Reference:* Editora [`process/ProcessRunner.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/process/ProcessRunner.java) (`augmentedPath`; on Windows its login-shell probe returns
-    nothing and the inherited `PATH` is used).
+    nothing and the inherited `PATH` is used). The app template's [`sync/ShellPath.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/sync/ShellPath.java) does the same for the `git` and `gh` it
+    starts: the login shell's `PATH` before the inherited one on macOS and Linux, the inherited one on Windows
+    ([`ShellPathTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/sync/ShellPathTest.java)).

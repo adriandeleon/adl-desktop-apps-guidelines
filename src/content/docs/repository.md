@@ -110,7 +110,7 @@ template's: a convention, not a rule. Editora's README has those seven in this o
 The Pauta badge names the edition and the conformance, in green `2ea043` for Complete, blue `5b8def` for Core and
 amber `d29922` for Partial, and links to the app's *Pauta conformance* docs page; a test holds
 it to `pauta.version` and the computed conformance ([Conformance](../conformance/#pauta-15)). The template's badge
-reads `Pauta 6.0.0 · Core`, in blue, and the README line beside it says "Built to"; at Partial that line says
+reads `Pauta 6.0.0 · Complete`, in green, and the README line beside it says "Built to"; at Partial that line says
 "Working toward" instead.
 
 The rest of this section describes Editora's README and is not a rule. Its hero screenshot is a `<picture>` with a

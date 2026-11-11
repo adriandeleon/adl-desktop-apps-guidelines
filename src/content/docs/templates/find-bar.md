@@ -160,9 +160,10 @@ read as one family: a lens, the field as the card's own text, the count, a regex
     bottom row of the view.
   - *Reference:* Editora [`FindReplaceBar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/FindReplaceBar.java) (`searchAnchor`, `recompute`) over the editor. Over a terminal, Editora's
     [`terminal/TerminalView.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/terminal/TerminalView.java) (`startIndex`, `drawSearch`) and Termina's [`TerminalView`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalView.java) (`drawSearchMatches`)
-    with [`ScrollbackSearch.initial`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/ScrollbackSearch.java). Editora's [`ConsoleFindBar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ConsoleFindBar.java) and the app template's
-    [`ui/FindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/FindBar.java) don't yet: each searches from the current selection (`refine`, and the template's `found`), not
-    from an anchor saved when the bar opened. Editora's console is a `CodeArea`, which could paint every match, and
+    with [`ScrollbackSearch.initial`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/ScrollbackSearch.java). The app template's [`ui/FindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/FindBar.java) saves the
+    caret as its `anchor` when the bar opens and `refine` searches from it ([`FindBarFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/FindBarFxTest.java),
+    `theSearchStartsAtTheCaretAndTheFieldKeepsItsEditingKeys`). Editora's [`ConsoleFindBar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ConsoleFindBar.java) doesn't yet: it searches
+    from the current selection (`refine`), not from an anchor saved when the bar opened. Editora's console is a `CodeArea`, which could paint every match, and
     its bar paints the active one only. The template's documents, Output and Debug Log are each a `TextArea`, which
     draws one selection and nothing else, so its bar rightly shows the active match alone.
 - **FIND-06 · MUST.** In a find bar, Enter steps to the next match and Shift+Enter to the previous one, wrapping
@@ -205,7 +206,10 @@ read as one family: a lens, the field as the card's own text, the count, a regex
     and the commands for next, previous, replace and close still run while a find field has the focus.
   - *Reference:* Editora [`TextInputKeymap.installShared`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/TextInputKeymap.java), installed on [`FindReplaceBar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/FindReplaceBar.java)'s find and replace fields.
     Editora's [`ConsoleFindBar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ConsoleFindBar.java) and [`TerminalFindBar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TerminalFindBar.java) don't yet: neither installs it on its field. Nor does
-    Termina's find field: its [`TextInputKeys`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TextInputKeys.java) is installed on the palette only.
+    Termina's find field: its [`TextInputKeys`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TextInputKeys.java) is installed on the palette only. The app
+    template's [`ui/TextInputKeys.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/TextInputKeys.java) (`install`) is on the field of each of its find bars, and its key dispatcher leaves a
+    text field's editing chords to the field ([`TextInputKeysTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/TextInputKeysTest.java); [`FindBarFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/FindBarFxTest.java),
+    `theSearchStartsAtTheCaretAndTheFieldKeepsItsEditingKeys`).
 - **FIND-10 · SHOULD.** Nothing found is one status-line message ("Not found: x") or the count "No matches". No beep,
   no dialog.
   - *Check (code):* the no-match path sets `find.notFound` or `search.none` and opens nothing.

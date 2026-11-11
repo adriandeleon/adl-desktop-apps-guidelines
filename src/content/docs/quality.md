@@ -42,7 +42,7 @@ fail. These are the gates that have paid for themselves across the family.
     called (`@Tag("fx")` in Editora).
   - *Reference:* Termina holds it by test: [`FxTestTagsTest`](https://github.com/adriandeleon/Termina/blob/master/src/test/java/com/termina/FxTestTagsTest.java) fails when a test source that names
     `Platform.startup(` or `FxToolkit.` has no `@Tag("fx")`. Editora states it in [`docs/testing.md`](https://github.com/adriandeleon/Editora/blob/master/docs/testing.md) and does not
-    hold it fully yet: 33 of its `*FxTest` classes, 18 of them `ProjectMap*FxTest`, carry no tag. Torrenta doesn't
+    hold it fully yet: 38 of its `*FxTest` classes, 18 of them `ProjectMap*FxTest`, carry no tag. Torrenta doesn't
     yet: 26 of its test classes start the toolkit through its [`FxToolkit`](https://github.com/adriandeleon/torrenta/blob/master/src/test/java/com/torrenta/ui/FxToolkit.java) extension, and no test in the
     repository carries a tag.
 - **QUAL-07 · SHOULD.** Tests do not sleep. A scope owns the workers and FX callbacks (Editora's

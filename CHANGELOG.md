@@ -34,6 +34,14 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
   QOPEN-12, QUAL-13, REL-17 (the signing step, waiting for a certificate), SET-08, SET-18, SET-20, WELC-03, WELC-04,
   WELC-05, WELC-11, WIN-08 and WIN-09. PAUTA-04, PAUTA-07, ABOUT-07, OS-04, WIN-12, SET-09, SET-22, the palette's
   ranking row and the README badge note follow it from Core to Complete.
+- **Editora's References follow it to its head.** Editora moved on after 6.0.0 pinned it, and the pages said what
+  it no longer does. Its right-click menus now show chords in the editor's, the tabs', the previews' and the output
+  consoles' menus (`MenuChords`), so MENU-15's Reference and *Gaps per app* say which do and that the rest still
+  don't, a Project Map card's among them. Its Expert mode now hides the menu bar too, so WIN-10's statement says
+  Expert keeps only the status bar, and its Reference follows. QUAL-06 counts 38 untagged `*FxTest` classes, not 33;
+  ICON-07 counts 79 component declarations that name a role, not 78, and ICON-08 lists `.debug-menu-logpoint`
+  among the fixed hexes; the Quick open template's uses add breakpoint groups and loaded sources and modules.
+  Every other Editora class, method, test, key and file the pages cite still exists and does what they say.
 
 ## [6.0.0] - 2026-11-10
 

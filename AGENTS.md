@@ -125,10 +125,11 @@ Editora (`../Editora`) is the reference implementation.
   number, runs `node scripts/rule-changes.mjs`, which records in `rule-changes.json` the edition each rule's level,
   scope or statement last changed in (`changed` in `rules.json`; no network, and never edited by hand or outside a
   release), and runs `node scripts/pin-references.mjs`, which records in `pins.json` the commit at the head of every
-  repository the pages link into. The next release also switches `ruleHash` (`src/lib/rules.mjs`) to a hash of the
-  statement's words alone (no emphasis marks, no link brackets), and for that one release
-  `scripts/rule-changes.mjs` and `scripts/check-edition.mjs` accept a stored hash that matches either function, so
-  the switch re-dates no rule. What the edition serves (pages, agent files, downloads) links those commits
+  repository the pages link into (`Repo=<sha>` arguments pin a repository at the commit named instead, for one that
+  has moved on since the edition's References and gaps were read against it). `ruleHash` (`src/lib/rules.mjs`) hashes a rule's level, scope and
+  statement as words alone (a link is its label; emphasis marks and backticks are dropped), so a markup-only edit
+  re-dates no rule. The record of 5.0.0 was made with an older hash that kept the markup: `sameRule` accepts
+  either until the release of 6.0.0 has rewritten the record, after which `legacyHash` can be removed. What the edition serves (pages, agent files, downloads) links those commits
   instead of `blob/master`, and this repository's own links its tag (`src/lib/pins.mjs`), so an edition's References
   keep showing the code as it was at the release; the script fails when a linked path
   isn't there. Pages keep writing `blob/master`. **Version numbers** below says which part to raise, for the whole batch.

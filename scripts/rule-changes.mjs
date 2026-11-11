@@ -13,14 +13,14 @@
 // that touches it.
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { CHANGES, changesText, freshChanges, readChanges, readRules } from "../src/lib/rules.mjs";
+import { CHANGES, changesText, freshChanges, readChanges, readRules, sameRule } from "../src/lib/rules.mjs";
 
 process.chdir(fileURLToPath(new URL("..", import.meta.url))); // not .pathname, which keeps a space as %20
 const { version } = JSON.parse(readFileSync("package.json", "utf8"));
 const was = readChanges();
 const rules = readRules().pages.flatMap((p) => p.rules);
 const now = freshChanges(was, rules, version);
-const marked = rules.filter((r) => was?.rules?.[r.id]?.hash !== now.rules[r.id].hash).map((r) => `${r.id}${was?.rules?.[r.id] ? "" : " (new)"}`);
+const marked = rules.filter((r) => !sameRule(was?.rules?.[r.id], r)).map((r) => `${r.id}${was?.rules?.[r.id] ? "" : " (new)"}`);
 const gone = now.retired.filter((id) => !(was?.retired ?? []).includes(id));
 const said = `${marked.length} rules new or changed since ${was?.edition ?? "the start"}${marked.length ? `: ${marked.join(", ")}` : ""}; ${gone.length} retired${gone.length ? `: ${gone.join(", ")}` : ""}`;
 if (process.argv.includes("--check")) {

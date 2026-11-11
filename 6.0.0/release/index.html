@@ -1,0 +1,560 @@
+<!DOCTYPE html><html lang="en" dir="ltr" data-theme="dark" data-has-toc data-has-sidebar class="astro-g5ptsecz"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Packaging, signing and release | Pauta</title><link rel="canonical" href="https://pauta-project.dev/6.0.0/release/"/><link rel="sitemap" href="/6.0.0/sitemap-index.xml"/><script src="/6.0.0/lightbox.js" defer></script><script src="/6.0.0/mock-fit.js" defer></script><script src="/6.0.0/checklist.js" defer data-version="6.0.0" data-edition="6.0.0"></script><script src="/6.0.0/versions.js" defer data-root="/" data-version="6.0.0" data-edition="6.0.0"></script><link rel="apple-touch-icon" href="/6.0.0/pauta-128.png"/><link rel="shortcut icon" href="/6.0.0/favicon.svg" type="image/svg+xml"/><meta name="generator" content="Astro v7.4.7"/><meta name="generator" content="Starlight v0.42.10"/><meta property="og:title" content="Packaging, signing and release"/><meta property="og:type" content="article"/><meta property="og:url" content="https://pauta-project.dev/6.0.0/release/"/><meta property="og:locale" content="en"/><meta property="og:description" content="jpackage, JReleaser, the five-target matrix, macOS/Linux/Windows signing and CI."/><meta property="og:site_name" content="Pauta"/><meta name="description" content="jpackage, JReleaser, the five-target matrix, macOS/Linux/Windows signing and CI."/><meta name="robots" content="noindex"/><meta property="og:image" content="https://pauta-project.dev/6.0.0/og.png"/><meta property="og:image:width" content="1280"/><meta property="og:image:height" content="640"/><meta property="og:image:alt" content="Pauta, the adl desktop apps guidelines, with the six apps' icons"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:image" content="https://pauta-project.dev/6.0.0/og.png"/><script>
+	window.StarlightThemeProvider = (() => {
+		const storedTheme =
+			typeof localStorage !== 'undefined' && localStorage.getItem('starlight-theme');
+		const theme =
+			storedTheme ||
+			(window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+		document.documentElement.dataset.theme = theme === 'light' ? 'light' : 'dark';
+		return {
+			updatePickers(theme = storedTheme || 'auto') {
+				document.querySelectorAll('starlight-theme-select').forEach((picker) => {
+					const select = picker.querySelector('select');
+					if (select) select.value = theme;
+					/** @type {HTMLTemplateElement | null} */
+					const tmpl = document.querySelector(`#theme-icons`);
+					const newIcon = tmpl && tmpl.content.querySelector('.' + theme);
+					if (newIcon) {
+						const oldIcon = picker.querySelector('svg.label-icon');
+						if (oldIcon) {
+							oldIcon.replaceChildren(...newIcon.cloneNode(true).childNodes);
+						}
+					}
+				});
+			},
+		};
+	})();
+</script><template id="theme-icons"><svg aria-hidden="true" class="light astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M5 12a1 1 0 0 0-1-1H3a1 1 0 0 0 0 2h1a1 1 0 0 0 1-1Zm.64 5-.71.71a1 1 0 0 0 0 1.41 1 1 0 0 0 1.41 0l.71-.71A1 1 0 0 0 5.64 17ZM12 5a1 1 0 0 0 1-1V3a1 1 0 0 0-2 0v1a1 1 0 0 0 1 1Zm5.66 2.34a1 1 0 0 0 .7-.29l.71-.71a1 1 0 1 0-1.41-1.41l-.66.71a1 1 0 0 0 0 1.41 1 1 0 0 0 .66.29Zm-12-.29a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.71-.71a1.004 1.004 0 1 0-1.43 1.41l.73.71ZM21 11h-1a1 1 0 0 0 0 2h1a1 1 0 0 0 0-2Zm-2.64 6A1 1 0 0 0 17 18.36l.71.71a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.76-.66ZM12 6.5a5.5 5.5 0 1 0 5.5 5.5A5.51 5.51 0 0 0 12 6.5Zm0 9a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Zm0 3.5a1 1 0 0 0-1 1v1a1 1 0 0 0 2 0v-1a1 1 0 0 0-1-1Z"/></svg><svg aria-hidden="true" class="dark astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.64 13a1 1 0 0 0-1.05-.14 8.049 8.049 0 0 1-3.37.73 8.15 8.15 0 0 1-8.14-8.1 8.59 8.59 0 0 1 .25-2A1 1 0 0 0 8 2.36a10.14 10.14 0 1 0 14 11.69 1 1 0 0 0-.36-1.05Zm-9.5 6.69A8.14 8.14 0 0 1 7.08 5.22v.27a10.15 10.15 0 0 0 10.14 10.14 9.784 9.784 0 0 0 2.1-.22 8.11 8.11 0 0 1-7.18 4.32v-.04Z"/></svg><svg aria-hidden="true" class="auto astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg></template><link rel="stylesheet" href="/6.0.0/_astro/print.C9eyqPGL.css" media="print"><link rel="stylesheet" href="/6.0.0/_astro/common.QCVoDCf_.css"><style>@layer starlight.components{svg:where(.astro-hkc32dio){color:var(--sl-icon-color);font-size:var(--sl-icon-size,1em);width:1em;height:1em;overflow:visible}}
+</style><script type="module" src="/6.0.0/_astro/page.cNngjUgL.js"></script></head><body class="astro-g5ptsecz"><a class="sl-skip-link astro-qb7clj6f" href="#_top">Skip to content</a><div class="page sl-flex astro-yntsjkba"><header class="header astro-yntsjkba"><div class="header astro-by6fddyj"><div class="title-wrapper sl-flex astro-by6fddyj"><a href="/6.0.0/" class="site-title sl-flex astro-6rvad3va"><img class="astro-6rvad3va" alt src="/6.0.0/_astro/pauta-icon.BdPhq1pq.svg" width="512" height="512"><span class="astro-6rvad3va" translate="no">Pauta</span></a><a class="edition-mini md:sl-hidden print:hidden astro-hen6hmfb" href="/6.0.0/changelog/" title="This edition of the guidelines">6.0.0</a><pauta-edition-select data-root="/" data-base="/6.0.0/" class="astro-hwvk6c3s print:hidden sl-hidden md:sl-flex astro-hen6hmfb"><label style="--sl-select-width: 9.5em" class="astro-2z5xp7gb"><span class="sr-only astro-2z5xp7gb">Edition</span><svg aria-hidden="true" class="icon label-icon astro-2z5xp7gb astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.17 2.06A13.1 13.1 0 0 0 19 1.87a12.94 12.94 0 0 0-7 2.05 12.94 12.94 0 0 0-7-2 13.1 13.1 0 0 0-2.17.19 1 1 0 0 0-.83 1v12a1 1 0 0 0 1.17 1 10.9 10.9 0 0 1 8.25 1.91l.12.07h.11a.91.91 0 0 0 .7 0h.11l.12-.07A10.899 10.899 0 0 1 20.83 16 1 1 0 0 0 22 15V3a1 1 0 0 0-.83-.94ZM11 15.35a12.87 12.87 0 0 0-6-1.48H4v-10c.333-.02.667-.02 1 0a10.86 10.86 0 0 1 6 1.8v9.68Zm9-1.44h-1a12.87 12.87 0 0 0-6 1.48V5.67a10.86 10.86 0 0 1 6-1.8c.333-.02.667-.02 1 0v10.04Zm1.17 4.15a13.098 13.098 0 0 0-2.17-.19 12.94 12.94 0 0 0-7 2.05 12.94 12.94 0 0 0-7-2.05c-.727.003-1.453.066-2.17.19A1 1 0 0 0 2 19.21a1 1 0 0 0 1.17.79 10.9 10.9 0 0 1 8.25 1.91 1 1 0 0 0 1.16 0A10.9 10.9 0 0 1 20.83 20a1 1 0 0 0 1.17-.79 1 1 0 0 0-.83-1.15Z"/></svg><select autocomplete="off" class="astro-2z5xp7gb"><option value="latest" class="astro-2z5xp7gb">latest (6.0.0)</option><option value="6.0.0" selected class="astro-2z5xp7gb">6.0.0</option><option value="5.0.0" class="astro-2z5xp7gb">5.0.0</option><option value="4.5.0" class="astro-2z5xp7gb">4.5.0</option><option value="4.4.0" class="astro-2z5xp7gb">4.4.0</option><option value="4.3.1" class="astro-2z5xp7gb">4.3.1</option><option value="4.3.0" class="astro-2z5xp7gb">4.3.0</option><option value="4.2.0" class="astro-2z5xp7gb">4.2.0</option><option value="4.1.0" class="astro-2z5xp7gb">4.1.0</option><option value="4.0.2" class="astro-2z5xp7gb">4.0.2</option><option value="4.0.1" class="astro-2z5xp7gb">4.0.1</option><option value="4.0.0" class="astro-2z5xp7gb">4.0.0</option><option value="3.0.0" class="astro-2z5xp7gb">3.0.0</option><option value="2.0.2" class="astro-2z5xp7gb">2.0.2</option><option value="2.0.1" class="astro-2z5xp7gb">2.0.1</option><option value="2.0.0" class="astro-2z5xp7gb">2.0.0</option><option value="1.4.1" class="astro-2z5xp7gb">1.4.1</option><option value="1.4.0" class="astro-2z5xp7gb">1.4.0</option><option value="1.3.2" class="astro-2z5xp7gb">1.3.2</option><option value="1.3.1" class="astro-2z5xp7gb">1.3.1</option><option value="1.3.0" class="astro-2z5xp7gb">1.3.0</option><option value="1.2.0" class="astro-2z5xp7gb">1.2.0</option><option value="1.1.0" class="astro-2z5xp7gb">1.1.0</option><option value="1.0.0" class="astro-2z5xp7gb">1.0.0</option></select><svg aria-hidden="true" class="icon caret astro-2z5xp7gb astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg></label></pauta-edition-select><script type="module">var e=class extends HTMLElement{connectedCallback(){let e=this.querySelector(`select`);if(!e)return;let t=this.dataset.root??`/`,n=this.dataset.base??`/`,r=location.pathname.startsWith(n)?location.pathname.slice(n.length):``,i=()=>e.querySelector(`option[selected]`)?.index,a=async()=>{if(e.selectedIndex===i())return;let n=`${t}${e.value}/`,a=n+r;try{let e=await fetch(a,{method:`HEAD`});location.href=e.ok?a:n}catch{location.href=n}},o=!1,s=!1;e.addEventListener(`keydown`,e=>{e.key===`Enter`&&s?(s=!1,a()):(o=!0,setTimeout(()=>o=!1))}),e.addEventListener(`change`,()=>{o?s=!0:a()}),e.addEventListener(`blur`,()=>{let t=i();s&&t!==void 0&&(e.selectedIndex=t),s=!1}),window.addEventListener(`pageshow`,t=>{if(!t.persisted)return;let n=i();n!==void 0&&n!==e.selectedIndex&&(e.selectedIndex=n)})}};customElements.define(`pauta-edition-select`,e);</script></div><div class="sl-flex print:hidden astro-by6fddyj"><site-search class="astro-by6fddyj astro-b5kgnn7o" data-translations="{&quot;placeholder&quot;:&quot;Search&quot;}"><button data-open-modal disabled aria-label="Search" aria-keyshortcuts="Control+K" class="astro-b5kgnn7o"><svg aria-hidden="true" class="astro-b5kgnn7o astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.71 20.29 18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a.999.999 0 0 0 1.42 0 1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z"/></svg><span class="sl-hidden md:sl-block astro-b5kgnn7o" aria-hidden="true">Search</span><kbd class="sl-hidden md:sl-flex astro-b5kgnn7o" style="display: none"><kbd class="astro-b5kgnn7o">Ctrl</kbd><kbd class="astro-b5kgnn7o">K</kbd></kbd></button><dialog style="padding: 0" aria-label="Search" class="astro-b5kgnn7o"><div class="dialog-frame sl-flex astro-b5kgnn7o"><button data-close-modal class="sl-flex md:sl-hidden astro-b5kgnn7o">Cancel</button><div class="search-container astro-b5kgnn7o"><div id="starlight__search" class="astro-b5kgnn7o"></div></div></div></dialog></site-search><script>
+	(() => {
+		const openBtn = document.querySelector('button[data-open-modal]');
+		const shortcut = openBtn?.querySelector('kbd');
+		if (!openBtn || !(shortcut instanceof HTMLElement)) return;
+		const platformKey = shortcut.querySelector('kbd');
+		if (platformKey && /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)) {
+			platformKey.textContent = '⌘';
+			openBtn.setAttribute('aria-keyshortcuts', 'Meta+K');
+		}
+		shortcut.style.display = '';
+	})();
+</script><script type="module" src="/6.0.0/_astro/Search.astro_astro_type_script_index_0_lang.ioiLWlZp.js"></script></div><div class="sl-hidden md:sl-flex print:hidden right-group astro-by6fddyj"><div class="sl-flex social-icons astro-by6fddyj"><a href="https://github.com/adriandeleon/adl-desktop-apps-guidelines" rel="me" class="sl-flex astro-n2mnl6yq"><span class="sr-only astro-n2mnl6yq">GitHub</span><svg aria-hidden="true" class="astro-n2mnl6yq astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57L9 21.07c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.09-.73.09-.73 1.2.09 1.83 1.24 1.83 1.24 1.08 1.83 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18a4.65 4.65 0 0 1 1.23 3.22c0 4.61-2.8 5.63-5.48 5.92.42.36.81 1.1.81 2.22l-.01 3.29c0 .31.2.69.82.57A12 12 0 0 0 12 .3Z"/></svg></a></div><starlight-theme-select><label style="--sl-select-width: 6.25em" class="astro-2z5xp7gb"><span class="sr-only astro-2z5xp7gb">Select theme</span><svg aria-hidden="true" class="icon label-icon astro-2z5xp7gb astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg><select autocomplete="off" class="astro-2z5xp7gb"><option value="dark" class="astro-2z5xp7gb">Dark</option><option value="light" class="astro-2z5xp7gb">Light</option><option value="auto" selected class="astro-2z5xp7gb">Auto</option></select><svg aria-hidden="true" class="icon caret astro-2z5xp7gb astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg></label></starlight-theme-select><script>
+	StarlightThemeProvider.updatePickers();
+</script><script type="module">var e=`starlight-theme`,t=e=>e===`auto`||e===`dark`||e===`light`?e:`auto`,n=()=>t(typeof localStorage<`u`&&localStorage.getItem(e));function r(t){typeof localStorage<`u`&&localStorage.setItem(e,t===`light`||t===`dark`?t:``)}var i=()=>matchMedia(`(prefers-color-scheme: light)`).matches?`light`:`dark`;function a(e){StarlightThemeProvider.updatePickers(e),document.documentElement.dataset.theme=e===`auto`?i():e,r(e)}matchMedia(`(prefers-color-scheme: light)`).addEventListener(`change`,()=>{n()===`auto`&&a(`auto`)});var o=class extends HTMLElement{constructor(){super(),a(n()),this.querySelector(`select`)?.addEventListener(`change`,e=>{e.currentTarget instanceof HTMLSelectElement&&a(t(e.currentTarget.value))})}};customElements.define(`starlight-theme-select`,o);</script><script type="module">var e=class extends HTMLElement{constructor(){super();let e=this.querySelector(`select`);e&&(e.addEventListener(`change`,e=>{e.currentTarget instanceof HTMLSelectElement&&(window.location.pathname=e.currentTarget.value)}),window.addEventListener(`pageshow`,t=>{if(!t.persisted)return;let n=e.querySelector(`option[selected]`)?.index;n!==e.selectedIndex&&(e.selectedIndex=n??0)}))}};customElements.define(`starlight-lang-select`,e);</script></div></div></header><nav class="sidebar print:hidden astro-yntsjkba" aria-label="Main"><button popovertarget="starlight__sidebar" class="sl-menu-button sl-flex md:sl-hidden print:hidden astro-r2osgdlg"><svg aria-hidden="true" class="open-menu astro-r2osgdlg astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M3 8h18a1 1 0 1 0 0-2H3a1 1 0 0 0 0 2Zm18 8H3a1 1 0 0 0 0 2h18a1 1 0 0 0 0-2Zm0-5H3a1 1 0 0 0 0 2h18a1 1 0 0 0 0-2Z"/></svg><svg aria-hidden="true" class="close-menu astro-r2osgdlg astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="m13.41 12 6.3-6.29a1.004 1.004 0 1 0-1.42-1.42L12 10.59l-6.29-6.3a1.004 1.004 0 0 0-1.42 1.42l6.3 6.29-6.3 6.29a1 1 0 0 0 0 1.42.998.998 0 0 0 1.42 0l6.29-6.3 6.29 6.3a.999.999 0 0 0 1.42 0 1 1 0 0 0 0-1.42L13.41 12Z"/></svg><span class="sr-only astro-r2osgdlg">Menu</span></button><script type="module">var e=class extends HTMLElement{constructor(){super();let e=matchMedia(`(min-width: 50em)`),t=()=>{this.popover=e.matches?null:`auto`};t(),e.addEventListener(`change`,()=>t()),this.addEventListener(`toggle`,({newState:e})=>this.trapFocus(e===`open`))}trapFocus(e){document.querySelectorAll(`.main-frame, .sl-skip-link`).forEach(t=>{t.toggleAttribute(`inert`,e)})}};customElements.define(`sl-sidebar-pane`,e);</script><sl-sidebar-pane popover id="starlight__sidebar" class="sidebar-pane astro-yntsjkba"><div class="sidebar-content sl-flex astro-yntsjkba"><sl-sidebar-state-persist data-hash="1oyqopw" class="astro-ipdry5cl"><script aria-hidden="true">
+		(() => {
+			try {
+				if (!matchMedia('(min-width: 50em)').matches) return;
+				/** @type {HTMLElement | null} */
+				const target = document.querySelector('sl-sidebar-state-persist');
+				const state = JSON.parse(sessionStorage.getItem('sl-sidebar-state') || '0');
+				if (!target || !state || target.dataset.hash !== state.hash) return;
+				window._starlightScrollRestore = state.scroll;
+				customElements.define(
+					'sl-sidebar-restore',
+					class SidebarRestore extends HTMLElement {
+						connectedCallback() {
+							try {
+								const idx = parseInt(this.dataset.index || '');
+								const details = this.closest('details');
+								if (details && typeof state.open[idx] === 'boolean') details.open = state.open[idx];
+							} catch {}
+						}
+					}
+				);
+			} catch {}
+		})();
+	</script><ul class="top-level astro-rmhv4bp6"><li class="astro-rmhv4bp6"><a href="/6.0.0/" class="large astro-rmhv4bp6"><span class="astro-rmhv4bp6">Overview</span></a></li><li class="astro-rmhv4bp6"><details open class="astro-rmhv4bp6"><summary class="astro-rmhv4bp6"><span class="group-label astro-rmhv4bp6"><span class="large astro-rmhv4bp6">Start here</span></span><svg aria-hidden="true" class="caret astro-rmhv4bp6 astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="0"></sl-sidebar-restore><ul class="astro-rmhv4bp6"><li class="astro-rmhv4bp6"><a href="/6.0.0/principles/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Principles</span></a></li><li class="astro-rmhv4bp6"><a href="/6.0.0/same-on-every-os/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Same on every OS</span></a></li><li class="astro-rmhv4bp6"><a href="/6.0.0/checklist/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">New app checklist</span></a></li><li class="astro-rmhv4bp6"><a href="/6.0.0/conformance/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Conformance</span></a></li><li class="astro-rmhv4bp6"><a href="/6.0.0/coding-agents/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Coding agents and LLMs</span></a></li></ul></details></li><li class="astro-rmhv4bp6"><details open class="astro-rmhv4bp6"><summary class="astro-rmhv4bp6"><span class="group-label astro-rmhv4bp6"><span class="large astro-rmhv4bp6">Foundations</span></span><svg aria-hidden="true" class="caret astro-rmhv4bp6 astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="1"></sl-sidebar-restore><ul class="astro-rmhv4bp6"><li class="astro-rmhv4bp6"><a href="/6.0.0/platform/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Platform baseline</span></a></li><li class="astro-rmhv4bp6"><a href="/6.0.0/repository/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Repository documents</span></a></li><li class="astro-rmhv4bp6"><a href="/6.0.0/documentation/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Documentation</span></a></li><li class="astro-rmhv4bp6"><a href="/6.0.0/quality/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Code quality gates</span></a></li><li class="astro-rmhv4bp6"><a href="/6.0.0/performance/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Performance</span></a></li></ul></details></li><li class="astro-rmhv4bp6"><details open class="astro-rmhv4bp6"><summary class="astro-rmhv4bp6"><span class="group-label astro-rmhv4bp6"><span class="large astro-rmhv4bp6">Experience</span></span><svg aria-hidden="true" class="caret astro-rmhv4bp6 astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="2"></sl-sidebar-restore><ul class="astro-rmhv4bp6"><li class="astro-rmhv4bp6"><a href="/6.0.0/keyboard/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Keyboard first</span></a></li><li class="astro-rmhv4bp6"><a href="/6.0.0/accessibility/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Accessibility</span></a></li><li class="astro-rmhv4bp6"><a href="/6.0.0/window-shell/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Window shell</span></a></li><li class="astro-rmhv4bp6"><a href="/6.0.0/icons-and-color/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Icons and color</span></a></li><li class="astro-rmhv4bp6"><a href="/6.0.0/toolbars-and-tooltips/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Toolbars and tooltips</span></a></li><li class="astro-rmhv4bp6"><a href="/6.0.0/tabs-and-panels/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Tabs and tool panels</span></a></li><li class="astro-rmhv4bp6"><a href="/6.0.0/menus/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Menus</span></a></li><li class="astro-rmhv4bp6"><a href="/6.0.0/tray-and-background/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Tray and background</span></a></li><li class="astro-rmhv4bp6"><a href="/6.0.0/settings/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Settings</span></a></li><li class="astro-rmhv4bp6"><a href="/6.0.0/diagnostics/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Diagnostics and support</span></a></li><li class="astro-rmhv4bp6"><a href="/6.0.0/command-line/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Command line and launch</span></a></li><li class="astro-rmhv4bp6"><a href="/6.0.0/i18n/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Internationalization</span></a></li></ul></details></li><li class="astro-rmhv4bp6"><details open class="astro-rmhv4bp6"><summary class="astro-rmhv4bp6"><span class="group-label astro-rmhv4bp6"><span class="large astro-rmhv4bp6">Templates</span></span><svg aria-hidden="true" class="caret astro-rmhv4bp6 astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="3"></sl-sidebar-restore><ul class="astro-rmhv4bp6"><li class="astro-rmhv4bp6"><a href="/6.0.0/templates/command-palette/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Command Palette</span></a></li><li class="astro-rmhv4bp6"><a href="/6.0.0/templates/quick-open/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">QuickOpen picker</span></a></li><li class="astro-rmhv4bp6"><a href="/6.0.0/templates/welcome/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Welcome page</span></a></li><li class="astro-rmhv4bp6"><a href="/6.0.0/templates/about/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">About window</span></a></li><li class="astro-rmhv4bp6"><a href="/6.0.0/templates/pauta-window/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Pauta window</span></a></li><li class="astro-rmhv4bp6"><a href="/6.0.0/templates/confirm-dialog/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Confirm dialog</span></a></li><li class="astro-rmhv4bp6"><a href="/6.0.0/templates/find-bar/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Find bar</span></a></li><li class="astro-rmhv4bp6"><a href="/6.0.0/templates/message-log/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Message Log</span></a></li><li class="astro-rmhv4bp6"><a href="/6.0.0/templates/settings-sync/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Settings Sync</span></a></li></ul></details></li><li class="astro-rmhv4bp6"><details open class="astro-rmhv4bp6"><summary class="astro-rmhv4bp6"><span class="group-label astro-rmhv4bp6"><span class="large astro-rmhv4bp6">Shipping</span></span><svg aria-hidden="true" class="caret astro-rmhv4bp6 astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="4"></sl-sidebar-restore><ul class="astro-rmhv4bp6"><li class="astro-rmhv4bp6"><a href="/6.0.0/release/" aria-current="page" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Packaging, signing and release</span></a></li></ul></details></li><li class="astro-rmhv4bp6"><details open class="astro-rmhv4bp6"><summary class="astro-rmhv4bp6"><span class="group-label astro-rmhv4bp6"><span class="large astro-rmhv4bp6">The family</span></span><svg aria-hidden="true" class="caret astro-rmhv4bp6 astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></summary><sl-sidebar-restore data-index="5"></sl-sidebar-restore><ul class="astro-rmhv4bp6"><li class="astro-rmhv4bp6"><a href="/6.0.0/family/matrix/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Feature matrix</span></a></li><li class="astro-rmhv4bp6"><a href="/6.0.0/family/shared-features/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Shared features</span></a></li><li class="astro-rmhv4bp6"><a href="/6.0.0/family/gaps/" class="astro-rmhv4bp6"><span class="astro-rmhv4bp6">Gaps per app</span></a></li></ul></details></li><li class="astro-rmhv4bp6"><a href="/6.0.0/changelog/" class="large astro-rmhv4bp6"><span class="astro-rmhv4bp6">Changelog</span></a></li></ul><script aria-hidden="true">
+		(() => {
+			const scroller = document.getElementById('starlight__sidebar');
+			if (!window._starlightScrollRestore || !scroller) return;
+			scroller.scrollTop = window._starlightScrollRestore;
+			delete window._starlightScrollRestore;
+		})();
+	</script></sl-sidebar-state-persist><div class="md:sl-hidden"><div class="mobile-preferences sl-flex astro-p4azlveh"><div class="social-icons astro-p4azlveh"><a href="https://github.com/adriandeleon/adl-desktop-apps-guidelines" rel="me" class="sl-flex astro-n2mnl6yq"><span class="sr-only astro-n2mnl6yq">GitHub</span><svg aria-hidden="true" class="astro-n2mnl6yq astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57L9 21.07c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.09-.73.09-.73 1.2.09 1.83 1.24 1.83 1.24 1.08 1.83 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18a4.65 4.65 0 0 1 1.23 3.22c0 4.61-2.8 5.63-5.48 5.92.42.36.81 1.1.81 2.22l-.01 3.29c0 .31.2.69.82.57A12 12 0 0 0 12 .3Z"/></svg></a></div><starlight-theme-select><label style="--sl-select-width: 6.25em" class="astro-2z5xp7gb"><span class="sr-only astro-2z5xp7gb">Select theme</span><svg aria-hidden="true" class="icon label-icon astro-2z5xp7gb astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg><select autocomplete="off" class="astro-2z5xp7gb"><option value="dark" class="astro-2z5xp7gb">Dark</option><option value="light" class="astro-2z5xp7gb">Light</option><option value="auto" selected class="astro-2z5xp7gb">Auto</option></select><svg aria-hidden="true" class="icon caret astro-2z5xp7gb astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg></label></starlight-theme-select><script>
+	StarlightThemeProvider.updatePickers();
+</script></div><div class="edition-row astro-oq7puzlo"><span class="astro-oq7puzlo">Edition</span><pauta-edition-select data-root="/" data-base="/6.0.0/" class="astro-hwvk6c3s print:hidden astro-oq7puzlo"><label style="--sl-select-width: 9.5em" class="astro-2z5xp7gb"><span class="sr-only astro-2z5xp7gb">Edition</span><svg aria-hidden="true" class="icon label-icon astro-2z5xp7gb astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.17 2.06A13.1 13.1 0 0 0 19 1.87a12.94 12.94 0 0 0-7 2.05 12.94 12.94 0 0 0-7-2 13.1 13.1 0 0 0-2.17.19 1 1 0 0 0-.83 1v12a1 1 0 0 0 1.17 1 10.9 10.9 0 0 1 8.25 1.91l.12.07h.11a.91.91 0 0 0 .7 0h.11l.12-.07A10.899 10.899 0 0 1 20.83 16 1 1 0 0 0 22 15V3a1 1 0 0 0-.83-.94ZM11 15.35a12.87 12.87 0 0 0-6-1.48H4v-10c.333-.02.667-.02 1 0a10.86 10.86 0 0 1 6 1.8v9.68Zm9-1.44h-1a12.87 12.87 0 0 0-6 1.48V5.67a10.86 10.86 0 0 1 6-1.8c.333-.02.667-.02 1 0v10.04Zm1.17 4.15a13.098 13.098 0 0 0-2.17-.19 12.94 12.94 0 0 0-7 2.05 12.94 12.94 0 0 0-7-2.05c-.727.003-1.453.066-2.17.19A1 1 0 0 0 2 19.21a1 1 0 0 0 1.17.79 10.9 10.9 0 0 1 8.25 1.91 1 1 0 0 0 1.16 0A10.9 10.9 0 0 1 20.83 20a1 1 0 0 0 1.17-.79 1 1 0 0 0-.83-1.15Z"/></svg><select autocomplete="off" class="astro-2z5xp7gb"><option value="latest" class="astro-2z5xp7gb">latest (6.0.0)</option><option value="6.0.0" selected class="astro-2z5xp7gb">6.0.0</option><option value="5.0.0" class="astro-2z5xp7gb">5.0.0</option><option value="4.5.0" class="astro-2z5xp7gb">4.5.0</option><option value="4.4.0" class="astro-2z5xp7gb">4.4.0</option><option value="4.3.1" class="astro-2z5xp7gb">4.3.1</option><option value="4.3.0" class="astro-2z5xp7gb">4.3.0</option><option value="4.2.0" class="astro-2z5xp7gb">4.2.0</option><option value="4.1.0" class="astro-2z5xp7gb">4.1.0</option><option value="4.0.2" class="astro-2z5xp7gb">4.0.2</option><option value="4.0.1" class="astro-2z5xp7gb">4.0.1</option><option value="4.0.0" class="astro-2z5xp7gb">4.0.0</option><option value="3.0.0" class="astro-2z5xp7gb">3.0.0</option><option value="2.0.2" class="astro-2z5xp7gb">2.0.2</option><option value="2.0.1" class="astro-2z5xp7gb">2.0.1</option><option value="2.0.0" class="astro-2z5xp7gb">2.0.0</option><option value="1.4.1" class="astro-2z5xp7gb">1.4.1</option><option value="1.4.0" class="astro-2z5xp7gb">1.4.0</option><option value="1.3.2" class="astro-2z5xp7gb">1.3.2</option><option value="1.3.1" class="astro-2z5xp7gb">1.3.1</option><option value="1.3.0" class="astro-2z5xp7gb">1.3.0</option><option value="1.2.0" class="astro-2z5xp7gb">1.2.0</option><option value="1.1.0" class="astro-2z5xp7gb">1.1.0</option><option value="1.0.0" class="astro-2z5xp7gb">1.0.0</option></select><svg aria-hidden="true" class="icon caret astro-2z5xp7gb astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg></label></pauta-edition-select></div></div></div></sl-sidebar-pane></nav><div class="main-frame astro-yntsjkba"><script type="module">var e=document.getElementById(`starlight__sidebar`),t=e?.querySelector(`sl-sidebar-state-persist`),n=`sl-sidebar-state`,r=()=>{let r=[],i=t?.dataset.hash||``;try{let e=sessionStorage.getItem(n),t=JSON.parse(e||`{}`);Array.isArray(t.open)&&t.hash===i&&(r=t.open)}catch{}return{hash:i,open:r,scroll:e?.scrollTop||0}},i=e=>{try{sessionStorage.setItem(n,JSON.stringify(e))}catch{}},a=()=>i(r()),o=(e,t)=>{let n=r();n.open[t]=e,i(n)};t?.addEventListener(`click`,e=>{if(!(e.target instanceof Element))return;let t=e.target.closest(`summary`)?.closest(`details`);if(!t)return;let n=t.querySelector(`sl-sidebar-restore`),r=parseInt(n?.dataset.index||``);isNaN(r)||o(!t.open,r)}),addEventListener(`visibilitychange`,()=>{document.visibilityState===`hidden`&&a()});</script><div class="lg:sl-flex astro-lrzkfocr"><aside class="right-sidebar-container print:hidden astro-lrzkfocr"><div class="right-sidebar astro-lrzkfocr"><div class="lg:sl-hidden astro-qok35upx"><mobile-starlight-toc data-min-h="2" data-max-h="3" class="astro-66cqc7ze"><nav aria-labelledby="starlight__on-this-page--mobile" class="astro-66cqc7ze"><details id="starlight__mobile-toc" class="astro-66cqc7ze"><summary id="starlight__on-this-page--mobile" class="sl-flex astro-66cqc7ze"><span class="toggle sl-flex astro-66cqc7ze">On this page<svg aria-hidden="true" class="caret astro-66cqc7ze astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg></span><span class="display-current astro-66cqc7ze"></span></summary><div class="dropdown astro-66cqc7ze"><ul class="isMobile astro-jugkfwgx" style="--depth: 0;"><li style="--depth: 0;" class="astro-jugkfwgx"><a href="#_top" style="--depth: 0;" class="astro-jugkfwgx"><span style="--depth: 0;" class="astro-jugkfwgx">Overview</span></a></li><li style="--depth: 0;" class="astro-jugkfwgx"><a href="#targets" style="--depth: 0;" class="astro-jugkfwgx"><span style="--depth: 0;" class="astro-jugkfwgx">Targets</span></a></li><li style="--depth: 0;" class="astro-jugkfwgx"><a href="#install-methods" style="--depth: 0;" class="astro-jugkfwgx"><span style="--depth: 0;" class="astro-jugkfwgx">Install methods</span></a></li><li style="--depth: 0;" class="astro-jugkfwgx"><a href="#signing" style="--depth: 0;" class="astro-jugkfwgx"><span style="--depth: 0;" class="astro-jugkfwgx">Signing</span></a></li><li style="--depth: 0;" class="astro-jugkfwgx"><a href="#cicd-github-actions" style="--depth: 0;" class="astro-jugkfwgx"><span style="--depth: 0;" class="astro-jugkfwgx">CI/CD (GitHub Actions)</span></a></li></ul></div></details></nav></mobile-starlight-toc><script type="module" src="/6.0.0/_astro/MobileTableOfContents.astro_astro_type_script_index_0_lang.C3fM4Kra.js"></script></div><div class="right-sidebar-panel sl-hidden lg:sl-block astro-qok35upx"><div class="sl-container astro-qok35upx"><starlight-toc data-min-h="2" data-max-h="3"><nav aria-labelledby="starlight__on-this-page"><h2 id="starlight__on-this-page">On this page</h2><ul class="astro-jugkfwgx" style="--depth: 0;"><li style="--depth: 0;" class="astro-jugkfwgx"><a href="#_top" style="--depth: 0;" class="astro-jugkfwgx"><span style="--depth: 0;" class="astro-jugkfwgx">Overview</span></a></li><li style="--depth: 0;" class="astro-jugkfwgx"><a href="#targets" style="--depth: 0;" class="astro-jugkfwgx"><span style="--depth: 0;" class="astro-jugkfwgx">Targets</span></a></li><li style="--depth: 0;" class="astro-jugkfwgx"><a href="#install-methods" style="--depth: 0;" class="astro-jugkfwgx"><span style="--depth: 0;" class="astro-jugkfwgx">Install methods</span></a></li><li style="--depth: 0;" class="astro-jugkfwgx"><a href="#signing" style="--depth: 0;" class="astro-jugkfwgx"><span style="--depth: 0;" class="astro-jugkfwgx">Signing</span></a></li><li style="--depth: 0;" class="astro-jugkfwgx"><a href="#cicd-github-actions" style="--depth: 0;" class="astro-jugkfwgx"><span style="--depth: 0;" class="astro-jugkfwgx">CI/CD (GitHub Actions)</span></a></li></ul></nav></starlight-toc><script type="module" src="/6.0.0/_astro/TableOfContents.astro_astro_type_script_index_0_lang.BpJaGz7G.js"></script></div></div></div></aside><div class="main-pane astro-lrzkfocr"><main data-pagefind-body class="astro-g5ptsecz" lang="en" dir="ltr"><div class="content-panel astro-a7po4psb"><div class="sl-container astro-a7po4psb"><h1 id="_top" class="astro-bebwqqxs">Packaging, signing and release</h1></div></div><div class="content-panel astro-a7po4psb"><div class="sl-container astro-a7po4psb"><div class="sl-markdown-content"><details class="rule-index" open><summary>Rules on this page <span class="count">31</span></summary><table><thead><tr><th scope="col">ID</th><th scope="col">Level</th><th scope="col">Rule</th></tr></thead><tbody><tr class="sec"><th colspan="3" scope="colgroup">Targets</th></tr><tr><td><a class="rule-id" href="#rel-01">REL-01</a></td><td><span class="lvl lvl-must">MUST</span></td><td><div class="clamp" title="jpackage builds the installers for five targets, Linux x64 and arm64, macOS arm64 and x64, and Windows x64, each on its own runner, through a Maven profile that packages the app (dist in Editora).">jpackage builds the installers for five targets, Linux x64 and arm64, macOS arm64 and x64,
+and Windows x64, each on its own runner, through a Maven profile that packages the app (<code dir="auto">dist</code> in Editora).
+</div></td></tr><tr><td><a class="rule-id" href="#rel-02">REL-02</a></td><td><span class="lvl lvl-should">SHOULD</span></td><td><div class="clamp" title="Downloads are named <App>-<version>-<target>.<ext>.">Downloads are named <code dir="auto">&#x3C;App>-&#x3C;version>-&#x3C;target>.&#x3C;ext></code>.
+</div></td></tr><tr><td><a class="rule-id" href="#rel-03">REL-03</a></td><td><span class="lvl lvl-must">MUST</span></td><td><div class="clamp" title="JReleaser (jreleaser.yml) builds nothing: it creates the GitHub release, attaches every file and checksums_sha256.txt, and runs the packagers of REL-12 and REL-13 where the app has them."><strong>JReleaser</strong> (<code dir="auto">jreleaser.yml</code>) builds nothing: it creates the GitHub release, attaches every
+file and <code dir="auto">checksums_sha256.txt</code>, and runs the packagers of <a href="#rel-12">REL-12</a> and <a href="#rel-13">REL-13</a> where the app
+has them.
+</div></td></tr><tr><td><a class="rule-id" href="#rel-04">REL-04</a></td><td><span class="lvl lvl-should">SHOULD</span></td><td><div class="clamp" title="The release notes are the version’s section of CHANGELOG.md.">The release notes are the version’s section of <code dir="auto">CHANGELOG.md</code>.
+</div></td></tr><tr><td><a class="rule-id" href="#rel-05">REL-05</a></td><td><span class="lvl lvl-must">MUST</span></td><td><div class="clamp" title="The Maven version is the single source of truth: a tag vX.Y.Z releases the version in pom.xml.">The Maven version is the single source of truth: a tag <code dir="auto">vX.Y.Z</code> releases the version in
+<code dir="auto">pom.xml</code>.
+</div></td></tr><tr><td><a class="rule-id" href="#rel-06">REL-06</a></td><td><span class="lvl lvl-should">SHOULD</span></td><td><div class="clamp" title="The default branch carries a -SNAPSHOT version, and a post-release job opens the pull request that bumps it to the next snapshot.">The default branch carries a <code dir="auto">-SNAPSHOT</code> version, and a post-release job opens the pull
+request that bumps it to the next snapshot.
+</div></td></tr><tr><td><a class="rule-id" href="#rel-07">REL-07</a></td><td><span class="lvl lvl-should">SHOULD</span></td><td><div class="clamp" title="A release-asset check fails the run before publishing when an expected file is missing.">A <strong>release-asset check</strong> fails the run before publishing when an expected file is missing.
+</div></td></tr><tr><td><a class="rule-id" href="#rel-08">REL-08</a></td><td><span class="lvl lvl-should">SHOULD</span></td><td><div class="clamp" title="On Linux, a .desktop file’s StartupWMClass is the JavaFX app class.">On Linux, a <code dir="auto">.desktop</code> file’s <code dir="auto">StartupWMClass</code> is the JavaFX app class.
+</div></td></tr><tr><td><a class="rule-id" href="#rel-09">REL-09</a></td><td><span class="lvl lvl-should">SHOULD</span></td><td><div class="clamp" title="On Linux, AppStream metainfo has the id io.github.adriandeleon.<App>.">On Linux, AppStream metainfo has the id <code dir="auto">io.github.adriandeleon.&#x3C;App></code>.
+</div></td></tr><tr><td><a class="rule-id" href="#rel-10">REL-10</a></td><td><span class="lvl lvl-should">SHOULD</span></td><td><div class="clamp" title="Packaging trains an AOT cache (JDK 25 Leyden) to cut start-up time; Linux legs run the training under xvfb.">Packaging trains an <strong>AOT cache</strong> (JDK 25 Leyden) to cut start-up time; Linux legs run the
+training under <code dir="auto">xvfb</code>.
+</div></td></tr><tr class="sec"><th colspan="3" scope="colgroup">Install methods</th></tr><tr><td><a class="rule-id" href="#rel-11">REL-11</a></td><td><span class="lvl lvl-must">MUST</span></td><td><div class="clamp" title="The GitHub release offers every download of every target: the .dmg, .msi, .deb, .rpm, .AppImage and .tar.gz, with checksums. Which target gets which type is under Targets.">The GitHub release offers every download of every target: the <code dir="auto">.dmg</code>, <code dir="auto">.msi</code>, <code dir="auto">.deb</code>,
+<code dir="auto">.rpm</code>, <code dir="auto">.AppImage</code> and <code dir="auto">.tar.gz</code>, with checksums. Which target gets which type is under <a href="#targets">Targets</a>.
+</div></td></tr><tr><td><a class="rule-id" href="#rel-12">REL-12</a></td><td><span class="lvl lvl-should">SHOULD</span></td><td><div class="clamp" title="On macOS (Apple Silicon) the app installs with brew install --cask adriandeleon/tap/<app>: JReleaser’s brew packager writes the cask to adriandeleon/homebrew-tap. A cask takes exactly one artifact, so it serves Apple Silicon, and Intel Macs use the macos-x64 DMG.">On macOS (Apple Silicon) the app installs with
+<code dir="auto">brew install --cask adriandeleon/tap/&#x3C;app></code>: JReleaser’s <code dir="auto">brew</code> packager writes the cask to
+<a href="https://github.com/adriandeleon/homebrew-tap"><code dir="auto">adriandeleon/homebrew-tap</code></a>. A cask takes exactly one artifact,
+so it serves Apple Silicon, and Intel Macs use the <code dir="auto">macos-x64</code> DMG.
+</div></td></tr><tr><td><a class="rule-id" href="#rel-13">REL-13</a></td><td><span class="lvl lvl-should">SHOULD</span></td><td><div class="clamp" title="On Windows x64 the app installs with winget install AdrianDeLeon.<App>: JReleaser’s winget packager opens a pull request on microsoft/winget-pkgs from the adriandeleon fork. The package identifier is AdrianDeLeon.<App>, the moniker the app’s lower-case name.">On Windows x64 the app installs with <code dir="auto">winget install AdrianDeLeon.&#x3C;App></code>: JReleaser’s
+<code dir="auto">winget</code> packager opens a pull request on <a href="https://github.com/microsoft/winget-pkgs"><code dir="auto">microsoft/winget-pkgs</code></a>
+from the <code dir="auto">adriandeleon</code> fork. The package identifier is <code dir="auto">AdrianDeLeon.&#x3C;App></code>, the moniker the app’s lower-case
+name.
+</div></td></tr><tr><td><a class="rule-id" href="#rel-14">REL-14</a></td><td><span class="lvl lvl-should">SHOULD</span></td><td><div class="clamp" title="The Homebrew and winget packagers (REL-12, REL-13) read one repository secret, a classic personal access token with repo scope (PACKAGES_TOKEN in Torrenta, Termina and the app template). Without it JReleaser skips both packagers, and the GitHub release still publishes.">The Homebrew and winget packagers (<a href="#rel-12">REL-12</a>, <a href="#rel-13">REL-13</a>) read one
+repository secret, a classic personal access token with <code dir="auto">repo</code> scope (<code dir="auto">PACKAGES_TOKEN</code> in Torrenta, Termina and
+the app template). Without it JReleaser skips both packagers, and the GitHub release still publishes.
+</div></td></tr><tr class="sec"><th colspan="3" scope="colgroup">Signing</th></tr><tr><td><a class="rule-id" href="#rel-15">REL-15</a></td><td><span class="lvl lvl-must">MUST</span></td><td><div class="clamp" title="The macOS .dmg is signed with the Developer ID Application certificate (team 8JKSF797L8), with the hardened runtime and per-app entitlements, notarized with notarytool, stapled and checked with spctl; then the notarized app is launched once.">The macOS <code dir="auto">.dmg</code> is signed with the Developer ID Application certificate (team 8JKSF797L8),
+with the hardened runtime and per-app entitlements, notarized with <code dir="auto">notarytool</code>, stapled and checked with
+<code dir="auto">spctl</code>; then the notarized app is launched once.
+</div></td></tr><tr><td><a class="rule-id" href="#rel-16">REL-16</a></td><td><span class="lvl lvl-must">MUST</span></td><td><div class="clamp" title="Linux downloads are signed with the one shared OpenPGP release key (“Adrian De Leon (release signing)”) in a job of their own, apart from the build legs (sign-linux in Editora): rpmsign for the .rpm, a debsigs origin signature for the .deb, and an armored .asc beside every file. The public key is committed as packaging/linux/signing-key.asc and attached to each release.">Linux downloads are signed with the one shared OpenPGP release key (“Adrian De Leon (release
+signing)”) in a job of their own, apart from the build legs (<code dir="auto">sign-linux</code> in Editora): <code dir="auto">rpmsign</code> for the <code dir="auto">.rpm</code>, a
+debsigs origin signature for the <code dir="auto">.deb</code>, and an armored <code dir="auto">.asc</code> beside every file. The public key is committed as
+<code dir="auto">packaging/linux/signing-key.asc</code> and attached to each release.
+</div></td></tr><tr><td><a class="rule-id" href="#rel-17">REL-17</a></td><td><span class="lvl lvl-should">SHOULD</span></td><td><div class="clamp" title="The Windows .msi is signed with Authenticode, once the certificate is chosen.">The Windows <code dir="auto">.msi</code> is signed with Authenticode, once the certificate is chosen.
+</div></td></tr><tr><td><a class="rule-id" href="#rel-18">REL-18</a></td><td><span class="lvl lvl-must">MUST</span></td><td><div class="clamp" title="Every download has a GitHub build provenance attestation (actions/attest-build-provenance), which gh attestation verify checks.">Every download has a GitHub <strong>build provenance attestation</strong>
+(<code dir="auto">actions/attest-build-provenance</code>), which <code dir="auto">gh attestation verify</code> checks.
+</div></td></tr><tr class="sec"><th colspan="3" scope="colgroup">CI/CD (GitHub Actions)</th></tr><tr><td><a class="rule-id" href="#rel-19">REL-19</a></td><td><span class="lvl lvl-must">MUST</span></td><td><div class="clamp" title="The CI workflow (ci.yml in Editora) runs on every push to the default branch and every pull request, with two checks: the format check of PLAT-10 (spotless:check; the job Editora names Format) and the build with its tests (./mvnw verify, coverage gate included; Editora’s Build &#x26; Test), on the JDK PLAT-01 names. Both are required status checks for the default branch.">The CI workflow (<code dir="auto">ci.yml</code> in Editora) runs on every push to the default branch and every pull
+request, with two checks: the format check of <a href="../platform/#plat-10">PLAT-10</a> (<code dir="auto">spotless:check</code>; the job Editora
+names <strong>Format</strong>) and the build with its tests (<code dir="auto">./mvnw verify</code>, coverage gate included; Editora’s <strong>Build &#x26;
+Test</strong>), on the JDK <a href="../platform/#plat-01">PLAT-01</a> names. Both are required status checks for the default branch.
+</div></td></tr><tr><td><a class="rule-id" href="#rel-20">REL-20</a></td><td><span class="lvl lvl-must">MUST</span></td><td><div class="clamp" title="The tests run on all three OSes: the pure suite (no JavaFX toolkit) on Linux, macOS and Windows, and the FX suite on Linux and at least one more. They run there every day or on every pull request. How the runs are split is the app’s own: one workflow that runs everything on every pull request meets this, and so does a quick workflow for pull requests with a fuller one on a schedule. A release waits for these runs on its own commit, on all three OSes: that it waits at all is REL-30.">The tests run on all three OSes: the pure suite (no JavaFX toolkit) on Linux, macOS and
+Windows, and the FX suite on Linux and at least one more. They run there every day or on every pull request. How
+the runs are split is the app’s own: one workflow that runs everything on every pull request meets this, and so
+does a quick workflow for pull requests with a fuller one on a schedule. A release waits for these runs on its own
+commit, on all three OSes: that it waits at all is <a href="#rel-30">REL-30</a>.
+</div></td></tr><tr><td><a class="rule-id" href="#rel-21">REL-21</a></td><td><span class="lvl lvl-must">MUST</span></td><td><div class="clamp" title="The release workflow (release.yml in Editora) runs on a version tag (v* meets it; the version-shaped v[0-9]+.[0-9]+.[0-9]+* is the better pattern, since a tag like vendor-import doesn’t match it), with workflow_dispatch as a dry run that builds and signs and publishes nothing. The tag matching the pom is REL-05, the tests it waits for REL-30, the release-asset check REL-07, and the bump to the next snapshot REL-06.">The release workflow (<code dir="auto">release.yml</code> in Editora) runs on a version tag (<code dir="auto">v*</code> meets it; the
+version-shaped <code dir="auto">v[0-9]+.[0-9]+.[0-9]+*</code> is the better pattern, since a tag like <code dir="auto">vendor-import</code> doesn’t match
+it), with <code dir="auto">workflow_dispatch</code> as a dry run that builds and signs and publishes nothing. The tag matching the pom
+is <a href="#rel-05">REL-05</a>, the tests it waits for <a href="#rel-30">REL-30</a>, the release-asset check <a href="#rel-07">REL-07</a>, and the
+bump to the next snapshot <a href="#rel-06">REL-06</a>.
+</div></td></tr><tr><td><a class="rule-id" href="#rel-30">REL-30</a></td><td><span class="lvl lvl-must">MUST</span></td><td><div class="clamp" title="A release is cut only from a commit whose tests passed: the release workflow runs the suite before it builds the installers, or a preflight job reads CI’s result for the tagged commit and stops when it is not green.">A release is cut only from a commit whose tests passed: the release workflow runs the suite
+before it builds the installers, or a preflight job reads CI’s result for the tagged commit and stops when it is
+not green.
+</div></td></tr><tr><td><a class="rule-id" href="#rel-22">REL-22</a></td><td><span class="lvl lvl-must">MUST</span></td><td><div class="clamp" title="Every workflow pins each third-party action to a commit SHA, with its version in a comment (actions/setup-java@b843ebf… # v6.1.0).">Every workflow pins each third-party action to a commit SHA, with its version in a comment
+(<code dir="auto">actions/setup-java@b843ebf… # v6.1.0</code>).
+</div></td></tr><tr><td><a class="rule-id" href="#rel-23">REL-23</a></td><td><span class="lvl lvl-must">MUST</span></td><td><div class="clamp" title="Dependabot updates github-actions and maven weekly.">Dependabot updates <code dir="auto">github-actions</code> and <code dir="auto">maven</code> weekly.
+</div></td></tr><tr><td><a class="rule-id" href="#rel-24">REL-24</a></td><td><span class="lvl lvl-must">MUST</span></td><td><div class="clamp" title="Every workflow starts from permissions: contents: read, or from less; only a job that needs write access asks for it, in its own block.">Every workflow starts from <code dir="auto">permissions: contents: read</code>, or from less; only a job that needs
+write access asks for it, in its own block.
+</div></td></tr><tr><td><a class="rule-id" href="#rel-25">REL-25</a></td><td><span class="lvl lvl-should">SHOULD</span></td><td><div class="clamp" title="Every actions/setup-java step caches Maven’s repository (cache: maven). The JDK it sets up is PLAT-01’s.">Every <code dir="auto">actions/setup-java</code> step caches Maven’s repository (<code dir="auto">cache: maven</code>). The JDK it sets
+up is <a href="../platform/#plat-01">PLAT-01</a>’s.
+</div></td></tr><tr><td><a class="rule-id" href="#rel-26">REL-26</a></td><td><span class="lvl lvl-must">MUST</span></td><td><div class="clamp" title="Every job that runs steps has timeout-minutes. A job that calls a reusable workflow (uses: in place of steps:) takes no timeout-minutes: GitHub does not accept the key there, and the called workflow’s own jobs carry theirs.">Every job that runs steps has <code dir="auto">timeout-minutes</code>. A job that calls a reusable workflow
+(<code dir="auto">uses:</code> in place of <code dir="auto">steps:</code>) takes no <code dir="auto">timeout-minutes</code>: GitHub does not accept the key there, and the called
+workflow’s own jobs carry theirs.
+</div></td></tr><tr><td><a class="rule-id" href="#rel-31">REL-31</a></td><td><span class="lvl lvl-must">MUST</span></td><td><div class="clamp" title="Every workflow that runs on pull requests has a concurrency group that cancels a superseded pull-request run, and never a run on the default branch.">Every workflow that runs on pull requests has a <code dir="auto">concurrency</code> group that cancels a superseded
+pull-request run, and never a run on the default branch.
+</div></td></tr><tr><td><a class="rule-id" href="#rel-27">REL-27</a></td><td><span class="lvl lvl-must">MUST</span></td><td><div class="clamp" title="A CI run leaves its results where they can be read without running it again: it uploads the surefire reports even when tests fail, uploads the JaCoCo report, and writes the coverage totals to the job summary.">A CI run leaves its results where they can be read without running it again: it uploads the
+surefire reports even when tests fail, uploads the JaCoCo report, and writes the coverage totals to the job
+summary.
+</div></td></tr><tr><td><a class="rule-id" href="#rel-28">REL-28</a></td><td><span class="lvl lvl-must">MUST</span></td><td><div class="clamp" title="Signing skips cleanly when the secrets are absent (forks, dry runs), so they still build; a tag without them fails.">Signing skips cleanly when the secrets are absent (forks, dry runs), so they still build; a tag
+without them fails.
+</div></td></tr><tr><td><a class="rule-id" href="#rel-29">REL-29</a></td><td><span class="lvl lvl-must">MUST</span></td><td><div class="clamp" title="The packaged app is launched once on each OS before a release (a smoke test).">The packaged app is launched once on each OS before a release (a smoke test).
+</div></td></tr></tbody></table></details><div class="sl-heading-wrapper level-h2"><h2 id="targets">Targets</h2><a class="sl-anchor-link" href="#targets"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Targets”</span></a></div>
+<p>Each target builds on its own GitHub-hosted runner. jpackage and JavaFX natives are host-specific, so there
+is no cross-building.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Target</th><th>Runner</th><th>Downloads</th></tr></thead><tbody><tr><td>Linux x64</td><td><code dir="auto">ubuntu-latest</code></td><td><code dir="auto">.deb</code>, <code dir="auto">.rpm</code>, <code dir="auto">.AppImage</code>, <code dir="auto">.tar.gz</code>, fat jar</td></tr><tr><td>Linux arm64</td><td><code dir="auto">ubuntu-24.04-arm</code></td><td><code dir="auto">.tar.gz</code> (and <code dir="auto">.deb</code> where the app’s tooling allows), fat jar</td></tr><tr><td>macOS arm64</td><td><code dir="auto">macos-15</code></td><td><code dir="auto">.dmg</code></td></tr><tr><td>macOS x64</td><td><code dir="auto">macos-15-intel</code></td><td><code dir="auto">.dmg</code> (the last Intel image, good to about Aug 2027)</td></tr><tr><td>Windows x64</td><td><code dir="auto">windows-latest</code></td><td><code dir="auto">.msi</code>, fat jar</td></tr><tr><td>Windows arm64</td><td>—</td><td><strong>Not possible yet</strong>: OpenJFX publishes no <code dir="auto">win-aarch64</code> natives (JDK-8314064). ARM users run the x64 MSI under emulation.</td></tr></tbody></table>
+<p>The fat jar is Editora’s and the template’s: only their release workflows build one (<code dir="auto">-Pfatjar</code>), on the Linux and
+Windows legs. Termina, Torrenta, Mirada, Modula and nux release none.</p>
+<ul>
+<li id="rel-01" class="rule"><a class="rule-id" href="#rel-01">REL-01</a> <span class="lvl lvl-must">MUST</span> jpackage builds the installers for five targets, Linux x64 and arm64, macOS arm64 and x64,
+and Windows x64, each on its own runner, through a Maven profile that packages the app (<code dir="auto">dist</code> in Editora).
+<ul>
+<li><em>Check (code):</em> the release workflow’s build matrix has a leg for each of the five targets (<code dir="auto">linux-x64</code>,
+<code dir="auto">linux-arm64</code>, <code dir="auto">macos-arm64</code>, <code dir="auto">macos-x64</code> and <code dir="auto">windows-x64</code> in Editora), each on a runner of that OS and
+architecture, and each leg builds with a profile of <code dir="auto">pom.xml</code> that runs jpackage, whatever the profile is
+called. The runner images under <a href="#targets">Targets</a> are Editora’s:
+another image of the same OS and architecture meets it (Termina, Torrenta, Mirada, Modula and nux build macOS
+arm64 on <code dir="auto">macos-latest</code>).</li>
+<li><em>Reference:</em> Editora <a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/.github/workflows/release.yml"><code dir="auto">release.yml</code></a> (the <code dir="auto">build</code> job), <a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/pom.xml"><code dir="auto">pom.xml</code></a> (<code dir="auto">dist</code>). The template
+and the five other apps name their profile <code dir="auto">dist</code> too.</li>
+</ul>
+</li>
+<li id="rel-02" class="rule"><a class="rule-id" href="#rel-02">REL-02</a> <span class="lvl lvl-should">SHOULD</span> Downloads are named <code dir="auto">&#x3C;App>-&#x3C;version>-&#x3C;target>.&#x3C;ext></code>.
+<ul>
+<li><em>Check (code):</em> the release-asset check builds the expected names this way.</li>
+<li><em>Reference:</em> Editora <a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/scripts/release/CheckRelease.java"><code dir="auto">scripts/release/CheckRelease.java</code></a> (<code dir="auto">expectedAssets</code>).</li>
+</ul>
+</li>
+<li id="rel-03" class="rule"><a class="rule-id" href="#rel-03">REL-03</a> <span class="lvl lvl-must">MUST</span> <strong>JReleaser</strong> (<code dir="auto">jreleaser.yml</code>) builds nothing: it creates the GitHub release, attaches every
+file and <code dir="auto">checksums_sha256.txt</code>, and runs the packagers of <a href="#rel-12">REL-12</a> and <a href="#rel-13">REL-13</a> where the app
+has them.
+<ul>
+<li><em>Check (code):</em> <code dir="auto">jreleaser.yml</code> has no step that compiles or packages the app: it attaches the build matrix’s
+files and the checksums file, and its <code dir="auto">brew</code> and <code dir="auto">winget</code> packagers, where the app has them, take those same
+files. The job that runs it needs the build jobs.</li>
+<li><em>Reference:</em> Editora <a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/jreleaser.yml"><code dir="auto">jreleaser.yml</code></a>, the <code dir="auto">release</code> job in <a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/.github/workflows/release.yml"><code dir="auto">release.yml</code></a>.</li>
+</ul>
+</li>
+<li id="rel-04" class="rule"><a class="rule-id" href="#rel-04">REL-04</a> <span class="lvl lvl-should">SHOULD</span> The release notes are the version’s section of <code dir="auto">CHANGELOG.md</code>.
+<ul>
+<li><em>Check (code):</em> the release job gives that section to the step that publishes (JReleaser, by
+<a href="#rel-03">REL-03</a>) as the release’s notes.</li>
+<li><em>Reference:</em> Torrenta <a href="https://github.com/adriandeleon/torrenta/blob/52d47c02ac57d8671d1e58d268b96a5532dbb00a/scripts/release/ReleaseNotes.java"><code dir="auto">scripts/release/ReleaseNotes.java</code></a>. Editora’s release notes are still its commit list.</li>
+</ul>
+</li>
+<li id="rel-05" class="rule"><a class="rule-id" href="#rel-05">REL-05</a> <span class="lvl lvl-must">MUST</span> The Maven version is the single source of truth: a tag <code dir="auto">vX.Y.Z</code> releases the version in
+<code dir="auto">pom.xml</code>.
+<ul>
+<li><em>Check (code):</em> the release workflow fails when the tag and the pom version differ.</li>
+<li><em>Reference:</em> Editora’s “Check the tag against the pom version” step in <a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/.github/workflows/release.yml"><code dir="auto">release.yml</code></a>.</li>
+</ul>
+</li>
+<li id="rel-06" class="rule"><a class="rule-id" href="#rel-06">REL-06</a> <span class="lvl lvl-should">SHOULD</span> The default branch carries a <code dir="auto">-SNAPSHOT</code> version, and a post-release job opens the pull
+request that bumps it to the next snapshot.
+<ul>
+<li><em>Check (code):</em> the pom’s version on the default branch ends in <code dir="auto">-SNAPSHOT</code>, and <code dir="auto">release.yml</code> has the bump job.</li>
+<li><em>Reference:</em> Editora’s <code dir="auto">bump</code> job in <a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/.github/workflows/release.yml"><code dir="auto">release.yml</code></a>.</li>
+</ul>
+</li>
+<li id="rel-07" class="rule"><a class="rule-id" href="#rel-07">REL-07</a> <span class="lvl lvl-should">SHOULD</span> A <strong>release-asset check</strong> fails the run before publishing when an expected file is missing.
+<ul>
+<li><em>Why:</em> GitHub releases are immutable.</li>
+<li><em>Check (code):</em> a step before the one that publishes compares the gathered files with the expected list.</li>
+<li><em>Reference:</em> Editora’s “Verify the expected release assets” step in <a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/.github/workflows/release.yml"><code dir="auto">release.yml</code></a>.</li>
+</ul>
+</li>
+<li id="rel-08" class="rule"><a class="rule-id" href="#rel-08">REL-08</a> <span class="lvl lvl-should">SHOULD</span> On Linux, a <code dir="auto">.desktop</code> file’s <code dir="auto">StartupWMClass</code> is the JavaFX app class.
+<ul>
+<li><em>Why:</em> the running window then belongs to the menu entry and shows its icon.</li>
+<li><em>Check (code):</em> <code dir="auto">packaging/linux/&#x3C;App>.desktop</code> sets <code dir="auto">StartupWMClass</code> to the fully qualified name of the app’s
+own class that extends <code dir="auto">Application</code>: <code dir="auto">com.editora.App</code> in Editora, <code dir="auto">com.modula.ModulaApp</code> in Modula.</li>
+<li><em>Reference:</em> Editora <a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/packaging/linux/Editora.desktop"><code dir="auto">packaging/linux/Editora.desktop</code></a>, Torrenta <a href="https://github.com/adriandeleon/torrenta/blob/52d47c02ac57d8671d1e58d268b96a5532dbb00a/packaging/linux/Torrenta.desktop"><code dir="auto">packaging/linux/Torrenta.desktop</code></a>,
+Modula <a href="https://github.com/adriandeleon/Modula/blob/518300a4c2114909315fbd3a73acc999fb4c16b5/packaging/linux/Modula.desktop"><code dir="auto">packaging/linux/Modula.desktop</code></a>. The template, Termina, Mirada and nux set theirs the same way.</li>
+</ul>
+</li>
+<li id="rel-09" class="rule"><a class="rule-id" href="#rel-09">REL-09</a> <span class="lvl lvl-should">SHOULD</span> On Linux, AppStream metainfo has the id <code dir="auto">io.github.adriandeleon.&#x3C;App></code>.
+<ul>
+<li><em>Check (code):</em> <code dir="auto">packaging/linux/io.github.adriandeleon.&#x3C;App>.metainfo.xml</code> carries that <code dir="auto">&#x3C;id></code>.</li>
+<li><em>Reference:</em> Torrenta <a href="https://github.com/adriandeleon/torrenta/tree/52d47c02ac57d8671d1e58d268b96a5532dbb00a/packaging/linux"><code dir="auto">packaging/linux/</code></a>. Editora’s metainfo id (<code dir="auto">com.editora.Editora</code>) predates the rule.</li>
+</ul>
+</li>
+<li id="rel-10" class="rule"><a class="rule-id" href="#rel-10">REL-10</a> <span class="lvl lvl-should">SHOULD</span> Packaging trains an <strong>AOT cache</strong> (JDK 25 Leyden) to cut start-up time; Linux legs run the
+training under <code dir="auto">xvfb</code>.
+<ul>
+<li><em>Check (code):</em> the packaging build (Editora’s <code dir="auto">dist</code> profile) runs a training launch with
+<code dir="auto">-XX:AOTCacheOutput</code>, and the Linux release legs install <code dir="auto">xvfb</code>.</li>
+<li><em>Reference:</em> Editora <a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/scripts/aot_build.java"><code dir="auto">scripts/aot_build.java</code></a>; Termina’s and Mirada’s <a href="https://github.com/adriandeleon/Mirada/blob/a3a84ec5e8227b1886e3dd920ab2b030aa3a2ba1/scripts/aot-train.sh"><code dir="auto">scripts/aot-train.sh</code></a>.</li>
+</ul>
+</li>
+</ul>
+<div class="sl-heading-wrapper level-h2"><h2 id="install-methods">Install methods</h2><a class="sl-anchor-link" href="#install-methods"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Install methods”</span></a></div>
+<ul>
+<li id="rel-11" class="rule"><a class="rule-id" href="#rel-11">REL-11</a> <span class="lvl lvl-must">MUST</span> The GitHub release offers every download of every target: the <code dir="auto">.dmg</code>, <code dir="auto">.msi</code>, <code dir="auto">.deb</code>,
+<code dir="auto">.rpm</code>, <code dir="auto">.AppImage</code> and <code dir="auto">.tar.gz</code>, with checksums. Which target gets which type is under <a href="#targets">Targets</a>.
+<ul>
+<li><em>Check (code):</em> the files the release attaches include each of these types and a checksums file: the files
+<code dir="auto">jreleaser.yml</code> lists or, in a workflow that publishes another way, the ones its publishing step uploads. That
+JReleaser is what publishes is <a href="#rel-03">REL-03</a>.</li>
+<li><em>Reference:</em> Editora <a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/jreleaser.yml"><code dir="auto">jreleaser.yml</code></a>.</li>
+</ul>
+</li>
+<li id="rel-12" class="rule"><a class="rule-id" href="#rel-12">REL-12</a> <span class="lvl lvl-should">SHOULD</span> On macOS (Apple Silicon) the app installs with
+<code dir="auto">brew install --cask adriandeleon/tap/&#x3C;app></code>: JReleaser’s <code dir="auto">brew</code> packager writes the cask to
+<a href="https://github.com/adriandeleon/homebrew-tap"><code dir="auto">adriandeleon/homebrew-tap</code></a>. A cask takes exactly one artifact,
+so it serves Apple Silicon, and Intel Macs use the <code dir="auto">macos-x64</code> DMG.
+<ul>
+<li><em>Why:</em> the official homebrew-cask repository has notability rules a new project does not meet, so the family
+shares one personal tap.</li>
+<li><em>Check (code):</em> <code dir="auto">jreleaser.yml</code> has a <code dir="auto">brew</code> packager for that tap; <code dir="auto">jreleaser package --basedir .</code> writes the
+cask locally, to check it without releasing.</li>
+<li><em>Reference:</em> Torrenta and Termina <code dir="auto">jreleaser.yml</code>; Editora has no packager yet.</li>
+</ul>
+</li>
+<li id="rel-13" class="rule"><a class="rule-id" href="#rel-13">REL-13</a> <span class="lvl lvl-should">SHOULD</span> On Windows x64 the app installs with <code dir="auto">winget install AdrianDeLeon.&#x3C;App></code>: JReleaser’s
+<code dir="auto">winget</code> packager opens a pull request on <a href="https://github.com/microsoft/winget-pkgs"><code dir="auto">microsoft/winget-pkgs</code></a>
+from the <code dir="auto">adriandeleon</code> fork. The package identifier is <code dir="auto">AdrianDeLeon.&#x3C;App></code>, the moniker the app’s lower-case
+name.
+<ul>
+<li><em>Check (code):</em> <code dir="auto">jreleaser.yml</code> has a <code dir="auto">winget</code> packager with that identifier; <code dir="auto">jreleaser package --basedir .</code>
+writes the manifests locally.</li>
+<li><em>Reference:</em> Torrenta and Termina <code dir="auto">jreleaser.yml</code>; Editora has no packager yet.</li>
+</ul>
+</li>
+<li id="rel-14" class="rule"><a class="rule-id" href="#rel-14">REL-14</a> <span class="lvl lvl-should">SHOULD</span> The Homebrew and winget packagers (<a href="#rel-12">REL-12</a>, <a href="#rel-13">REL-13</a>) read one
+repository secret, a classic personal access token with <code dir="auto">repo</code> scope (<code dir="auto">PACKAGES_TOKEN</code> in Torrenta, Termina and
+the app template). Without it JReleaser skips both packagers, and the GitHub release still publishes.
+<ul>
+<li><em>Why:</em> the workflow’s own token cannot write to the tap or open a pull request on the fork.</li>
+<li><em>Check (code):</em> the release workflow passes a secret of the repository to JReleaser as the two packagers’
+token, whatever the secret is called, and leaves both packagers out when it is empty.</li>
+<li><em>Reference:</em> the publishing jobs of Torrenta’s <a href="https://github.com/adriandeleon/torrenta/blob/52d47c02ac57d8671d1e58d268b96a5532dbb00a/.github/workflows/release.yml"><code dir="auto">release.yml</code></a>, Termina’s <a href="https://github.com/adriandeleon/Termina/blob/6de43a19b7185a25c01cdf506a6286719b1991ff/.github/workflows/release.yml"><code dir="auto">release.yml</code></a> and the app
+template’s <a href="https://github.com/adriandeleon/adl-desktop-app-template/blob/b1ba438e61bce02fcbc389f1775f34a7def1ee31/.github/workflows/release.yml"><code dir="auto">release.yml</code></a>, which read <code dir="auto">PACKAGES_TOKEN</code> and exclude the packagers without it.</li>
+</ul>
+</li>
+</ul>
+<p>winget is reviewed by Microsoft: the first submission for a new publisher is checked by a person, not merged
+automatically.</p>
+<p><strong>Status on 2026-11-06:</strong> the tap exists and holds no casks yet. Torrenta and Termina have both packagers
+configured, waiting for the token. Mirada’s first winget submission
+(<a href="https://github.com/microsoft/winget-pkgs/pull/471599">microsoft/winget-pkgs#471599</a>) is open.</p>
+<div class="sl-heading-wrapper level-h2"><h2 id="signing">Signing</h2><a class="sl-anchor-link" href="#signing"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “Signing”</span></a></div>
+<ul>
+<li id="rel-15" class="rule"><a class="rule-id" href="#rel-15">REL-15</a> <span class="lvl lvl-must">MUST</span> The macOS <code dir="auto">.dmg</code> is signed with the Developer ID Application certificate (team 8JKSF797L8),
+with the hardened runtime and per-app entitlements, notarized with <code dir="auto">notarytool</code>, stapled and checked with
+<code dir="auto">spctl</code>; then the notarized app is launched once.
+<ul>
+<li><em>Check (code):</em> <code dir="auto">release.yml</code>, or a script it runs, imports <code dir="auto">MACOS_CERT_P12</code> and <code dir="auto">MACOS_CERT_PASSWORD</code>,
+notarizes with <code dir="auto">APPLE_API_KEY_P8</code>, <code dir="auto">APPLE_API_KEY_ID</code> and <code dir="auto">APPLE_API_ISSUER</code>, staples, runs <code dir="auto">spctl</code> and
+launches the app.</li>
+<li><em>Reference:</em> Editora’s “Import signing certificate (macOS)” and “Notarize DMG (macOS)” steps in
+<a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/.github/workflows/release.yml"><code dir="auto">release.yml</code></a>, <a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/packaging/macos/Editora.entitlements"><code dir="auto">packaging/macos/Editora.entitlements</code></a>. All six apps sign, notarize,
+staple and run <code dir="auto">spctl</code>; Editora, Termina, Mirada, Modula and nux then launch the notarized app. Torrenta does not
+yet: its “Smoke-test the packaged app” step launches the signed app before it is notarized, and its “Notarize the
+dmg (macOS)” step in <a href="https://github.com/adriandeleon/torrenta/blob/52d47c02ac57d8671d1e58d268b96a5532dbb00a/.github/workflows/release.yml"><code dir="auto">release.yml</code></a> ends at <code dir="auto">spctl</code>. Mirada’s steps are in <a href="https://github.com/adriandeleon/Mirada/blob/a3a84ec5e8227b1886e3dd920ab2b030aa3a2ba1/scripts/sign-mac.sh"><code dir="auto">scripts/sign-mac.sh</code></a> and
+<a href="https://github.com/adriandeleon/Mirada/blob/a3a84ec5e8227b1886e3dd920ab2b030aa3a2ba1/scripts/notarize-mac.sh"><code dir="auto">scripts/notarize-mac.sh</code></a>.</li>
+</ul>
+</li>
+<li id="rel-16" class="rule"><a class="rule-id" href="#rel-16">REL-16</a> <span class="lvl lvl-must">MUST</span> Linux downloads are signed with the one shared OpenPGP release key (“Adrian De Leon (release
+signing)”) in a job of their own, apart from the build legs (<code dir="auto">sign-linux</code> in Editora): <code dir="auto">rpmsign</code> for the <code dir="auto">.rpm</code>, a
+debsigs origin signature for the <code dir="auto">.deb</code>, and an armored <code dir="auto">.asc</code> beside every file. The public key is committed as
+<code dir="auto">packaging/linux/signing-key.asc</code> and attached to each release.
+<ul>
+<li><em>Check (code):</em> the release workflow has a job apart from the build legs, whatever it is called, that reads
+the release key and its passphrase from the repository’s secrets (<code dir="auto">LINUX_GPG_KEY</code> and <code dir="auto">LINUX_GPG_PASSPHRASE</code> in
+Editora), signs each <code dir="auto">.rpm</code> and <code dir="auto">.deb</code> and writes an <code dir="auto">.asc</code> beside every Linux file; and
+<code dir="auto">packaging/linux/signing-key.asc</code> exists, and the release attaches that public key (as
+<code dir="auto">editora-signing-key.asc</code> in Editora).</li>
+<li><em>Reference:</em> Editora <a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/scripts/release/sign-linux-packages.sh"><code dir="auto">scripts/release/sign-linux-packages.sh</code></a>, <a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/scripts/release/check-linux-signatures.sh"><code dir="auto">scripts/release/check-linux-signatures.sh</code></a>.
+Done in Editora, the app template, Torrenta, Termina, Mirada and Modula, all with the same key; nux has no <code dir="auto">sign-linux</code> job and no
+committed key yet.</li>
+</ul>
+</li>
+<li id="rel-17" class="rule"><a class="rule-id" href="#rel-17">REL-17</a> <span class="lvl lvl-should">SHOULD</span> The Windows <code dir="auto">.msi</code> is signed with Authenticode, once the certificate is chosen.
+<ul>
+<li><em>Check (code):</em> the Windows leg signs the <code dir="auto">.msi</code> before it is uploaded.</li>
+<li><em>Reference:</em> no app yet. <strong>Open decision</strong>: SignPath Foundation (free for OSS), a Certum Open Source
+certificate, or Azure Trusted Signing. Until then MSIs are unsigned and SmartScreen warns.</li>
+</ul>
+</li>
+<li id="rel-18" class="rule"><a class="rule-id" href="#rel-18">REL-18</a> <span class="lvl lvl-must">MUST</span> Every download has a GitHub <strong>build provenance attestation</strong>
+(<code dir="auto">actions/attest-build-provenance</code>), which <code dir="auto">gh attestation verify</code> checks.
+<ul>
+<li><em>Check (code):</em> the release workflow has an <code dir="auto">actions/attest-build-provenance</code> step whose subjects cover every
+file the release attaches. The test that keeps the two lists the same is <a href="../quality/#qual-15">QUAL-15</a>’s.</li>
+<li><em>Reference:</em> Editora’s “Attest build provenance” step in <a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/.github/workflows/release.yml"><code dir="auto">release.yml</code></a>, <a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/src/test/java/com/editora/packaging/ReleaseSupplyChainTest.java"><code dir="auto">ReleaseSupplyChainTest</code></a>. Done in
+Editora, the app template, Termina and Mirada.</li>
+</ul>
+</li>
+</ul>
+<p>The certificate renews before 2027-11-30; the Apple membership before 2027-10-31.</p>
+<div class="sl-heading-wrapper level-h2"><h2 id="cicd-github-actions">CI/CD (GitHub Actions)</h2><a class="sl-anchor-link" href="#cicd-github-actions"><span aria-hidden="true" class="sl-anchor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m12.11 15.39-3.88 3.88a2.52 2.52 0 0 1-3.5 0 2.47 2.47 0 0 1 0-3.5l3.88-3.88a1 1 0 1 0-1.42-1.42l-3.88 3.89a4.48 4.48 0 0 0 6.33 6.33l3.89-3.88a1 1 0 0 0-1.42-1.42m8.58-12.08a4.49 4.49 0 0 0-6.33 0l-3.89 3.88a1 1 0 1 0 1.42 1.42l3.88-3.88a2.52 2.52 0 0 1 3.5 0 2.47 2.47 0 0 1 0 3.5l-3.88 3.88a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3.88-3.89a4.49 4.49 0 0 0 0-6.33M8.83 15.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.92-4.92a1 1 0 1 0-1.42-1.42l-4.92 4.92a1 1 0 0 0 0 1.42"></path></svg></span><span class="sr-only" data-pagefind-ignore="">Section titled “CI/CD (GitHub Actions)”</span></a></div>
+<ul>
+<li id="rel-19" class="rule"><a class="rule-id" href="#rel-19">REL-19</a> <span class="lvl lvl-must">MUST</span> The CI workflow (<code dir="auto">ci.yml</code> in Editora) runs on every push to the default branch and every pull
+request, with two checks: the format check of <a href="../platform/#plat-10">PLAT-10</a> (<code dir="auto">spotless:check</code>; the job Editora
+names <strong>Format</strong>) and the build with its tests (<code dir="auto">./mvnw verify</code>, coverage gate included; Editora’s <strong>Build &#x26;
+Test</strong>), on the JDK <a href="../platform/#plat-01">PLAT-01</a> names. Both are required status checks for the default branch.
+<ul>
+<li><em>Check (code):</em> the CI workflow triggers on <code dir="auto">push</code> to the default branch and on <code dir="auto">pull_request</code>. One of its jobs
+is the Format job of <a href="../platform/#plat-10">PLAT-10</a>, which runs <code dir="auto">spotless:check</code> and neither builds nor tests,
+and its jobs between them run the whole suite and <code dir="auto">verify</code> with the coverage gate: one
+job that runs <code dir="auto">./mvnw verify</code>, or, as in Editora, jobs that run <code dir="auto">test</code> in shards and one that runs <code dir="auto">verify</code> over
+their results. What the jobs are called is the app’s own. A workflow that lacks a trigger or one of the two
+checks fails the rule. That the default branch requires both is a repository setting, which no file shows. An audit
+run from the app’s checkout alone reports the rule as <code dir="auto">not-checked</code> and says what would settle it.</li>
+<li><em>Reference:</em> Editora <a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/.github/workflows/ci.yml"><code dir="auto">ci.yml</code></a>, on <code dir="auto">master</code> (its <code dir="auto">format</code> job, its four <code dir="auto">tests</code> shards and its <code dir="auto">build</code> job, which
+runs <code dir="auto">verify</code> over the shards’ results); the app template’s <a href="https://github.com/adriandeleon/adl-desktop-app-template/blob/b1ba438e61bce02fcbc389f1775f34a7def1ee31/.github/workflows/ci.yml"><code dir="auto">ci.yml</code></a> and Termina’s <a href="https://github.com/adriandeleon/Termina/blob/6de43a19b7185a25c01cdf506a6286719b1991ff/.github/workflows/ci.yml"><code dir="auto">ci.yml</code></a>, on <code dir="auto">master</code>, and
+Mirada’s <a href="https://github.com/adriandeleon/Mirada/blob/a3a84ec5e8227b1886e3dd920ab2b030aa3a2ba1/.github/workflows/ci.yml"><code dir="auto">ci.yml</code></a>, on <code dir="auto">main</code>, each with a job for <code dir="auto">spotless:check</code> and one for <code dir="auto">verify</code>. Torrenta
+(<a href="https://github.com/adriandeleon/torrenta/blob/52d47c02ac57d8671d1e58d268b96a5532dbb00a/.github/workflows/ci.yml"><code dir="auto">ci.yml</code></a>), Modula (<a href="https://github.com/adriandeleon/Modula/blob/518300a4c2114909315fbd3a73acc999fb4c16b5/.github/workflows/build.yml"><code dir="auto">build.yml</code></a>) and nux (<a href="https://github.com/adriandeleon/nux/blob/d374ec4ee3f2eff0f7d378797884e6b81520ce20/.github/workflows/ci.yml"><code dir="auto">ci.yml</code></a>) don’t yet: none has a format check
+of its own. Torrenta’s and Modula’s one test job runs <code dir="auto">./mvnw verify</code>, which their poms bind <code dir="auto">spotless:check</code> to,
+so a single status stands for both checks; nux’s pom has no Spotless, and its job runs <code dir="auto">./mvnw test</code>, not <code dir="auto">verify</code>.
+Modula’s and nux’s builds have no coverage gate either (<a href="../platform/#plat-12">PLAT-12</a>). No file of any of them
+shows the required checks.</li>
+</ul>
+</li>
+<li id="rel-20" class="rule"><a class="rule-id" href="#rel-20">REL-20</a> <span class="lvl lvl-must">MUST</span> The tests run on all three OSes: the pure suite (no JavaFX toolkit) on Linux, macOS and
+Windows, and the FX suite on Linux and at least one more. They run there every day or on every pull request. How
+the runs are split is the app’s own: one workflow that runs everything on every pull request meets this, and so
+does a quick workflow for pull requests with a fuller one on a schedule. A release waits for these runs on its own
+commit, on all three OSes: that it waits at all is <a href="#rel-30">REL-30</a>.
+<ul>
+<li><em>Why:</em> path separators, line endings, case-insensitive file systems and process spawning fail on one OS only, and
+the pure suite is where they show; the FX suite catches layout and focus differences. The FX suite is the slow
+one (three shards on macOS in Editora), so it is asked on two OSes and not three: the third is covered by the
+pure suite alone.</li>
+<li><em>Check (code):</em> taken together, the workflows’ test jobs run the pure suite on <code dir="auto">ubuntu-*</code>, <code dir="auto">macos-*</code> and
+<code dir="auto">windows-*</code> runners and the FX suite on <code dir="auto">ubuntu-*</code> and one more, under a <code dir="auto">schedule</code> or a <code dir="auto">pull_request</code> trigger
+that needs no label; and the tests a release waits for (<a href="#rel-30">REL-30</a>) ran on those runners, in the release
+workflow itself or in the run it reads.</li>
+<li><em>Reference:</em> Editora splits them: <a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/.github/workflows/ci.yml"><code dir="auto">ci.yml</code></a> runs the whole suite on Linux on every pull request, and
+<a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/.github/workflows/full-tests.yml"><code dir="auto">full-tests.yml</code></a> the pure suite on Windows and macOS and the FX suite on macOS, in three shards, daily, on
+a pull request labeled <code dir="auto">full-ci</code> and before every release: the “Check that the Full tests passed on this
+commit” step in <a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/.github/workflows/release.yml"><code dir="auto">release.yml</code></a>. It lists flaky tests in the job summary
+(<a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/scripts/ci/ReportFlakes.java"><code dir="auto">scripts/ci/ReportFlakes.java</code></a>). The app template splits them the same way, and its release calls
+<a href="https://github.com/adriandeleon/adl-desktop-app-template/blob/b1ba438e61bce02fcbc389f1775f34a7def1ee31/.github/workflows/full-tests.yml"><code dir="auto">full-tests.yml</code></a> itself. Termina (<a href="https://github.com/adriandeleon/Termina/blob/6de43a19b7185a25c01cdf506a6286719b1991ff/.github/workflows/ci.yml"><code dir="auto">ci.yml</code></a>), Torrenta (<a href="https://github.com/adriandeleon/torrenta/blob/52d47c02ac57d8671d1e58d268b96a5532dbb00a/.github/workflows/ci.yml"><code dir="auto">ci.yml</code></a>), Mirada
+(<a href="https://github.com/adriandeleon/Mirada/blob/a3a84ec5e8227b1886e3dd920ab2b030aa3a2ba1/.github/workflows/ci.yml"><code dir="auto">ci.yml</code></a>), Modula (<a href="https://github.com/adriandeleon/Modula/blob/518300a4c2114909315fbd3a73acc999fb4c16b5/.github/workflows/build.yml"><code dir="auto">build.yml</code></a>) and nux (<a href="https://github.com/adriandeleon/nux/blob/d374ec4ee3f2eff0f7d378797884e6b81520ce20/.github/workflows/ci.yml"><code dir="auto">ci.yml</code></a>) run the
+whole suite on the three OSes on every pull request.</li>
+</ul>
+</li>
+<li id="rel-21" class="rule"><a class="rule-id" href="#rel-21">REL-21</a> <span class="lvl lvl-must">MUST</span> The release workflow (<code dir="auto">release.yml</code> in Editora) runs on a version tag (<code dir="auto">v*</code> meets it; the
+version-shaped <code dir="auto">v[0-9]+.[0-9]+.[0-9]+*</code> is the better pattern, since a tag like <code dir="auto">vendor-import</code> doesn’t match
+it), with <code dir="auto">workflow_dispatch</code> as a dry run that builds and signs and publishes nothing. The tag matching the pom
+is <a href="#rel-05">REL-05</a>, the tests it waits for <a href="#rel-30">REL-30</a>, the release-asset check <a href="#rel-07">REL-07</a>, and the
+bump to the next snapshot <a href="#rel-06">REL-06</a>.
+<ul>
+<li><em>Check (code):</em> the release workflow triggers on a tag pattern that starts with <code dir="auto">v</code> and on
+<code dir="auto">workflow_dispatch</code>. A dispatched run goes through the build and signing jobs and publishes nothing: the step
+that publishes runs in a mode that publishes nothing (JReleaser’s <code dir="auto">--dry-run</code>), or the job that publishes runs
+only for a tag (an <code dir="auto">if:</code> on the ref).</li>
+<li><em>Reference:</em> Editora <a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/.github/workflows/release.yml"><code dir="auto">release.yml</code></a>, whose “JReleaser” step takes <code dir="auto">release --dry-run</code> on a dispatch; the
+template, Termina, Torrenta and Mirada pass JReleaser <code dir="auto">--dry-run</code> the same way. Modula’s <a href="https://github.com/adriandeleon/Modula/blob/518300a4c2114909315fbd3a73acc999fb4c16b5/.github/workflows/release.yml"><code dir="auto">release.yml</code></a> and nux’s
+<a href="https://github.com/adriandeleon/nux/blob/d374ec4ee3f2eff0f7d378797884e6b81520ce20/.github/workflows/release.yml"><code dir="auto">release.yml</code></a>, which have no JReleaser, run their publishing job only for a tag
+(<code dir="auto">if: startsWith(github.ref, 'refs/tags/…')</code>).</li>
+</ul>
+</li>
+<li id="rel-30" class="rule"><a class="rule-id" href="#rel-30">REL-30</a> <span class="lvl lvl-must">MUST</span> A release is cut only from a commit whose tests passed: the release workflow runs the suite
+before it builds the installers, or a preflight job reads CI’s result for the tagged commit and stops when it is
+not green.
+<ul>
+<li><em>Why:</em> the build legs often skip the tests (<code dir="auto">-DskipTests</code>), and a tag can be pushed on any commit, so without
+this a release can be cut from code whose checks failed or never ran.</li>
+<li><em>Check (code):</em> in the release workflow, every job that publishes needs, directly or through the jobs between, a
+job that settles the tests on the tagged commit: it runs them (a Maven run that reaches the <code dir="auto">test</code> phase,
+<code dir="auto">./mvnw test</code>, <code dir="auto">package</code>, <code dir="auto">verify</code> or <code dir="auto">install</code>, with no <code dir="auto">-DskipTests</code> and no <code dir="auto">-Dmaven.test.skip</code>, or a call to
+the full-tests workflow), or it reads the conclusion of the CI run on <code dir="auto">GITHUB_SHA</code> and fails on anything but
+success.</li>
+<li><em>Reference:</em> both ways are in use, and all seven release workflows meet it. A preflight that reads CI: Editora’s
+“Check that CI passed on this commit” step in <a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/.github/workflows/release.yml"><code dir="auto">release.yml</code></a> (<a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/scripts/release/CheckRelease.java"><code dir="auto">scripts/release/CheckRelease.java</code></a> <code dir="auto">ci</code>, which waits up to 30
+minutes for the required checks; its build legs run <code dir="auto">-DskipTests</code>), and Torrenta’s “Require CI on this commit”
+step in <a href="https://github.com/adriandeleon/torrenta/blob/52d47c02ac57d8671d1e58d268b96a5532dbb00a/.github/workflows/release.yml"><code dir="auto">release.yml</code></a>, which reads the newest <code dir="auto">ci.yml</code> run on the commit and starts one when there is none. The
+suite in the release: the template’s <code dir="auto">full-tests</code> job in <a href="https://github.com/adriandeleon/adl-desktop-app-template/blob/b1ba438e61bce02fcbc389f1775f34a7def1ee31/.github/workflows/release.yml"><code dir="auto">release.yml</code></a> calls <code dir="auto">full-tests.yml</code> before <code dir="auto">build</code>;
+the “Build, test and package” step of Termina’s <a href="https://github.com/adriandeleon/Termina/blob/6de43a19b7185a25c01cdf506a6286719b1991ff/.github/workflows/release.yml"><code dir="auto">release.yml</code></a> and Mirada’s <a href="https://github.com/adriandeleon/Mirada/blob/a3a84ec5e8227b1886e3dd920ab2b030aa3a2ba1/.github/workflows/release.yml"><code dir="auto">release.yml</code></a> runs <code dir="auto">./mvnw … verify</code> on
+every build leg; Modula’s “Build the installer” step in <a href="https://github.com/adriandeleon/Modula/blob/518300a4c2114909315fbd3a73acc999fb4c16b5/.github/workflows/release.yml"><code dir="auto">release.yml</code></a> runs <code dir="auto">package</code> with the tests; nux’s build
+legs run a “Test” step (<code dir="auto">./mvnw test</code>) before they package, in <a href="https://github.com/adriandeleon/nux/blob/d374ec4ee3f2eff0f7d378797884e6b81520ce20/.github/workflows/release.yml"><code dir="auto">release.yml</code></a>. In each of the five the job that
+publishes needs the build legs, directly or through the signing and asset-check jobs. Mirada’s <a href="https://github.com/adriandeleon/Mirada/blob/a3a84ec5e8227b1886e3dd920ab2b030aa3a2ba1/.github/workflows/codecs.yml"><code dir="auto">codecs.yml</code></a> also creates a GitHub release, of the codec libraries its build
+downloads by checksum: that is a dependency, not a release of the app, and the app’s own release runs the suite
+with them.</li>
+</ul>
+</li>
+<li id="rel-22" class="rule"><a class="rule-id" href="#rel-22">REL-22</a> <span class="lvl lvl-must">MUST</span> Every workflow pins each third-party action to a commit SHA, with its version in a comment
+(<code dir="auto">actions/setup-java@b843ebf… # v6.1.0</code>).
+<ul>
+<li><em>Check (code):</em> every <code dir="auto">uses:</code> in <code dir="auto">.github/workflows/</code>, and in a composite action under <code dir="auto">.github/actions/</code> where
+the repository has one, ends in a 40-character SHA and a comment naming its version (<code dir="auto"># v6.1.0</code>, <code dir="auto"># 2.5.0</code>, <code dir="auto"># v2</code>), never a
+branch such as <code dir="auto"># main</code>. The <code dir="auto">v2</code> in Editora’s and Torrenta’s <code dir="auto">jreleaser/release-action … # v2</code> names that
+action’s <code dir="auto">v2</code> line, whose head the SHA is; the template, Termina and Mirada pin its 2.5.0 release.</li>
+<li><em>Command:</em> <code dir="auto">[ -f pom.xml ] || { echo 'not an app root: no pom.xml here'; exit 1; }; [ -d .github/workflows ] || { echo 'no .github/workflows'; exit 1; }; ! grep -rhE '^[[:space:]]*-?[[:space:]]*uses:' .github/workflows .github/actions 2>/dev/null | grep -vE 'uses:[[:space:]]*\./' | grep -vE '@[0-9a-f]{40}[[:space:]]+#[[:space:]]*v?[0-9]'</code></li>
+<li><em>Reference:</em> Editora <a href="https://github.com/adriandeleon/Editora/tree/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/.github/workflows"><code dir="auto">.github/workflows/</code></a>.</li>
+</ul>
+</li>
+<li id="rel-23" class="rule"><a class="rule-id" href="#rel-23">REL-23</a> <span class="lvl lvl-must">MUST</span> Dependabot updates <code dir="auto">github-actions</code> and <code dir="auto">maven</code> weekly.
+<ul>
+<li><em>Check (code):</em> <code dir="auto">.github/dependabot.yml</code> lists both ecosystems with <code dir="auto">interval: weekly</code>.</li>
+<li><em>Reference:</em> Editora <a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/.github/dependabot.yml"><code dir="auto">.github/dependabot.yml</code></a>.</li>
+</ul>
+</li>
+<li id="rel-24" class="rule"><a class="rule-id" href="#rel-24">REL-24</a> <span class="lvl lvl-must">MUST</span> Every workflow starts from <code dir="auto">permissions: contents: read</code>, or from less; only a job that needs
+write access asks for it, in its own block.
+<ul>
+<li><em>Check (code):</em> each workflow has a top-level <code dir="auto">permissions</code> that grants no write: <code dir="auto">contents: read</code>, or less
+(<code dir="auto">permissions: {}</code>); and every <code dir="auto">write</code> sits in a job’s own <code dir="auto">permissions</code>.</li>
+<li><em>Reference:</em> Editora <a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/.github/workflows/release.yml"><code dir="auto">release.yml</code></a>: <code dir="auto">release</code> (publish), <code dir="auto">bump</code> (the pull request) and <code dir="auto">preflight</code> (start a
+Full tests run). Modula’s <a href="https://github.com/adriandeleon/Modula/blob/518300a4c2114909315fbd3a73acc999fb4c16b5/.github/workflows/notify-catalog.yml"><code dir="auto">notify-catalog.yml</code></a> starts from <code dir="auto">permissions: {}</code>.</li>
+</ul>
+</li>
+<li id="rel-25" class="rule"><a class="rule-id" href="#rel-25">REL-25</a> <span class="lvl lvl-should">SHOULD</span> Every <code dir="auto">actions/setup-java</code> step caches Maven’s repository (<code dir="auto">cache: maven</code>). The JDK it sets
+up is <a href="../platform/#plat-01">PLAT-01</a>’s.
+<ul>
+<li><em>Check (code):</em> each <code dir="auto">setup-java</code> step has <code dir="auto">cache: maven</code>.</li>
+<li><em>Reference:</em> Mirada (<a href="https://github.com/adriandeleon/Mirada/blob/a3a84ec5e8227b1886e3dd920ab2b030aa3a2ba1/.github/workflows/ci.yml"><code dir="auto">ci.yml</code></a>), Modula and nux, on every step. Editora (<a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/.github/workflows/ci.yml"><code dir="auto">ci.yml</code></a>,
+<a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/.github/workflows/release.yml"><code dir="auto">release.yml</code></a>), the app template, Termina and Torrenta each have a <code dir="auto">setup-java</code> step without it. Editora
+sets up Temurin for its tests and Liberica for the release build, for linux-aarch64 coverage.</li>
+</ul>
+</li>
+<li id="rel-26" class="rule"><a class="rule-id" href="#rel-26">REL-26</a> <span class="lvl lvl-must">MUST</span> Every job that runs steps has <code dir="auto">timeout-minutes</code>. A job that calls a reusable workflow
+(<code dir="auto">uses:</code> in place of <code dir="auto">steps:</code>) takes no <code dir="auto">timeout-minutes</code>: GitHub does not accept the key there, and the called
+workflow’s own jobs carry theirs.
+<ul>
+<li><em>Check (code):</em> in every workflow, every job with <code dir="auto">steps:</code> sets <code dir="auto">timeout-minutes</code> on the job itself; a timeout
+on one of its steps does not stand for it. A job with <code dir="auto">uses:</code> and no <code dir="auto">steps:</code> is not judged.</li>
+<li><em>Reference:</em> every job of Editora’s five workflows (<a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/.github/workflows/ci.yml"><code dir="auto">ci.yml</code></a>, <a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/.github/workflows/full-tests.yml"><code dir="auto">full-tests.yml</code></a>, <a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/.github/workflows/release.yml"><code dir="auto">release.yml</code></a> and
+the rest), of the template’s three, Termina’s two and Mirada’s five sets one; the template’s <code dir="auto">full-tests</code> job
+in <a href="https://github.com/adriandeleon/adl-desktop-app-template/blob/b1ba438e61bce02fcbc389f1775f34a7def1ee31/.github/workflows/release.yml"><code dir="auto">release.yml</code></a>, which calls <code dir="auto">full-tests.yml</code>, carries none, as the rule says, and nor does the <code dir="auto">winget</code> job of
+Mirada’s <a href="https://github.com/adriandeleon/Mirada/blob/a3a84ec5e8227b1886e3dd920ab2b030aa3a2ba1/.github/workflows/release.yml"><code dir="auto">release.yml</code></a>, which calls <code dir="auto">winget.yml</code>. Torrenta, Modula and nux don’t
+yet: the two jobs of Torrenta’s <a href="https://github.com/adriandeleon/torrenta/blob/52d47c02ac57d8671d1e58d268b96a5532dbb00a/.github/workflows/ci.yml"><code dir="auto">ci.yml</code></a> and the one of its <a href="https://github.com/adriandeleon/torrenta/blob/52d47c02ac57d8671d1e58d268b96a5532dbb00a/.github/workflows/engine-soak.yml"><code dir="auto">engine-soak.yml</code></a> set none (its <code dir="auto">release.yml</code>
+does); no job in Modula’s three workflows (<a href="https://github.com/adriandeleon/Modula/blob/518300a4c2114909315fbd3a73acc999fb4c16b5/.github/workflows/build.yml"><code dir="auto">build.yml</code></a>, <a href="https://github.com/adriandeleon/Modula/blob/518300a4c2114909315fbd3a73acc999fb4c16b5/.github/workflows/release.yml"><code dir="auto">release.yml</code></a>, <a href="https://github.com/adriandeleon/Modula/blob/518300a4c2114909315fbd3a73acc999fb4c16b5/.github/workflows/notify-catalog.yml"><code dir="auto">notify-catalog.yml</code></a>) or in
+nux’s two (<a href="https://github.com/adriandeleon/nux/blob/d374ec4ee3f2eff0f7d378797884e6b81520ce20/.github/workflows/ci.yml"><code dir="auto">ci.yml</code></a>, <a href="https://github.com/adriandeleon/nux/blob/d374ec4ee3f2eff0f7d378797884e6b81520ce20/.github/workflows/release.yml"><code dir="auto">release.yml</code></a>) sets one: each app has it on one step only, the one that notarizes.</li>
+</ul>
+</li>
+<li id="rel-31" class="rule"><a class="rule-id" href="#rel-31">REL-31</a> <span class="lvl lvl-must">MUST</span> Every workflow that runs on pull requests has a <code dir="auto">concurrency</code> group that cancels a superseded
+pull-request run, and never a run on the default branch.
+<ul>
+<li><em>Check (code):</em> every workflow with a <code dir="auto">pull_request</code> trigger has a <code dir="auto">concurrency</code> block whose <code dir="auto">group</code> is shared
+by the runs of one pull request and by no run on the default branch (keyed by <code dir="auto">github.ref</code>, or by the pull
+request’s number), and whose <code dir="auto">cancel-in-progress</code> is true for a pull-request run: true, or an expression that
+is true there. And in that workflow <code dir="auto">cancel-in-progress</code> is never true for a run on the default branch,
+whatever starts it (a push, a schedule, or a run started by hand, which <code dir="auto">workflow_dispatch</code> allows on any
+branch): it is an expression that is false there, and it may be plain true only in a workflow that nothing
+can start on the default branch. A workflow with no <code dir="auto">pull_request</code> trigger is not judged.</li>
+<li><em>Reference:</em> Editora <a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/.github/workflows/ci.yml"><code dir="auto">ci.yml</code></a> and <a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/.github/workflows/full-tests.yml"><code dir="auto">full-tests.yml</code></a> (<code dir="auto">cancel-in-progress: ${{ github.event_name == 'pull_request' }}</code>,
+in a group keyed by the pull request’s number). The template’s
+(<a href="https://github.com/adriandeleon/adl-desktop-app-template/blob/b1ba438e61bce02fcbc389f1775f34a7def1ee31/.github/workflows/ci.yml"><code dir="auto">ci.yml</code></a>, <a href="https://github.com/adriandeleon/adl-desktop-app-template/blob/b1ba438e61bce02fcbc389f1775f34a7def1ee31/.github/workflows/full-tests.yml"><code dir="auto">full-tests.yml</code></a>), Termina’s (<a href="https://github.com/adriandeleon/Termina/blob/6de43a19b7185a25c01cdf506a6286719b1991ff/.github/workflows/ci.yml"><code dir="auto">ci.yml</code></a>) and Mirada’s (<a href="https://github.com/adriandeleon/Mirada/blob/a3a84ec5e8227b1886e3dd920ab2b030aa3a2ba1/.github/workflows/ci.yml"><code dir="auto">ci.yml</code></a>) pull-request workflows
+use the same expression, Termina’s and Mirada’s in a group keyed by <code dir="auto">github.ref</code>. Editora’s third pull-request
+workflow, <a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/.github/workflows/terminal-image.yml"><code dir="auto">terminal-image.yml</code></a>, doesn’t yet: its <code dir="auto">cancel-in-progress</code> is plain true, and beside pull requests and
+pushes to <code dir="auto">probe/**</code> it can be started by hand, so a second run started on <code dir="auto">master</code> cancels the first.
+Torrenta, Modula and nux don’t either: Modula’s <a href="https://github.com/adriandeleon/Modula/blob/518300a4c2114909315fbd3a73acc999fb4c16b5/.github/workflows/build.yml"><code dir="auto">build.yml</code></a> and nux’s <a href="https://github.com/adriandeleon/nux/blob/d374ec4ee3f2eff0f7d378797884e6b81520ce20/.github/workflows/ci.yml"><code dir="auto">ci.yml</code></a> run on
+pull requests with no <code dir="auto">concurrency</code> block, so they cancel nothing, and Torrenta’s <a href="https://github.com/adriandeleon/torrenta/blob/52d47c02ac57d8671d1e58d268b96a5532dbb00a/.github/workflows/ci.yml"><code dir="auto">ci.yml</code></a> sets
+<code dir="auto">cancel-in-progress: true</code> for its pushes to <code dir="auto">master</code> as well.</li>
+</ul>
+</li>
+<li id="rel-27" class="rule"><a class="rule-id" href="#rel-27">REL-27</a> <span class="lvl lvl-must">MUST</span> A CI run leaves its results where they can be read without running it again: it uploads the
+surefire reports even when tests fail, uploads the JaCoCo report, and writes the coverage totals to the job
+summary.
+<ul>
+<li><em>Check (code):</em> the step that uploads the surefire reports runs under <code dir="auto">if: always()</code>, a step uploads the
+JaCoCo report, and a step appends the coverage totals to <code dir="auto">$GITHUB_STEP_SUMMARY</code>.</li>
+<li><em>Reference:</em> Editora’s “Upload test reports and coverage data” and “Summarise coverage” steps in <a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/.github/workflows/ci.yml"><code dir="auto">ci.yml</code></a>.</li>
+</ul>
+</li>
+<li id="rel-28" class="rule"><a class="rule-id" href="#rel-28">REL-28</a> <span class="lvl lvl-must">MUST</span> Signing skips cleanly when the secrets are absent (forks, dry runs), so they still build; a tag
+without them fails.
+<ul>
+<li><em>Check (code):</em> each signing step checks its secrets first, skips without them, and fails on a tag push.</li>
+<li><em>Reference:</em> Editora’s “Import signing certificate (macOS)” step in <a href="https://github.com/adriandeleon/Editora/blob/c9a28545f5be0b1411dc07ab7ca07bed010d13fd/.github/workflows/release.yml"><code dir="auto">release.yml</code></a> checks <code dir="auto">MACOS_CERT_P12</code>
+first.</li>
+</ul>
+</li>
+<li id="rel-29" class="rule"><a class="rule-id" href="#rel-29">REL-29</a> <span class="lvl lvl-must">MUST</span> The packaged app is launched once on each OS before a release (a smoke test).
+<ul>
+<li><em>Check (code):</em> the release workflow runs the packaged launcher on each OS (a Linux, a macOS and a Windows leg)
+before the step that publishes.</li>
+<li><em>Reference:</em> Torrenta’s “Smoke-test the packaged app” step in <a href="https://github.com/adriandeleon/torrenta/blob/52d47c02ac57d8671d1e58d268b96a5532dbb00a/.github/workflows/release.yml"><code dir="auto">release.yml</code></a> runs the launcher in the image of each
+of its three targets, one per OS. Editora runs only the notarized macOS app (<code dir="auto">--version</code>, <code dir="auto">--check-terminal</code>).</li>
+</ul>
+</li>
+</ul></div><footer class="sl-flex astro-ddtxxk7k"><div class="meta sl-flex astro-ddtxxk7k"><a href="https://github.com/adriandeleon/adl-desktop-apps-guidelines/edit/master/src/content/docs/release.md" class="sl-flex print:hidden astro-qlekgd3o"><svg aria-hidden="true" class="astro-qlekgd3o astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.2em;"><path d="M22 7.24a1 1 0 0 0-.29-.71l-4.24-4.24a1 1 0 0 0-1.1-.22 1 1 0 0 0-.32.22l-2.83 2.83L2.29 16.05a1 1 0 0 0-.29.71V21a1 1 0 0 0 1 1h4.24a1 1 0 0 0 .76-.29l10.87-10.93L21.71 8c.1-.1.17-.2.22-.33a1 1 0 0 0 0-.24v-.14l.07-.05ZM6.83 20H4v-2.83l9.93-9.93 2.83 2.83L6.83 20ZM18.17 8.66l-2.83-2.83 1.42-1.41 2.82 2.82-1.41 1.42Z"/></svg>Edit page</a><p>Last updated: <time datetime="2026-11-11T03:23:01.000Z">Nov 11, 2026</time></p></div><div class="pagination-links print:hidden astro-b5raizh3" dir="ltr"><a href="/6.0.0/templates/settings-sync/" rel="prev" class="astro-b5raizh3"><svg aria-hidden="true" class="astro-b5raizh3 astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.5rem;"><path d="M17 11H9.41l3.3-3.29a1.004 1.004 0 1 0-1.42-1.42l-5 5a1 1 0 0 0-.21.33 1 1 0 0 0 0 .76 1 1 0 0 0 .21.33l5 5a1.002 1.002 0 0 0 1.639-.325 1 1 0 0 0-.219-1.095L9.41 13H17a1 1 0 0 0 0-2Z"/></svg><span class="astro-b5raizh3">Previous<br class="astro-b5raizh3"><span class="link-title astro-b5raizh3">Settings Sync</span></span></a><a href="/6.0.0/family/matrix/" rel="next" class="astro-b5raizh3"><svg aria-hidden="true" class="astro-b5raizh3 astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.5rem;"><path d="M17.92 11.62a1.001 1.001 0 0 0-.21-.33l-5-5a1.003 1.003 0 1 0-1.42 1.42l3.3 3.29H7a1 1 0 0 0 0 2h7.59l-3.3 3.29a1.002 1.002 0 0 0 .325 1.639 1 1 0 0 0 1.095-.219l5-5a1 1 0 0 0 .21-.33 1 1 0 0 0 0-.76Z"/></svg><span class="astro-b5raizh3">Next<br class="astro-b5raizh3"><span class="link-title astro-b5raizh3">Feature matrix</span></span></a></div></footer><p class="edition astro-jo6i4kqk">Pauta <strong class="astro-jo6i4kqk">6.0.0</strong> · <time datetime="2026-11-10" class="astro-jo6i4kqk">November 10, 2026</time> · <a href="/6.0.0/changelog/" class="astro-jo6i4kqk">Changelog</a> · <a href="/latest/release/" rel="alternate" class="astro-jo6i4kqk">This page in the latest edition</a></p></div></div></main></div></div></div></div></body></html>

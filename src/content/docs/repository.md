@@ -3,6 +3,12 @@ title: "Repository documents"
 description: "README, CHANGELOG, LICENSE, NOTICE, AGENTS.md and the rest of the files every repository carries."
 ---
 
+Every repository in the family carries the same documents in the same places: a README that is a landing page, a
+changelog, the license and its notice, the files that coding agents and contributors read, a `docs/` folder, the bug
+report form and the source of the icon. Whoever has found their way around one app's repository finds it in any
+other. This page says which files there are and what each holds; what the documentation as a whole must cover, and
+for which reader, is [Documentation](../documentation/).
+
 **Start from the template.** [adl-desktop-app-template](https://github.com/adriandeleon/adl-desktop-app-template) carries an example of every file on this page,
 filled in for a placeholder app, `ExampleApp`. `scripts/rename.sh <AppName> <package>` renames it to yours.
 

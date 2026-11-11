@@ -3,6 +3,13 @@ title: "Packaging, signing and release"
 description: "jpackage, JReleaser, the five-target matrix, macOS/Linux/Windows signing and CI."
 ---
 
+Every app ships the same way: a version tag on a commit whose tests passed builds the installers for five targets,
+each on its own runner, signs the macOS and Linux downloads, attests every one, and publishes them in one GitHub
+release, with Homebrew and winget packages where the app has them. The workflows that do it share one posture
+(actions pinned to a commit, the least permissions, a timeout on every job) and leave their results readable after
+the run. A user gets the same kind of download, checked the same way, for any app on any OS
+([principle 1](../principles/)).
+
 ## Targets
 
 Each target builds on its own GitHub-hosted runner. jpackage and JavaFX natives are host-specific, so there

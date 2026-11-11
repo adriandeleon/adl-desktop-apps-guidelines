@@ -3,6 +3,14 @@ title: "Platform baseline"
 description: "JDK, JavaFX, AtlantaFX, NullAway, Maven Wrapper, tests and coverage: the stack every app shares."
 ---
 
+Every app is built from the same parts: the JDK and JavaFX, one JPMS module, AtlantaFX for the controls, Maven with
+its wrapper, JSpecify and NullAway for nullness, Spotless for formatting, JUnit on JavaFX's headless platform, JaCoCo
+for coverage, `java.util.logging` and Jackson. A developer who knows one app's build knows them all, and a fix found
+in one carries to the others. Each rule names a tool and the version it starts from; how to work with NullAway and the
+coverage floors day to day is [Code quality gates](../quality/), and how the installers are built, signed and
+published is [Packaging, signing and release](../release/). [Everyday commands](#everyday-commands) lists the
+commands that drive the build.
+
 - **PLAT-01 · MUST.** The app builds on **JDK 25 or newer**. `maven.compiler.release` 25 is the floor, not the
   ceiling: a newer JDK builds the app too, so no enforcer rule refuses one, in the main build or in any profile
   that turns itself on (an `<activation>` by JDK version, OS, property or file, or one that is `activeByDefault`;

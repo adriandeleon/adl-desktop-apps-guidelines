@@ -8,6 +8,14 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 
 ## [Unreleased]
 
+### Changed
+
+- **Every page opens by saying what it covers.** Platform baseline, Repository documents, Code quality gates,
+  Keyboard first, Window shell, Settings, Diagnostics and support, Command line and launch, Internationalization and
+  Packaging, signing and release now open with a short paragraph before their rules: what the page is about, why the
+  apps share it, and which page holds what it leaves out. The New app checklist and Same on every OS gain a sentence
+  each. No rule changed.
+
 ### Fixed
 
 - **The app template's References follow it to 6.0.0.** The template now meets every MUST of 6.0.0 (Core), and the

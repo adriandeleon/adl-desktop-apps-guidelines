@@ -5,6 +5,13 @@ description: "Status bar, themes, title bar, dialogs, Welcome, About, window sta
 
 ![Editora's Welcome tab](../../assets/shots/editora-welcome.png "Editora's Welcome page: Start actions with their chords, Recent Projects, Recent Files and Customize.")
 
+The window shell is what every app has around its content: the status bar and its echo area, the menu bar in the
+title bar, dialogs and the order of their buttons, the window's size and place kept across launches, zoom, and Quit.
+A user meets these parts before any of the app's own features, so they look and work the same in every app, and on
+every OS apart from the places [Same on every OS](../same-on-every-os/) lists (the macOS application menu among
+them). The [Welcome page](../templates/welcome/) and the [About window](../templates/about/) have templates of their
+own.
+
 - **WIN-01 · MUST.** The main window has a status bar, shown by default; the user may hide it. Its left side is the
   *echo area*: one line of feedback for the last action, errors in red and warnings in amber. Clicking it opens the
   Message Log ([DIAG-01](../diagnostics/#diag-01)).

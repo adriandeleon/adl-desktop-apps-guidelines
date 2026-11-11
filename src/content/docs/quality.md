@@ -3,8 +3,14 @@ title: "Code quality gates"
 description: "NullAway, coverage floors and the guard tests that pay for themselves across the family."
 ---
 
-NullAway runs as an error on every package, each `@NullMarked` in its own `package-info.java`:
-[PLAT-09](../platform/#plat-09). What follows is how to live with it.
+The [Platform baseline](../platform/) turns the checks on: NullAway as an error on every package, each
+`@NullMarked` in its own `package-info.java` ([PLAT-09](../platform/#plat-09)), and JaCoCo's build-wide coverage
+floors ([PLAT-12](../platform/#plat-12)). This page is how to live with them and what to test beyond them: fix a
+nullness report instead of hiding it, keep each decision in a pure helper with unit tests
+([principle 12](../principles/)), keep the FX tests tagged, free of sleeps and out of the real home folder, look at
+the real window with nobody at the screen ([principle 13](../principles/)), and back the claims that matter (every
+command runs, every setting survives a restart, the release still signs) with guard tests that have been seen to
+fail. These are the gates that have paid for themselves across the family.
 
 - **QUAL-02 · SHOULD.** A NullAway report is fixed, not suppressed: put `@Nullable` on what may be null.
   - *Check (code):* `grep -rn '@SuppressWarnings("NullAway")' src/main` finds nothing.

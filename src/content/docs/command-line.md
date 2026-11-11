@@ -3,6 +3,12 @@ title: "Command line and launch"
 description: "The flags every app accepts and the single-instance hand-off."
 ---
 
+Every app takes the same command-line flags, and they mean the same thing in each: print the help or the version,
+use another config folder, start without the last session, write a problem report, open the files named. They work
+the same on every OS, Windows' console included, and refuse an option they don't know. A second launch doesn't start
+a second app: it hands its arguments to the one already running for that config folder and exits. Scripts and
+habits depend on these names, so a flag a rule names is required as written.
+
 ## Flags
 
 - **CLI-01 · MUST.** `--help` and `--version` print before the GUI starts, in plain English, not translated.

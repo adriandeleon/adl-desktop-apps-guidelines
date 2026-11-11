@@ -92,15 +92,15 @@ Editora's [`ui/WelcomeText.java`](https://github.com/adriandeleon/Editora/blob/m
 
 - **WELC-03 · SHOULD.** The Welcome page is shown at startup when there is no session to restore (so always with
   `--no-session`), by the `view.welcome` command (Help → Welcome Page where the app has a Help menu, in the place
-  [DOCS-07](../../documentation/#docs-07) gives it), and when the tab strip is empty after a
-  project swap. In an app that can start straight into one view, as Editora does for a standalone diff, that
-  startup suppresses the page while its worker reads the files.
+  [DOCS-07](../../documentation/#docs-07) gives it), and when a switch to another project leaves the tab strip
+  empty (Editora's project swap). In an app that can start straight into one view, as Editora does for a
+  standalone diff, that startup suppresses the page while its worker reads the files.
   - *Check (code):* those three paths open the one Welcome tab, and where the app has a Help menu, a row inside it
     runs `view.welcome`; a startup that goes straight to a view holds a flag that skips the page.
   - *Reference:* Editora [`MainController.addWelcomeTab`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java), `showWelcomeIfNoTabs`; [`WindowSessionCoordinator`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowSessionCoordinator.java)
     (`suppressWelcome`). Editora's menu row is in View, not in Help yet ([`MenuBarModel`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java)).
-- **WELC-04 · SHOULD.** Closing the last tab does not bring the page back. The empty content area shows its own
-  quiet hint instead: the app's ways in, each with its chord (in Editora: Open File, Open Folder, Command Palette
+- **WELC-04 · SHOULD.** Closing the last tab does not bring the Welcome page back. The empty content area shows its
+  own quiet hint instead: the app's ways in, each with its chord (in Editora: Open File, Open Folder, Command Palette
   and Welcome Page), and takes focus so chords still reach the window.
   - *Check (code):* closing the last tab shows the hint in the empty content area, not the Welcome page, and gives
     it the focus; opening a tab hides it. A test that asserts it is the surest evidence.

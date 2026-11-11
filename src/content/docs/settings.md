@@ -15,7 +15,7 @@ description: "The Settings window with search, live apply, versioned config and 
   - *Reference:* Editora `view.settings`, bound in [`keymaps/cua.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/cua.json) and [`cua.mac.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/cua.mac.json) (and in the VS Code and
     Sublime keymaps; IntelliJ's uses `C-M-s`). Termina, a terminal app, binds `settings` to `Shortcut+Comma` in its one
     keymap ([`keymaps/keymap.json`](https://github.com/adriandeleon/Termina/blob/master/src/main/resources/com/termina/keymaps/keymap.json) and [`keymap.mac.json`](https://github.com/adriandeleon/Termina/blob/master/src/main/resources/com/termina/keymaps/keymap.mac.json)). Torrenta and nux, which ship no keymap files, bind the same
-    chord in code ([`ui/Chords.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/Chords.java); nux's [`App.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/App.java), `Shortcut+Comma`). Modula's Settings command has no chord
+    chord in code ([`ui/Chords.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/Chords.java); nux's [`App.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/App.java), `Shortcut+Comma`). Modula doesn't yet: its Settings command has no chord
     ([`ui/RadioPane.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/RadioPane.java), `commands`).
 - **SET-02 · MUST.** The Settings window has a sidebar of pages with icons on the left, the open page on the right,
   and a search field on top.
@@ -71,7 +71,8 @@ keymap, a theme, a language), not when the developer could not decide.
 4. **Load** line that sets the control from the model, safe to run at any time.
 5. **Palette command** that flips or prompts the same field, plus strings in every catalog.
 
-- **SET-06 · MUST.** Every setting has a palette command that flips the field or prompts for its value.
+- **SET-06 · MUST.** Every setting the Settings window shows has a palette command that flips the field or prompts
+  for its value. A key that [SET-16](#set-16) keeps out of the UI has no row, and takes no command.
   - *Check (code):* list the settings the Settings window's rows change and the commands the palette lists; each
     setting has a command that flips it or prompts for its value. A row that only shows something, or runs an
     action, has no setting to give a command to. A test that fails on a row with no command is the surest evidence.
@@ -123,7 +124,10 @@ keymap, a theme, a language), not when the developer could not decide.
     kind of list the rule exempts. Termina ([`config/ConfigJson.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/config/ConfigJson.java), for `settings.json` and
     `workspace-state.json`) and Mirada ([`settings/Migrations.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/settings/Migrations.java), for `settings.properties` and
     `bookmarks.properties`) do it too, and so does the app template for `settings.json`
-    ([`config/Migrations.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/Migrations.java)), though not for its `sync/base.json`. Torrenta's files ([`store/Settings.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/store/Settings.java) and
+    ([`config/Migrations.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/Migrations.java)), though not for its `sync/base.json`. Nor does Termina for the color schemes it
+    imports: each is a file Termina writes whole, in a format of its own, and reads back at start
+    (`themes/<name>.properties`, [`theme/ThemeFile.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/theme/ThemeFile.java)), so a config file by [SET-22](#set-22), and it carries no
+    version. Torrenta's files ([`store/Settings.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/store/Settings.java) and
     the other stores beside it) and Modula's ([`config/ConfigStore.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/config/ConfigStore.java): `settings.properties`, `presets.txt`,
     `schedules.txt`, each line a record with fields) carry no version, and nux writes `schema=1` into its file and never reads it
     ([`config/ConfigStore.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/config/ConfigStore.java), `format` and `parse`).
@@ -136,7 +140,8 @@ keymap, a theme, a language), not when the developer could not decide.
   - *Reference:* Editora [`ConfigVersioningTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/config/ConfigVersioningTest.java) (`tooNewSettingsAreBackedUpAndDefaultsLoaded`). Termina
     ([`config/Settings.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/config/Settings.java)), Mirada ([`settings/ConfigFile.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/settings/ConfigFile.java), `newerBackupOf`) and the app template
     ([`config/ConfigStore.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/ConfigStore.java)) do the same, under the same name. Torrenta, Modula and nux read no version
-    ([SET-09](#set-09)), so they cannot tell a newer file.
+    ([SET-09](#set-09)), so they cannot tell a newer file, and nor can Termina for an imported color scheme, which
+    carries none.
 - **SET-11 · MUST.** Never trust a config file. Clamp every value to its valid range when it is **read**, not only
   when it is written; an unknown value falls back to its default; a file that cannot be decoded is kept as a backup
   (Editora names it `<name>.corrupt.bak`) and defaults load. A bad file never stops the app from starting.
@@ -158,18 +163,21 @@ keymap, a theme, a language), not when the developer could not decide.
   writes as a whole and reads back as its state: the settings, the session state, a store of bookmarks or presets,
   what a sync engine keeps beside its clone. A file the app only appends to (a log, a ledger, a word list) is not
   one, and neither is a file in the working tree of a sync repository's clone, which Git holds a committed copy of
-  and the next sync writes again.
+  and the next sync writes again. Nor is a file the app writes for one run and deletes at exit, such as one that
+  tells another process where this run listens.
   - *Why:* without it, a crash or a full disk in the middle of a save leaves a file that will not decode, and the
     corrupt-file path of [SET-11](#set-11), a backup and then defaults, is what the person gets for it.
   - *Check (code):* every write of a config file as a whole (a store's save, an import, a sync engine's own state
-    outside its clone) goes to a temporary file in the same folder and ends in a move onto the target (`Files.move`,
-    which is surest with `ATOMIC_MOVE` and a plain replace only where the file system has no atomic move). An
-    append to a log, a ledger or a list is not such a write, and neither is a write into a sync clone's working tree.
+    outside its clone) goes to a temporary file in the same folder and ends in a move onto the target (`Files.move`).
+    `ATOMIC_MOVE` is the surest form; a move that only replaces the target passes too, since the statement asks for
+    the temporary file and the move. An append to a log, a ledger or a list is not such a write, and neither is a
+    write into a sync clone's working tree, nor the write of a file the app deletes when it exits.
   - *Reference:* Editora [`config/ConfigWriter.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/ConfigWriter.java) (`writeAtomicOrThrow`: a temporary file of its own beside the target,
     forced to disk, then moved; [`ConfigWriterTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/config/ConfigWriterTest.java), `atomicReplacementFailuresKeepThePreviousConfiguration`), which
-    its settings and stores go through. One Editora file doesn't yet: `mcp-endpoint.json`, which its MCP server
-    writes into the config folder when it starts and Editora reads back at the next launch to tell a stale one, is
-    written in place ([`mcp/McpServer.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/mcp/McpServer.java), `writeEndpointFile`). Every other
+    its settings and stores go through. Editora's `mcp-endpoint.json` is not a config file: its MCP server writes it
+    for the run when it starts and deletes it when it stops, as the last window closes
+    ([`mcp/McpServer.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/mcp/McpServer.java), `writeEndpointFile` and `stop`), and one that a crash left behind is deleted at the next
+    launch (`reapStaleEndpoint`). Every other
     app's settings store does it too: Torrenta [`store/Settings.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/store/Settings.java) (`save`), Termina [`config/Settings.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/config/Settings.java) (`writeOne`,
     `moveIntoPlace`), Mirada [`settings/Settings.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/settings/Settings.java) (`write`), Modula [`config/ConfigStore.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/config/ConfigStore.java) (`writeAtomically`), nux
     [`config/ConfigStore.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/config/ConfigStore.java) (`save`) and the app template's [`config/ConfigStore.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/ConfigStore.java) (`writePending`). The template's
@@ -190,42 +198,65 @@ keymap, a theme, a language), not when the developer could not decide.
 
 ## Secrets stay out of files
 
-- **SET-13 · MUST.** An app that stores a secret (a password, a token, a key) puts none in a config file. API keys
-  and tokens go to the operating system's keychain: macOS Keychain, Windows Credential Manager, the Secret Service
+- **SET-13 · MUST.** An app that stores a secret the user gave it (a password, a token, a key) puts none in a config
+  file. Each goes to the operating system's keychain: macOS Keychain, Windows Credential Manager, the Secret Service
   on Linux. Calls may block on a prompt, so they run off the FX thread. Where no keychain answers, as in a Linux
   session with no Secret Service, the secret is kept in memory for the session only and its row in Settings says so:
-  it is never written to a file instead. A run with no window says so on standard error. A credential the app only
-  holds for the session, and asks for again in the next, is [SET-14](#set-14)'s.
-  - *Check (code):* the rule covers an app that keeps a password, an API key or a token from one session to the
-    next; an app that keeps none is outside it. In an app it covers, no secret is a field of the settings model;
-    reads and writes go through the secret store, and
+  it is never written to a file instead. A run with no window says so on standard error. A key or token the app
+  generates itself is not such a secret: it may live in a file only the owner can read, outside the settings files
+  (Torrenta's `keys/<name>.key`). Whether a credential is kept from one session to the next is the app's to decide:
+  one it keeps is this rule's, and one it only holds for the session, and asks for again in the next, is
+  [SET-14](#set-14)'s.
+  - *Check (code):* the rule covers an app that keeps a password, an API key or a token the user gave it from one
+    session to the next; an app that keeps none is outside it. In an app it covers, no such secret is a field of
+    the settings model or is written to any other file; reads and writes go through the secret store, and
     every caller reaches it from a background thread, never from a handler on the FX thread; the store's fallback,
     for when no keychain answers, holds the secret in memory and writes no file, and the secret's row in Settings
-    says when it is kept for the session only, as a line on standard error does in a run with no window.
+    says when it is kept for the session only, as a line on standard error does in a run with no window. A key or
+    token the app generates is not judged as such a secret where it is in a file of its own, outside the settings
+    files, that the app makes readable by its owner alone (owner-only permissions, where the file system has them).
   - *Reference:* Editora [`secrets/SecretStore.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/secrets/SecretStore.java), [`config/ApiKeyVault.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/ApiKeyVault.java). Editora doesn't yet: [`Settings`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/Settings.java)
     keeps the AI keys as a fallback for when no keychain answers, and saving a key from Settings writes the keychain
-    on the FX thread. Its Settings row does say which of the two holds the key. Torrenta uses no keychain: its proxy
+    on the FX thread. Its Settings row does say which of the two holds the key. The bearer token Editora's MCP
+    server generates is in a file of its own for the run, `mcp-endpoint.json`, made owner-only where the file system
+    has POSIX permissions and deleted when the server stops ([`mcp/McpServer.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/mcp/McpServer.java), `writeEndpointFile`), which
+    the rule allows. Torrenta uses no keychain: its proxy
     password and the password of its Remote access certificate file (`proxy.password` and `webapi.httpsPassword` in
     `settings.properties`, [`store/Settings.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/store/Settings.java)), its Torznab keys (`search-providers.json`) and its remote-profile
     passwords (`profiles.json`) are in plain text in its config folder; of its Remote access password it keeps only
-    a hash. Termina, Mirada and Modula store no secret, so the rule does
+    a hash. The keys Torrenta generates for the updatable torrents it publishes are where the rule allows: a file
+    each, outside the settings files and owner-only where the file system has permissions (`keys/<name>.key`,
+    [`store/KeyStore.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/store/KeyStore.java)). Termina, Mirada and Modula store no secret, so the rule does
     not cover them: Termina's sync signs in through the user's own Git and `gh`
-    ([`sync/SyncAccount.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/sync/SyncAccount.java)), and the other two ask for none. nux's one credential is for the session only
-    ([SET-14](#set-14)).
-- **SET-14 · MUST.** An app that asks for a credential it can ask for again holds it in memory for the session only
-  and never writes it. Work that needs the credential waits until the user has signed in this session; do not "fix"
-  that by storing the password.
-  - *Check (code):* the rule covers an app that asks the user for such a credential; an app that asks for none is
-    outside it. In an app it covers, the credential is a field of a runtime object, absent from every config class.
-  - *Reference:* nux's UPS login ([`app/CommandRunner.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/app/CommandRunner.java)). Termina, Mirada and Modula ask for no credential.
-- **SET-15 · MUST.** An app with Settings Sync refuses a repository URL with a password or token in it, with the fix
-  ([Settings Sync](../templates/settings-sync/)). A problem report's redaction is [DIAG-11](../diagnostics/#diag-11).
-  - *Check (by hand):* paste `https://user:token@host/repo.git` as the sync repository.
+    ([`sync/SyncAccount.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/sync/SyncAccount.java)), and the other two ask for none. nux's one credential is for the session only,
+    and so are the SSH passwords and passphrases Editora asks for ([SET-14](#set-14)).
+- **SET-14 · MUST.** An app that asks for a credential it does not keep from one session to the next holds it in
+  memory for the session only and never writes it. Whether to keep a credential is the app's to decide: one it
+  keeps is [SET-13](#set-13)'s, in the keychain and never in a config file, and this rule covers only one it does
+  not keep. Work that needs such a credential waits until the user has signed in this session; do not "fix" that
+  by writing the password to a file.
+  - *Check (code):* for each credential the app asks the user for (a login, a password, a passphrase), find whether
+    the app keeps it for the next session. One it keeps is [SET-13](#set-13)'s and is not judged here. One it does
+    not keep is a field of a runtime object, absent from every config class, and no code writes it to a file. An
+    app that asks for no credential, or keeps every one it asks for, is outside the rule.
+  - *Reference:* nux's UPS login: the user name and password it asks for are two fields of a runtime object
+    ([`app/CommandRunner.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/app/CommandRunner.java)), in no config class. Editora asks for an SSH password or a key's passphrase while a
+    login runs ([`vfs/LoginPrompt.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/vfs/LoginPrompt.java)) and stores neither: a saved connection holds the host, the user and the key's
+    path ([`config/ConnectionStore.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/ConnectionStore.java)). What an app keeps is [SET-13](#set-13)'s alone: Editora's AI keys, and
+    Torrenta's proxy, Torznab and remote-profile secrets. Termina, Mirada and Modula ask for no credential.
+- **SET-15 · MUST.** An app with Settings Sync refuses a repository URL with a password or token in it, and says
+  what to use instead: a Git credential helper or an SSH URL ([Settings Sync](../templates/settings-sync/)). A
+  problem report's redaction is [DIAG-11](../diagnostics/#diag-11).
+  - *Check (by hand):* paste `https://user:token@host/repo.git` as the sync repository: the page refuses it, with
+    a message that says what to use instead.
   - *Reference:* Editora [`ui/SettingsSyncPage.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsSyncPage.java) (`settings.sync.repo.credentials`), which asks
     [`sync/SyncEngine.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/sync/SyncEngine.java) (`hasCredentials`) as the URL is typed, when the field commits and again at Connect.
 - **SET-16 · MUST.** An option that weakens security has no UI: it exists only as a key in the config file, so
-  nobody turns it on by clicking.
-  - *Check (code):* no Settings row or command writes such a key.
+  nobody turns it on by clicking. An option weakens security when it switches off a check or a question the app
+  otherwise makes to protect the user; a feature, such as remote access or a proxy, is not such an option.
+  - *Check (code):* no Settings row or command writes the key of an option that switches off a check or a question the
+    app otherwise makes to protect the user, whichever of its values is the weaker one: on for nux's `tlsTrustAll`,
+    off for a check the app makes by default.
   - *Reference:* nux's trust-all TLS (`tlsTrustAll` in [`config/Config.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/config/Config.java)), and Termina's paste confirmation, which
     only its config file turns off ([`SecurityOptionsTest`](https://github.com/adriandeleon/Termina/blob/master/src/test/java/com/termina/config/SecurityOptionsTest.java), `noControlOrCommandWritesAWeakeningOption`). Editora doesn't yet: *Require
     registry signature* for plugins is a Settings checkbox and the `plugins.toggleRequireSignature` command.
@@ -261,7 +292,8 @@ it; an app without it owes them nothing.
   - *Reference:* Editora [`sync/SyncMerge.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/sync/SyncMerge.java), [`SyncMergeTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/sync/SyncMergeTest.java).
 - **SET-21 · SHOULD.** Settings Sync shows its status as a pill in Settings and as echo messages; its failures go to
   the Message Log.
-  - *Check (by hand):* point Sync at a repository that does not exist and read the pill and the log.
+  - *Check (by hand):* point Sync at a repository that does not exist: the pill in Settings shows the failure, the
+    echo area says it, and the Message Log keeps it.
   - *Reference:* Editora [`ui/SettingsSyncPage.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsSyncPage.java), [`SyncStatus`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SyncStatus.java).
 
 ![Editora's Sync settings page](../../assets/shots/editora-settings-sync.png "Editora's Sync page, not connected: the repository and branch fields, Connect, the status pill and what to sync.")

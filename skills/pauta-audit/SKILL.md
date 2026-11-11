@@ -190,27 +190,40 @@ Then, in this order:
        then: the rule's level, scope or statement changed after the check. Give the result its `checked` field all
        the same, and say in `problem` that the entry is stale, since which edition, and that it is to be removed
        and the rule checked again. Report in `problem` too an entry for a rule that also has an exception.
+     - A few by-hand Checks send the person somewhere other than the running app: to the repository's merged
+       pull requests on GitHub (DOCS-16, PERF-18, PERF-22), or to break a test and watch it fail (QUAL-10). They
+       are `manual` like the rest, and never `not-checked`, which is only for a Check that names it: the evidence
+       says where to look, and a `checked` entry records them like any other.
    - **Out of the checkout's reach.** A few checks need what the app's checkout does not hold: another repository (the
      app's website, for DOCS-01, DOCS-02, PAUTA-13 and a few more) or what the repository's host keeps and no file shows
      (a repository setting, such as the checks REL-19 has the default branch require; whether the issue PAUTA-07 asks
      for is open). The Check says so, and names `not-checked`. First judge the part of the Check the checkout does hold:
-     if that part is unmet, the rule is unmet (step 4 or 5). Then, if you can reach the rest (the website's repository
-     is checked out beside the app, as `../<app>-website`; `gh` answers for this repository), read it and judge the rule
-     like any `code` rule. If you can't, and `pauta.json` has no exception for the rule, the status is
+     if that part is unmet, the rule is unmet (step 4 or 5). For the website's rules that part includes whether the
+     app names a website at all: an app whose README and About link none, and whose `help.documentation` opens
+     none, fails DOCS-01, DOCS-02 and PAUTA-13 from the checkout, as their Checks say. `not-checked` is only for an
+     app that names a website whose repository you cannot reach. Then, if you can reach the rest (the website's
+     repository is checked out beside the app, as `../<app>-website`; `gh` answers for this repository), read it and
+     judge the rule like any `code` rule. If you can't, and `pauta.json` has no exception for the rule, the status is
      **`not-checked`**: not a finding and not a pass. The evidence says what was read, what was not, and what would
      settle it ("ci.yml:3 and :9 have both triggers and both jobs; whether the default branch requires them is a
-     repository setting: read its branch protection on GitHub"). `not-checked` is for these cases only, and only where
-     the rule's Check names it. What needs the running app is `manual`, and a `code` or `test` rule the source merely
-     doesn't show is unmet (below).
+     repository setting: read its branch protection on GitHub"). `not-checked` is for these cases and for ABOUT-07 in
+     an audit run against another edition (*Judged last*, next), and only where the rule's Check names it. What needs
+     a person, in the running app or wherever a by-hand Check sends them, is `manual`, and a `code` or `test` rule the
+     source merely doesn't show is unmet (below).
    - **Judged last.** PAUTA-04 and ABOUT-07 have the audit itself as their Check. Judge them after every other
      rule in scope, from those results, as each Check says: PAUTA-04 passes when no MUST or SHOULD is `fail` and
      no result reports an entry for a rule that passes, and its evidence names the rules that fail. A `manual` or
      `not-checked` result does not fail either of them. In an audit of part of the edition, judge them from the
-     rules in scope and say so in the evidence. Only the rules of the edition the app names settle ABOUT-07: an
-     audit run against another edition says so in its evidence.
+     rules in scope and say so in the evidence. Only the rules of the edition the app names settle ABOUT-07. An
+     audit run against another edition (`edition=` was given, or the app's edition serves no `rules.json`) cannot
+     judge an About that says *Built to*: it reports ABOUT-07 as `not-checked`, as the Check says, and the
+     evidence names the edition whose rules would settle it. What the Check settles from the app's own code, it
+     still settles: an About that says *Working toward* passes whatever edition was audited.
 
    Partly met is unmet: say which part is missing. Don't guess: when the source doesn't settle a `code` or `test`
-   rule, say what you searched for and treat it as unmet, with "not found" in the evidence.
+   rule, say what you searched for and treat it as unmet, with "not found" in the evidence. Each rule is judged on
+   its own words: one defect that breaks two rules (a button no command reaches, which is also out of the Tab
+   order) fails both, each with its evidence.
 3. **Met:** **`pass`**. If `pauta.json` has an entry for it, report the stale entry in the result's `problem`.
 4. **Unmet, and `pauta.json` lists it:** its status is the entry's kind (`pending`, `deviation`, `not-applicable`,
    `app-only`) and the evidence is the entry's `reason`. Report in `problem` a deviation on a MUST, a deviation or
@@ -219,19 +232,26 @@ Then, in this order:
 5. **Unmet, and not listed:** **`fail`**, for a MUST or SHOULD. An unmet MAY is `fail` with no consequence and
    needs no entry.
 
-**Nothing to judge.** When the app has nothing of what a rule is about, the rule's own words say what it gets. Take
-the first of these that fits, and don't guess between them:
+**Nothing to judge.** When the app has nothing of what a rule is about, the rule's own words say what it gets:
+where its Check says what an app without the thing gets ("fails with FIND-01", "is outside the rule"), that is the
+answer. Otherwise take the first of these that fits, and don't guess between them:
 
 - **The rule is limited** (step 1: its text, its `appliesTo`, or the rule it details) and the app is outside it:
   `limited`.
-- **The rule is about a part another rule requires** (the Command Palette, a status bar, About, the Debug Log's
-  find bar, the Pauta window): how the part behaves, or what it shows. Without the part the rule is unmet. It fails
+- **The rule is about a part another rule requires** (the Command Palette, a status bar, About and its edition
+  link, the Debug Log's find bar, the Pauta window, the keymap files): how the part behaves, what it shows, or
+  what every one of its rows, controls or files does or never does. Without the part the rule is unmet. It fails
   with the rule that requires the part, and its evidence names that rule ("no Pauta window: fails with PWIN-01"),
   so the reader sees one cause and not several findings. Where FIND-01 asks for a find bar and the app has none,
   the rules on how a find bar searches, steps and closes fail with FIND-01; with no Pauta window, the rules on
-  what it shows and reads fail with PWIN-01.
-- **The rule constrains things an app may have or not.** It says what every entry, row or file of a kind does, or
-  what none does, and no rule requires the app to have one ("every `deviation` entry names a SHOULD", "a Chinese,
+  what it shows and reads fail with PWIN-01; with no keymap file, the rule on what a keymap's macOS variant binds
+  (KBD-21) fails with KBD-09; with no edition link in About, the rule on the address it opens (ABOUT-06) fails
+  with ABOUT-05. A rule worded as a limit on every item of a kind belongs here, not in the next case, whenever
+  some rule requires the app to have an item of that kind: ask that first. Its Check may still say otherwise, as
+  FIND-16's and ABOUT-07's do for an app with no find bar and an About that names no edition: then the Check is
+  the answer.
+- **The rule constrains things no rule requires an app to have.** It says what every entry, row or file of a kind
+  does, or what none does, and the app may have one or not ("every `deviation` entry names a SHOULD", "a Chinese,
   Japanese or Korean catalog comes with a font fallback"). With none of that kind in the app, nothing breaks the
   rule: `pass`, and the evidence says there is none ("no `deviation` entry in `pauta.json`"). So with no
   `pauta.json` at all, PAUTA-05 to PAUTA-08 and PAUTA-18 pass, and the missing file is PAUTA-01's and PAUTA-09's
@@ -319,8 +339,8 @@ recorded is not a failure, of the rule or of PAUTA-18.)
 
 ## Not checked
 
-(Each with what would settle it: the other repository to read, or the repository setting to look up. Not a
-failure, and not a pass.)
+(Each with what would settle it: the other repository to read, the repository setting to look up, or for
+ABOUT-07 the edition to audit against. Not a failure, and not a pass.)
 
 ## Exceptions
 

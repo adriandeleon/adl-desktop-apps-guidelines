@@ -47,7 +47,7 @@ rendered a third larger than every other menu in the app).
 | Title | Inter 14 px, `-color-fg-default` | `.menu-item-title` |
 | Chord | Right-aligned in its own column, Inter 11 px, in the keyboard color (`-state-key`, brace periwinkle); at least 18 px from the title column; in every menu, right-click menus included | `.menu-item-chord`, `alignChordColumns` |
 | Submenu row | Laid out like a command row, with an invisible chord as wide as the menu's widest, so the arrow lands at the right edge | `nestedMenu`, `.menu-submenu` |
-| Card | Radius 8; shadow `rgba(27,30,42,0.28)`, radius 16, **offset Y 16** | `.context-menu` |
+| Card | Radius 8; shadow `rgba(27,30,42,0.28)`, the value of a token defined on `.root` ([ICON-08](../icons-and-color/#icon-08)), radius 16, **offset Y 16** | `.context-menu` |
 | Danger item | Text in `-color-danger-fg` | `.menu-item.danger` |
 | Disabled item | The theme's dimmed label, and the icon dimmed with it | Termina's `.menu-item:disabled .menu-icon` |
 | Separators | Never two in a row and none at either end: when items hide, their orphaned separators hide too | `LazyContextMenu.collapseSeparators`, Torrenta's [`MenuSeparators`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MenuSeparators.java) |
@@ -84,20 +84,25 @@ tray icon's menu) show text only; there the chord is appended to the title ([MEN
     [`MenuBarIconsTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/MenuBarIconsTest.java) holds that a command without a fitting glyph gets none, which this rule reverses; many
     right-click and drop-down rows have none either (Run All Requests in a `.http` file, the CSV grid's menu, the
     Markdown preview's).
-- **MENU-15 · MUST.** Every menu row whose command has a chord in the active keymap shows that chord, in
-  right-click menus and drop-downs as in the menu bar: right-aligned in the menu's chord column, in the keyboard
-  color, the one color the app keeps for chords and key chips (Editora's token for it is `-state-key`;
-  [ICON-06](../icons-and-color/#icon-06) says how the color is made), at the size [MENU-16](#menu-16) gives. An
-  unbound command leaves the cell empty, never a wrong chord, and a keymap switch rewrites every cell.
+- **MENU-15 · MUST.** In every menu the app draws itself, a row whose command has a chord in the active keymap shows
+  that chord, in right-click menus, drop-downs and the toolbar's overflow as in the in-window menu bar: right-aligned
+  in the menu's chord column, in the keyboard color, the one color the app keeps for chords and key chips (Editora's
+  token for it is `-state-key`; [ICON-06](../icons-and-color/#icon-06) says how the color is made), at the size
+  [MENU-16](#menu-16) gives. An unbound command leaves the cell empty, never a wrong chord, and a keymap switch
+  rewrites every cell. The menus a platform draws are outside this rule: the macOS system menu bar, whose rows append
+  the chord to the title ([MENU-02](#menu-02)), and a tray icon's menu, which shows none.
   - *Why:* the menu is where a user learns the keys. A right-click menu that hides them teaches the mouse, while the
     palette and the toolbar's tooltips already show the same chord.
-  - *Check (code):* in the menu bar, in every right-click menu and in every drop-down, a row that runs a command
-    has a chord cell, right-aligned in one column of the menu, that the code fills with the active keymap's
-    display chord for the command's id and leaves empty for an unbound command: a label of the row's own
-    (Editora's `menu-item-chord`) or, outside the menu bar, the item's accelerator text, never a chord typed into a
-    string. The cell is filled again on each showing or when the keymap changes, and the stylesheet draws it in
-    the app's keyboard color at [MENU-16](#menu-16)'s size. A test that binds a command, opens a right-click menu
-    that lists it, finds its chord, and finds the new chord after a keymap switch is the surest evidence.
+  - *Check (code):* in the in-window menu bar, in every right-click menu and in every drop-down, a row that runs a
+    command has a chord cell, right-aligned in one column of the menu, that the code fills with the active keymap's
+    display chord for the command's id and leaves empty for an unbound command: a label of the row's own (Editora's
+    `menu-item-chord`) or, outside the menu bar, the item's accelerator text, never a chord typed into a string. The
+    cell is filled again on each showing or when the keymap changes, and the stylesheet draws it in the app's keyboard
+    color at [MENU-16](#menu-16)'s size. An app whose menu rows run only commands that have no chord (nux's
+    drop-downs: its one key table binds none of their commands) has nothing to show, and passes. A row of the macOS
+    system menu bar is not judged here, since [MENU-02](#menu-02) has its chord appended to its title, and neither is
+    a tray icon's menu. A test that binds a command, opens a right-click menu that lists it, finds its chord, and
+    finds the new chord after a keymap switch is the surest evidence.
   - *Reference:* Editora [`MainMenuBar.rowContent`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java) and `alignChordColumns`, `.menu-item-chord` in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css), for
     the menu bar. Editora's right-click menus show no chords yet: a row there is a plain `MenuItem`, not the menu
     bar's row. The app template's right-click menus show them: [`ui/CommandMenu.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/CommandMenu.java) draws each row as the menu
@@ -105,10 +110,12 @@ tray icon's menu) show text only; there the chord is appended to the title ([MEN
     meet the rule either: it colors the chord `-color-fg-muted`, not a keyboard color (`.menu-item-chord` in its
     [`app.css`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/styles/app.css)), and so does Termina's menu bar ([`app.css`](https://github.com/adriandeleon/Termina/blob/master/src/main/resources/com/termina/styles/app.css)). No app has a test that opens a right-click menu
     and reads a chord from it.
-- **MENU-16 · MUST.** Every menu draws its titles in Inter 14 px regular and its chords in Inter 11 px at the
-  default zoom, scaled by the UI zoom ([WIN-12](../window-shell/#win-12)), whatever node it was opened from: the
-  size is set on `.context-menu` and its rows' labels from one value the zoom sets, never inherited from the
-  node.
+- **MENU-16 · MUST.** Every menu the app draws itself (the in-window menu bar, right-click menus, the drop-down of a
+  menu button or a split button, the toolbar's overflow) draws its titles in Inter 14 px regular and its chords in
+  Inter 11 px at the default zoom, scaled by the UI zoom ([WIN-12](../window-shell/#win-12)), whatever node it was
+  opened from: the size is set on `.context-menu` and its rows' labels from one value the zoom sets, never inherited
+  from the node. The macOS system menu bar and a tray icon's menu are the platform's, drawn in the platform's font,
+  and outside this rule.
   - *Why:* a popup inherits the font of the node it was shown from, and `em` resolves against it: Editora's toolbar
     menu once rendered at the bar's 18 px, a third larger than every other menu, and a file tree's or a monospace
     editor's font leaks the same way.
@@ -174,8 +181,16 @@ tray icon's menu) show text only; there the chord is appended to the title ([MEN
   ([KBD-03](../keyboard/#kbd-03)), its chord from the active keymap and its enabled state from the command's gate.
   A row may show the title without its category prefix ("Save As…" for "File: Save As…"); it never carries a title
   of its own. The bar assembles and refreshes; it holds no behavior of its own.
-  - *Check (code):* the bar's model lists command ids only, and every row runs its id through the registry.
-  - *Reference:* Editora [`ui/MenuBarModel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java) over [`command/CommandRegistry.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/CommandRegistry.java), [`ui/MainMenuBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java).
+  - *Check (code):* the bar's model lists command ids only, beside the separators and the submenus that group them,
+    and every row runs its id through the registry. A row that is no command id fails: one built by hand, with a title
+    and a handler of its own.
+  - *Reference:* Editora [`ui/MenuBarModel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java) over [`command/CommandRegistry.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/CommandRegistry.java), [`ui/MainMenuBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java): the
+    model's entries are command ids, separators and the titles of its submenus. Torrenta and Termina don't meet the
+    rule yet. Rows of Torrenta's View menu, the Command Palette, Toolbar, Sidebar and Simple Mode rows among them, are
+    built by hand with `menu.*` titles and handlers of their own ([`ui/MainWindow.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java)). Termina's model
+    ([`ui/MenuBarModel.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MenuBarModel.java)) holds rows that are no command id: the New Tab With Profile submenu, whose rows
+    carry each profile's name and open the tab from a handler of their own (`profileBarRows` in
+    [`ui/TerminalWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalWindow.java)), and, off macOS, the zoom row, one row of buttons for its four zoom commands.
 - **MENU-02 · MUST.** Menu-bar rows use no `KeyCombination` accelerators. In the in-window bar each row is a
   `CustomMenuItem` laying out icon, title, spacer and chord. On the macOS system menu bar (`useSystemMenuBar`) the
   chord is appended to the title and rows carry no icon.
@@ -222,20 +237,36 @@ no right-click menu.
 - **MENU-05 · MUST.** In an app with a right-click menu, every list row, tree row, tab, editor and read-only
   console has one, with the actions for *that* thing, and every action in a right-click menu is a command
   ([KBD-01](../keyboard/#kbd-01)). The rule covers the lists, trees, tabs, editors and read-only consoles in the
-  app's windows; the overlay list of a picker or a palette and a plain text area in a dialog are outside it.
-  - *Check (code):* list the lists, trees, tab strips, editors and read-only consoles in the app's windows and
-    find the right-click menu each one installs; then read every row of every right-click menu the app builds: its
-    action is one a registered command runs too, by the command's id through the registry or by calling what the
-    command calls, so the palette reaches it. A row whose action no command runs fails, as does a list, tree, tab
-    strip, editor or console with no menu. The overlay list of a picker or a palette and a plain text area in a
-    dialog are not judged.
-  - *Reference:* the app template's [`ui/CommandMenu.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/CommandMenu.java), which builds each menu from registered command ids
-    and runs a row through the registry (`onRow` for a list row, `onConsole` for a read-only console;
-    [`RightClickMenusFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/RightClickMenusFxTest.java)). Editora's [`ui/TabContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabContextMenu.java), [`ui/RowContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/RowContextMenu.java) and
-    [`ui/ConsoleContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ConsoleContextMenu.java) are the menus this rule describes, but their rows are built by hand and
-    call the window's methods, not a command id, so nothing holds that each row has a command. Modula doesn't
-    meet the rule yet: the Rename… and Remove rows of a preset chip's menu ([`ui/PresetBar.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/PresetBar.java)) run no
-    command, and its command list has neither ([`ui/RadioPane.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/RadioPane.java), `commands`).
+  app's windows. A log shown as text, the Debug Log among them, is a read-only console and has its right-click
+  menu. A list that only navigates, switching what its window shows (a Settings sidebar, a list of pages), has no
+  actions of its own and is outside the rule, as are the overlay list of a picker or a palette and a plain text
+  area in a dialog.
+  - *Check (code):* list the lists, trees, tab strips, editors and read-only consoles in the app's windows, the
+    text of the Debug Log window and of any other log shown as text among the consoles, and find the right-click
+    menu each one installs; then read every row of every right-click menu the app builds: its action is one a
+    registered command runs too, by the command's id through the registry or by calling what the command calls, so
+    the palette reaches it. A row whose action no command runs fails, as does a list, tree, tab strip, editor or
+    console with no menu; the stock Cut, Copy and Paste menu that JavaFX gives a text area is not one. A list
+    that only switches what its window shows (a Settings sidebar, a list of pages), the overlay list of a picker
+    or a palette and a plain text area in a dialog are not judged.
+  - *Reference:* the app template's [`ui/CommandMenu.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/CommandMenu.java), which builds each menu from registered command ids and
+    runs a row through the registry (`onRow` for a list row, `onConsole` for a read-only console, its Debug Log
+    among them: [`ui/DebugLogWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DebugLogWindow.java);
+    [`RightClickMenusFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/RightClickMenusFxTest.java)). Editora's [`ui/TabContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabContextMenu.java) and [`ui/ConsoleContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ConsoleContextMenu.java) are menus this
+    rule describes ([`ui/RowContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/RowContextMenu.java) builds none: it sends the keyboard's request to the selected row's own
+    menu), but their rows are built by hand and call the window's methods, not a command id, so nothing holds that
+    each row has a command. Editora, Termina, Mirada, Torrenta and Modula don't meet the rule yet, in these places
+    among others. In Editora the trees and the list of the Hierarchy, References and Undo History panels have no
+    right-click menu ([`ui/HierarchyPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/HierarchyPanel.java), [`ui/ReferencesPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ReferencesPanel.java), [`ui/UndoHistoryPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/UndoHistoryPanel.java)), and the
+    Customize Toolbar… row of the toolbar's menu turns on a mode that no command does (`showContextMenu` in
+    [`ui/ToolbarCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolbarCoordinator.java)). In Termina the list of the Message Log has no menu
+    ([`ui/MessageLogWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MessageLogWindow.java)), and neither has Mirada's ([`ui/MessageLogView.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MessageLogView.java)). The Debug Log
+    windows of Editora, Torrenta, Termina and Mirada show the log in a read-only `TextArea` and give it no menu
+    (Editora's [`ui/DebugLogWindow.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/DebugLogWindow.java), Torrenta's [`ui/DebugLogWindow.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/DebugLogWindow.java), Termina's
+    [`ui/DebugLogWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/DebugLogWindow.java) and Mirada's [`ui/DebugLogWindow.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/DebugLogWindow.java)). In Torrenta the rows of the
+    files and peers menus, Ban Peer among them, run handlers that no command reaches ([`ui/DetailPane.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/DetailPane.java)). In
+    Modula the Rename… and Remove rows of a preset chip's menu ([`ui/PresetBar.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/PresetBar.java)) run no command, and its command
+    list has neither ([`ui/RadioPane.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/RadioPane.java), `commands`).
 
 The mockup is an editor tab's menu, shortened; Editora's has twenty-one rows.
 
@@ -338,7 +369,10 @@ The mockup is an editor tab's menu, shortened; Editora's has twenty-one rows.
 - **MENU-10 · SHOULD.** A right-click selects first. In an editor, a right-click outside every selection moves the
   caret to the click (so Paste lands there); inside a selection it keeps carets and selections (so Cut and Copy act
   on what was clicked). From the keyboard the target is the caret. In a list, the menu is the clicked row's.
-  - *Check (by hand):* select a word, right-click elsewhere and paste; then right-click inside a selection and copy.
+  - *Check (by hand):* in an editor, select a word, right-click elsewhere and paste: the text lands at the click;
+    then right-click inside a selection and copy: the selection is what was copied. In a list, select one row and
+    right-click another: the menu that opens is the clicked row's, and its actions act on that row. An app with no
+    editor is judged on its lists alone.
   - *Reference:* Editora [`editor/ContextMenuTarget.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/editor/ContextMenuTarget.java).
 - **MENU-11 · SHOULD.** A menu attached to something that exists once per open file is built when first shown, and
   set up for each showing: an `onShowing` handler sets the labels, enablement and visibility for *this* showing,
@@ -350,11 +384,11 @@ The mockup is an editor tab's menu, shortened; Editora's has twenty-one rows.
   - *Reference:* Editora [`ui/LazyContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/LazyContextMenu.java), [`LazyContextMenuFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/LazyContextMenuFxTest.java). A read-only console's menu is just
     Select All and Copy, both disabled while it is empty ([`ConsoleContextMenu`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ConsoleContextMenu.java)).
 - **MENU-12 · SHOULD.** A destructive row is styled as dangerous, its text in `-color-danger-fg` (Editora's style
-  class for it is `danger`). The action follows the
-  [Confirm dialog](../templates/confirm-dialog/) rules ([CONF-01](../templates/confirm-dialog/#conf-01),
-  [CONF-03](../templates/confirm-dialog/#conf-03)): it asks first with a button that names it, or is undoable.
-  - *Check (code):* rows that delete, discard or reset carry the style class that colors their text
-    `-color-danger-fg` (Editora's `danger`).
+  class for it is `danger`). What the action does before it destroys anything is not this rule's: the
+  [Confirm dialog](../templates/confirm-dialog/) rules hold it ([CONF-01](../templates/confirm-dialog/#conf-01),
+  [CONF-03](../templates/confirm-dialog/#conf-03): it asks first with a button that names it, or is undoable).
+  - *Check (code):* rows that delete, discard or reset carry the style class that colors their text `-color-danger-fg`
+    (Editora's `danger`). Whether the action asks first is judged under CONF-01 and CONF-03, not here.
   - *Reference:* Editora `.menu-item.danger` in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css), [`ui/BranchPopup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/BranchPopup.java).
 - **MENU-13 · MAY.** In a terminal view, a program that grabbed the mouse owns the right-click;
   `Shift`+right-click always opens the menu, and the keyboard request is never contested.

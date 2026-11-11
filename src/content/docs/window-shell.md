@@ -98,12 +98,11 @@ description: "Status bar, themes, title bar, dialogs, Welcome, About, window sta
     application menu's and the Dock's Quit into a close request on every window
     (`GlassStage.requestClosingAllWindows`) unless the app catches Glass's quit action (`handleQuitAction`), so the
     quit handler calls the quit method, or, in an app with one main window, that window's close request does. In an
-    app with one main window and no quit command, what the close request runs is the quit method, and it is judged
-    as one; an app with several main windows whose close requests each ask for themselves has no quit method. The
-    method itself asks before it discards anything [CONF-01](../templates/confirm-dialog/#conf-01) covers (unsaved
-    work; an app with nothing to lose asks nothing), closes the app's other windows and its open dialogs before it
-    exits, and runs the same save a close of the window runs (the window state of [WIN-08](#win-08), in an app
-    that keeps it).
+    app with one main window and no quit command, what the close request runs is the quit method, and it is judged as
+    one; an app with several main windows whose close requests each ask for themselves has no quit method. The method
+    itself asks before it discards anything [CONF-01](../templates/confirm-dialog/#conf-01) covers (unsaved work; an
+    app with nothing to lose asks nothing), closes its open dialogs before it exits, and runs the same save a close of
+    the window runs (the window state of [WIN-08](#win-08), in an app that keeps it).
   - *Reference:* the app template's [`MainWindow.quit`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MainWindow.java): the `app.quit` command, which File → Quit runs, and the
     window's close request both call it, so macOS's Quit reaches it as a close request; it hides the other windows
     and dialogs, saves the window state and waits for the last settings write before it exits, and has nothing
@@ -118,12 +117,12 @@ description: "Status bar, themes, title bar, dialogs, Welcome, About, window sta
     `release`, `rememberPlace`), and macOS's Quit arrives there as a close request. Termina doesn't meet the rule
     yet: it has several windows and no quit method, so macOS's Quit arrives at each window as a close request and
     each asks for itself ([`TerminalWindow.close`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalWindow.java)).
-- **WIN-14 · MUST.** Every app has a Quit, on every OS: the `app.quit` command, in the Command Palette, and, where
-  the app has a File menu or a main menu, a Quit row that ends it. A main menu is a menu button in the window that
-  holds the app's commands as a menu bar would (Mirada's ☰, which it shows on every OS). A menu button that lists
-  one kind of thing is not a main menu (nux's Profiles and Commands), and neither is a right-click menu (the only
-  menu Modula has): an app with no File menu and no main menu meets the rule with the command alone. What Quit does
-  is [WIN-13](#win-13). Closing the last window may end the app as well, but it is never the only way out.
+- **WIN-14 · MUST.** Every app has a Quit, on every OS: the `app.quit` command, in the Command Palette, and, where the
+  app has a File menu or a main menu, a Quit row in that menu that runs the command. A main menu is a menu button in
+  the window that holds the app's commands as a menu bar would (Mirada's ☰, which it shows on every OS). A menu button
+  that lists one kind of thing is not a main menu (nux's Profiles and Commands), and neither is a right-click menu
+  (the only menu Modula has): an app with no File menu and no main menu meets the rule with the command alone. What
+  Quit does is [WIN-13](#win-13). Closing the last window may end the app as well, but it is never the only way out.
   - *Why:* someone who quits one app of the family from the palette or the File menu looks for the same in the
     next. An app that ends only with its last window has no answer once it has a tray or a second window.
   - *Check (code):* `app.quit` is registered and the palette lists it. Where the app builds a File menu, a row of

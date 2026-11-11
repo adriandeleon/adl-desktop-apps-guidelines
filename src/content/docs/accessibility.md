@@ -116,9 +116,10 @@ reaches every menu command through the Command Palette ([KBD-05](../keyboard/#kb
     ([PAUTA-18](../conformance/#pauta-18)).
   - *Reference:* no app yet. No app's `docs/release.md` names either screen reader, and Modula and nux have no
     `docs/release.md`.
-- **ACC-08 · SHOULD.** In an overlay list that keeps focus in its text field (the Command Palette, QuickOpen), the
-  row the arrow keys select is announced, with its state: the list tells the screen reader its focused item moved
-  (`notifyAccessibleAttributeChanged(FOCUS_ITEM)`), and a row that can't run says so in its accessible text.
+- **ACC-08 · SHOULD.** In an overlay list that keeps focus in its text field (the Command Palette, a picker:
+  [QOPEN-01](../templates/quick-open/#qopen-01)), the row the arrow keys select is announced, with its state: the list
+  tells the screen reader its focused item moved (`notifyAccessibleAttributeChanged(FOCUS_ITEM)`), and a row that
+  can't run says so in its accessible text.
   - *Why:* the arrows move the highlight, not the focus, so a screen reader stays on the text field and reads
     nothing as the user moves through the list.
   - *Check (code):* the code that moves the selection calls

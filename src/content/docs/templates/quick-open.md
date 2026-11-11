@@ -111,15 +111,15 @@ have none ([Uses](#uses)).
     [`QuickOpenPreviewFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/QuickOpenPreviewFxTest.java) (`dismissingRestoresWhatWasPreviewed`). `Ctrl+G` is fixed in the app
     template's [`ui/OverlayHost.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/OverlayHost.java) and in the `EMACS` table of Mirada's [`ui/PaletteKeys.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/PaletteKeys.java).
 - **QOPEN-08 · MAY.** A picker previews the highlighted row as the selection moves and undoes the preview on cancel
-  (Recent Locations shows each place and returns to the origin on Esc). A preview without an undo is worse than none,
-  and nothing is previewed for the row the picker opens on, only for one the user moved to. The theme and keymap
-  pickers do not preview; they apply on Enter.
+  (Editora's Recent Locations shows each place and returns to the origin on Esc). A preview without an undo is
+  worse than none, and nothing is previewed for the row the picker opens on, only for one the user moved to.
+  Editora's theme and keymap pickers do not preview; they apply on Enter.
   - *Check (code):* a previewing picker previews from its selection listener once it is showing, never for the row
     it opens on, restores what it previewed when dismissed, and does not restore after a choice. A test that
     asserts it is the surest evidence.
   - *Reference:* Editora [`QuickOpen.setPreview(onPreview, onCancelled)`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java), [`QuickOpenPreviewFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/QuickOpenPreviewFxTest.java).
-- **QOPEN-09 · MAY.** A row action acts on the highlighted row and keeps the picker open (the breakpoints picker
-  enables or removes one), re-reading the list afterwards and keeping the cursor in place.
+- **QOPEN-09 · MAY.** A row action acts on the highlighted row and keeps the picker open (Editora's breakpoints
+  picker enables or removes one), re-reading the list afterwards and keeping the cursor in place.
   - *Check (code):* a row action's key runs the action on the highlighted row without hiding the card, and the
     picker then reads its items again and keeps the cursor on that row. A test that asserts it is the surest
     evidence.
@@ -139,8 +139,9 @@ have none ([Uses](#uses)).
 - **QOPEN-12 · SHOULD.** A picker's relatives, the other list overlays an app has (in Editora the open-files
   switcher, the find-file field, the multi-select picker, and the branch and stash popups), move, accept and
   cancel with the same keys as the picker.
-  - *Check (code):* each of those overlays maps its keys through the helper the picker uses (Editora's
-    `PickerKeys`).
+  - *Check (code):* each of those overlays moves, accepts and cancels on the keys the picker does: the moves of
+    [QOPEN-06](#qopen-06), Enter, and the cancel chord and Esc of [QOPEN-07](#qopen-07). In Editora each maps its
+    keys through the helper the picker uses (`PickerKeys`), which is one way to hold it.
   - *Reference:* Editora [`Switcher`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Switcher.java), [`FileFinder`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/FileFinder.java), [`MultiSelectPicker`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MultiSelectPicker.java), [`BranchPopup`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/BranchPopup.java), [`GitStashPopup`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/GitStashPopup.java).
 
 The relatives: the Open Files `Switcher` lists tabs in tab order, opens on the current one and closes a file with

@@ -13,10 +13,14 @@ on the Settings page, applies to an app with Settings Sync.
 ## Rules
 
 - **SYNC-01 · SHOULD.** An app with user data worth carrying between computers offers Settings Sync, on a page of its
-  own in the Settings window that the Settings search finds by "sync".
-  - *Check (by hand):* open Settings, search "sync", and land on the Sync page.
+  own in the Settings window that the Settings search finds by "sync". Such data is what a person builds up in the
+  app by hand and would set up again on another computer: snippets, templates, shortcuts, profiles, presets,
+  bookmarks, saved views.
+  - *Check (by hand):* open Settings, search "sync", and land on the Sync page. An app that keeps none of the data
+    the statement lists is outside the rule.
   - *Reference:* Editora [`ui/SettingsSync.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsSync.java) (the service) and [`ui/SettingsSyncPage.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsSyncPage.java), built by
-    [`SettingsWindow`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsWindow.java) (`Category.SYNC`).
+    [`SettingsWindow`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsWindow.java) (`Category.SYNC`). Termina, Torrenta and the app template have Settings Sync
+    too. Modula, Mirada and nux keep such data (presets, bookmarks, profiles) and have no Settings Sync yet.
 - **SYNC-02 · SHOULD.** In an app with Settings Sync ([SYNC-01](#sync-01)), the store is a Git repository the user
   owns, reached through their own Git credentials (a credential helper or an SSH key), with no server or account of
   ours. Refusing a URL with a password or token in it is [SET-15](../../settings/#set-15).

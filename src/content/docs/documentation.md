@@ -19,35 +19,55 @@ repository's [`docs/README.md`](https://github.com/adriandeleon/Editora/blob/mas
   thing to do), one page per feature area, the keyboard reference, the Settings, and an FAQ. It is written for the
   person using the app, in their words, with screenshots from the real window. The README, a landing page of at
   most 250 lines ([REPO-01](../repository/#repo-01)), is not it.
-  - *Check (code):* the website repository's `src/content/docs/` has a getting-started page, a keymaps page, a
-    settings or configuration page, an FAQ and a page per feature area. The website is a repository of its own
-    ([DOCS-02](#docs-02)), which the app's checkout does not hold. An audit run from the app's checkout alone
-    reports the rule as `not-checked` and says what would settle it.
+  - *Check (code):* the app names a website for its user docs: its README or its About links one, or the address
+    `help.documentation` opens ([DOCS-06](#docs-06)) is on one. The repository's own address on GitHub is not
+    one. An app whose repository and About name no website has no user documentation to point at, and fails the
+    rule from the app's checkout. The rest is in the website's repository: its docs (the files of
+    `src/content/docs/` in editora-website) have a getting-started page, a keyboard reference (a keymaps page
+    there), a settings or configuration page, an FAQ and a page per feature area, and the pages carry screenshots
+    of the app's real window. The website is a repository of its own ([DOCS-02](#docs-02)), which the app's
+    checkout does not hold. An audit run from the app's checkout alone reports the rule as `not-checked` and says
+    what would settle it.
   - *Reference:* editora-website [`src/content/docs/`](https://github.com/adriandeleon/editora-website/tree/master/src/content/docs) (43 pages in nine categories, from *Getting started* to
     *Help*); torrenta-website (19), termina-website (16), mirada-website (11).
 - **DOCS-02 · MUST.** The user docs live on the app's website, under `/docs/`, in the app's `<app>-website`
   repository, beside the feature pages, the screenshots, the news posts and the blog. Each docs page is a Markdown
   file whose frontmatter gives the page's category and its place in it (editora-website's keys are `category` and
-  `order`); the sidebar, the sitemap and the RSS feed follow. The app's repository never carries a second copy.
-  - *Check (code):* the app's `docs/` holds no user guide: one found there fails the rule from the app's checkout.
-    The rest is in the website's repository: every file in its `src/content/docs/` gives its category and its
-    order in its frontmatter. An audit run from the app's checkout alone reports the rule as `not-checked` and says
-    what would settle it.
-  - *Reference:* editora-website [`README.md`](https://github.com/adriandeleon/editora-website/blob/master/README.md) (*Content*); Editora's [`AGENTS.md`](https://github.com/adriandeleon/Editora/blob/master/AGENTS.md): "User-facing feature
-    documentation goes to the separate website repository".
-- **DOCS-03 · SHOULD.** Deep links from the app open the running version's docs. Pages live under
+  `order`); the sidebar, the sitemap and the RSS feed follow. The app's repository carries none of them: a page
+  kept in the app's `docs/` fails the rule when any section of it tells the app's user how to install or use
+  something, even if the rest of the page is for contributors, and whether or not the website has it too.
+  - *Check (code):* no page in the app's `docs/` has a section that tells the person using the app how to install
+    or use something: one found there fails the rule from the app's checkout, whoever the rest of the page is
+    written for. So does an app whose repository and About name no website for its user docs
+    ([DOCS-01](#docs-01)): its user docs live on none. The rest is in the website's repository: every docs page
+    there (the files of `src/content/docs/` in editora-website) gives its category and its order in its
+    frontmatter. An audit run from the app's checkout alone reports the rule as `not-checked` and says what would
+    settle it.
+  - *Reference:* editora-website [`README.md`](https://github.com/adriandeleon/editora-website/blob/master/README.md) (*Content*). Editora doesn't yet, though its [`AGENTS.md`](https://github.com/adriandeleon/Editora/blob/master/AGENTS.md) says "User-facing feature
+    documentation goes to the separate website repository": [`docs/plugins.md`](https://github.com/adriandeleon/Editora/blob/master/docs/plugins.md), a page for plugin authors, has a
+    section that tells the user the three ways to install a plugin and one on troubleshooting plugins. Termina
+    doesn't either: [`docs/reference/installing.md`](https://github.com/adriandeleon/Termina/blob/master/docs/reference/installing.md) tells the person installing it which download to take, how to
+    install each and how to check its signature, and its README sends the reader there. Nor does Torrenta:
+    [`docs/headless.md`](https://github.com/adriandeleon/torrenta/blob/master/docs/headless.md), [`docs/webapi.md`](https://github.com/adriandeleon/torrenta/blob/master/docs/webapi.md) and [`docs/search-providers.md`](https://github.com/adriandeleon/torrenta/blob/master/docs/search-providers.md) are guides for the person using it.
+- **DOCS-03 · SHOULD.** Every link from the app into its user docs opens the running version's docs, the address
+  `help.documentation` opens ([DOCS-06](#docs-06)) as much as a link to one page. Pages live under
   `/docs/v-<version>/…`; bare `/docs` and every unversioned slug redirect to the current version, so a link in a
   page never carries a version and a bump just regenerates one file (editora-website's `src/lib/version.ts`). The
   app builds the base from its own version with `-SNAPSHOT` dropped, so a development build points at the release
   it is working toward instead of a path that would always 404.
   - *Why:* a release that pointed at another release's docs would claim what is not true
     ([*Never claim what is not true*](../principles/#for-the-people-using-the-apps)).
-  - *Check (code):* the app's docs URL is `<homepage>/docs/v-` plus its version without `-SNAPSHOT`: another
-    address fails the rule from the app's checkout. The rest is in the website's repository: its
-    `astro.config.mjs` serves `/docs/v-<version>/` and redirects the unversioned paths. An audit run from the app's
-    checkout alone reports the rule as `not-checked` and says what would settle it.
+  - *Check (code):* the address the app opens for its docs is its website's `/docs/v-` plus the app's version
+    without `-SNAPSHOT`: another address, the unversioned `/docs/` among them, fails the rule from the app's
+    checkout. An app that opens no docs address has no link to judge and nothing to fail here: the missing address
+    is [DOCS-06](#docs-06)'s. The rest is in the website's repository: it serves `/docs/v-<version>/` and redirects
+    the unversioned paths (in its `astro.config.mjs`, in editora-website). An audit run from the app's checkout
+    alone reports the rule as `not-checked` and says what would settle it.
   - *Reference:* Editora [`AppInfo.docsUrl()`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/AppInfo.java), `releaseVersion()`; editora-website [`astro.config.mjs`](https://github.com/adriandeleon/editora-website/blob/master/astro.config.mjs), [`README.md`](https://github.com/adriandeleon/editora-website/blob/master/README.md)
-    (*Versioned docs*). The other three sites carry a comment to port these routes when their app first deep-links.
+    (*Versioned docs*). The app template builds the same address (`docsUrl()` in its [`AppInfo.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/AppInfo.java)). Termina and
+    Mirada don't yet: each opens its site's unversioned `/docs/` (`DOCUMENTATION` in Termina's [`AppInfo.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/AppInfo.java),
+    `DOCS_URL` in Mirada's [`AppInfo.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/AppInfo.java)). Torrenta, Modula and nux open no docs address. The other three
+    sites carry a comment to port these routes when their app first deep-links.
 - **DOCS-04 · SHOULD.** The website's docs are generated where the app is the source. The Commands and Keybindings
   pages are generated from the app's command registrations, `messages.properties` and keymaps; What's new from
   `CHANGELOG.md`, and the Roadmap from `TODO.md` where the app keeps one ([REPO-08](../repository/#repo-08)); the
@@ -55,10 +75,11 @@ repository's [`docs/README.md`](https://github.com/adriandeleon/Editora/blob/mas
   the site when a docs page quotes a command id that does not exist or a chord that is bound to a different
   command.
   - *Why:* one fact, one source ([*One source of truth for each fact*](../principles/#for-the-people-building-them)).
-  - *Check (code):* the website's `scripts/` holds the generators, their output under `src/lib/` is committed,
-    `npm run check:docs` runs the id and chord check, and the site's build or its deploy workflow runs that check.
-    All of it is in the website's repository. An audit run from the app's checkout alone reports the rule as
-    `not-checked` and says what would settle it.
+  - *Check (code):* the website's repository holds the generators and their committed output (`scripts/` and
+    `src/lib/` in editora-website) and a check of the ids and chords its docs quote (`npm run check:docs` there),
+    and the site's build or its deploy workflow runs that check. An app that names no website has no docs to
+    generate: the rule fails with [DOCS-01](#docs-01). All the rest is in the website's repository. An audit run
+    from the app's checkout alone reports the rule as `not-checked` and says what would settle it.
   - *Reference:* editora-website [`scripts/GenCommands.java`](https://github.com/adriandeleon/editora-website/blob/master/scripts/GenCommands.java) (every `Command.of` in Editora's `com.editora.ui`,
     [`WindowCommandRegistrar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowCommandRegistrar.java) holding most), [`GenRoadmap.java`](https://github.com/adriandeleon/editora-website/blob/master/scripts/GenRoadmap.java), [`GenFeatures.java`](https://github.com/adriandeleon/editora-website/blob/master/scripts/GenFeatures.java); [`scripts/check-doc-commands.mjs`](https://github.com/adriandeleon/editora-website/blob/master/scripts/check-doc-commands.mjs)
     (`npm run check:docs`), which exits non-zero on a missing id or a chord bound to another command. Nothing runs it
@@ -86,11 +107,11 @@ repository's [`docs/README.md`](https://github.com/adriandeleon/Editora/blob/mas
 
 The documentation is one command away, so nobody has to know the website's address.
 
-- **DOCS-06 · MUST.** The `help.documentation` command opens the user docs in the browser. It is a command like
-  any other, so it is in the palette and bindable, and where the app has a Help menu (the Help menu of a menu bar,
-  or a Help submenu of the app's main menu) a **Documentation** row of that menu runs it through the registry like
-  every other row. An app with a Welcome page repeats the command in the page's Help row. The row's place in the
-  Help menu is [DOCS-07](#docs-07).
+- **DOCS-06 · MUST.** The `help.documentation` command opens the user docs in the browser. It is a command like any
+  other, so it is in the palette and bindable, and where the app has a Help menu (the Help menu of a menu bar, or a
+  Help submenu of the app's main menu, which [WIN-14](../window-shell/#win-14) defines) a **Documentation** row of
+  that menu runs it through the registry like every other row. An app with a Welcome page repeats the command in the
+  page's Help row. The row's place in the Help menu is [DOCS-07](#docs-07).
   - *Check (code):* the command `help.documentation` is registered and opens the user docs' address in the
     browser; where the app has a Help menu, a row of that menu runs the command (the Help `MenuSpec` of Editora's
     `MenuBarModel` lists it), and a row beside a Help submenu is not in it; and in an app with a Welcome page, the
@@ -101,10 +122,10 @@ The documentation is one command away, so nobody has to know the website's addre
     the row ([`MacMenus`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MacMenus.java)); its main menu doesn't yet: there the Documentation row sits beside the Help submenu,
     not in it ([`ui/TitleBar.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/TitleBar.java)).
 - **DOCS-07 · SHOULD.** Where the app has a Help menu (the Help menu of a menu bar, or a Help submenu of the app's
-  main menu), its rows run in this order: Command Palette · Documentation · the keyboard reference
-  ([DOCS-08](#docs-08)) · Welcome Page · Check for Updates · Message Log · Debug Log · Report a Problem · Pauta
-  Conformance · About. In an app with a Simple mode, that mode's Help menu keeps Command Palette, Documentation,
-  Welcome Page and About. An app without a feature drops its row; nothing moves.
+  main menu, which [WIN-14](../window-shell/#win-14) defines), its rows run in this order: Command Palette ·
+  Documentation · the keyboard reference ([DOCS-08](#docs-08)) · Welcome Page · Check for Updates · Message Log ·
+  Debug Log · Report a Problem · Pauta Conformance · About. In an app with a Simple mode, that mode's Help menu keeps
+  Command Palette, Documentation, Welcome Page and About. An app without a feature drops its row; nothing moves.
   - *Check (code):* the rows of the Help menu the app has are in that order, in the full menu and in Simple mode's
     where the app has one (both `menubar.help` menu specs in Editora). An app with a Help menu in a menu bar on one
     OS and a Help submenu in its main menu is judged on both.
@@ -117,8 +138,8 @@ The documentation is one command away, so nobody has to know the website's addre
     Problem, then Check for Updates, and Documentation, the keyboard reference and About are rows of the main menu
     beside it ([`ui/TitleBar.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/TitleBar.java)).
 - **DOCS-08 · SHOULD.** Where the app has a Help menu (the Help menu of a menu bar, or a Help submenu of the app's
-  main menu), a row of it opens a keyboard reference: a searchable window of every key, grouped as the menus are,
-  or the keybinding editor.
+  main menu, which [WIN-14](../window-shell/#win-14) defines), a row of it opens a keyboard reference: a searchable
+  window of every key, grouped as the menus are, or the keybinding editor.
   - *Check (by hand):* open it from Help, search for a command, and find its key.
   - *Reference:* Termina's [`ShortcutsWindow`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/ShortcutsWindow.java), a row of its Help menu, and Mirada's [`ShortcutsWindow`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/ShortcutsWindow.java), a row of its
     macOS Help menu; in Mirada's main menu the row sits beside the Help submenu. Editora doesn't yet: its
@@ -167,8 +188,12 @@ title and description come from the message catalogs, and the parity test holds 
   [REPO-05](../repository/#repo-05)). `CONTRIBUTING.md` is the short version for a person, pointing into
   `docs/`. `docs/` holds the durable explanations. Exhaustive history goes to `docs/reference/`, not into any of
   the three.
-  - *Check (code):* `AGENTS.md` and `CONTRIBUTING.md` link into `docs/`; long catalogs sit under
-    `docs/reference/`.
+  - *Check (code):* `CONTRIBUTING.md` links into `docs/`. Neither `AGENTS.md`, `CONTRIBUTING.md` nor a guide in
+    `docs/` ([REPO-07](../repository/#repo-07)) holds exhaustive history: a record of past work, or a catalog
+    that sets out to list every part of a subsystem or every command (Editora's `architecture-catalog.md` and
+    `commands.md` are two). Where the app keeps such material, it is in files under `docs/reference/`; an app
+    that keeps none needs no `docs/reference/` and passes on the link. An audit report (`docs/pauta-audit.md`) is
+    not such material.
   - *Reference:* Editora's [`AGENTS.md`](https://github.com/adriandeleon/Editora/blob/master/AGENTS.md) (*Documentation map*), [`CONTRIBUTING.md`](https://github.com/adriandeleon/Editora/blob/master/CONTRIBUTING.md), [`docs/reference/README.md`](https://github.com/adriandeleon/Editora/blob/master/docs/reference/README.md).
 - **DOCS-15 · SHOULD.** Javadoc sits on its member: a doc comment above another doc comment documents nothing.
   Comments say why, not what.
@@ -182,10 +207,12 @@ title and description come from the message catalogs, and the parity test holds 
   contributor guides it touches in the same pull request, the website's user docs in a pull request on the
   website's repository opened with it, and `TODO.md` where the app keeps one ([REPO-08](../repository/#repo-08));
   never as a follow-up. A reviewer treats a feature PR with no docs change as incomplete.
-  - *Check (by hand):* read the app's last merged feature pull requests on GitHub: each one's diff touches
-    `CHANGELOG.md` and the guides it concerns, and one that changes what a user sees names the website's pull
-    request. That `docs/conventions.md`, `CONTRIBUTING.md` and `AGENTS.md` state the rule shows it is asked, not
-    that it is kept.
+  - *Check (by hand):* read the app's most recently merged feature pull requests on GitHub, as many as it takes
+    to see the habit: each one's diff touches `CHANGELOG.md`, the guides it concerns and, where the app keeps
+    one, `TODO.md`, and one that changes what a user sees names the website's pull request. A recent one that
+    changed behavior and touched none of them fails the rule. That `docs/conventions.md`, `CONTRIBUTING.md` and
+    `AGENTS.md` state the rule shows it is asked, not that it is kept. The person reads GitHub, not the running
+    app, and the rule is still checked by hand: an audit reports it as `manual`.
   - *Reference:* Editora [`docs/conventions.md#docs-in-the-same-pr`](https://github.com/adriandeleon/Editora/blob/master/docs/conventions.md#docs-in-the-same-pr), [`CONTRIBUTING.md`](https://github.com/adriandeleon/Editora/blob/master/CONTRIBUTING.md) (step 4, which names the
     website repository), [`AGENTS.md`](https://github.com/adriandeleon/Editora/blob/master/AGENTS.md); the template's [`docs/conventions.md`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/docs/conventions.md). Editora, the template, Mirada and nux
     keep a `TODO.md`; Termina, Torrenta and Modula keep none.
@@ -194,17 +221,18 @@ title and description come from the message catalogs, and the parity test holds 
   Pauta applies the same rule to itself.
   - *Check (code):* `AGENTS.md` and `docs/README.md` say so.
   - *Reference:* Editora's [`AGENTS.md`](https://github.com/adriandeleon/Editora/blob/master/AGENTS.md), [`docs/README.md`](https://github.com/adriandeleon/Editora/blob/master/docs/README.md).
-- **DOCS-18 · SHOULD.** An app's screenshots are retaken, not described: its capture hook
+- **DOCS-18 · SHOULD.** An app's screenshots are retaken, not described: its capture hook or headless fixture
   ([QUAL-09](../quality/#qual-09)) renders the real window at 2× after any UI change, for the README (its hero in
   light and dark), the website and bug reports.
   - *Why:* a stale screenshot claims what is not true.
-  - *Check (by hand):* the README's hero and the website's screenshots show the current UI; they are rendered with
-    the capture hook [QUAL-09](../quality/#qual-09) asks for, not drawn or described.
+  - *Check (by hand):* the README's hero, in its light and its dark form, and the website's screenshots show the
+    current UI at 2×; they are rendered from the real window by the capture hook or headless fixture
+    [QUAL-09](../quality/#qual-09) asks for, not drawn or described.
   - *Reference:* Termina's [`DevCapture.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/DevCapture.java) and Torrenta's [`DevCapture.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/DevCapture.java), and nux's
     [`ui/Screenshot.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/Screenshot.java) ([Shared features](../family/shared-features/)). None of the three renders at 2× yet: each writes what
-    `scene.snapshot(null)` returns, the scene at its own size. Editora doesn't yet: it has no capture hook, and three
-    of its FX tests write a screenshot only when `-Deditora.test.shots=<dir>` is set
-    ([`SplitViewFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/SplitViewFxTest.java)).
+    `scene.snapshot(null)` returns, the scene at its own size. Editora doesn't yet: it has no capture hook, and its
+    headless fixture writes a screenshot from three FX tests only, when `-Deditora.test.shots=<dir>` is set, and
+    at the scene's own size too ([`SplitViewFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/SplitViewFxTest.java)).
 
 The README's own shape, at most 250 lines that leave the detail to the website's docs, is
 [REPO-01](../repository/#repo-01).

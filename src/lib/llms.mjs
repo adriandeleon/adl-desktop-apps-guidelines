@@ -85,7 +85,8 @@ export function rulesJson(root) {
     checks: {
       code: "Verify by reading or searching the app's source, as the check says.",
       test: "The statement requires a test; confirm the app has it, or its equivalent, and that it runs in the build.",
-      "by hand": "Needs the running app: the source alone can't confirm it, though it can show the rule unmet.",
+      "by hand":
+        "Needs a person, in the running app or where the check sends them (the repository's pull requests): the source alone can't confirm it, though it can show the rule unmet.",
     },
     statuses: STATUSES,
     audit: `${base}audit.schema.json`,

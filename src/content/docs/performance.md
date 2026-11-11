@@ -12,56 +12,82 @@ every change on a hot path there must honor.
 
 - **PERF-01 · MUST.** Never block the JavaFX application thread. No file or network I/O, no process start or wait,
   no parsing, searching, hashing or JSON of any size on it, and no `Thread.sleep`, `Future.get()`, `join()` or
-  `Process.waitFor()` there. Two exceptions. At start-up, before the first window is shown, `start()` may do the
-  two things that window cannot be drawn without: wait once for the config read that [PERF-16](#perf-16) began
-  before the toolkit, and register the fonts the first window draws with, or wait once for the thread that
-  registers them ([ICON-02](../icons-and-color/#icon-02) requires them before any CSS is applied). Nothing else at
-  start-up is excepted: a font registered on that thread after the first frame, and any other read `start()` makes
-  (a log file opened, a ledger read, the user's themes scanned), block it as they would anywhere, and a resource is
-  not excepted for being bundled with the app. And as the app quits, when no frame is left to block, the quit method
-  ([WIN-13](../window-shell/#win-13)) or `Application.stop()` may make the last save on it: write the settings,
-  the window state and the session, or wait for a write already under way. An app that loads its settings inside
-  `start()` instead, with no earlier read, has PERF-16's gap and none here.
+  `Process.waitFor()` there. Two exceptions. At start-up, before the first window is shown, `start()` may wait once
+  for the config read that [PERF-16](#perf-16) began before the toolkit, and may read the bundled resources that
+  window is built from: its fonts, registered there or by a thread `start()` waits for once
+  ([ICON-02](../icons-and-color/#icon-02) requires them before any CSS is applied), the message catalog, the
+  keymap and its icons. Nothing else at start-up is excepted: a log file opened, a file or a store of the user's
+  read (presets, profiles, schedules, themes the user added), a ledger read, a socket bound or a lock taken blocks
+  the thread as it would anywhere, and so does a font registered on it after the first frame. And as the app quits,
+  when no frame is left to block, the quit method ([WIN-13](../window-shell/#win-13)) or `Application.stop()` may
+  make the last save on it: write the settings, the window state and the session, or wait for a write already
+  under way. An app whose `start()` loads its settings itself, whether or not `main` read the file earlier, or
+  waits for a read begun after the toolkit, has PERF-16's gap and none here.
   - *Check (code):* `grep -rnE 'Files\.[a-z]|File(Input|Output)Stream|File(Reader|Writer)|RandomAccessFile|getResourceAsStream|loadFont|HttpClient|openConnection|openStream|new Socket|SocketChannel\.open|ProcessBuilder|getRuntime\(\)\.exec|\.waitFor\(|Thread\.sleep|\.join\(\)|uture[A-Za-z]*\.get\(|\.get\([^)]*TimeUnit|invokeAndWait|\.await\(' src/main/java`
     lists the candidates: the lines that read or write a file or a bundled resource, open a connection, start or
     wait for a process, sleep, or wait for another thread. Each line is judged by reading what calls it. It is fine
     when only an executor's task or a thread's body reaches it; when `start()` reaches it before the first window
-    is shown and it is one of the two things the statement allows there, the one `join()` or `get()` on the config
-    read begun before the toolkit, or the registering of the fonts the first window draws with (Editora's
-    `Fonts.loadForFirstPaint`) or the one wait for the thread that registers them; or when it is the last save,
-    made by the quit method or `Application.stop()`. It is a violation when an event handler, a listener, a
-    `Platform.runLater` body, a timer's or an animation's callback, or `start()` reaches it on the FX thread, itself
-    or through a method it calls: a handler that calls a settings store's `save()` writes the file on the FX thread.
-    In `start()` everything but those two is a violation: a second wait for the config, a log file opened, a
-    ledger read, a folder of user themes scanned, whether the file is the user's or bundled with the app; only a
-    settings load made in `start()` itself is left to [PERF-16](#perf-16). A font registered on the FX thread after
-    the first frame is a violation too. A grep finds only the spellings it is given: read the handlers and
-    listeners too for parsing, searching, hashing or JSON done in place, and for a wait under another name.
+    is shown and it is one of the things the statement allows there, the one `join()` or `get()` on the config
+    read begun before the toolkit, or the reading of a resource bundled with the app that the first window is
+    built from: the registering of the fonts it draws with (Editora's `Fonts.loadForFirstPaint`) or the one wait
+    for the thread that registers them, the message catalog (Editora's `Messages.init`), the keymap (Editora's
+    `KeymapManager.loadNamed`) or the window's icons; or when it is the last save, made by the quit method or
+    `Application.stop()`, which may do nothing else that blocks. It is a violation when an event handler, a
+    listener, a `Platform.runLater` body, a timer's or an animation's callback, or `start()` reaches it on the FX
+    thread, itself or through a method it calls: a handler that calls a settings store's `save()` writes the file
+    on the FX thread. In `start()` everything else is a violation, before the first window is shown or after: a
+    second wait for the config, a log file opened, a file or a store of the user's read (presets, profiles,
+    schedules, a folder of themes the user added), a ledger read, a socket bound, a lock taken. Only the settings
+    are left to [PERF-16](#perf-16): a load of them made in `start()` itself, whether or not `main` read the file
+    earlier, and a wait for a read of them begun after the toolkit. A font registered on the FX thread after the
+    first frame is a violation too. A grep finds only the spellings it is given: read the handlers and listeners
+    too for parsing, searching, hashing or JSON done in place, and for a wait under another name.
   - *Reference:* Editora [`docs/performance.md`](https://github.com/adriandeleon/Editora/blob/master/docs/performance.md) §1; its one start-up wait is `takeBootstrap` in [`App.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java),
     which joins the `config-prefetch` read, and `Fonts.loadForFirstPaint`, called next, registers its first fonts
-    ([`ui/Fonts.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Fonts.java)). Mirada's `start()` makes the two waits the first exception allows: `settings()` joins the
-    settings read and `Fonts.ready`, before the window is shown, joins the thread that registers its fonts
+    ([`ui/Fonts.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Fonts.java)); the `config-prefetch` thread reads the catalog too, and `start()` reads it only when
+    that thread picked another language (`Messages.init`). Mirada's `start()` makes the two waits the first
+    exception allows: `settings()` joins the settings read, which also reads its catalog (in its jlink image that
+    read begins after the toolkit, which is [PERF-16](#perf-16)'s gap and none here), and `Fonts.ready`, before the
+    window is shown, joins the thread that registers its fonts
     ([`App.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/App.java), [`ui/Fonts.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Fonts.java)). For the last save, the app template's [`MainWindow.quit`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MainWindow.java) waits for the
-    settings write on a background thread and exits from there, which needs no exception; Termina's
+    settings write on a background thread and exits from there, which needs no exception, and its
+    `Application.stop()` then waits for the writer once more on the FX thread (`Running.close` in
+    [`ui/Startup.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Startup.java)), which the second exception allows; Termina's
     [`WindowManager.closeAll`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/WindowManager.java), run from `Application.stop()`, flushes its settings on the FX thread, which the second
     exception allows. No app has been read through for the rule yet, and none holds it everywhere. Found so far:
-    Editora's `start()`, in that `App.java`, reads on the FX thread besides the two things it may do there: its
-    calls to `DebugLog.attachFile` (the Debug Log's session file), `ProcessRegistry.reapOrphans` (the ledger of the
-    servers it started), `McpServer.reapStaleEndpoint` (a stale `mcp-endpoint.json`) and `Themes.loadUserThemes`
-    (the user themes' folders). Some of its handlers still touch the disk too, for example `renameFileTo`
-    (`Files.exists`, `Files.move`) and `openPersonalDictionary` (`Files.writeString`) in [`ui/MainController.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java)
+    Editora's `start()`, in that `App.java`, does on the FX thread, before its first window is shown, what no
+    exception covers: its calls to `DebugLog.attachFile` (the Debug Log's session file),
+    `SharedConfig.claimInstance` (the lock on a file in the config folder), `ProcessRegistry.reapOrphans` (the
+    ledger of the servers it started), `McpServer.reapStaleEndpoint` (a stale `mcp-endpoint.json`) and
+    `Themes.loadUserThemes` (the user themes' folders). Some of its handlers still touch the disk too, for example
+    `renameFileTo` (`Files.exists`, `Files.move`) and `openPersonalDictionary` (`Files.writeString`) in [`ui/MainController.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java)
     and the new-folder prompt in [`ui/ProjectPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ProjectPanel.java) (`Files.createDirectories`). The app template's `start()`
-    registers its fonts, which the exception allows (`Fonts.load`), and opens the Debug Log's session file on the FX
-    thread, which it does not (`DebugLog.attachFile`, both called from [`ui/Startup.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Startup.java)); Torrenta's `start()`
-    opens that file the same way (`DebugLog.attachFile` in its [`App.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/App.java)). Termina reads everything its first
-    window needs in `Application.init()`, off the FX thread, and then registers its remaining font families on the
-    FX thread after the first frame, which no exception covers ([`Fonts.loadRest`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/Fonts.java), called from its [`App.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/App.java)).
+    registers its fonts and reads its catalog, which the exception allows (`Fonts.load`, `Messages.init`), and
+    opens the Debug Log's session file on the FX thread, which it does not (`DebugLog.attachFile`, all called from
+    [`ui/Startup.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Startup.java)); once the window is shown it deletes a stale socket file and binds the socket for
+    later launches there ([`SingleInstance.listen`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/instance/SingleInstance.java)), and after the first frame it registers its remaining font on
+    the FX thread (`Fonts.loadDeferred`), neither of which an exception covers. Torrenta's `start()` reads its
+    catalog, which the exception allows, and opens that file the same way (`DebugLog.attachFile` in its [`App.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/App.java));
+    its main window's constructor, before the window is shown, reads six stores of the user's (the profiles, the
+    labels, the watch folders, the search providers, their definitions and the RSS feeds, in [`ui/MainWindow.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java)),
+    and `start()` reads `profiles.json` again once the window is shown (`Startup.profile`). Termina reads its
+    settings, its first fonts, its catalog and its imported themes in `Application.init()`, off the FX thread
+    (`prepare` in its [`App.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/App.java)); building its first window then reads the bundled keymap ([`ui/Keymap.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/Keymap.java), on
+    the first `Keymap.defaultFor`) and decodes the window's icons ([`ui/Icons.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/Icons.java), `Icons.applyTo`) on the FX
+    thread, which the exception allows, and once the window is shown `start()` deletes a stale socket file and
+    binds the socket for later launches there, which it does not (`serve` in [`instance/SingleInstance.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/instance/SingleInstance.java)). It also registers
+    its remaining font families on the FX thread after the first frame, which no exception covers ([`Fonts.loadRest`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/Fonts.java), called from that `App.java`).
+    Mirada, on macOS, compares two paths on the FX thread when it was started with a file and the OS hands it its
+    first one (`Files.isSameFile` in [`os/MacOpenFiles.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/os/MacOpenFiles.java)). nux waits up to two seconds for the tray icon's removal in the
+    handler of Settings' Save ([`AwtTray.dispose`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/tray/AwtTray.java), reached from [`TrayController.settingsSaved`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/app/TrayController.java)) and writes its
+    `--screenshot` file from an animation's callback ([`ui/Screenshot.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/Screenshot.java)).
     Torrenta writes its settings from the listeners
     of its Settings rows (`saveQuietly` in [`ui/SettingsWindow.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/SettingsWindow.java)) and asks the file store for the free space
-    on each keystroke in a save-folder field (`updateFreeSpace` in [`ui/LocationDialog.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/LocationDialog.java)). Modula writes its
-    presets and settings from handlers (`config.savePresets` and `config.saveSettings` in [`ui/RadioPane.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/RadioPane.java))
-    and, building its Settings window, starts `ffmpeg -version` and waits up to five seconds for it
-    ([`Encoders.isAvailable`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/audio/Encoders.java)).
+    on each keystroke in a save-folder field (`updateFreeSpace` in [`ui/LocationDialog.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/LocationDialog.java)). Modula reads its
+    presets and its schedules in its pane's constructor, before the window is shown (`config.loadPresets` and
+    `config.loadSchedules` in [`ui/RadioPane.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/RadioPane.java)), writes its presets and settings from handlers
+    (`config.savePresets` and `config.saveSettings` in that file) and, building its Settings window, starts
+    `ffmpeg -version` and waits up to five seconds for it ([`Encoders.isAvailable`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/audio/Encoders.java)).
 - **PERF-02 · MUST.** Touch the scene graph only on the FX thread. Background work hands its result back with
   `Platform.runLater`; nothing else creates, changes or reads live nodes.
   - *Check (code):* `grep -rnE 'new Thread\(|Thread\.(ofVirtual|ofPlatform|startVirtualThread)|\.(submit|execute|schedule|scheduleAtFixedRate|scheduleWithFixedDelay)\(|(supply|run)Async\(|\.(thenAccept|thenRun|thenApply|thenCompose|whenComplete|handle|exceptionally)(Async)?\(' src/main/java`
@@ -87,7 +113,10 @@ every change on a hot path there must honor.
     stream, a result asked for once at start-up.
   - *Reference:* Editora [`git/GitService.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/git/GitService.java) (`refresh`, with its `refreshGen` counter), [`search/SearchService.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/search/SearchService.java) and
     [`ui/LatestOnly.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/LatestOnly.java) ([`LatestOnlyTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/LatestOnlyTest.java)); Termina ([`work/LatestOnly.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/work/LatestOnly.java)) and Mirada
-    ([`ui/LatestOnly.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/LatestOnly.java)) carry the same helper. No app has been read through for the rule yet.
+    ([`ui/LatestOnly.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/LatestOnly.java)) carry the same helper. No app has been read through for the rule yet. Found so
+    far: nux applies each Refresh of its Events window, and each load of the Energy and Outages tabs of its
+    History window, with no mark ([`ui/EventsWindow.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/EventsWindow.java), `offFx` in [`ui/HistoryWindow.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/HistoryWindow.java)), beside a
+    Charts tab that numbers its loads and applies only the newest.
 - **PERF-04 · SHOULD.** Every thread is named and is a daemon.
   - *Why:* a thread dump then says what is running, and a stray worker never keeps the app alive after its last
     window closes.
@@ -138,10 +167,14 @@ typing, scrolling, highlighting, the overlays and the gutter. In Torrenta they a
 in Termina the terminal grid, in Mirada stepping between images.
 
 - **PERF-06 · MUST.** Redraws are coalesced to at most one per pulse, with a flag that one request is already
-  queued.
+  queued. A redraw is the painting of what the app draws itself, a canvas, a chart or a grid of cells; in an app
+  that paints nothing itself, it is the refresh of its list or view.
   - *Check (code):* a redraw request sets a flag (Editora's are named `…Pending`) and schedules one pass, and a
-    request that finds the flag set schedules nothing. In an app that paints nothing itself, the redraw is the
-    refresh of its list or view.
+    request that finds the flag set schedules nothing. A handler that paints, or in an app that paints nothing
+    refreshes its list or view, straight from its event has no such flag and fails: a chart drawn from its width
+    listener and again from its height listener draws twice for one resize. Setting a control's own property in
+    a handler (a label's text, a progress bar's value) is not a redraw: JavaFX draws the control once on the next
+    pulse.
   - *Reference:* Editora [`docs/performance.md`](https://github.com/adriandeleon/Editora/blob/master/docs/performance.md) §2 (the `redrawPending` shape) and
     [`ui/WindowToolbar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowToolbar.java) (`scheduleEditStateRefresh`, with its `editStateRefreshPending` flag). [`ui/FxThrottle.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/FxThrottle.java)
     is another tool: a leading-edge throttle with a maximum wait and no such flag, which runs the first request
@@ -163,14 +196,20 @@ in Termina the terminal grid, in Mirada stepping between images.
   readings from another thread) hands it to the FX thread in batches at least 16 ms apart, never one `runLater` per
   line or record.
   - *Check (code):* in an app that shows a stream, the thread that receives it appends to a buffer that the FX
-    thread drains, with a minimum interval of 16 ms or more between drains; no reader calls `Platform.runLater`
-    once for each line or record. An app whose FX thread is sent no stream, as one whose log window reads its store
-    only when it opens or is refreshed, is not covered.
+    thread drains, with a minimum interval of 16 ms or more between drains, or once a pulse (pulses come a frame
+    apart); no reader calls `Platform.runLater` once for each line or record. A stream is what arrives at its
+    source's pace, however many items that is: a process's output, log records, the results of a scan handed
+    over as each is found. A poll the app paces itself, one hand-over for each tick of a timer of 16 ms or more
+    (a reading fetched every few seconds), already hands over that far apart and needs no buffer. An app whose
+    FX thread is sent no stream, as one whose log window reads its store only when it opens or is refreshed, is
+    not covered.
   - *Reference:* Editora [`process/OutputPump.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/process/OutputPump.java) (`MIN_DRAIN_INTERVAL_MILLIS`), [`ui/ConsoleAppender.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ConsoleAppender.java).
     Torrenta doesn't yet for its event log: the bridge in [`ui/EventLog.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/EventLog.java) (`logBridge`) hands each warning
-    it catches to the FX thread in a `runLater` of its own. Mirada's Debug Log window
-    ([`ui/DebugLogWindow.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/DebugLogWindow.java)) reads the log when it opens and on Refresh, so no log stream reaches its FX
-    thread.
+    it catches to the FX thread in a `runLater` of its own. nux doesn't yet for its network scan: `scan` in
+    [`service/DiscoveryService.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/service/DiscoveryService.java) hands each server it finds to the FX thread in a `runLater` of its own; its
+    poll hands over one reading every five seconds ([`service/PollService.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/service/PollService.java)), which is paced already. Mirada's
+    Debug Log window ([`ui/DebugLogWindow.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/DebugLogWindow.java)) reads the log when it opens and on Refresh, so no log stream
+    reaches its FX thread.
 - **PERF-08 · MUST.** Work only on what is visible and only on what changed: no O(document) or O(list) work per
   keystroke, scroll or tick, and a list the user or the data can grow without a limit the app sets is shown in a
   virtualized control (`ListView`, `TableView`, a fixed cell size), which builds nodes for the visible rows only.
@@ -186,8 +225,13 @@ in Termina the terminal grid, in Mirada stepping between images.
     can grow without a limit the app sets (results, log records, files, transfers), which belongs in a `ListView`
     or `TableView`; it is fine where the pane holds a set of controls the code fixes, or a list the app caps at a
     number it names (a bar of at most five preset chips).
-  - *Reference:* Editora [`editor/highlight/HighlightPass.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/editor/highlight/HighlightPass.java), [`editor/minimap/MinimapRows.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/editor/minimap/MinimapRows.java). No app has been
-    read through for the rule yet.
+  - *Reference:* Editora [`editor/highlight/HighlightPass.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/editor/highlight/HighlightPass.java), which restyles only as far as an edit reaches.
+    No app has been read through for the rule yet. Found so far, each a loop that makes a node for every item of
+    a list nothing caps: Modula's preset bar (a chip for each preset, `rebuild` in [`ui/PresetBar.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/PresetBar.java)); nux's
+    dashboard (a card for each saved profile it watches and for each UPS, rebuilt as readings arrive, `setFleet` and
+    `setOverview` in [`ui/Dashboard.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/Dashboard.java)); Torrenta's rule and tags dialogs (a check box for each feed and each
+    tag, [`ui/RuleDialog.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/RuleDialog.java), [`ui/TagsDialog.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/TagsDialog.java)); and Editora's crontab preview and pull-request checks card
+    (a node for each job and each check run, [`editor/structured/CrontabPreview.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/editor/structured/CrontabPreview.java), [`ui/ChecksListCard.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ChecksListCard.java)).
 - **PERF-09 · SHOULD.** A hot path allocates little: it reuses buffers and arrays, and caches data a repaint only
   reads.
   - *Check (code):* the per-frame and per-keystroke code allocates no new arrays or images when the size has not
@@ -211,13 +255,16 @@ in Termina the terminal grid, in Mirada stepping between images.
     not part of the rule.
 - **PERF-12 · MUST.** In an app that opens files or data the user picks, a large input is guarded before it loads:
   its size is checked before its content is read, or the read is capped, and what will not fit is never read in.
-  The app refuses it with a message or opens only the part that fits. Where an input can open with less, as a file
-  in an editor can, the app steps down as the input grows: expensive features turn off past one threshold, and past
-  another it opens read-only or capped.
+  The app refuses it with a message or opens only the part that fits. Where an input can open with less, without
+  features the app runs over its content, as a file in an editor can open without highlighting or a minimap, the
+  app steps down as the input grows: those features turn off past one threshold, and past another it opens
+  read-only or capped. An input the app can only read in or refuse (an imported theme, a `.torrent` file) has
+  nothing to step down to.
   - *Check (code):* the code that loads a picked file or import compares its size against a named limit before
-    reading the content, or reads through a cap, and refuses or cuts what passes the limit. Where the app can open an
-    input with less, a lower named threshold turns the expensive features off and a higher one opens it read-only or
-    capped.
+    reading the content, or reads through a cap, and refuses or cuts what passes the limit. Where the app runs
+    features over an input's content that the input can open without (an editor's highlighting, its minimap), a
+    lower named threshold turns them off and a higher one opens the input read-only or capped. Where it runs
+    none, the size check or the cap is the whole of the rule.
   - *Reference:* Editora, whose tiers are the example: [`EditorBuffer.LARGE_FILE_BYTES`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/editor/EditorBuffer.java) (5 MB: no highlighting, no minimap) and
     `HUGE_FILE_BYTES` (50 MB: read-only and cut to 50 MB), and [`ui/LoadHeapGuard.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/LoadHeapGuard.java), which caps a load at
     what the free heap affords ([`LoadHeapGuardTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/LoadHeapGuardTest.java)). Termina's theme import has nothing to step down to:
@@ -267,8 +314,8 @@ in Termina the terminal grid, in Mirada stepping between images.
     and nux don't yet: each starts its update check in the body of `start()` (`checkForUpdates` in
     [`ModulaApp.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ModulaApp.java), `maybeCheckForUpdates` in nux's [`App.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/App.java)).
 - **PERF-16 · SHOULD.** The config read starts on a thread of its own before the toolkit does, so the two overlap
-  and the wait for it that [PERF-01](#perf-01) allows at start-up, `start()` taking the result, is short. An app that loads
-  its settings inside `start()`, with no earlier read, does not meet this.
+  and the wait for it that [PERF-01](#perf-01) allows at start-up, `start()` taking the result, is short. An app
+  whose `start()` loads its settings itself does not meet this, whether or not `main` read the file earlier.
   - *Check (code):* `main` starts the config read on its own thread before `launch`, from an entry point that is
     not the `Application` subclass (the launcher starts the toolkit for one before its `main` runs), and `start()`
     takes that read's result instead of reading the files itself. A load `start()` makes only when the earlier read

@@ -97,7 +97,9 @@ says which bars count as one. Reference: Editora's [`ui/Icons.java`](https://git
   ([KBD-03](../keyboard/#kbd-03)), which a tooltip may show without its category prefix, as a menu row may
   ([MENU-01](../menus/#menu-01)): "Save" for "File: Save". An unbound command shows its title alone.
   - *Check (code):* the tooltip shows the command's title, whole or without its category prefix, and the keymap's
-    display chord for its id, and is rebuilt when the keymap changes.
+    display chord for its id, and is rebuilt when the keymap changes. The chord is the one of the command the button
+    runs, and no chord is typed into the string. A fixed key of the control itself (Enter in a find field) is no
+    command's chord and may be written, as [KBD-13](../keyboard/#kbd-13) allows.
   - *Reference:* Editora [`ToolbarCoordinator.buildExtraButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolbarCoordinator.java) (the `command.<id>` title, prefix and all) and
     [`ToolWindowManager.tooltipFor`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolWindowManager.java). Its main toolbar ([`WindowToolbar.setupButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowToolbar.java), `refreshToolbarTooltips`) takes
     the chord from the keymap and the name from a `tooltip.*` catalog key of its own: for most buttons that is the
@@ -114,8 +116,11 @@ says which bars count as one. Reference: Editora's [`ui/Icons.java`](https://git
     "label (key)" form with the chord from the keymap in use ([`Command.chord`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Command.java)), and [`TitleBar.relabel`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/TitleBar.java) names the
     header buttons again when the keys change; Termina's [`IconNames.withChord`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/IconNames.java) takes the chord from its keymap too,
     but its find bar's arrows don't meet the rule yet: [`ui/SearchBar.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/SearchBar.java) names them from `search.older` and
-    `search.newer`, "Previous match, up (Enter)" and "Next match, down (Shift+Enter)", not from the titles of
-    `findPrevious` and `findNext`, with a key typed into each string. Modula's and nux's tooltips are written in
+    `search.newer`, "Previous match, up (Enter)" and "Next match, down (Shift+Enter)", not from a command's title,
+    and gives each arrow the chord of the command that steps the other way. The up arrow steps to an older match,
+    as `findNext` does ([`ui/TerminalWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalWindow.java)), and shows the chord of `findPrevious`; the down arrow steps to a
+    newer one, as `findPrevious` does, and shows the chord of `findNext`. The Enter and Shift+Enter in the two
+    strings are the field's own keys. Modula's and nux's tooltips are written in
     the code, not read from a command: Modula's carry no chord ([`ui/RadioPane.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/RadioPane.java)), and nux's add the display
     text of a `KeyCombination` to the button's label ([`App.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/App.java), `shortcut`).
 - **TBAR-14 · SHOULD.** Every tooltip shows after the same delay, 400 ms, set where the app makes its tooltips and
@@ -151,52 +156,67 @@ button, "?", only [TBAR-01](#tbar-01) covers); controls that belong to the windo
 (Modula's transport and footer controls, Mirada's controls over the image); the buttons at the end of a tab strip
 (Termina's "+" and its chevron); and a find bar's buttons ([FIND-16](../templates/find-bar/#find-16) is theirs).
 Controls that belong to the window's content include a row of preset chips with its add button (Modula's) and the
-buttons inside a panel's rows (Mirada's info panel), and an image or PDF viewer's own bar in the content area
-(Editora's) is content too.
+buttons inside a panel's rows (Mirada's info panel), and an image, PDF or Diff viewer's own bar in the content
+area (Editora's) is content too.
 
 - **TBAR-02 · MUST.** Toolbar buttons stay out of the Tab order: the command, the palette and the menus reach the
   action, and Tab is for the content. The [keyboard page](../keyboard/#focus-and-accessibility) has the general
   focus rules.
   - *Check (code):* every button on a toolbar is taken out of the Tab order with `setFocusTraversable(false)`,
     where it is built or by the helper that builds it (Editora's `Icons.toolbarButton`).
-  - *Reference:* Editora [`Icons.toolbarButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Icons.java), used by the tool window toolbars (Git, Diff, Markdown lint); Torrenta's
-    copy of it, which builds every button of its main toolbar ([`MainWindow.toolButton`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java)); Mirada's header buttons, which
-    its [`Icons.button`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Icons.java) takes out of the Tab order. Editora doesn't yet on its main toolbar: the buttons built by
-    [`WindowToolbar.setupButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowToolbar.java) and [`ToolbarCoordinator.buildExtraButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolbarCoordinator.java), and the stripe buttons, take focus.
-- **TBAR-04 · SHOULD.** Groups are separated by spacing, not rules: keep the `Separator` nodes (their padding is the
-  gap) and make the line transparent.
-  - *Check (code):* the stylesheet sets `.tool-bar .separator:vertical > .line` to a transparent border.
-  - *Reference:* Editora [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css). Torrenta's separators still draw a line.
+  - *Reference:* Editora [`Icons.toolbarButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Icons.java), used by the toolbars of its Git and Markdown lint tool windows;
+    Torrenta's copy of it, which builds every button of its main toolbar ([`MainWindow.toolButton`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java)); Mirada's header
+    buttons: its [`Icons.button`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Icons.java) takes Rotate out of the Tab order, and [`ui/TitleBar.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/TitleBar.java) takes Info and ☰ out
+    where it builds them. Editora doesn't yet, on these toolbars among others: the buttons of its main toolbar, built
+    by [`WindowToolbar.setupButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowToolbar.java) and [`ToolbarCoordinator.buildExtraButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolbarCoordinator.java), the stripe buttons, the buttons of
+    the Test Results panel's toolbar, built by `Icons.button` ([`ui/TestRunnerPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TestRunnerPanel.java)), and the float, maximize
+    and close buttons in the header of every tool window ([`ui/ToolWindowPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolWindowPanel.java)) take focus.
+- **TBAR-04 · SHOULD.** A toolbar's groups of buttons are separated by spacing, not rules: where a toolbar holds
+  `Separator` nodes, keep them (their padding is the gap) and make the line transparent.
+  - *Check (code):* the stylesheet makes the line of every `Separator` on a toolbar transparent (Editora's
+    `.tool-bar .separator:vertical > .line`, a transparent border), on a panel's toolbar as on the main one. A toolbar
+    that holds no `Separator` (Mirada's header buttons) has nothing to restyle and passes.
+  - *Reference:* Editora [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css), for its main toolbar. Editora doesn't meet the rule on its Debug panel's toolbar
+    yet: the separators there carry a class of their own, `debug-toolbar-separator`, whose one rule sets their padding
+    and leaves the line drawn ([`ui/DebugPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/DebugPanel.java)). Torrenta's separators still draw a line
+    (`.main-toolbar .separator:vertical > .line` in its [`styles/app.css`](https://github.com/adriandeleon/torrenta/blob/master/src/main/resources/com/torrenta/styles/app.css)).
 - **TBAR-05 · SHOULD.** Hiding a button group (Simple mode, a build tool that is not detected) hides the leading,
   trailing and doubled separators it leaves, so no gap stands on its own, and shows them all again when nothing is
   hidden.
   - *Check (code):* every change to a toolbar item's visibility ends in one pass over the bar's separators.
-  - *Reference:* Editora [`WindowChromeCoordinator.collapseToolbarSeparators`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowChromeCoordinator.java).
+  - *Reference:* Editora [`WindowChromeCoordinator.collapseToolbarSeparators`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowChromeCoordinator.java), for its main toolbar.
 - **TBAR-07 · SHOULD.** A toggle looks on while it is on: a button that opens an overlay (Find, the palette, a split)
   and the Simple mode button carry a pseudo-class (Editora's `:open`) while their state holds, so the way back out
   does not look like the way in.
   - *Check (code):* each such button sets a pseudo-class from its state, and the stylesheet gives that state a fill.
   - *Reference:* Editora [`MainController.OPEN`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java), [`WindowChromeCoordinator`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowChromeCoordinator.java) (Simple mode), `.button:open` in
-    [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css). Torrenta uses `:on` for Simple mode and `:active` for the alternative speed limit.
+    [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css). Torrenta's Simple mode button carries `:on`, which its stylesheet fills (`.toolbar-button:on`), but
+    Torrenta doesn't meet the rule yet: its palette button carries no pseudo-class while the palette shows
+    ([`ui/MainWindow.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java)). Its `:active` marks the alternative speed limit on a label of the status bar, not on a
+    toolbar button.
 - **TBAR-08 · MUST.** A toolbar never holds the only way to an action: every icon on it (in Editora, every icon
   of the cluster the user can customize) is also in the menus and the palette.
   - *Why:* that is what makes it safe to hide icons in a narrow window and to let the user remove them.
-  - *Check (code):* every button on the toolbar runs a registered command, so the palette lists it, and a menu
-    lists that command too: the menu bar, or the app's main menu where it has no bar. A button that only opens a
-    menu (Editora's Recent, Mirada's ☰) is no action of its own. In an app whose toolbar is built from a catalog
-    (Editora's `ToolbarCatalog`), every catalog item's command id is also in the menus' model.
-  - *Reference:* Torrenta [`MainWindow.buildToolbar`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java), whose buttons each run a command its menus list; Mirada's
-    header buttons, Rotate and Info, which its ☰ menu lists too ([`ui/TitleBar.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/TitleBar.java)). Editora
-    [`toolbar/ToolbarCatalog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/toolbar/ToolbarCatalog.java): each item carries the `commandId` it runs, and the only items without one are
-    declared special widgets, such as the Recent menu button ([`ToolbarCatalogTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/toolbar/ToolbarCatalogTest.java)). Editora doesn't meet the
-    rule yet: three catalog items run commands that are in the palette and in no menu, `tool.todo`,
-    `tool.bookmarks` and `view.toggleZen`, which [`ui/MenuBarModel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java) doesn't list.
+  - *Check (code):* every button on the toolbar runs a registered command, so the palette lists it, and a menu lists
+    that command too: the menu bar, or the app's main menu where it has no bar ([WIN-14](../window-shell/#win-14) says
+    what a main menu is). A button that only opens a menu (Editora's Recent, Mirada's ☰) is no action of its own. In
+    an app whose toolbar is built from a catalog (Editora's `ToolbarCatalog`), every catalog item's command id is also
+    in the menus' model.
+  - *Reference:* Mirada's header buttons, Rotate and Info, which its ☰ menu lists too ([`ui/TitleBar.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/TitleBar.java)). Eleven
+    of the twelve buttons of Torrenta's toolbar run a command that a menu row runs too ([`MainWindow.buildToolbar`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java)),
+    but Torrenta doesn't meet the rule yet: the twelfth, the palette button, opens the palette from a handler of its
+    own, as the View menu's Command Palette row does, and no command does
+    ([PAL-01](../templates/command-palette/#pal-01)). Editora [`toolbar/ToolbarCatalog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/toolbar/ToolbarCatalog.java): each item carries the
+    `commandId` it runs, and the only items without one are declared special widgets, such as the Recent menu button
+    ([`ToolbarCatalogTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/toolbar/ToolbarCatalogTest.java)). Editora doesn't meet the rule yet: three catalog items run commands that are in the
+    palette and in no menu, `tool.todo`, `tool.bookmarks` and `view.toggleZen`, which [`ui/MenuBarModel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java) doesn't
+    list.
 - **TBAR-09 · MAY.** The toolbar is customizable: the user reorders, removes and restores its buttons, and the
   layout is saved in Settings and shared by every window.
-  - *Check (code):* the toolbar has a customize mode in which a drag along the bar reorders its buttons and a
-    drag off it removes one; a command or a menu row restores the default; and the layout is written to the
-    settings, which every window reads. A test that drives the mode, a reorder and a removal is the surest
-    evidence.
+  - *Check (code):* the user can reorder the toolbar's buttons, remove one and bring the default layout back (Editora:
+    a customize mode in which a drag along the bar reorders its buttons and a drag off it removes one, and a menu row
+    that restores the default); and the layout is written to the settings, which every window reads. A test that
+    drives a reorder and a removal is the surest evidence.
   - *Reference:* Editora [`ui/ToolbarCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolbarCoordinator.java), [`ToolbarCustomizeModeFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ToolbarCustomizeModeFxTest.java), [`ToolbarCustomizationFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ToolbarCustomizationFxTest.java).
     The cluster is a list of catalog ids in Settings (`toolbarLayout`), sanitized on read. The bar's right-click
     menu offers *Customize Toolbar…* (or *Done*), *Configure…* (the Settings page) and *Restore Default*. In
@@ -252,9 +272,10 @@ always reach from the bar, or the way back out of a mode, goes in the tail.
   - *Check (code):* a registered command toggles the bar, and the setting it writes is read back at startup.
   - *Reference:* Editora `view.toggleToolbar` ([`WindowChromeCoordinator.toggleToolbar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowChromeCoordinator.java)), with a floating button at
     the top right that brings a hidden bar back; Torrenta `toggle-toolbar`, kept as `settings.toolbar()`.
-- **TBAR-19 · SHOULD.** The main toolbar keeps its height when a control in it hides or shows (the project
+- **TBAR-19 · SHOULD.** The main toolbar keeps its height when a control in it hides or shows (in Editora, the project
   switcher in Simple mode or with Projects off), so the tabs and the content under it never move.
-  - *Check (by hand):* turn Simple mode on and off and watch the tab strip's top edge.
+  - *Check (by hand):* hide and show each control the bar can lose (in Editora, turn Simple mode on and off) and watch
+    the top edge of what sits under the bar: it stays where it was.
   - *Reference:* Editora [`WindowToolbar.stabilizeToolbarHeight`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowToolbar.java), which pins the row's minimum height to the
     project switcher's.
 

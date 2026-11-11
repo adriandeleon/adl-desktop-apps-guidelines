@@ -73,14 +73,18 @@ Every app keeps one, session-only and bounded, newest first, with Esc to close a
   - *Reference:* Editora [`StatusBar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusBar.java) (`echo`, `unreadErrors`), [`StatusBar.showMessageLog`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusBar.java).
 - **MLOG-03 · SHOULD.** The active keymap's cancel chord or a click outside closes the Message Log, as Esc does.
   - *Check (code):* the Message Log closes on the chord the active keymap binds to its cancel command, not on a fixed
-    `Ctrl+G`, and the overlay's backdrop hides it on a press.
+    `Ctrl+G`, and a press outside the log closes it: on the backdrop, where the log is the in-scene card
+    [MLOG-08](#mlog-08) asks for. In an app with one key table (a terminal app's keymap, or the built-in table of
+    an app that ships no keymap files), the chord is the one that table binds to a cancel command; where it binds
+    none, Esc and the press outside are all there is to test.
   - *Reference:* Editora [`OverlayHost`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/OverlayHost.java), which hides the card on a press on its backdrop and on [`PickerKeys.isCancel`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/PickerKeys.java): Esc,
     or the chord the keymap binds to `edit.cancel` (Editora's id; `C-g` in its Emacs keymap). Its [`MessageLogPopup`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java)
     also closes on `Ctrl+G` whatever the keymap, though the CUA keymap binds `C-g` to `nav.goToLine`; its handler
     reads `Alt+G` too, which the Emacs keymap's `M-g` prefix takes first.
     Elsewhere the chord is fixed: `Ctrl+G` in the app template ([`ui/OverlayHost.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/OverlayHost.java)), Termina
-    ([`ui/MessageLogWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MessageLogWindow.java)) and Mirada ([`ui/MessageLogView.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MessageLogView.java)), and Esc alone in Torrenta
-    ([`ui/MessageLogPopup.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MessageLogPopup.java)).
+    ([`ui/MessageLogWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MessageLogWindow.java)) and Mirada ([`ui/MessageLogView.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MessageLogView.java)). Torrenta's
+    ([`ui/MessageLogPopup.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MessageLogPopup.java)) closes on Esc and on a press on its backdrop: Torrenta has no keymap and no cancel
+    command, so the chord asks nothing more of it.
 - **MLOG-04 · SHOULD.** The Message Log copies the selected entries on the platform's copy chord, `Ctrl+C`
   (`Cmd+C` on macOS), in every keymap, and on the active keymap's copy chord too.
   - *Check (code):* the Message Log's key handling copies the selected entries on C with the platform's shortcut
@@ -95,8 +99,8 @@ Every app keeps one, session-only and bounded, newest first, with Esc to close a
     on Windows and Linux either: the keymap starts longer chords with `C-c`, a prefix the window's key dispatcher
     ([`command/KeyDispatcher.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/KeyDispatcher.java)) consumes in a scene filter, ahead of the log's own.
 - **MLOG-05 · SHOULD.** A message's severity comes from its key: a `status.*` key whose last segment contains `fail`
-  or `error` is an error, one containing `cannot` or `invalid` a warning. Name new keys accordingly, or report through
-  the error channel directly.
+  or `error` is an error, one containing `cannot` or `invalid` a warning. Name new keys accordingly, or post the
+  message as an error directly (Editora's status bar has an error channel for that).
   - *Check (code):* one function gives a message's severity from its key by those rules (Editora's
     `StatusSeverity.ofKey`). A test that asserts it is the surest evidence.
   - *Reference:* Editora [`ui/StatusSeverity.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusSeverity.java) (`ofKey`), [`StatusSeverityTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StatusSeverityTest.java).

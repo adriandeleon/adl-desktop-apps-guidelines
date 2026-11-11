@@ -35,13 +35,15 @@ description: "Message Log, Debug Log, update notification, Report a Problem, Doc
     ([`ui/WindowManager.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/WindowManager.java), through `DebugLog.onUncaught`), the app template ([`ui/Startup.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Startup.java)) and Mirada
     ([`App.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/App.java), `uncaught`). Editora's handler and Torrenta's ([`ui/DebugLog.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/DebugLog.java)) log the exception
     but do not yet post one.
-- **DIAG-05 · MUST.** The **update check** reads GitHub `/releases/latest` once per app session (not per window), at
-  most once a day. The automatic check starts at least three seconds after the first frame
-  ([PERF-15](../performance/#perf-15)). It never downloads or installs anything by itself.
+- **DIAG-05 · MUST.** The **update check** reads GitHub `/releases/latest`. The automatic check runs once per app
+  session (not per window), at most once a day, and starts at least three seconds after the first frame
+  ([PERF-15](../performance/#perf-15)); a check the user asks for ([DIAG-10](#diag-10)) runs when asked. It never
+  downloads or installs anything by itself.
   - *Check (code):* the code that starts the automatic check waits for the first frame and then a delay of three
-    seconds or more before it asks GitHub (Editora's `AfterFirstPaint`, then a pause of five seconds); it asks
-    once for the whole process, however many windows open, and not at all when the last check, whose time is kept
-    in the settings, was less than a day ago, or when the setting is off ([DIAG-10](#diag-10)); and what it does
+    seconds or more before it asks GitHub's `/releases/latest` for the app's repository (Editora's
+    `AfterFirstPaint`, then a pause of five seconds); it asks once for the whole process, however many windows
+    open, and not at all when the last check, whose time the app keeps from one session to the next, was less than
+    a day ago, or when the setting is off ([DIAG-10](#diag-10)); and what it does
     with the answer is show it: no code downloads or installs a release. A test that asserts the wait, the one
     check a session and the two skips is the surest evidence.
   - *Reference:* Editora [`update/UpdateCheck.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/update/UpdateCheck.java), [`ui/UpdateCheckScheduler.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/UpdateCheckScheduler.java) ([`UpdateCheckSchedulerTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/UpdateCheckSchedulerTest.java),
@@ -63,11 +65,13 @@ description: "Message Log, Debug Log, update notification, Report a Problem, Doc
     ([`ui/StatusBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/StatusBar.java)) show a link in the bar, and Torrenta a badge there that opens the release
     ([`ui/MainWindow.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java), `updateBadge`). Termina and Modula don't link the release yet: their status message
     names the version and nothing in the bar opens it (Termina's `status.updateAvailable`, posted from
-    [`ui/WindowManager.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/WindowManager.java); Modula's [`ui/RadioPane.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/RadioPane.java), `setAvailableUpdate`). nux has no status bar, and
-    shows a button in its toolbar that opens the release ([`App.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/App.java), `refreshUpdateNotice`).
+    [`ui/WindowManager.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/WindowManager.java); Modula's [`ui/RadioPane.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/RadioPane.java), `setAvailableUpdate`). nux doesn't meet it
+    either: it has no status bar, and shows a button in its toolbar that opens the release
+    ([`App.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/App.java), `refreshUpdateNotice`).
 - **DIAG-10 · MUST.** **Check for Updates** runs the update check ([DIAG-05](#diag-05)) by hand, as a command in the
-  palette and in the Help menu, where the app has a Help menu (the Help menu of a menu bar, or a Help submenu of
-  the app's main menu), and Settings has an off switch for the automatic check.
+  palette and in the Help menu, where the app has a Help menu (the Help menu of a menu bar, or a Help submenu of the
+  app's main menu, which [WIN-14](../window-shell/#win-14) defines), and Settings has an off switch for the automatic
+  check.
   - *Check (code):* the command (`help.checkForUpdates` in Editora) is registered and, in an app with a Help menu,
     listed there, and the scheduler skips the automatic check while the setting is off.
   - *Reference:* Editora [`ui/MenuBarModel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java) (`help.checkForUpdates`),
@@ -107,10 +111,10 @@ description: "Message Log, Debug Log, update notification, Report a Problem, Doc
   - *Reference:* Editora [`ui/ReportProblemWindow.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ReportProblemWindow.java) ([`ReportProblemWindowFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/ReportProblemWindowFxTest.java),
     `theEditedReportIsCopiedAndFilledIntoTheIssue`), [`ProblemReport.issueUrl`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/report/ProblemReport.java). Termina's
     [`ui/ReportProblemWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/ReportProblemWindow.java), Torrenta's [`ui/ReportProblemWindow.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/ReportProblemWindow.java), Mirada's
-    [`ui/ReportProblemWindow.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/ReportProblemWindow.java) and the app template's [`ui/ReportProblemWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/ReportProblemWindow.java) do the same. Only
-    Termina sends everything as the user left it: its environment block (version, runtime, OS) is a second editable
-    field. The other four fill the form's environment field from the block as the app built it, whatever the user
-    edits: Editora and Torrenta show the block at the top of the editable report, Mirada shows it as a label, and
+    [`ui/ReportProblemWindow.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/ReportProblemWindow.java) and the app template's [`ui/ReportProblemWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/ReportProblemWindow.java) do the same. The
+    five differ in one thing the rule does not ask. Only Termina sends everything as the user left it: its
+    environment block (version, runtime, OS) is a second editable field. The other four fill the form's environment
+    field from the block as the app built it, whatever the user edits: Editora and Torrenta show the block at the top of the editable report, Mirada shows it as a label, and
     the app template does not show it.
 - **DIAG-13 · MUST.** When the issue link that Report a Problem prefills ([DIAG-12](#diag-12)) would be longer than
   7,500 characters, the report stays out of the link: the form's report field asks the user to paste the report

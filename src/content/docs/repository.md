@@ -16,10 +16,14 @@ filled in for a placeholder app, `ExampleApp`. `scripts/rename.sh <AppName> <pac
 - **REPO-02 · MUST.** `CHANGELOG.md` follows [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.0/) and
   SemVer: an `## [Unreleased]` section with Added / Changed / Fixed / Removed, and each entry opens with a bold
   one-line summary written for users.
-  - *Check (code):* the file names Keep a Changelog and Semantic Versioning, starts with `## [Unreleased]`, and every
-    entry starts with `- **`.
+  - *Check (code):* the file's first section is `## [Unreleased]` and the others are headed by a SemVer number
+    and a date (`## [x.y.z] - YYYY-MM-DD`); the entries of a section sit under `### Added`, `### Changed`,
+    `### Fixed` or `### Removed`, whichever it has entries for (Keep a Changelog's other two, `### Deprecated` and
+    `### Security`, are as good); and every entry starts with `- **`.
   - *Reference:* Termina [`CHANGELOG.md`](https://github.com/adriandeleon/Termina/blob/master/CHANGELOG.md) and Mirada's, where every entry opens in bold. In Editora's
-    [`CHANGELOG.md`](https://github.com/adriandeleon/Editora/blob/master/CHANGELOG.md) 1,804 of 2,173 entries do: the older ones don't.
+    [`CHANGELOG.md`](https://github.com/adriandeleon/Editora/blob/master/CHANGELOG.md) 1,804 of 2,173 entries do: the older ones don't, and some sections have
+    headings of its own (`### Performance`, `### Internal`, `### Packaging`), as some of Modula's and nux's do.
+    Torrenta's sections are headed `## Unreleased` and `## 0.4.1 — 2026-10-28`, without the brackets.
 - **REPO-03 · MUST.** `LICENSE` is MIT, "Copyright (c) 2026 Adrián Arturo De León Saldivar", with the year the app
   started in: 2026 for the six apps, later for a newer one.
   - *Check (code):* `LICENSE` opens with `MIT License` and has that copyright line, with a year from 2026 on.

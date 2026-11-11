@@ -37,7 +37,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 - [ ] A jlinked runtime in every installer, so users never install Java (SHOULD) · [PLAT-02](../platform/#plat-02)
 - [ ] One named JPMS module · [PLAT-04](../platform/#plat-04)
 - [ ] Maven Wrapper committed (`mvnw`, `mvnw.cmd`, `.mvn/wrapper/`) · [PLAT-08](../platform/#plat-08)
-- [ ] AtlantaFX 3 controls, and app stylesheets that take their colors from its `-color-*` tokens · [PLAT-05](../platform/#plat-05), [ICON-08](../icons-and-color/#icon-08)
+- [ ] AtlantaFX 3 controls, and app stylesheets that take their colors from its `-color-*` tokens or from tokens the app builds on them · [PLAT-05](../platform/#plat-05), [ICON-08](../icons-and-color/#icon-08)
 
 ## Same on every OS
 
@@ -56,14 +56,14 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 - [ ] Spotless with Palantir Java Format; CI fails an unformatted change in a Format job of its own · [PLAT-10](../platform/#plat-10)
 - [ ] JUnit 5 and headless FX tests (`-Dglass.platform=Headless`), every FX test class carrying one JUnit tag (Editora's `fx`) · [PLAT-11](../platform/#plat-11), [QUAL-06](../quality/#qual-06)
 - [ ] JaCoCo check at 0.90 lines and 0.90 methods, which no profile that activates by OS or by JDK version lowers or skips · [PLAT-12](../platform/#plat-12)
-- [ ] Rules live in pure, unit-tested helpers; UI classes stay thin (SHOULD) · [QUAL-05](../quality/#qual-05)
+- [ ] What decides whether a control is enabled or shown, or where a key or a click leads, lives in pure, unit-tested helpers; UI classes stay thin (SHOULD) · [QUAL-05](../quality/#qual-05)
 - [ ] A capture hook or headless screenshot drives the real window for UI checks · [QUAL-09](../quality/#qual-09)
 
 ## Performance
 
 [Performance](../performance/)
 
-- [ ] No I/O, process, parsing or waiting on the JavaFX application thread, but for the wait for the config read and the registering of the first window's fonts at start-up, and the last save as the app quits; results return through `Platform.runLater` · [PERF-01](../performance/#perf-01), [PERF-02](../performance/#perf-02)
+- [ ] No I/O, process, parsing or waiting on the JavaFX application thread, but for the wait for the config read and the reading of the bundled resources the first window is built from (its fonts, the message catalog, the keymap, its icons) at start-up, and the last save as the app quits; results return through `Platform.runLater` · [PERF-01](../performance/#perf-01), [PERF-02](../performance/#perf-02)
 - [ ] Background results applied under a generation guard; blocking work kept off the common pool · [PERF-03](../performance/#perf-03), [PERF-05](../performance/#perf-05)
 - [ ] Redraws coalesced to one per pulse; a stream the app shows delivered in batches; work only on what is visible and changed, with a virtualized control for a list the user or the data can grow without a limit the app sets · [PERF-06](../performance/#perf-06), [PERF-07](../performance/#perf-07), [PERF-08](../performance/#perf-08)
 - [ ] Text-driven work that leaves the FX thread or outlasts a frame waits for typing to pause; filtering an in-memory list is exempt · [PERF-23](../performance/#perf-23)
@@ -76,7 +76,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 [Keyboard first](../keyboard/) · [Command Palette](../templates/command-palette/) · [Find bar](../templates/find-bar/)
 
 - [ ] One command registry: every action is a command with an id, its title and one-line description from the message catalogs · [KBD-01](../keyboard/#kbd-01), [KBD-03](../keyboard/#kbd-03)
-- [ ] One Command Palette per window, `M-x` in the Emacs keymap and `Ctrl+Shift+P` in the others or in an app's one key table, an in-scene overlay, as every picker is (never a `Popup`), that lists every command · [KBD-05](../keyboard/#kbd-05), [KBD-07](../keyboard/#kbd-07), [PAL-01](../templates/command-palette/#pal-01), [PAL-02](../templates/command-palette/#pal-02)
+- [ ] One Command Palette in each main window, `M-x` in the Emacs keymap and `Ctrl+Shift+P` in the others or in an app's one key table, an in-scene overlay, as every picker is (never a `Popup`), that lists every command · [KBD-05](../keyboard/#kbd-05), [KBD-07](../keyboard/#kbd-07), [PAL-01](../templates/command-palette/#pal-01), [PAL-02](../templates/command-palette/#pal-02)
 - [ ] Emacs and CUA keymaps at least, each `.mac.json` variant binding the same commands, with user overrides on top · [KBD-09](../keyboard/#kbd-09), [KBD-21](../keyboard/#kbd-21), [KBD-11](../keyboard/#kbd-11)
 - [ ] A find bar in the scene wherever there is text to search, the Debug Log window included: searches as you type with a count, Enter and Shift+Enter step, Escape closes it and, over a terminal, never reaches the shell; an app whose main content is a list filters it instead, and so does a log shown as a list · [FIND-01](../templates/find-bar/#find-01), [FIND-02](../templates/find-bar/#find-02), [FIND-03](../templates/find-bar/#find-03), [FIND-06](../templates/find-bar/#find-06), [FIND-07](../templates/find-bar/#find-07)
 - [ ] One QuickOpen-style picker for every list choice (themes, keymaps, recent items, a setting's values), and in an app with a picker, the picker in the overlay host (SHOULD) · [QOPEN-01](../templates/quick-open/#qopen-01), [QOPEN-02](../templates/quick-open/#qopen-02)
@@ -85,7 +85,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 
 [Accessibility](../accessibility/)
 
-- [ ] Every control reachable with Tab and operable with Space or Enter, except controls whose command the keyboard reaches another way, and showing the focus ring when it has focus · [KBD-15](../keyboard/#kbd-15), [KBD-16](../keyboard/#kbd-16)
+- [ ] Every control reachable with Tab and operable with Space or Enter, except controls whose command the keyboard reaches another way; every button, toggle, menu button, link, combo box, check box, radio button and text field shows the focus ring when the keyboard focuses it · [KBD-15](../keyboard/#kbd-15), [KBD-16](../keyboard/#kbd-16)
 - [ ] The focus ring 2 px wide at the default zoom, just outside the control, taking no room in the layout (SHOULD) · [KBD-22](../keyboard/#kbd-22)
 - [ ] A find-bar or filter control out of the Tab order only where a command does its work, or a key the bar's field handles does · [FIND-16](../templates/find-bar/#find-16)
 - [ ] Every control a person can reach has an accessible name, rows drawn from graphics included, held by a test · [ACC-01](../accessibility/#acc-01)
@@ -100,13 +100,13 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 - [ ] A status bar whose echo area shows the last action's feedback, errors in red and warnings in amber, and opens the Message Log on a click · [WIN-01](../window-shell/#win-01)
 - [ ] Every destructive action asks first, or can be taken back instead; where the app asks, the question names the thing, the button names the action in red, and Escape cancels · [CONF-01](../templates/confirm-dialog/#conf-01), [CONF-02](../templates/confirm-dialog/#conf-02), [CONF-03](../templates/confirm-dialog/#conf-03), [CONF-04](../templates/confirm-dialog/#conf-04)
 - [ ] Every such question has one default button, never the red one: Cancel, or Save where saving is an option, so Enter destroys nothing · [CONF-13](../templates/confirm-dialog/#conf-13)
-- [ ] The buttons of every such question are worded from the message catalog, never JavaFX's stock OK, Yes, No or Cancel · [CONF-14](../templates/confirm-dialog/#conf-14)
+- [ ] The buttons of every dialog with two or more buttons, a text prompt and a form included, are worded from the message catalog, never JavaFX's stock OK, Yes, No, Cancel, Apply or Close · [CONF-14](../templates/confirm-dialog/#conf-14)
 - [ ] Dialog buttons in one order on every OS, Cancel to the left of every action · [WIN-11](../window-shell/#win-11)
 - [ ] A UI zoom that scales the whole chrome, menus included, applied at once and kept across launches, with commands to zoom in, out and back · [WIN-12](../window-shell/#win-12)
 - [ ] One quit method for every quit entry point the app has: the Quit row, the `app.quit` command and the system's own Quit · [WIN-13](../window-shell/#win-13)
-- [ ] A Quit in every app: the `app.quit` command and, where the app has a File menu or a main menu, a Quit row that ends it · [WIN-14](../window-shell/#win-14)
+- [ ] A Quit in every app: the `app.quit` command and, where the app has a File menu or a main menu, a Quit row in that menu that runs the command · [WIN-14](../window-shell/#win-14)
 - [ ] On macOS, Settings in the application menu, showing the active keymap's chord (SHOULD) · [WIN-15](../window-shell/#win-15)
-- [ ] About from the `help.about` command, the Help menu where the app has one (a menu bar's, or a Help submenu of its main menu), and the macOS application menu: version and build, runtime, license, links and the last update check · [ABOUT-01](../templates/about/#about-01), [ABOUT-02](../templates/about/#about-02)
+- [ ] About from the `help.about` command, the Help menu where the app has one (a menu bar's, or a Help submenu of its main menu), and the macOS application menu: version and build, runtime, license, links to the home page, the source code and the releases, and the last update check · [ABOUT-01](../templates/about/#about-01), [ABOUT-02](../templates/about/#about-02)
 - [ ] A Welcome page when there is nothing to restore, or an empty state that names the ways in with their chords (SHOULD) · [WELC-01](../templates/welcome/#welc-01), [WELC-02](../templates/welcome/#welc-02)
 
 ## Icons and color
@@ -115,7 +115,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 
 - [ ] Inter's four faces bundled, registered before any CSS, and attached by a scene stylesheet to every scene, dialogs and popups included · [ICON-01](../icons-and-color/#icon-01), [ICON-02](../icons-and-color/#icon-02)
 - [ ] Light and dark themes switched at run time, a theme setting that offers "follow the system", and an unknown theme falling back to the default · [ICON-15](../icons-and-color/#icon-15), [ICON-16](../icons-and-color/#icon-16), [ICON-17](../icons-and-color/#icon-17)
-- [ ] State colors named once on `.root` from the theme's roles, no fixed hex in a component rule · [ICON-07](../icons-and-color/#icon-07), [ICON-08](../icons-and-color/#icon-08)
+- [ ] State colors named once on `.root` from the theme's roles, no fixed color in a component rule, whatever its spelling (a hex, `rgba()`, `white`) · [ICON-07](../icons-and-color/#icon-07), [ICON-08](../icons-and-color/#icon-08)
 - [ ] Tinted text at 4.5:1 on its fill and on both grounds; `-color-fg-emphasis` on an emphasis fill; one focus ring; a contrast test holds each · [ICON-10](../icons-and-color/#icon-10), [ICON-11](../icons-and-color/#icon-11), [ICON-12](../icons-and-color/#icon-12)
 - [ ] Where the icons come in two families, each glyph in one family's style class; the same glyph for an action everywhere it is reached, every glyph set credited in `NOTICE` · [ICON-19](../icons-and-color/#icon-19), [ICON-20](../icons-and-color/#icon-20), [ICON-24](../icons-and-color/#icon-24)
 - [ ] Readable text in `-color-fg-muted` or stronger, held by a contrast test · [ICON-09](../icons-and-color/#icon-09)
@@ -136,7 +136,7 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 
 [Tabs and tool panels](../tabs-and-panels/)
 
-- [ ] In an app whose main window holds documents or sessions in tabs the user opens and closes: every tab operation is a command; a terminal app's tabs have no close unmodified and no close all · [TABS-01](../tabs-and-panels/#tabs-01)
+- [ ] In an app whose main window holds documents or sessions in tabs the user opens and closes: every tab operation is a command, on every tab of the strip, whatever it shows; a terminal app's tabs have no close unmodified and no close all · [TABS-01](../tabs-and-panels/#tabs-01)
 - [ ] One tab header carries the title and the states: `•` and amber italic for unsaved, a pin and bold for pinned, muted italic for read-only (`TabHeaders`); in a terminal, the running program as the title and a mark for a notification, bell or activity · [TABS-02](../tabs-and-panels/#tabs-02), [TABS-03](../tabs-and-panels/#tabs-03)
 - [ ] Bulk close skips pinned tabs, pinning moves a tab to the end of the pinned group, and Reopen Closed Tab brings the last one back (`ClosedTabs`) · [TABS-04](../tabs-and-panels/#tabs-04), [TABS-05](../tabs-and-panels/#tabs-05), [TABS-06](../tabs-and-panels/#tabs-06)
 - [ ] A `tool.<id>` command shows and hides each tool panel, on `M-1` to `M-0` in the Emacs keymap, and a panel's content is built on first use (`ToolWindowManager`) · [TABS-13](../tabs-and-panels/#tabs-13), [PERF-14](../performance/#perf-14)
@@ -147,10 +147,10 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 [Menus](../menus/)
 
 - [ ] In an app with a menu bar, its rows are commands: icon, title and chord from the registry and the active keymap, no `KeyCombination` accelerators · [MENU-01](../menus/#menu-01), [MENU-02](../menus/#menu-02)
-- [ ] Every row of every menu, right-click menus and drop-downs included, has an icon that depicts it and its chord when bound · [MENU-14](../menus/#menu-14), [MENU-15](../menus/#menu-15)
-- [ ] Menus draw in Inter 14 px at the default zoom whatever they were opened from, and follow the UI zoom (`.context-menu` sets the size from the zoom's one value) · [MENU-16](../menus/#menu-16)
+- [ ] Every row of every menu the app draws, right-click menus and drop-downs included, has an icon that depicts it and its chord when bound · [MENU-14](../menus/#menu-14), [MENU-15](../menus/#menu-15)
+- [ ] The menus the app draws are in Inter 14 px at the default zoom whatever they were opened from, and follow the UI zoom (`.context-menu` sets the size from the zoom's one value) · [MENU-16](../menus/#menu-16)
 - [ ] Menu rows 34 px high with a 22 px icon column, the chord at least 18 px after the title, on a card whose shadow's offset is at least its radius (SHOULD) · [MENU-18](../menus/#menu-18)
-- [ ] In an app with a right-click menu: every row, tab and editor has one with its own actions, each a command · [MENU-05](../menus/#menu-05)
+- [ ] In an app with a right-click menu: every row, tab, editor and read-only console, a log shown as text such as the Debug Log among them, has one with its own actions, each a command; a list that only navigates has none · [MENU-05](../menus/#menu-05)
 - [ ] One right-click menu at a time; a press anywhere outside closes it, and so does Escape, returning focus (`ContextMenuDismissal`) · [MENU-06](../menus/#menu-06), [MENU-07](../menus/#menu-07), [MENU-08](../menus/#menu-08)
 - [ ] Right-click menus open from the Menu key and Shift+F10 at the selected row, or for the focused view where it has no rows (`RowContextMenu`) · [MENU-09](../menus/#menu-09)
 
@@ -171,12 +171,12 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 [Settings](../settings/) · [Settings Sync](../templates/settings-sync/)
 
 - [ ] Settings window from a palette command (`Ctrl+,`), with a page sidebar and search · [SET-01](../settings/#set-01), [SET-02](../settings/#set-02), [SET-03](../settings/#set-03)
-- [ ] Live apply with no Save button, a setting that waits for a restart saying so on its row, and a palette command for every setting · [SET-04](../settings/#set-04), [SET-06](../settings/#set-06)
+- [ ] Live apply with no Save button, a setting that waits for a restart saying so on its row, and a palette command for every setting the Settings window shows · [SET-04](../settings/#set-04), [SET-06](../settings/#set-06)
 - [ ] Config in `~/.<app>` on Windows, macOS and Linux alike, unless a flag or, after it, the environment variable names another folder; versioned with migrations, a file newer than the build backed up and defaults loaded · [SET-07](../settings/#set-07), [SET-09](../settings/#set-09), [SET-10](../settings/#set-10)
 - [ ] Config read with suspicion: values clamped on load, an unreadable file kept as a backup and defaults loaded · [SET-11](../settings/#set-11)
 - [ ] A config file written whole or not at all: to a temporary file beside it, then moved into place · [SET-22](../settings/#set-22)
 - [ ] Export and import of the config folder · [SET-12](../settings/#set-12)
-- [ ] In an app that stores a secret, none in a config file: keys and tokens in the OS keychain, or in memory for the session where no keychain answers; a credential the app can ask for again in memory only · [SET-13](../settings/#set-13), [SET-14](../settings/#set-14)
+- [ ] A secret the user gave the app, where the app keeps it, never in a config file: in the OS keychain, or in memory for the session where no keychain answers; a credential the app does not keep held in memory only, never written · [SET-13](../settings/#set-13), [SET-14](../settings/#set-14)
 - [ ] A secret in the wrong place refused (a sync URL with a password), and an option that weakens security only a config key · [SET-15](../settings/#set-15), [SET-16](../settings/#set-16)
 - [ ] Settings Sync in an app with user data worth carrying between computers, through a Git repository the user owns (SHOULD) · [SYNC-01](../templates/settings-sync/#sync-01), [SYNC-02](../templates/settings-sync/#sync-02)
 
@@ -220,13 +220,13 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 
 [Documentation](../documentation/)
 
-- [ ] User docs on the app's website under `/docs/`: Getting started, a page per feature area, the keyboard reference, Settings and an FAQ · [DOCS-01](../documentation/#docs-01), [DOCS-02](../documentation/#docs-02)
+- [ ] User docs on the app's website under `/docs/`: Getting started, a page per feature area, the keyboard reference, Settings and an FAQ, and no page in the app's `docs/` with a section that tells the app's user how to install or use something · [DOCS-01](../documentation/#docs-01), [DOCS-02](../documentation/#docs-02)
 - [ ] The `help.documentation` command opens the user docs, with a Documentation row where the app has a Help menu · [DOCS-06](../documentation/#docs-06)
 - [ ] Release notes written for users, and in an app with a Welcome page, its *What's New* opens this build's release · [DOCS-05](../documentation/#docs-05)
 - [ ] `docs/README.md` indexes the contributor guides · [DOCS-12](../documentation/#docs-12)
 - [ ] Docs change with the code, the website's in a pull request opened with it; when they disagree with the code, the code wins and the docs are fixed, as `AGENTS.md` and `docs/README.md` say · [DOCS-16](../documentation/#docs-16), [DOCS-17](../documentation/#docs-17)
 - [ ] Where the app has a Help menu, its rows in the family's order, Documentation first after the Command Palette, then the keyboard reference (SHOULD) · [DOCS-07](../documentation/#docs-07)
-- [ ] Deep links from the app open the running version's docs, `/docs/v-<version>/` (SHOULD) · [DOCS-03](../documentation/#docs-03)
+- [ ] Every link from the app into its user docs opens the running version's docs, `/docs/v-<version>/` (SHOULD) · [DOCS-03](../documentation/#docs-03)
 - [ ] Command and keybinding references generated from the source, with a check that quoted ids and chords exist (SHOULD) · [DOCS-04](../documentation/#docs-04)
 
 ## Packaging and signing

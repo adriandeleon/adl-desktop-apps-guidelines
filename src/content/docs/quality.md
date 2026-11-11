@@ -22,9 +22,9 @@ NullAway runs as an error on every package, each `@NullMarked` in its own `packa
     table.
   - *Reference:* Editora [`BuildHygieneTest.theCoverageFloorsQuotedInTheTestingGuideAreTheOnesTheBuildEnforces`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/packaging/BuildHygieneTest.java),
     [`docs/testing.md`](https://github.com/adriandeleon/Editora/blob/master/docs/testing.md).
-- **QUAL-05 · SHOULD.** Extract the decision, then test it ([principle 12](../principles/#for-the-people-building-them)).
-  Prefer a pure decision helper plus unit tests; use the headless FX harness only when controller or toolkit
-  behavior is the point.
+- **QUAL-05 · SHOULD.** Extract the decision, then test it ([principle 12](../principles/#for-the-people-building-them)):
+  what decides whether a control is enabled or shown, or where a key or a click leads, sits in a pure helper
+  with unit tests. The headless FX harness is for a test whose point is controller or toolkit behavior.
   - *Check (code):* enablement, visibility and navigation rules sit in classes that import no `javafx` type, each
     with a unit test that does not carry the FX tests' tag ([QUAL-06](#qual-06)).
   - *Reference:* Editora [`docs/testing.md`](https://github.com/adriandeleon/Editora/blob/master/docs/testing.md) (*Prefer pure logic*): [`ui/Chrome`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Chrome.java), [`editops/TextNav`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/editops/TextNav.java),

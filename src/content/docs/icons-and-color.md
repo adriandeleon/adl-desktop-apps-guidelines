@@ -30,9 +30,12 @@ timestamps.
     that does not share `app.css`, and a scene sheet is re-applied cleanly when the theme switches at run time
     (`setUserAgentStylesheet`). AtlantaFX neither bundles nor names Inter, and JavaFX does not fall through a
     font-family list, so without the sheet the whole interface renders in the platform's "System" face.
-  - *Check (code):* every window's scene gets `ui-font.css`: a listener on `Window.getWindows()` adds it to each
-    window's scene, and to a new scene when the window's scene changes, or every window and dialog the app builds
-    adds it itself, none left out. No `.root` rule in `app.css` sets `-fx-font-family`.
+  - *Check (code):* every window's scene gets the font sheet (Editora's `ui-font.css`): a listener on
+    `Window.getWindows()` adds it to each window's scene, and to a new scene when the window's scene changes, or every
+    window and dialog the app builds adds it itself, none left out. A popup or a tooltip needs no call of its own:
+    when JavaFX shows one, it gives it the scene stylesheets of the window it is shown from
+    (`PopupWindow.applyStylesheetFromOwner`). No `.root` rule in the app stylesheet (Editora's `app.css`) sets
+    `-fx-font-family`.
   - *Reference:* Editora [`App.installUiFont`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java), a listener on `Window.getWindows()`, and [`styles/ui-font.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/ui-font.css); the app
     template's [`ui/Themes.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Themes.java) (`installUiFont`, `hookUiFont`) and Mirada's [`ui/Fonts.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Fonts.java) (`installSheet`) do the same.
     Termina and Torrenta carry the same sheet with no listener: each window and dialog adds it by calling
@@ -105,7 +108,7 @@ tab, a status segment, a tree row, a picker and a Settings row.
 
 | Token | Chains to | Meaning | Where it appears |
 |---|---|---|---|
-| `-state-amber` | `-color-warning-fg` | Not durable yet | An unsaved tab, a read-only file, a narrowed view, a snapshot build |
+| `-state-amber` | `-color-warning-fg` | Not durable yet, a warning, or an update available in About | An unsaved tab, a read-only file, a narrowed view, a snapshot build; warnings in the echo area and the Message Log; "Update available" in About ([ABOUT-10](../templates/about/#about-10)) |
 | `-state-red` | `-color-danger-fg` | Broken | Errors in the echo area and the Message Log, breakpoints, a recording |
 | `-state-green` | `-color-success-fg` | Verified | Found, added, passing, running |
 | `-state-accent` | `-color-accent-fg` | The app is offering something | An update, a link, the current branch, a selected row's bar |
@@ -128,7 +131,7 @@ pill, a row tint and a hover state come from the same place. `.state-pill` is th
     which fails a component rule that names a danger, warning or success role). Termina meets it too: its
     [`styles/app.css`](https://github.com/adriandeleon/Termina/blob/master/src/main/resources/com/termina/styles/app.css) declares `-state-red`, `-state-amber` and `-state-green` on `.root`, and no component rule of
     its stylesheets names the role behind one. The other five apps don't yet. Editora's [`styles/app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css)
-    declares its tokens the same way (`.root`), but Editora doesn't hold the last clause: 84 declarations in that
+    declares its tokens the same way (`.root`), but Editora doesn't hold the last clause: 78 declarations in that
     file's component rules name `-color-danger-fg`, `-color-warning-fg` or `-color-success-fg`
     directly, errors among them (`.crontab-error`, `.md-math-error`). Torrenta's tokens are on `.root` too
     (`-torrenta-*`), and two of its component rules write out the ladder of `-torrenta-up` again
@@ -136,36 +139,56 @@ pill, a row tint and a hover state come from the same place. `.state-pill` is th
     24 declarations in that file's component rules and five in `add-dialog.css` name `-color-danger-fg`,
     `-color-warning-fg` or `-color-success-fg` directly (`.port-dot.port-down`, `.add-fetch-failed`), not the
     `-torrenta-error`, `-torrenta-stall` and `-torrenta-done` tokens that chain to them. Mirada and nux have no
-    state token: Mirada's [`styles/mirada.css`](https://github.com/adriandeleon/Mirada/blob/main/src/main/resources/com/mirada/styles/mirada.css) redefines the roles themselves on `.root`, as ladders, and four of
+    token for a state (Mirada's one `-state-*` token is `-state-key`, the keyboard's): Mirada's [`styles/mirada.css`](https://github.com/adriandeleon/Mirada/blob/main/src/main/resources/com/mirada/styles/mirada.css) redefines the roles themselves on `.root`, as ladders, and four of
     its component rules name `-color-danger-fg` or `-color-warning-fg` (`.status-echo-error`, `.status-echo-warn`
     and the Message Log's two); nux's [`nux.css`](https://github.com/adriandeleon/nux/blob/master/src/main/resources/com/nux/nux.css) has no `.root` block, and three of its rules name
     `-color-warning-fg` or `-color-danger-fg` (`.on-battery-note`, `.settings-problem`, `.detail-warn`). Modula's
     [`modula.css`](https://github.com/adriandeleon/Modula/blob/master/src/main/resources/com/modula/modula.css) has tokens its rules use (`-lock`, `-fault`), set as fixed hexes on `.root` and again on
     `.root.daylight`, chained to no role.
-- **ICON-08 · MUST.** App stylesheets take their colors from AtlantaFX `-color-*` tokens, or from state tokens built
-  on them; no component rule carries a fixed hex.
-  - *Why:* a hex suits one theme; the roles track every theme for free.
-  - *Check (code):* the colors in the app's stylesheets are AtlantaFX `-color-*` roles or tokens that chain to them,
-    and `grep -nE '#[0-9a-fA-F]{3,8}\b'` over those stylesheets finds hexes only where a token is defined: in a
-    `.root` block, where a `ladder()` of the ground may hold them, or in a scoped block that sets `-color-*` tokens.
-    No component rule's `-fx-*-color` or `-fx-fill` holds one, inside a `ladder()` or not. A test that fails a fixed
+- **ICON-08 · MUST.** App stylesheets take their colors from AtlantaFX `-color-*` tokens, or from tokens the app
+  builds on them; no component rule carries a fixed color, whatever its spelling: a hex, an `rgb()`, `rgba()` or
+  `hsb()` value, or a named color such as `white`. A fixed color may stand only in a token's definition, on `.root`
+  or in a scoped block that sets `-color-*` tokens, and only where the theme has no role to build on: a scrim's or
+  a shadow's color, a color drawn over an image or a canvas and not on the theme's ground, or a color inside a
+  `ladder()` of the ground ([ICON-13](#icon-13)). The ground, ink or accent of the app's own windows given there as
+  a fixed color, in place of the theme's role, fails this rule; a state color given so is [ICON-07](#icon-07)'s
+  failure and is not counted here again. `transparent` is not a color.
+  - *Why:* a fixed color suits one theme; the roles track every theme for free.
+  - *Check (code):* every color in a component rule of the app's stylesheets is an AtlantaFX `-color-*` role or a
+    token, and a fixed color stands only where a token is defined, in a `.root` block or in a scoped block that
+    sets `-color-*` tokens: as the plain value of a token for a scrim, a shadow or what is drawn over an image or a
+    canvas (an `rgba()` of black, say), or inside a `ladder()` of the ground. A token for the ground, ink or
+    accent of the app's own windows whose value is a fixed color and no role fails; a state color's token with no role behind it is [ICON-07](#icon-07)'s to judge, not this
+    rule's. A fixed color is a hex
+    (`grep -nE '#[0-9a-fA-F]{3,8}\b'` over those stylesheets lists them), an `rgb()`, `rgba()`, `hsb()` or `hsba()`
+    value, or a named color such as `white`; `transparent` is not one. No component rule holds one, whichever property
+    it sets (a `-fx-*-color`, a `-fx-fill`, an effect's color), inside a `ladder()` or not. A test that fails a fixed
     color outside the token block is the surest evidence.
   - *Reference:* Termina's [`AppCssColorsTest`](https://github.com/adriandeleon/Termina/blob/master/src/test/java/com/termina/ui/AppCssColorsTest.java) (`componentRulesUseTokensNotLiteralColours`) and Mirada's
-    [`StyleContrastTest`](https://github.com/adriandeleon/Mirada/blob/main/src/test/java/com/mirada/ui/StyleContrastTest.java) (`noRuleAfterTheTokenBlockHoldsAFixedColour`) fail any fixed color outside the `.root` block.
-    Editora's [`StyleContrastTest.severityAndDebugColoursComeFromTheStateTokens`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java) holds six selectors it names, and
-    Editora doesn't yet pass the whole check: `.breakpoint-marker`, `.exec-arrow`, `.view-mode-bar`,
-    `.recent-remove`, `.personal-note-tooltip-content`, the fold-gutter markers and the default editor and Markdown
-    preview palettes in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) still carry fixed hexes. Torrenta doesn't either: `.speed-graph-up` and
-    `.speed-graph-legend-up` in its [`styles/app.css`](https://github.com/adriandeleon/torrenta/blob/master/src/main/resources/com/torrenta/styles/app.css) hold a ladder of two hexes.
+    [`StyleContrastTest`](https://github.com/adriandeleon/Mirada/blob/main/src/test/java/com/mirada/ui/StyleContrastTest.java) (`noRuleAfterTheTokenBlockHoldsAFixedColour`) fail a fixed color outside the `.root` block:
+    a hex, an `rgb()` or an `hsb()` value, a shadow's color included, and in Mirada's a named color too. Both apps
+    keep the scrim behind an overlay and their shadows' colors as tokens on `.root`. Editora's
+    [`StyleContrastTest.severityAndDebugColoursComeFromTheStateTokens`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java) holds six selectors it names, and Editora
+    doesn't yet pass the whole check: `.breakpoint-marker`, `.exec-arrow`, `.view-mode-bar`, `.recent-remove`,
+    `.personal-note-tooltip-content`, the fold-gutter markers and the default editor and Markdown preview palettes in
+    [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) still carry fixed hexes, other rules an `rgba()` (the scrim of `.overlay-backdrop`, the diff and merge
+    tints and shadows among them), and `.breakpoint-condition-mark` a fixed `white`. Torrenta doesn't either: `.speed-graph-up` and
+    `.speed-graph-legend-up` in its [`styles/app.css`](https://github.com/adriandeleon/torrenta/blob/master/src/main/resources/com/torrenta/styles/app.css) hold a ladder of two hexes, and `.palette-backdrop` and two
+    shadows an `rgba()`. Modula, nux and the app template write the palette's scrim as an `rgba()` background in a
+    component rule, and a shadow's color the same way (`.palette-backdrop` and `.palette-card` in [`modula.css`](https://github.com/adriandeleon/Modula/blob/master/src/main/resources/com/modula/modula.css) and
+    [`nux.css`](https://github.com/adriandeleon/nux/blob/master/src/main/resources/com/nux/nux.css), `.overlay-backdrop` and `.command-palette` in the template's [`styles/app.css`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/styles/app.css)), so none of the
+    three meets the rule yet; nux also sets `-fx-text-fill: white` on `.status-pill` and `.update-badge`.
 - **ICON-09 · MUST.** Readable text uses `-color-fg-muted` or stronger, which is 4.5:1 on the default, subtle and
-  overlay grounds in both flagship themes: a line of UI text is `-color-fg-default` and secondary text
-  `-color-fg-muted`. `-color-fg-subtle` (2.7:1 to 3.9:1, under 3:1 on Editora Light's subtle and inset grounds) is for disabled or
-  decorative text only. A test holds it.
+  overlay grounds in both flagship themes, Editora Light and Editora Dark: a line of UI text is `-color-fg-default`
+  and secondary text `-color-fg-muted`. `-color-fg-subtle` (2.7:1 to 3.9:1, under 3:1 on Editora Light's subtle and
+  inset grounds) is for disabled or decorative text only. An app whose default light and dark themes are another pair
+  is held to the same on that pair. A test holds it.
   - *Check (test):* a contrast test computes muted ink on the default, subtle and overlay grounds of both flagship
-    themes, and walks every rule of the app's stylesheets: it fails a rule that sets a text fill (`-fx-text-fill`,
-    or `-fx-fill` on text) to `-color-fg-subtle` unless its selector is on a list the test names, of disabled and
-    decorative selectors only. A test that checks a list of readable selectors instead passes every selector it
-    doesn't name.
+    themes (Editora Light and Editora Dark), or of the app's own default light and dark themes where it ships another
+    pair, and finds 4.5:1 or more; and it walks every rule of the app's stylesheets: it fails a rule that sets a text
+    fill (`-fx-text-fill`, or `-fx-fill` on text) to `-color-fg-subtle` unless its selector is on a list the test
+    names, of disabled and decorative selectors only. A test that checks a list of readable selectors instead passes
+    every selector it doesn't name.
   - *Reference:* no app's test walks every rule yet. Editora's
     [`StyleContrastTest.textThatMustBeReadUsesTheMutedRoleNotSubtle`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java) computes the ratios and checks six selectors it names (the palette's
     and the switcher's hints, an unbound shortcut, the line numbers of the notes and structure trees, the blame
@@ -175,22 +198,31 @@ pill, a row tint and a hover state come from the same place. `.state-pill` is th
     test for this rule, and Termina, Torrenta, Modula and nux have no contrast test of their stylesheets.
 - **ICON-10 · MUST.** Text in a role's tint (the theme's `-color-<role>-fg`, for the accent, success, warning and
   danger roles) reaches 4.5:1 on that role's subtle fill (`-color-<role>-subtle`) and on the default and subtle
-  grounds (`-color-bg-default`, `-color-bg-subtle`), in both flagship themes. A test holds it.
+  grounds (`-color-bg-default`, `-color-bg-subtle`), in both flagship themes, Editora Light and Editora Dark, or, in
+  an app whose default light and dark themes are another pair, in that pair. A test holds it.
   - *Check (test):* a contrast test computes each role's `-fg` on its `-subtle`, on `-color-bg-subtle` and on
-    `-color-bg-default`, in both flagship themes.
+    `-color-bg-default`, in both flagship themes (Editora Light and Editora Dark), or in the app's own default light
+    and dark themes where it ships another pair, and finds 4.5:1 or more.
   - *Reference:* Editora [`StyleContrastTest.lightTintedTextReachesAaOnItsOwnGroundAndOnTheSubtleSurface`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java),
-    `darkTintedTextStaysAa`.
-- **ICON-11 · MUST.** Ink on an emphasis fill is `-color-fg-emphasis`, never a fixed white: the token is white in
-  the light themes and a dark ink in the dark ones. A test holds it.
+    `darkTintedTextStaysAa`. Mirada's [`StyleContrastTest`](https://github.com/adriandeleon/Mirada/blob/main/src/test/java/com/mirada/ui/StyleContrastTest.java) (`tintedTextReachesAaOnItsOwnFillAndOnBothGrounds`) holds
+    it on Cupertino Light and Cupertino Dark, the pair it ships.
+- **ICON-11 · MUST.** Ink on an emphasis fill is `-color-fg-emphasis`, never a fixed white: the token is white in the
+  light themes and a dark ink in the dark ones, 4.5:1 or more on the emphasis fill of the accent, success, warning and
+  danger roles in the two themes [ICON-09](#icon-09) names. A test holds it.
   - *Why:* white on the dark accent is 1.68:1.
-  - *Check (test):* a contrast test computes `-color-fg-emphasis` on each role's `-emphasis`, and the rules that
-    paint on an emphasis fill use it.
-  - *Reference:* Editora [`StyleContrastTest.inkOnAnEmphasisFillIsTheThemesOnEmphasisColour`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java).
+  - *Check (test):* a contrast test computes `-color-fg-emphasis` on the `-emphasis` fill of the accent, success,
+    warning and danger roles, in both flagship themes (Editora Light and Editora Dark) or in the app's own default
+    light and dark themes where it ships another pair, and finds 4.5:1 or more; and the rules that paint on an
+    emphasis fill use it.
+  - *Reference:* Editora [`StyleContrastTest.inkOnAnEmphasisFillIsTheThemesOnEmphasisColour`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java), and Mirada's test of
+    the same name ([`StyleContrastTest`](https://github.com/adriandeleon/Mirada/blob/main/src/test/java/com/mirada/ui/StyleContrastTest.java)), on Cupertino Light and Cupertino Dark: each holds 4.5:1.
 - **ICON-12 · MUST.** One focus ring color, the theme's `-color-accent-emphasis`, named once on `.root` (Editora's
-  `-focus-ring`) and drawn by the `:focus-visible` block in the app stylesheet ([KBD-16](../keyboard/#kbd-16)), at
-  3:1 or better on every surface (see [Keyboard first](../keyboard/)). A test holds it.
-  - *Check (test):* a test reads `-focus-ring` from `.root` and computes it on the default, subtle, inset and
-    overlay grounds.
+  `-focus-ring`) and drawn by the `:focus-visible` block in the app stylesheet ([KBD-16](../keyboard/#kbd-16)), at 3:1
+  or better on every surface: the default, subtle, inset and overlay grounds of the two themes [ICON-09](#icon-09)
+  names (see [Keyboard first](../keyboard/)). A test holds it.
+  - *Check (test):* a test reads the ring's token from `.root` (Editora's `-focus-ring`) and computes it on the
+    default, subtle, inset and overlay grounds of both flagship themes (Editora Light and Editora Dark), or of the
+    app's own default light and dark themes where it ships another pair, and finds 3:1 or more.
   - *Reference:* Editora [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css) (*Keyboard focus*),
     [`StyleContrastTest.theFocusRingIsAtLeastThreeToOneOnEverySurface`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/StyleContrastTest.java).
 - **ICON-13 · SHOULD.** A state color the AtlantaFX theme has no role for (Editora's Git olive and violet) is a
@@ -220,7 +252,8 @@ pill, a row tint and a hover state come from the same place. `.state-pill` is th
 ## Themes
 
 - **ICON-15 · MUST.** The app has light and dark themes and switches between them at run time, without a restart.
-  - *Check (code):* picking a theme calls `Application.setUserAgentStylesheet` in the running app.
+  - *Check (code):* the app has a light theme and a dark one, and picking a theme calls
+    `Application.setUserAgentStylesheet` in the running app.
   - *Reference:* Editora [`ui/Themes.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Themes.java) (`applyAppTheme`).
 - **ICON-16 · MUST.** The theme setting offers "follow the system": a choice that applies the light or dark theme
   to match the system's color scheme, and changes with it.
@@ -235,9 +268,11 @@ pill, a row tint and a hover state come from the same place. `.state-pill` is th
 - **ICON-17 · MUST.** A theme name the app does not know falls back to the first-run default theme.
   - *Check (code):* the lookup from a saved name to a theme ends in the default, not an exception.
   - *Reference:* Editora [`Themes.themeFor`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Themes.java), falling back to [`Themes.DEFAULT`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Themes.java) (Editora Light).
-- **ICON-18 · SHOULD.** The state colors never decorate: in every theme amber means "not durable yet", red "broken"
-  and green "verified", and nothing is colored amber, red or green for any other reason. A theme may change the
-  accent, the ground and the ink, never these meanings.
+- **ICON-18 · SHOULD.** The state colors never decorate: in every theme amber means "not durable yet", a warning
+  ([WIN-01](../window-shell/#win-01) requires a warning in the echo area in amber) or an update available in About
+  ([ABOUT-10](../templates/about/#about-10) asks for it there), red "broken" and green "verified", and nothing is
+  colored amber, red or green for any other reason. A theme may change the accent, the ground and the ink, never
+  these meanings.
   - *Check (code):* every rule that uses the amber, red or green state token (Editora's `-state-amber`,
     `-state-red` and `-state-green`) marks one of the meanings in the table under [State colors](#state-colors).
   - *Reference:* Editora [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css).
@@ -277,7 +312,7 @@ are not interchangeable.
 
 - **ICON-19 · MUST.** In an app whose icons come in two families, one colored by its stroke and one by its fill, a
   glyph node carries the style class of one family, never both (Editora's two are `icon-line` and `toolbar-icon`).
-  An app with one icon family has nothing to mix.
+  An app with one icon family, or with no icons in its window, has nothing to mix.
   - *Why:* a line glyph is colored by its stroke, and any `X .toolbar-icon` fill rule (there are dozens) would paint
     its outline solid. A glyph that moves family moves its CSS with it.
   - *Check (code):* the method that builds a line glyph adds the line family's class alone, the one that builds a
@@ -293,7 +328,8 @@ are not interchangeable.
   - *Check (code):* wherever an action is drawn (a toolbar button, a menu row, a tab's menu), its glyph comes from
     one icon class or one lookup keyed by the command. Where a second icon class holds a copy of its own, the copy
     has the same path data and style class. A test that compares the path data and style class of each action's
-    glyph across the icon classes is the surest evidence.
+    glyph across the icon classes is the surest evidence. An app that draws no glyph anywhere has nothing to
+    compare and passes; its missing icons are [MENU-14](../menus/#menu-14)'s.
   - *Reference:* Editora [`ui/MenuBarIcons.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarIcons.java) reuses [`Icons`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Icons.java); [`editor/MenuIcons.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/editor/MenuIcons.java) (the editor package may not
     depend on `ui`) copies each twin's family and path data verbatim, held by
     [`MenuIconFamilyFxTest.everySharedActionUsesTheSameGlyphInBothIconSets`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/MenuIconFamilyFxTest.java). Mirada gives a command's menu row
@@ -307,7 +343,7 @@ are not interchangeable.
     Material. [`FileIconsTest.unknownAndNullFallBackToGeneric`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/FileIconsTest.java).
 - **ICON-24 · MUST.** Every glyph set and font the app ships is credited in `NOTICE` with its license.
   - *Check (code):* each icon source named in the icon classes and each family under `fonts/` has an entry in
-    `NOTICE`.
+    `NOTICE`. An app that ships no glyph set and no font has nothing to credit here.
   - *Reference:* Editora [`NOTICE`](https://github.com/adriandeleon/Editora/blob/master/NOTICE): Material Design Icons (Apache-2.0), Simple Icons (CC0; the logos stay their
     owners' trademarks), Inter and the monospace faces (OFL), and the glyph sets inside the bundled Symbols Nerd
     Font, Octicons and Seti UI (MIT) among them.

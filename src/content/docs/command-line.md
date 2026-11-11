@@ -11,7 +11,8 @@ description: "The flags every app accepts and the single-instance hand-off."
   - *Reference:* Editora [`App.main`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java), [`App.helpText`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java); [`AppArgsTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/AppArgsTest.java).
 - **CLI-02 · MUST.** `--config-dir <dir>` uses another config folder, and `--dev` uses `~/.<app>-dev`, a folder in
   the user's home on Windows, macOS and Linux alike.
-  - *Check (code):* the config folder is resolved from both flags before anything reads `~/.<app>`.
+  - *Check (code):* the config folder is resolved from both flags before anything reads `~/.<app>`, and what
+    `--dev` resolves to is `<user.home>/.<app>-dev` on Windows, macOS and Linux alike, with no branch on the OS.
   - *Reference:* Editora [`App.main`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java) ([`ConfigManager.configDirFor`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/ConfigManager.java), [`App.devFlag`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java)).
 - **CLI-03 · SHOULD.** `--new-instance` starts a second process instead of handing off to the running one.
   - *Check (code):* the flag skips the single-instance hand-off.
@@ -96,7 +97,8 @@ description: "The flags every app accepts and the single-instance hand-off."
     confirmed it.
 - **CLI-06 · SHOULD.** An app that opens files or folders (documents, images, a `.torrent`) opens the ones named
   as arguments on its command line, which its `--help` lists as `[files…]`.
-  - *Check (by hand):* launch with two files and find both open.
+  - *Check (by hand):* launch with two files and find both open, and run `--help` and find `[files…]` in its
+    usage line.
   - *Reference:* Editora [`App.fileTargets`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java). Termina, Modula and nux open no files, so the rule does not cover
     them.
 
@@ -111,6 +113,9 @@ description: "The flags every app accepts and the single-instance hand-off."
     handler for the macOS open-files event passes them to the running app (Editora's `MacOpenFiles`). A test that
     makes the first launch primary and delivers a second launch's arguments to it is the surest evidence.
   - *Reference:* Editora [`ipc/SingleInstance.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ipc/SingleInstance.java) ([`SingleInstanceTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ipc/SingleInstanceTest.java)), [`MacOpenFiles.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/MacOpenFiles.java).
+    nux doesn't yet: its second launch asks the running app to show its window and exits, handing over none of its
+    arguments ([`instance/SingleInstance.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/instance/SingleInstance.java), `NUX-SHOW`), and what lets a second instance run on the folder is a
+    setting (`singleInstance`, read in `main` of [`App.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/App.java)), not `--new-instance`.
 - **CLI-08 · SHOULD.** An advisory lock tells two processes on one config folder about each other.
   - *Check (code):* each process takes an advisory file lock in its config folder, and can tell that another
     process already holds one there. A test that takes the lock from two processes is the surest evidence.

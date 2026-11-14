@@ -1,10 +1,11 @@
 ---
 // Starlight's footer plus the edition: version and date from package.json, the Changelog, and this page's address in
 // the latest edition or at its permanent, numbered one. In next/ it names the edition the batch follows instead.
-// The 404 page is no page of any edition, so there the link leads to the edition's first page.
+// The 404 page is no page of any edition, so there the link leads to the edition's first page. The family appendix
+// is in no edition: its line says so and leads to the latest one.
 import Default from "@astrojs/starlight/components/Footer.astro";
 import pkg from "../../package.json";
-import { siteRoot, editionOf, longDate, NEXT } from "../lib/site.mjs";
+import { siteRoot, editionOf, longDate, NEXT, APPENDIX } from "../lib/site.mjs";
 
 const date = longDate(pkg.guidelines.date);
 const root = siteRoot(pkg);
@@ -14,6 +15,7 @@ const missing = Astro.locals.starlightRoute.entry.id === "404"; // Starlight's o
 const rest = !missing && Astro.url.pathname.startsWith(base) ? Astro.url.pathname.slice(base.length) : "";
 const changelog = `${base}changelog/`;
 const next = here === NEXT;
+const appendix = here === APPENDIX;
 const other = here === "latest"
   ? { href: `${root}${pkg.version}/${rest}`, text: missing ? `Pauta ${pkg.version} at its permanent address` : `Permanent link to this page in ${pkg.version}` }
   : { href: `${root}latest/${rest}`, text: missing ? "The latest edition" : "This page in the latest edition" };
@@ -22,12 +24,14 @@ const other = here === "latest"
 <Default><slot /></Default>
 <p class="edition">
   {
-    next ? (
+    appendix ? (
+      <>Pauta's family appendix · in no edition, updated as the apps change · <a href={`${root}latest/`}>The latest edition</a></>
+    ) : next ? (
       <>Pauta <strong>Next</strong> · unreleased changes after {pkg.version} · </>
     ) : (
       <>Pauta <strong>{pkg.version}</strong> · <time datetime={pkg.guidelines.date}>{date}</time> · </>
     )
-  }<a href={changelog}>Changelog</a> · <a href={other.href} rel="alternate">{other.text}</a>
+  }{!appendix && (<><a href={changelog}>Changelog</a> · <a href={other.href} rel="alternate">{other.text}</a></>)}
 </p>
 
 <style>

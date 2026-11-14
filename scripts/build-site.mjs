@@ -13,6 +13,8 @@
 //   dist/downloads/, CNAME, 404.html, versions.js   copies of the latest edition's: GitHub Pages reads them at the root
 //   dist/llms.txt, llms-full.txt, rules.json   the latest edition's, where coding agents look for them (src/lib/llms.mjs)
 //   dist/robots.txt   written here: everything allowed, latest/'s sitemap
+//   dist/family/      the family appendix, in no edition (scripts/build-appendix.mjs): from this checkout, or from
+//                     $PAUTA_APPENDIX, which CI builds from the commit it runs on
 // In latest/ and <version>/, links into the apps' code point at the commits pins.json recorded for this edition.
 //
 // "This checkout" is this script's own, or $PAUTA_ROOT: while a batch waits under [Unreleased], CI builds the current
@@ -174,5 +176,13 @@ const walk = (dir) => {
 };
 walk(latest);
 console.log(`${redirects} redirects`);
+
+// 5. The family appendix at family/, beside the editions and in none of them (scripts/build-appendix.mjs): built from
+// this checkout, unless $PAUTA_APPENDIX holds one built from the commit CI runs on, which may be newer than the release
+// commit this script is building latest/ from. After the redirects, so it replaces any an older latest/ left there.
+step("family appendix");
+const appendix = process.env.PAUTA_APPENDIX || "build/family";
+if (!process.env.PAUTA_APPENDIX) run("node", [join(scripts, "build-appendix.mjs"), "--build", appendix]);
+run("node", [join(scripts, "build-appendix.mjs"), "--add", appendix, "dist"]);
 
 console.log(`\nPauta ${version} built: latest/${pending ? ", next/" : ""} and ${versions.join(", ")} in dist/`);

@@ -51,7 +51,7 @@ Every edition stays online at its own address: [`/latest/`](https://pauta-projec
 | Experience | Keyboard first & Command Palette · Accessibility · Window shell · Icons and color (Inter, the Caret & Ink palette, state colors, icon families) · Toolbars and tooltips · Tabs and tool panels · Menus (menu bar, right-click menus) · Tray and background (close to tray, start at login, notifications) · Settings (search, Git/GitHub sync) · Diagnostics (Message Log, Debug Log, updates, Report a Problem) · Command line · Internationalization |
 | Templates | Command Palette · QuickOpen picker · Welcome page · About window · Pauta window · Confirm dialog · Find bar · Message Log · Settings Sync |
 | Shipping | jpackage + JReleaser installers for macOS / Linux / Windows on arm64 and x64, signing, CI |
-| The family | Feature matrix of the six apps · Shared features · Gaps per app |
+| The family (appendix) | Feature matrix of the six apps · Shared features · Gaps per app; in no edition, at `family/` beside them, updated as the apps change |
 
 ## Working on it
 

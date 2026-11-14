@@ -184,8 +184,12 @@ if (release && (record || baseRecord)) {
 }
 
 if (!release) {
-  const paths = ["src/content/docs", "pages.json", "src/assets/shots", "skills"];
+  // The family appendix (src/content/docs/family/, pages.json's `appendix`) is in no edition: it follows the apps
+  // without a release, so a change to it is never guidance (src/lib/site.mjs).
+  const paths = ["src/content/docs", ":(exclude)src/content/docs/family", "pages.json", "src/assets/shots", "skills"];
   const changed = new Set(git("diff", "--name-only", base, "HEAD", "--", ...paths).split("\n").filter(Boolean));
+  const groups = (ref) => JSON.stringify(JSON.parse(show(ref, "pages.json") ?? "{}").groups ?? null);
+  if (changed.has("pages.json") && groups(base) === groups("HEAD")) changed.delete("pages.json"); // the appendix's list alone
   // A rule added, retired or re-leveled is what an edition is made of: no trailer says otherwise.
   if (ruleChanges.length && !saysNew) {
     errors.push(

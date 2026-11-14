@@ -4,16 +4,26 @@
 import Default from "@astrojs/starlight/components/SiteTitle.astro";
 import EditionSelect from "./EditionSelect.astro";
 import pkg from "../../package.json";
-import { siteRoot, editionOf, NEXT } from "../lib/site.mjs";
+import { siteRoot, editionOf, NEXT, APPENDIX } from "../lib/site.mjs";
 
 const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
 const changelog = `${base}changelog/`;
-const next = editionOf(base, siteRoot(pkg)) === NEXT;
+const here = editionOf(base, siteRoot(pkg));
+const next = here === NEXT;
+const appendix = here === APPENDIX; // in no edition: no version and no switcher
 ---
 
 <Default />
-<a class="edition-mini md:sl-hidden print:hidden" href={changelog} title={next ? "Unreleased changes, not an edition yet" : "This edition of the guidelines"}>{next ? NEXT : pkg.version}</a>
-<EditionSelect class="sl-hidden md:sl-flex" />
+{
+  appendix ? (
+    <span class="edition-mini" title="Outside the editions, updated as the apps change">appendix</span>
+  ) : (
+    <>
+      <a class="edition-mini md:sl-hidden print:hidden" href={changelog} title={next ? "Unreleased changes, not an edition yet" : "This edition of the guidelines"}>{next ? NEXT : pkg.version}</a>
+      <EditionSelect class="sl-hidden md:sl-flex" />
+    </>
+  )
+}
 
 <style>
   .edition-mini {

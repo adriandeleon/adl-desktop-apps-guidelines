@@ -20,3 +20,8 @@ export const longDate = (iso) =>
 /** The folder of the batch waiting under CHANGELOG.md's [Unreleased], built from master by scripts/build-next.mjs. It
  *  is not an edition: no number, no date, never archived, never cited; the site has it only while a batch waits. */
 export const NEXT = "next";
+
+/** The folder of the family appendix: the feature matrix, the shared features and the gaps per app. It is no edition
+ *  and not guidance: served once at <root>family/, built from master on every deploy (scripts/build-appendix.mjs), so
+ *  it follows the apps without a release. An edition's pages link to it; it links to the rules in latest/. */
+export const APPENDIX = "family";

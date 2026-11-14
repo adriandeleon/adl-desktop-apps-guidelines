@@ -3,13 +3,15 @@
 // not an edition (AGENTS.md, "Pauta Next"). It is in the page's own HTML, so it is there for a reader without
 // scripts, a crawler and a coding agent that fetches the page. public/versions.js writes the notice of an earlier
 // edition, which no page can know at build time; in next/ it only points this one's link at the same page in latest/
-// when latest/ has that page.
+// when latest/ has that page. In the family appendix, the notice that its pages are in no edition.
 import Default from "@astrojs/starlight/components/Banner.astro";
 import pkg from "../../package.json";
-import { siteRoot, editionOf, NEXT } from "../lib/site.mjs";
+import { siteRoot, editionOf, NEXT, APPENDIX } from "../lib/site.mjs";
 
 const root = siteRoot(pkg);
-const next = editionOf(import.meta.env.BASE_URL.replace(/\/?$/, "/"), root) === NEXT;
+const here = editionOf(import.meta.env.BASE_URL.replace(/\/?$/, "/"), root);
+const next = here === NEXT;
+const appendix = here === APPENDIX;
 ---
 
 <Default />
@@ -19,6 +21,15 @@ const next = editionOf(import.meta.env.BASE_URL.replace(/\/?$/, "/"), root) === 
       You are reading <strong>Pauta Next</strong>: changes waiting for the edition after <strong>{pkg.version}</strong>.
       They are not an edition yet and may change before one is released. Never cite a rule from these pages or audit an
       app against them: apps are built and audited to a numbered edition. See <a href={`${root}latest/`}>the latest edition</a>.
+    </div>
+  )
+}
+{
+  appendix && (
+    <div class="edition-notice" role="note" data-pagefind-ignore>
+      This appendix is in no edition of Pauta. It describes the apps as they are and changes as they do, without a
+      release; its links lead to the rules of <a href={`${root}latest/`}>the latest edition</a>, which is what an app is
+      built and audited to.
     </div>
   )
 }

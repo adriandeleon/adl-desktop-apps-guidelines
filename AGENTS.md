@@ -105,12 +105,22 @@ Editora (`../Editora`) is the reference implementation.
   Template pages keep their mockups and spec tables. Their requirements are rules, under `## Rules` or in the
   section they concern (`## Behavior`, `## States`, `## Spec`), and a spec value the apps must share (a size, a
   count, a prompt) is a rule too: a spec table and a mockup describe, they don't require.
+- **The family appendix** (pages.json's `appendix`: `family/matrix`, `family/shared-features`, `family/gaps`) is in no
+  edition. It describes the apps, not what they must do, so it changes as they do: a change to it needs no changelog
+  entry, no `Edition: none` trailer and no release (`scripts/check-edition.mjs` leaves `src/content/docs/family/` and
+  the appendix's list in `pages.json` out of what it counts as guidance). Every deploy builds it from the commit it
+  runs on into `<root>family/<page>/` (`scripts/build-appendix.mjs`, `PAUTA_PATH=family`, `src/content.config.ts`
+  loads only those pages), beside the editions, never archived, pinned or in the PDF; an edition's sidebar links to
+  it, and `latest/family/` left by an older edition redirects there. Its links reach the rules through
+  `../../latest/<page>/#<rule>`, an edition's pages reach it through `../../family/<page>/` (one folder deeper for a
+  template page), and `npm run check` holds both. It holds no rule. `astro dev` serves it beside the pages.
 - Feature matrix cells start with `●`, `◐` or `—` (rendered as dots by `src/lib/rehype-status.mjs`; the print
   build does the same in `scripts/print-markup.py`). Change both if the convention changes.
 - Plain, direct sentences written for the app developer. No marketing copy. American spelling throughout (color,
   behavior, gray, license, customize, canceled), in pages, the changelog, the README and comments alike.
 - **Guidance collects under `## [Unreleased]`; editions are cut in batches.** A change to what a reader takes as
-  guidance (a rule, a fact about an app, the checklist, the matrix, a screenshot, a page's prose, the audit skill)
+  guidance (a rule, a fact about an app in a Reference, the checklist, a screenshot, a page's prose, the audit skill;
+  never the family appendix, above)
   keeps the version in
   `package.json` and is described under `## [Unreleased]` in `CHANGELOG.md` (Keep a Changelog), in the section its
   edition will have (Added, Changed, Fixed). A rule it retires goes in `retired-rules.json` with the edition
@@ -152,7 +162,7 @@ Editora (`../Editora`) is the reference implementation.
   `CHANGELOG.md`, `retired-rules.json`, `rule-changes.json` and `pins.json`; the edition check fails it otherwise.
 - **Version numbers** (the Changelog page, `src/content/docs/changelog.mdx`, says the same for readers). Judge by
   the rules alone: what moving an app to the new edition costs. The largest change sets the number.
-  - **Patch**: an app does nothing. No rule's ID, level or requirement changes: wording, a fixed fact (matrix, gaps,
+  - **Patch**: an app does nothing. No rule's ID, level or requirement changes: wording, a fixed fact (
     a Reference), a Check fixed to test what its rule already asked, a screenshot, a page or section with no rule.
   - **Minor**: an app adds, and undoes nothing. A new rule at any level, including a MUST every app fails; a level
     raised or lowered; a rule that covers more cases; a rule retired with nothing in its place.

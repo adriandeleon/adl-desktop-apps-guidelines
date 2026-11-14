@@ -1,6 +1,6 @@
 ---
 title: "Menus"
-description: "The menu bar and right-click menus: an icon and the chord on every row, one font, one menu at a time, and a press anywhere else closes it."
+description: "The menu bar and right-click menus: the chord on every row, an icon where one fits, one font, one menu at a time, and a press anywhere else closes it."
 ---
 
 Two surfaces show the same rows: the **menu bar**, a browsable map of every command, and **right-click menus**, what
@@ -42,8 +42,8 @@ rendered a third larger than every other menu in the app).
 |---|---|---|
 | Font | Inter 14 px at the default zoom, regular, in every row and label; set on `.context-menu` from the value the UI zoom sets, never inherited from the owner | `.context-menu`, `.context-menu .menu-item .label` in `app.css`; `MainMenuBar.UI_FONT_SIZE` |
 | Row | 34 px high: padding 8 × 12, the same in every theme | `.menu-item { -fx-padding: 8px 12px }` |
-| Icon column | 22 px, filled on every row: a command row's glyph, or a check row's tick; 8 px to the title | `MainMenuBar.ICON_COLUMN`, `rowContent` |
-| Icon | The command's glyph, the same one as on the toolbar and in the palette (Save is the same floppy everywhere), filled `-color-fg-muted` | `Icons`, `MenuBarIcons`, `.toolbar-icon` |
+| Icon column | 22 px on every row, so the titles line up: a row's glyph, a check row's tick, or empty; 8 px to the title | `MainMenuBar.ICON_COLUMN`, `rowContent` |
+| Icon | Optional; where a row has one, the command's glyph, the same one as on the toolbar and in the palette (Save is the same floppy everywhere), filled `-color-fg-muted` | `Icons`, `MenuBarIcons`, `.toolbar-icon` |
 | Title | Inter 14 px, `-color-fg-default` | `.menu-item-title` |
 | Chord | Right-aligned in its own column, Inter 11 px, in the keyboard color (`-state-key`, brace periwinkle); at least 18 px from the title column; in every menu, right-click menus included | `.menu-item-chord`, `alignChordColumns` |
 | Submenu row | Laid out like a command row, with an invisible chord as wide as the menu's widest, so the arrow lands at the right edge | `nestedMenu`, `.menu-submenu` |
@@ -61,31 +61,21 @@ a menu button or a split button, and the toolbar's overflow. The menus a platfor
 tray icon's menu) show text only; there the chord is appended to the title ([MENU-02](#menu-02)) and the
 [tray](../tray-and-background/) shows neither.
 
-- **MENU-14 · MUST.** Every row of every menu the app draws carries an icon that depicts it. A command row wears its
-  command's glyph; a row that names a thing rather than an action (a recent file, a branch, a project) wears that
-  thing's icon; a submenu wears its family's. Only a check or radio row goes without, because its mark fills the
-  icon column. Where the icon set has no glyph that depicts a command, the app adds one (a Material 24 dp path, or a
-  line glyph in the kit's style) instead of leaving the row blank or borrowing another command's.
-  - *Why:* a menu is scanned before it is read, and the glyph is what the eye finds first; the same glyph on the
-    toolbar, in the palette and in the menu ([ICON-20](../icons-and-color/#icon-20)) is learned once. A blank
-    cell breaks the column, and a borrowed glyph says something else.
-  - *Check (code):* every row the app adds to a menu it draws is given a glyph where the row is built, and only
-    check and radio rows are built without one. On a plain `MenuItem` the glyph is its graphic. A menu-bar row
-    ([MENU-02](#menu-02)) is a `CustomMenuItem` whose `getGraphic()` is null: its glyph is the node inside the icon
-    column of its content (Editora's `menu-item-icon`), and an empty column fails. A submenu's graphic is the same
-    row layout, read the same way. Where the glyphs come from a table keyed by command id, the table has an entry
-    for every command a menu lists, and none is another command's glyph. A test that opens the menu bar's menus
-    and the right-click menus of a tab, an editor, a list row and the toolbar, and fails on a visible row with no
-    glyph, is the surest evidence.
-  - *Reference:* Editora [`ui/MenuBarIcons.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarIcons.java), [`editor/MenuIcons.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/editor/MenuIcons.java), [`ui/TabContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabContextMenu.java); Termina's tab
-    menu has an icon on every row. The app template builds every row of its menus with the command's glyph
-    (`inWindowRow` in [`ui/AppMenus.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AppMenus.java), from `BY_COMMAND` in [`ui/Icons.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Icons.java)), and its
-    [`NamedControlsFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/NamedControlsFxTest.java) (`everyMenuRowReadsAsItsTitleAndWearsAGlyph`) fails on a row without one. Mirada's [`MenusFxTest`](https://github.com/adriandeleon/Mirada/blob/main/src/test/java/com/mirada/ui/MenusFxTest.java) (`everyRowOfEveryMenuHasAGlyph`) opens its header
-    menu, its zoom menu and the image's right-click menu and fails on a row with no glyph. Editora doesn't yet
-    pass: about half its menu-bar rows have no glyph, and
-    [`MenuBarIconsTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/MenuBarIconsTest.java) holds that a command without a fitting glyph gets none, which this rule reverses; many
-    right-click and drop-down rows have none either (Run All Requests in a `.http` file, the CSV grid's menu, the
-    Markdown preview's).
+- **MENU-14 · MAY.** A row of a menu the app draws may carry an icon, where a glyph depicts what the row does or
+  names: a command row its command's glyph, a row that names a thing rather than an action (a recent file, a branch,
+  a project) that thing's icon, a submenu its family's. A row with no fitting glyph goes without one rather than
+  borrow another command's, and a check or radio row carries none, because its mark fills the icon column.
+  - *Why:* a glyph the eye already knows from the toolbar and the palette ([ICON-20](../icons-and-color/#icon-20))
+    finds a row before its title is read, but only when it depicts the row: an icon forced onto every row ends up
+    saying something else, and an empty cell says nothing wrong.
+  - *Check (code):* where a row the app builds carries a glyph, it comes from the lookup the toolbar and the palette
+    use, keyed by the row's command, and no row wears another command's glyph. A row without one is not judged.
+  - *Reference:* Editora [`ui/MenuBarIcons.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarIcons.java), [`editor/MenuIcons.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/editor/MenuIcons.java), [`ui/TabContextMenu.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TabContextMenu.java): about
+    half its menu-bar rows wear a glyph, and
+    [`MenuBarIconsTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/MenuBarIconsTest.java) holds that a command without a fitting glyph gets none. Termina's tab menu has an
+    icon on every row. The app template gives every row of its menus the command's glyph (`inWindowRow` in
+    [`ui/AppMenus.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AppMenus.java), from `BY_COMMAND` in [`ui/Icons.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Icons.java)), and so does Mirada
+    ([`MenusFxTest`](https://github.com/adriandeleon/Mirada/blob/main/src/test/java/com/mirada/ui/MenusFxTest.java), `everyRowOfEveryMenuHasAGlyph`).
 - **MENU-15 · MUST.** In every menu the app draws itself, a row whose command has a chord in the active keymap shows
   that chord, in right-click menus, drop-downs and the toolbar's overflow as in the in-window menu bar: right-aligned
   in the menu's chord column, in the keyboard color, the one color the app keeps for chords and key chips (Editora's
@@ -181,7 +171,7 @@ tray icon's menu) show text only; there the chord is appended to the title ([MEN
 
 <ol class="anatomy">
 <li><span class="pin">1</span><span><strong>Menu button.</strong> Padding 3 × 10 on a bar with 4 px side insets; the bar and the toolbar share one <code>-color-bg-subtle</code> band with no rule under it.</span></li>
-<li><span class="pin">2</span><span><strong>Icon column</strong>, 22 px. Every row has a glyph that depicts its command; where the icon set has none that fits, the app adds one rather than leave the cell blank.</span></li>
+<li><span class="pin">2</span><span><strong>Icon column</strong>, 22 px. A row may wear the glyph that depicts its command; where none fits, the cell stays empty and the titles still line up.</span></li>
 <li><span class="pin">3</span><span><strong>Title</strong>, 14 px Inter, the command's title with its category prefix dropped ("Save", not "File: Save") unless two rows would then read the same. Editora drops the prefix only where two words or more are left ("File: Save As…" reads "Save As…"), so its File menu still reads "File: Save" (<a href="https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/editor/MenuTitles.java"><code>editor/MenuTitles.java</code></a>).</span></li>
 <li><span class="pin">4</span><span><strong>Chord column.</strong> Inter 11 px, periwinkle, right-aligned into one column per menu (not app-wide), read from the active keymap. Drawn by the app, not a JavaFX accelerator: Emacs chords are multi-key, which a <code>KeyCombination</code> cannot express, and on macOS an accelerator would bypass the key dispatcher.</span></li>
 <li><span class="pin">5</span><span><strong>Unbound command.</strong> An empty chord cell, never a wrong chord. A live keymap switch rewrites every cell.</span></li>
@@ -237,7 +227,7 @@ tray icon's menu) show text only; there the chord is appended to the title ([MEN
     ([`keymaps/cua.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/cua.json)), and no command focuses the bar. Termina leaves a plain `F10` to the program in the
     terminal ([`ui/ViewKeys.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/ViewKeys.java)) and has no such command either.
 
-![Editora's View menu open with toggle commands and their chords](../../assets/shots/editora-menu-bar.png "Editora's View menu in an earlier build: chords in one periwinkle column, but half the rows have no icon and every title repeats the menu's name.")
+![Editora's View menu open with toggle commands and their chords](../../assets/shots/editora-menu-bar.png "Editora's View menu in an earlier build: chords in one periwinkle column, but every title repeats the menu's name.")
 
 ## Right-click menus
 
@@ -309,7 +299,7 @@ The mockup is an editor tab's menu, shortened; Editora's has twenty-one rows.
 
 <ol class="anatomy">
 <li><span class="pin">1</span><span><strong>Anchored at the pointer.</strong> The menu's top-left corner is the click. From the keyboard (Menu key or <kbd>Shift+F10</kbd>) it opens under the selected row, a quarter of the way in and never off a narrow one, or just below the caret in an editor; never in the middle of the control.</span></li>
-<li><span class="pin">2</span><span><strong>Every row has an icon</strong>, the command's own, and its chord when it has one, in the same periwinkle column as the menu bar's. The one row without an icon is a <code>CheckMenuItem</code>, whose tick lives in the graphic column.</span></li>
+<li><span class="pin">2</span><span><strong>Icon and chord.</strong> A row wears its command's own icon where one fits, and its chord when it has one, in the same periwinkle column as the menu bar's. A <code>CheckMenuItem</code> has no icon: its tick lives in the graphic column.</span></li>
 <li><span class="pin">3</span><span><strong>Grayed, not hidden.</strong> An action that does not apply right now (Save on an unchanged file, Reveal on an unsaved one) stays in place, dimmed. Only a row that cannot apply to this thing at all is hidden (the Git submenu on an untitled buffer).</span></li>
 <li><span class="pin">4</span><span><strong>Separators</strong> group the rows; one that hiding has left alone hides too.</span></li>
 <li><span class="pin">5</span><span><strong>Submenu</strong> for a family of actions (Git: stage, unstage, revert, compare, history), with its own icon.</span></li>
@@ -427,4 +417,4 @@ The mockup is an editor tab's menu, shortened; Editora's has twenty-one rows.
 ## In the apps
 
 ![Termina window with a menu bar, a tab strip under it and a tab context menu](../../assets/shots/termina-tabs.png "Termina's tab menu: an icon on every row, following Editora's convention.")
-![Editora's View menu open with toggle commands and their chords](../../assets/shots/editora-menu-bar.png "Editora's in-window menu bar with the chord column, in an earlier build whose rows still lack icons and repeat the menu's name.")
+![Editora's View menu open with toggle commands and their chords](../../assets/shots/editora-menu-bar.png "Editora's in-window menu bar with the chord column, in an earlier build whose titles repeat the menu's name.")

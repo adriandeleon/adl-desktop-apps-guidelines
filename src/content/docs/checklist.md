@@ -147,8 +147,8 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 
 [Menus](../menus/)
 
-- [ ] In an app with a menu bar, its rows are commands: icon, title and chord from the registry and the active keymap, no `KeyCombination` accelerators · [MENU-01](../menus/#menu-01), [MENU-02](../menus/#menu-02)
-- [ ] Every row of every menu the app draws, right-click menus and drop-downs included, has an icon that depicts it and its chord when bound · [MENU-14](../menus/#menu-14), [MENU-15](../menus/#menu-15)
+- [ ] In an app with a menu bar, its rows are commands: title, chord and any icon from the registry and the active keymap, no `KeyCombination` accelerators · [MENU-01](../menus/#menu-01), [MENU-02](../menus/#menu-02)
+- [ ] Every row of every menu the app draws, right-click menus and drop-downs included, shows its chord when bound · [MENU-15](../menus/#menu-15)
 - [ ] The menus the app draws are in Inter 14 px at the default zoom whatever they were opened from, and follow the UI zoom (`.context-menu` sets the size from the zoom's one value) · [MENU-16](../menus/#menu-16)
 - [ ] Menu rows 34 px high with a 22 px icon column, the chord at least 18 px after the title, on a card whose shadow's offset is at least its radius (SHOULD) · [MENU-18](../menus/#menu-18)
 - [ ] In an app with a right-click menu: every row, tab, editor and read-only console, a log shown as text such as the Debug Log among them, has one with its own actions, each a command; a list that only navigates has none · [MENU-05](../menus/#menu-05)

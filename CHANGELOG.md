@@ -10,6 +10,14 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 
 ### Changed
 
+- **MENU-14 goes from MUST to MAY.** A menu row may carry an icon where a glyph depicts what it does or names; a
+  row with no fitting glyph goes without one rather than borrow another command's, and the icon column stays on
+  every row so the titles line up. An app no longer has to draw or invent a glyph for every row, so Editora's
+  `MenuBarIconsTest`, which holds that a command without a fitting glyph gets none, now describes a conforming app.
+  The checklist line drops MENU-14, *Gaps per app* drops the missing icons of Editora, Torrenta, Termina, Modula and
+  nux, the menus page's spec, anatomy and captions no longer call a row without an icon a defect, and the
+  conformance page, the *Coding agents and LLMs* page and the audit skill take MENU-15 for their example of a
+  `pending` MUST.
 - **The family pages leave the editions.** The feature matrix, the shared features and the gaps per app describe the
   apps, not what they must do, so they are now an appendix in no edition: served once at `family/` beside the
   editions (`https://pauta-project.dev/family/gaps/`), built from `master` on every deploy, and changed as the apps

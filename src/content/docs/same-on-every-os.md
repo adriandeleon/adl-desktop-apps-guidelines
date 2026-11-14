@@ -85,8 +85,8 @@ Everything else, and in particular:
 - **Commands, settings and windows**, with the same defaults: [OS-01](#os-01). What they do and where they sit:
   [OS-04](#os-04). A keymap's macOS variant binds the same commands: [KBD-21](../keyboard/#kbd-21).
 - **The look.** Inter on every window ([ICON-01](../icons-and-color/#icon-01)), not the OS's UI font; the same
-  AtlantaFX themes ([PLAT-05](../platform/#plat-05)); the same icons on every menu row the app draws
-  ([MENU-14](../menus/#menu-14)).
+  AtlantaFX themes ([PLAT-05](../platform/#plat-05)); the same icon on a menu row the app draws, where it
+  has one ([MENU-14](../menus/#menu-14)).
 - **Dialogs.** The same buttons in the same order ([WIN-11](../window-shell/#win-11)), with the same default
   button ([CONF-13](../templates/confirm-dialog/#conf-13)). Space presses the focused button everywhere. What Enter
   does on a focused button that is not the default follows the OS, a row of

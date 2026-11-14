@@ -216,7 +216,7 @@ PWIN-02  MUST    manual   compare the Pauta window with pauta.json in the runnin
 TRAY-01  MUST    limited  no tray: no SystemTray or TrayIcon in src/
 PAUTA-13 MUST    not-checked  needs the website's repository: its docs have a Pauta conformance page
 DIAG-07  SHOULD  not-applicable  pauta.json: the app depends on no outside tool, so a Doctor has nothing to check
-MENU-14  MUST    pending  pauta.json: issue #212
+MENU-15  MUST    pending  pauta.json: issue #212
 ```
 
 - **Split a large audit.** An edition has hundreds of rules. Give each page, or each prefix, its own pass or its own

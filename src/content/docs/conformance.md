@@ -114,7 +114,7 @@ an app, and a fourth for a template repository; each one asks for something diff
     names the rule's ID.
   - *Reference:* The [app template](https://github.com/adriandeleon/adl-desktop-app-template)'s [`PautaConformanceTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/PautaConformanceTest.java) (`eachKindHasWhatItNeeds`).
 - **PAUTA-07 · MUST.** A `pending` exception links an open issue in the app's own repository that names the rule's
-  ID and edition, "MENU-14 (Pauta x.y.z)". One issue may hold several rules, one per page for example, if it names
+  ID and edition, "MENU-15 (Pauta x.y.z)". One issue may hold several rules, one per page for example, if it names
   each one that way. Closing the issue removes its entries.
   - *Check (code):* every `pending` entry's `link` is an issue URL in the app's own repository; the source settles
     that much, and a link that is not one fails the rule. That the issue is open and names the entry's rule ID and
@@ -191,11 +191,11 @@ a test keeps the copies honest.
 {
   "exceptions": [
     {
-      "rule": "MENU-14",
+      "rule": "MENU-15",
       "level": "MUST",
-      "url": "https://pauta-project.dev/<edition>/menus/#menu-14",
+      "url": "https://pauta-project.dev/<edition>/menus/#menu-15",
       "kind": "pending",
-      "reason": "Some menu rows have no icon yet.",
+      "reason": "Some right-click menus show no chord yet.",
       "link": "https://github.com/adriandeleon/<App>/issues/212"
     },
     {

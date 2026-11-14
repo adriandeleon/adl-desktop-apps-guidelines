@@ -8,6 +8,13 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 
 ## [Unreleased]
 
+## [6.1.0] - 2026-11-14
+
+A minor: an app built to 6.0.1 has nothing to undo, and may drop work. MENU-14 goes from MUST to MAY, so a menu row
+carries an icon only where a glyph depicts it, and an app no longer draws or invents one for every row. The feature
+matrix, the shared features and the gaps per app leave the editions for an appendix at `family/`, which follows the
+apps without a release. Still 405 rules, none added or retired: 194 MUST, 201 SHOULD, 10 MAY.
+
 ### Changed
 
 - **MENU-14 goes from MUST to MAY.** A menu row may carry an icon where a glyph depicts what it does or names; a

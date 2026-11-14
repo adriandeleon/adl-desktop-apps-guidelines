@@ -1,6 +1,6 @@
 {
   "comment": "The edition in which each rule's level, scope or statement last changed (rules.json's `changed`), with a hash of the three as of `edition`, the last release; and every ID retired by then. scripts/rule-changes.mjs rewrites it at a release and nothing else edits it (scripts/check-edition.mjs). A rule whose hash no longer matches is new or changed since that release: it reads `next` in next/ (src/lib/rules.mjs).",
-  "edition": "6.0.1",
+  "edition": "6.1.0",
   "rules": {
     "ABOUT-01": { "changed": "6.0.0", "hash": "eb4d27edc8a9" },
     "ABOUT-02": { "changed": "6.0.0", "hash": "794a4ad3e6b0" },
@@ -160,7 +160,7 @@
     "MENU-11": { "changed": "6.0.0", "hash": "4a8d54b242f3" },
     "MENU-12": { "changed": "6.0.0", "hash": "7373a6dfb38e" },
     "MENU-13": { "changed": "6.0.0", "hash": "d13565c67f61" },
-    "MENU-14": { "changed": "4.0.0", "hash": "3b133c04302a" },
+    "MENU-14": { "changed": "6.1.0", "hash": "d7fa1b3651f0" },
     "MENU-15": { "changed": "6.0.0", "hash": "b57f91b31ad9" },
     "MENU-16": { "changed": "6.0.0", "hash": "92b998caf3a8" },
     "MENU-17": { "changed": "6.0.0", "hash": "a69c3d37f6f6" },
@@ -191,7 +191,7 @@
     "PAUTA-04": { "changed": "6.0.0", "hash": "ecc4474be73a" },
     "PAUTA-05": { "changed": "6.0.0", "hash": "0e7fc2a2e7b6" },
     "PAUTA-06": { "changed": "4.1.0", "hash": "05075804bce0" },
-    "PAUTA-07": { "changed": "6.0.0", "hash": "254cf4977e3a" },
+    "PAUTA-07": { "changed": "6.1.0", "hash": "3f88bc858397" },
     "PAUTA-08": { "changed": "4.1.0", "hash": "36516f1aa434" },
     "PAUTA-09": { "changed": "6.0.0", "hash": "4994600c3cf1" },
     "PAUTA-10": { "changed": "6.0.0", "hash": "bc87d17ca8ce" },

@@ -332,7 +332,7 @@ are not interchangeable.
     one icon class or one lookup keyed by the command. Where a second icon class holds a copy of its own, the copy
     has the same path data and style class. A test that compares the path data and style class of each action's
     glyph across the icon classes is the surest evidence. An app that draws no glyph anywhere has nothing to
-    compare and passes; its missing icons are [MENU-14](../menus/#menu-14)'s.
+    compare and passes.
   - *Reference:* Editora [`ui/MenuBarIcons.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarIcons.java) reuses [`Icons`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Icons.java); [`editor/MenuIcons.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/editor/MenuIcons.java) (the editor package may not
     depend on `ui`) copies each twin's family and path data verbatim, held by
     [`MenuIconFamilyFxTest.everySharedActionUsesTheSameGlyphInBothIconSets`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/MenuIconFamilyFxTest.java). Mirada gives a command's menu row

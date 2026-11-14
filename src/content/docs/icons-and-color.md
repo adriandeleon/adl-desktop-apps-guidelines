@@ -55,7 +55,7 @@ timestamps.
     [`fonts/`](https://github.com/adriandeleon/Modula/tree/master/src/main/resources/com/modula/fonts) holds IBM Plex Mono only.
 
 Modula sets everything in IBM Plex Mono today. Its readings may stay monospace, as content; Inter on its menus,
-settings and dialogs is a gap ([Gaps per app](../family/gaps/)).
+settings and dialogs is a gap ([Gaps per app](../../family/gaps/)).
 
 ## The palette: Caret & Ink
 

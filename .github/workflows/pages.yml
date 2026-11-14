@@ -102,6 +102,13 @@ jobs:
         run: |
           node scripts/check-rules.mjs
           node scripts/build-next.mjs --build "$RUNNER_TEMP/next"
+      - name: Build the family appendix from this commit
+        # The feature matrix, shared features and gaps per app, in no edition (scripts/build-appendix.mjs): always
+        # this commit's, before the checkout moves to the commit that released the current edition, so a change to
+        # them is live at the next merge without a release. The site build places it at family/ (PAUTA_APPENDIX).
+        run: |
+          node scripts/check-rules.mjs
+          node scripts/build-appendix.mjs --build "$RUNNER_TEMP/family"
       - name: Keep this run's scripts
         # scripts/ and the libraries they import (src/lib), as this run's commit has them, outside the checkout. Every
         # step from here on runs them from there, on the checkout (PAUTA_ROOT): when the checkout moves to the commit
@@ -186,6 +193,7 @@ jobs:
         # missing.
         env:
           PAUTA_ROOT: ${{ github.workspace }}
+          PAUTA_APPENDIX: ${{ runner.temp }}/family
           TOOLS: ${{ runner.temp }}/tools/scripts
         run: node "$TOOLS/build-site.mjs"
       - name: Add next/
@@ -209,6 +217,7 @@ jobs:
         if: github.event_name == 'pull_request'
         env:
           PAUTA_ROOT: ${{ github.workspace }}
+          PAUTA_APPENDIX: ${{ runner.temp }}/family
           TOOLS: ${{ runner.temp }}/tools/scripts
         run: |
           site=$(node scripts/release-state.mjs --site)

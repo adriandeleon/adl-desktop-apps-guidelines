@@ -2,9 +2,12 @@
 // Fails when a rule is malformed (AGENTS.md, "Rule IDs"): a head that doesn't match, an ID used twice, a prefix on
 // two pages, a rule without its statement, its one Check and its one Reference line, a table with a Level column, or
 // a retired ID back in use (src/lib/rules.mjs finds these). It also holds the pages to the rules:
-//   - every page is in pages.json, and the two that are not (the overview and the changelog) hold no rule;
+//   - every page is in pages.json, and the two that are not (the overview and the changelog) hold no rule, nor do the
+//     pages of the family appendix (pages.json's `appendix`), which no edition holds;
 //   - a relative link leads somewhere: to a page, to a section or a rule that page has (`../keyboard/#kbd-07` points
-//     at a rule that exists, on that page, and reads as that rule), to a screenshot that is there;
+//     at a rule that exists, on that page, and reads as that rule), to a screenshot that is there. An edition's page
+//     reaches the appendix beside the editions (`../../family/gaps/`); the appendix reaches the rules in latest/
+//     (`../../latest/menus/#menu-14`) and its own pages;
 //   - a retired ID is not named anywhere in the pages or the audit skill, and retired-rules.json loses no entry,
 //     repeats none and lists only IDs an edition had (src/lib/rules.mjs, against rule-changes.json);
 //   - every line of the New app checklist names its rules, every MUST is on a line, and a line's level is its rules'
@@ -15,7 +18,7 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { blankCode, parsePage, readRules } from "../src/lib/rules.mjs";
-import { NEXT } from "../src/lib/site.mjs";
+import { APPENDIX, NEXT } from "../src/lib/site.mjs";
 
 process.chdir(fileURLToPath(new URL("..", import.meta.url))); // not .pathname, which keeps a space as %20
 const { pages, retired, problems } = readRules();
@@ -35,14 +38,24 @@ const docs = files(DOCS).map((file) => ({ file, slug: relative(DOCS, file).repla
 // them. The two it leaves out on purpose are no place for a rule.
 const OUTSIDE = new Set(["index", "changelog"]); // the overview, and the page rendered from CHANGELOG.md
 const inOrder = new Set(pages.map((p) => p.slug));
+// The family appendix: its own build, beside the editions, and in none of them (src/lib/site.mjs).
+const appendix = new Set(JSON.parse(readFileSync("pages.json", "utf8")).appendix?.items ?? []);
+for (const slug of appendix) {
+  if (!slug.startsWith(`${APPENDIX}/`)) problems.push(`pages.json: the appendix's page ${slug} is not under ${APPENDIX}/`);
+  if (inOrder.has(slug)) problems.push(`pages.json: ${slug} is both in an edition's groups and in the appendix`);
+}
 for (const { file, slug, text } of docs) {
   if (inOrder.has(slug)) continue;
-  if (!OUTSIDE.has(slug)) {
+  if (slug.startsWith(`${APPENDIX}/`) && !appendix.has(slug)) {
+    problems.push(`${file} is not in pages.json's appendix, so the appendix's sidebar leaves it out`);
+    continue;
+  }
+  if (!OUTSIDE.has(slug) && !appendix.has(slug)) {
     problems.push(`${file} is not in pages.json, so the sidebar, the PDF and rules.json leave it out`);
     continue;
   }
   const stray = parsePage(slug, text);
-  for (const r of stray.rules) problems.push(`${slug}: ${r.id} is a rule on a page outside pages.json, where no rule is read`);
+  for (const r of stray.rules) problems.push(`${slug}: ${r.id} is a rule on a page outside an edition's pages, where no rule is read`);
   problems.push(...stray.problems.filter((p) => p.includes("malformed rule head")));
 }
 
@@ -92,14 +105,33 @@ for (const { file, slug, text } of docs) {
       if (!existsSync(join(dirname(file), target))) problems.push(`${at}: the image ${target} is not there`);
       continue;
     }
-    // Resolved inside a folder that stands for the edition's, so a link that climbs out of it is seen.
-    const url = new URL(target, `https://x/edition/${slug === "index" ? "" : `${slug}/`}`);
-    if (url.pathname === `/${NEXT}/`) continue; // Pauta Next, a folder beside the editions (scripts/build-next.mjs)
-    if (!url.pathname.startsWith("/edition/")) {
-      problems.push(`${at}: a link to "${target}", which leaves the edition's folder; only ${NEXT}/ lives beside it`);
+    // Resolved inside a folder that stands for the edition's, so a link that climbs out of it is seen. An appendix
+    // page sits at the site root's family/ instead, beside the editions, and reaches them through latest/.
+    const inAppendix = appendix.has(slug);
+    const url = new URL(target, inAppendix ? `https://x/${slug}/` : `https://x/edition/${slug === "index" ? "" : `${slug}/`}`);
+    if (!inAppendix && url.pathname === `/${NEXT}/`) continue; // Pauta Next, a folder beside the editions (scripts/build-next.mjs)
+    const folder = inAppendix ? "/latest/" : "/edition/";
+    let page;
+    if (url.pathname.startsWith(`/${APPENDIX}/`)) {
+      page = decodeURIComponent(url.pathname.slice(1)).replace(/\/$/, "");
+      if (!appendix.has(page)) {
+        problems.push(`${at}: a link to "${target}", which is no page of the family appendix (pages.json's appendix)`);
+        continue;
+      }
+    } else if (url.pathname.startsWith(folder)) {
+      page = decodeURIComponent(url.pathname.slice(folder.length - 1)).replace(/^\/|\/$/g, "");
+      if (appendix.has(page)) {
+        problems.push(`${at}: a link to "${target}"; no edition holds the family appendix, which lives beside them at ../../${page}/ from a page one folder deep`);
+        continue;
+      }
+    } else {
+      problems.push(
+        inAppendix
+          ? `${at}: a link to "${target}"; the family appendix reaches the guide through latest/ ("../../latest/menus/") and its own pages ("../gaps/")`
+          : `${at}: a link to "${target}", which leaves the edition's folder; only ${NEXT}/ and the family appendix live beside it`,
+      );
       continue;
     }
-    const page = decodeURIComponent(url.pathname.slice("/edition".length)).replace(/^\/|\/$/g, "");
     const anchor = decodeURIComponent(url.hash.slice(1));
     if (RULE_ID.test(anchor)) {
       const id = anchor.toUpperCase();

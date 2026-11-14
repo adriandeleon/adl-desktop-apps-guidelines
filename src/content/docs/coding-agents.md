@@ -246,7 +246,7 @@ MENU-15  MUST    pending  pauta.json: issue #212
   constrains things no rule requires an app to have (every entry, row or file of a kind) passes in an app that
   has none. The skill's step 4 has the order.
 - **Gaps per app** on this site is the same audit, done by hand for the six apps. An agent's report for one of them
-  should agree with [Gaps per app](../family/gaps/); where it doesn't, one of them is wrong.
+  should agree with [Gaps per app](../../family/gaps/); where it doesn't, one of them is wrong.
 
 ## Move an app to a newer edition
 

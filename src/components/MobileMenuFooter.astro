@@ -2,13 +2,22 @@
 // Starlight's mobile menu footer (theme, social links) with the edition switcher, which the phone header has no room for.
 import Default from "@astrojs/starlight/components/MobileMenuFooter.astro";
 import EditionSelect from "./EditionSelect.astro";
+import pkg from "../../package.json";
+import { siteRoot, editionOf, APPENDIX } from "../lib/site.mjs";
+
+// The family appendix is in no edition, so it has no switcher.
+const appendix = editionOf(import.meta.env.BASE_URL.replace(/\/?$/, "/"), siteRoot(pkg)) === APPENDIX;
 ---
 
 <Default />
-<div class="edition-row">
-  <span>Edition</span>
-  <EditionSelect />
-</div>
+{
+  !appendix && (
+    <div class="edition-row">
+      <span>Edition</span>
+      <EditionSelect />
+    </div>
+  )
+}
 
 <style>
   .edition-row {

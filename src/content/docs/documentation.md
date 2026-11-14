@@ -229,7 +229,7 @@ title and description come from the message catalogs, and the parity test holds 
     current UI at 2×; they are rendered from the real window by the capture hook or headless fixture
     [QUAL-09](../quality/#qual-09) asks for, not drawn or described.
   - *Reference:* Termina's [`DevCapture.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/DevCapture.java) and Torrenta's [`DevCapture.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/DevCapture.java), and nux's
-    [`ui/Screenshot.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/Screenshot.java) ([Shared features](../family/shared-features/)). None of the three renders at 2× yet: each writes what
+    [`ui/Screenshot.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/Screenshot.java) ([Shared features](../../family/shared-features/)). None of the three renders at 2× yet: each writes what
     `scene.snapshot(null)` returns, the scene at its own size. Editora doesn't yet: it has no capture hook, and its
     headless fixture writes a screenshot from three FX tests only, when `-Deditora.test.shots=<dir>` is set, and
     at the scene's own size too ([`SplitViewFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/SplitViewFxTest.java)).

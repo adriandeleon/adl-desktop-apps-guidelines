@@ -3,6 +3,7 @@ import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 import { readFileSync } from "node:fs";
 import rehypeStatus from "./src/lib/rehype-status.mjs";
+import { APPENDIX } from "./src/lib/site.mjs";
 
 const pages = JSON.parse(readFileSync(new URL("./pages.json", import.meta.url), "utf8"));
 
@@ -20,10 +21,32 @@ const base = `${root}${edition}`.replace(/\/$/, "") || "/";
 const at = (path) => `${base === "/" ? "" : base}/${path}`;
 const absolute = (path) => `${url.origin}${at(path)}`;
 
+// The family appendix (src/lib/site.mjs, APPENDIX) is built on its own, at <root>family/, and is in no edition: there
+// the sidebar holds its pages and the way back to the latest edition, and an edition's sidebar links out to it.
+// `astro dev` holds both (src/content.config.ts), so there the appendix's pages are in the sidebar as pages.
+const appendix = edition === APPENDIX;
+const titleOf = (slug) =>
+  readFileSync(new URL(`./src/content/docs/${slug}.md`, import.meta.url), "utf8").match(/^title: *"?(.*?)"?\s*$/m)[1];
+const appendixGroup = {
+  label: pages.appendix.label,
+  items: pages.appendix.items.map((slug) =>
+    !edition ? { slug } : appendix ? { slug: slug.slice(APPENDIX.length + 1) } : { label: titleOf(slug), link: `${url.origin}${root}${slug}/` },
+  ),
+};
+const sidebar = appendix
+  ? [{ label: "The guidelines (latest edition)", link: `${url.origin}${root}latest/` }, appendixGroup]
+  : [
+      { label: "Overview", link: "/" },
+      ...pages.groups.map((g) => ({ label: g.label, items: g.items.map((slug) => ({ slug })) })),
+      appendixGroup,
+      { label: "Changelog", link: "/changelog/" },
+    ];
+
 export default defineConfig({
   site: url.origin,
   base,
-  outDir: edition ? `./dist/${edition}` : "./dist",
+  // The appendix is built apart and placed at <root>family/ by scripts/build-appendix.mjs, after the editions.
+  outDir: appendix ? "./build/family" : edition ? `./dist/${edition}` : "./dist",
   markdown: { rehypePlugins: [[rehypeStatus, { iconBase: at("icons/") }]] },
   integrations: [
     starlight({
@@ -35,19 +58,24 @@ export default defineConfig({
       head: [
         { tag: "script", attrs: { src: at("lightbox.js"), defer: true } },
         { tag: "script", attrs: { src: at("mock-fit.js"), defer: true } },
-        // The checklist keeps its ticks per edition, so it is told which one the page belongs to.
-        {
-          tag: "script",
-          attrs: { src: at("checklist.js"), defer: true, "data-version": pkg.version, "data-edition": edition || "latest" },
-        },
-        // Tells a page which edition it belongs to; reads /versions.json so an old page knows the newest one.
-        {
-          tag: "script",
-          attrs: { src: at("versions.js"), defer: true, "data-root": root, "data-version": pkg.version, "data-edition": edition || "latest" },
-        },
-        // Search engines index /latest/ only; a numbered folder is the same pages at a permanent address, and next/ is
-        // the batch waiting for the next edition (scripts/build-next.mjs).
-        ...(edition && edition !== "latest" ? [{ tag: "meta", attrs: { name: "robots", content: "noindex" } }] : []),
+        // The checklist keeps its ticks per edition, so it is told which one the page belongs to. The appendix
+        // belongs to none, and has neither the checklist nor the switcher.
+        ...(appendix
+          ? []
+          : [
+              {
+                tag: "script",
+                attrs: { src: at("checklist.js"), defer: true, "data-version": pkg.version, "data-edition": edition || "latest" },
+              },
+              // Tells a page which edition it belongs to; reads /versions.json so an old page knows the newest one.
+              {
+                tag: "script",
+                attrs: { src: at("versions.js"), defer: true, "data-root": root, "data-version": pkg.version, "data-edition": edition || "latest" },
+              },
+            ]),
+        // Search engines index /latest/ and the appendix; a numbered folder is the same pages at a permanent address,
+        // and next/ is the batch waiting for the next edition (scripts/build-next.mjs).
+        ...(edition && edition !== "latest" && !appendix ? [{ tag: "meta", attrs: { name: "robots", content: "noindex" } }] : []),
         { tag: "meta", attrs: { property: "og:image", content: absolute("og.png") } },
         { tag: "meta", attrs: { property: "og:image:width", content: "1280" } },
         { tag: "meta", attrs: { property: "og:image:height", content: "640" } },
@@ -75,11 +103,7 @@ export default defineConfig({
         "./src/styles/caret-and-ink.css",
         "./src/styles/templates.css",
       ],
-      sidebar: [
-        { label: "Overview", link: "/" },
-        ...pages.groups.map((g) => ({ label: g.label, items: g.items.map((slug) => ({ slug })) })),
-        { label: "Changelog", link: "/changelog/" },
-      ],
+      sidebar,
     }),
   ],
 });

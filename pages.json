@@ -57,14 +57,15 @@
       "items": [
         "release"
       ]
-    },
-    {
-      "label": "The family",
-      "items": [
-        "family/matrix",
-        "family/shared-features",
-        "family/gaps"
-      ]
     }
-  ]
+  ],
+  "appendix": {
+    "comment": "The family appendix: pages about the apps, not guidance. Served once at <root>/family/, outside every edition, and built from master on every deploy (scripts/build-appendix.mjs); an edition's sidebar links to it.",
+    "label": "The family",
+    "items": [
+      "family/matrix",
+      "family/shared-features",
+      "family/gaps"
+    ]
+  }
 }

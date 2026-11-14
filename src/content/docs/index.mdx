@@ -35,9 +35,12 @@ import termina from "../../assets/shots/termina-main.png";
 import modula from "../../assets/shots/modula-main.png";
 import nux from "../../assets/shots/nux-main.png";
 import mirada from "../../assets/shots/mirada-main.png";
+import pkg from "../../../package.json";
+import { siteRoot } from "../../lib/site.mjs";
 
 export const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
 export const icon = (app) => `${base}icons/${app}.svg`;
+export const root = siteRoot(pkg); // the family appendix is served beside the editions, at <root>family/
 
 ## Where to start
 
@@ -49,13 +52,13 @@ There are two ways to implement Pauta, depending on whether the app exists yet:
   the edition its README names. Click **Use this template** and run `scripts/rename.sh <AppName> <package>`. If the
   template's edition is older than this one, add the rules the later editions brought.
 - **An existing app closes its gaps.** It works through the [New app checklist](checklist/) and through its own list
-  of what it still misses under [Gaps per app](family/gaps/).
+  of what it still misses under [Gaps per app](../family/gaps/).
 
 <CardGrid>
   <LinkCard title="Principles" href={`${base}principles/`} description="The thirteen rules every other page follows from." />
   <LinkCard title="New app checklist" href={`${base}checklist/`} description="Everything a new app needs before its first release." />
-  <LinkCard title="Feature matrix" href={`${base}family/matrix/`} description="Which of the six apps has which piece today." />
-  <LinkCard title="Gaps per app" href={`${base}family/gaps/`} description="What each app still misses against this guide." />
+  <LinkCard title="Feature matrix" href={`${root}family/matrix/`} description="Which of the six apps has which piece today." />
+  <LinkCard title="Gaps per app" href={`${root}family/gaps/`} description="What each app still misses against the latest edition." />
 </CardGrid>
 
 ## What's new

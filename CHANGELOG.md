@@ -18,6 +18,13 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
   nux, the menus page's spec, anatomy and captions no longer call a row without an icon a defect, and the
   conformance page, the *Coding agents and LLMs* page and the audit skill take MENU-15 for their example of a
   `pending` MUST.
+- **The family pages leave the editions.** The feature matrix, the shared features and the gaps per app describe the
+  apps, not what they must do, so they are now an appendix in no edition: served once at `family/` beside the
+  editions (`https://pauta-project.dev/family/gaps/`), built from `master` on every deploy, and changed as the apps
+  change, with no changelog entry and no release. An edition's sidebar, overview and pages link to it, its links
+  lead to the rules of the latest edition, and the PDF, the Markdown download and the agent files no longer carry
+  it. Editions released before keep their own copy at their numbered address; `latest/family/` redirects to the
+  appendix. No rule changed.
 
 ## [6.0.1] - 2026-11-11
 

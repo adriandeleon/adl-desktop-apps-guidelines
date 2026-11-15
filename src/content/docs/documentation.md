@@ -228,7 +228,11 @@ title and description come from the message catalogs, and the parity test holds 
   - *Check (by hand):* the README's hero, in its light and its dark form, and the website's screenshots show the
     current UI at 2×; they are rendered from the real window by the capture hook or headless fixture
     [QUAL-09](../quality/#qual-09) asks for, not drawn or described.
-  - *Reference:* Termina's [`DevCapture.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/DevCapture.java) and Torrenta's [`DevCapture.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/DevCapture.java), and nux's
+  - *Reference:* the app template's [`ScreenshotsFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/ScreenshotsFxTest.java), which builds the real window
+    headless through `Startup.start` and renders it at 2× in the light and the dark theme;
+    [`scripts/screenshots.sh`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/scripts/screenshots.sh) runs it and writes the README's
+    `docs/images/screenshot-light.png` and `docs/images/screenshot-dark.png`. Among the apps, Termina's
+    [`DevCapture.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/DevCapture.java) and Torrenta's [`DevCapture.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/DevCapture.java), and nux's
     [`ui/Screenshot.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/Screenshot.java) ([Shared features](../../family/shared-features/)). None of the three renders at 2× yet: each writes what
     `scene.snapshot(null)` returns, the scene at its own size. Editora doesn't yet: it has no capture hook, and its
     headless fixture writes a screenshot from three FX tests only, when `-Deditora.test.shots=<dir>` is set, and

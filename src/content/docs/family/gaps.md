@@ -97,7 +97,8 @@ MUSTs: each rule's Reference says where.
   never set `java.awt.headless`, so AWT is headful on every OS, Linux included.
 - **Screenshots rendered at 2×** ([DOCS-18](../../latest/documentation/#docs-18)): Termina's, Torrenta's and nux's capture
   hooks write the scene at its own size. Editora has no capture hook, and its headless fixture writes a screenshot
-  from three FX tests only, at the scene's own size too.
+  from three FX tests only, at the scene's own size too. The app template, which is not one of the six, renders
+  its README's screenshots at 2× ([`ScreenshotsFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/ScreenshotsFxTest.java)).
 - **Docs links that open the running version's docs** ([DOCS-03](../../latest/documentation/#docs-03)): Termina and Mirada
   each open their site's unversioned `/docs/`.
 - **Toolbar groups separated by spacing, not lines** ([TBAR-04](../../latest/toolbars-and-tooltips/#tbar-04)): the

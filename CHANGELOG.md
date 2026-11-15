@@ -8,6 +8,12 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 
 ## [Unreleased]
 
+### Fixed
+
+- **DOCS-18's Reference names the app template.** The template now renders its README's screenshots at 2× in the
+  light and the dark theme: `ScreenshotsFxTest` builds the real window headless through `Startup.start`, and
+  `scripts/screenshots.sh` writes `docs/images/screenshot-light.png` and `docs/images/screenshot-dark.png`.
+
 ## [6.1.0] - 2026-11-14
 
 A minor: an app built to 6.0.1 has nothing to undo, and may drop work. MENU-14 goes from MUST to MAY, so a menu row

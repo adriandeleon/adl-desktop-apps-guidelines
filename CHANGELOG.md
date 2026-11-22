@@ -24,6 +24,17 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
     longer differ by OS, so Same on every OS lists none of Mirada's differences. MLOG-03 and MLOG-04 say its log
     closes and copies on its keymap's chords.
   - WIN-14's statement no longer gives Mirada's ☰ as its example of a main menu; the definition is unchanged.
+- **The app template's References follow it to a minimal starter.** Since 6.2.0 made a toolbar, tabs and tool panels
+  optional, the template keeps only what every app has (its PR 53): its main window is the menus, an empty state and
+  the status bar. Its toolbar, tool windows and stripes, document tabs, sample files, tab switcher, text zoom, region
+  commands and Welcome page are gone, and the References that cited them no longer do. ACC-06, WIN-09, TABS-08, WELC-03,
+  WELC-04, WELC-05 and WELC-11 drop the template; ACC-06 now says no app meets it yet. ACC-01, ACC-04, ACC-05,
+  KBD-15, WIN-08, TABS-10, TBAR-14, MENU-05, FIND-01 and FIND-16 say what its code does now: one find bar, over its
+  Debug Log; right-click menus on the Debug Log, the Message Log and Settings; the window's place and size kept
+  in `session.json` with no documents to reopen; the app's name as the window title. WELC-02 names its empty state
+  (`placeholder` in `ui/MainWindow.java`). WIN-12 says the template no longer meets its last clause: with no content
+  zoom left, `Ctrl+=`, `Ctrl+-` and `Ctrl+0` should be the UI zoom's, and its keymaps leave them unbound. The Quick
+  open template's relatives and *Gaps per app* follow. No rule changed.
 
 ## [6.2.0] - 2026-11-22
 

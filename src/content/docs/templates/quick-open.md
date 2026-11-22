@@ -149,8 +149,7 @@ have none ([Uses](#uses)).
 
 The relatives: the Open Files `Switcher` lists tabs in tab order, opens on the current one and closes a file with
 `C-d` or Backspace. `FileFinder` is the Emacs `find-file` field with Tab completion. `MultiSelectPicker` ticks several
-rows with Space where exactly one would be wrong. `BranchPopup` and `GitStashPopup` are sectioned pickers with their own actions. The app template's one relative, its tab switcher
-    ([`ui/Switcher.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Switcher.java)), moves through the same [`ui/PickerKeys.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/PickerKeys.java) and accepts and cancels as its pickers do.
+rows with Space where exactly one would be wrong. `BranchPopup` and `GitStashPopup` are sectioned pickers with their own actions.
 
 ## Uses
 

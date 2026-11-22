@@ -8,6 +8,14 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 
 ## [Unreleased]
 
+## [6.2.0] - 2026-11-22
+
+A minor: an app built to 6.1.0 has nothing to undo. A status bar is no longer required: WIN-01 now covers only an app
+with one, and an app chooses its chrome, with each part's rules applying once it has that part. The echo area, the one
+line of feedback that opens the Message Log, is a MUST of its own for every app (WIN-16, new), so an app without a status
+bar still says what happened. Every app that has a status bar already has its echo area there; nux, with neither, fails
+the new rule. 406 rules, one added and none retired: 195 MUST, 201 SHOULD, 10 MAY.
+
 ### Added
 
 - **WIN-16 · MUST: every app has an echo area.** The echo area is the main window's one line of feedback for the last

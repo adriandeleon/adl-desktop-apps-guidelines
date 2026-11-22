@@ -1,15 +1,15 @@
 {
   "comment": "The commit of each repository the pages link into that this edition describes: its head when the edition was released, or the commit the release named for it (scripts/pin-references.mjs). The edition's pages, agent files and downloads link these commits instead of the branches (src/lib/pins.mjs).",
-  "edition": "6.1.0",
-  "date": "2026-11-14",
+  "edition": "6.2.0",
+  "date": "2026-11-22",
   "repos": {
-    "adl-desktop-app-template": "b5cbc21ce60b1e7aee0b8af224b0fa6d8c49e73f",
-    "Editora": "f314ca3b117829d25dbaa63be6ba2353fd898fd8",
-    "editora-website": "1b6390c20c7a8aa3fc6af394b68c11454478d69d",
+    "adl-desktop-app-template": "a18b68974a7ca50f12c3f40c55dfaee91b0c9e55",
+    "Editora": "9626d493b4945254720aade9b7f613461984abe2",
+    "editora-website": "04cad5bd76039dad50e503a23dc078a512654908",
     "Mirada": "a3a84ec5e8227b1886e3dd920ab2b030aa3a2ba1",
-    "Modula": "518300a4c2114909315fbd3a73acc999fb4c16b5",
-    "nux": "d374ec4ee3f2eff0f7d378797884e6b81520ce20",
+    "Modula": "8567b459a5b231a80afd4f7c40c3ea25a472e9ab",
+    "nux": "529eacd8eb36553d76ca84126fc1b7f18d408aed",
     "Termina": "6de43a19b7185a25c01cdf506a6286719b1991ff",
-    "torrenta": "52d47c02ac57d8671d1e58d268b96a5532dbb00a"
+    "torrenta": "ace501ec0e695fb037b52d7d2623a4478f184021"
   }
 }

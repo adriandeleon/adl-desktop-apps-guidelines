@@ -168,8 +168,8 @@ area (Editora's) is content too.
     where it is built or by the helper that builds it (Editora's `Icons.toolbarButton`).
   - *Reference:* Editora [`Icons.toolbarButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Icons.java), used by the toolbars of its Git and Markdown lint tool windows;
     Torrenta's copy of it, which builds every button of its main toolbar ([`MainWindow.toolButton`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java)); Mirada's header
-    buttons: its [`Icons.button`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Icons.java) takes Rotate out of the Tab order, and [`ui/TitleBar.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/TitleBar.java) takes Info and ☰ out
-    where it builds them. Editora doesn't yet, on these toolbars among others: the buttons of its main toolbar, built
+    buttons: its [`Icons.button`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Icons.java) takes Rotate out of the Tab order, and [`ui/TitleBar.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/TitleBar.java) takes Info out
+    where it builds it. Editora doesn't yet, on these toolbars among others: the buttons of its main toolbar, built
     by [`WindowToolbar.setupButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowToolbar.java) and [`ToolbarCoordinator.buildExtraButton`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolbarCoordinator.java), the stripe buttons, the buttons of
     the Test Results panel's toolbar, built by `Icons.button` ([`ui/TestRunnerPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TestRunnerPanel.java)), and the float, maximize
     and close buttons in the header of every tool window ([`ui/ToolWindowPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ToolWindowPanel.java)) take focus.
@@ -201,10 +201,11 @@ area (Editora's) is content too.
   - *Why:* that is what makes it safe to hide icons in a narrow window and to let the user remove them.
   - *Check (code):* every button on the toolbar runs a registered command, so the palette lists it, and a menu lists
     that command too: the menu bar, or the app's main menu where it has no bar ([WIN-14](../window-shell/#win-14) says
-    what a main menu is). A button that only opens a menu (Editora's Recent, Mirada's ☰) is no action of its own. In
+    what a main menu is). A button that only opens a menu (Editora's Recent) is no action of its own. In
     an app whose toolbar is built from a catalog (Editora's `ToolbarCatalog`), every catalog item's command id is also
     in the menus' model.
-  - *Reference:* Mirada's header buttons, Rotate and Info, which its ☰ menu lists too ([`ui/TitleBar.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/TitleBar.java)). Eleven
+  - *Reference:* Mirada's header buttons, Rotate and Info, which its Image and View menus list too
+    ([`ui/AppMenus.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/AppMenus.java)). Eleven
     of the twelve buttons of Torrenta's toolbar run a command that a menu row runs too ([`MainWindow.buildToolbar`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java)),
     but Torrenta doesn't meet the rule yet: the twelfth, the palette button, opens the palette from a handler of its
     own, as the View menu's Command Palette row does, and no command does

@@ -52,12 +52,12 @@ see the [QuickOpen template](../quick-open/).
     table of readings or of history is not judged.
   - *Reference:* Torrenta [`Omnibox`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/Omnibox.java), [`FilterQuery`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/FilterQuery.java), [`MainWindow.onOmniboxKey`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java).
     Over a log shown as a list: Editora's [`ui/MessageLogPopup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java), a filter field over its `ListView`
-    (`applyFilter`), and the Message Logs of Torrenta ([`ui/MessageLogPopup.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MessageLogPopup.java)), Mirada ([`ui/MessageLogView.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MessageLogView.java))
-    and the app template ([`ui/MessageLogView.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MessageLogView.java)), each a filter field over a `ListView`. Four logs don't
+    (`applyFilter`), and the Message Logs of Torrenta ([`ui/MessageLogPopup.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MessageLogPopup.java)), Termina ([`ui/MessageLogCard.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MessageLogCard.java)), Mirada ([`ui/MessageLogView.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MessageLogView.java))
+    and the app template ([`ui/MessageLogView.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MessageLogView.java)), each a filter field over a `ListView`. Three logs don't
     meet it yet: Torrenta's [`ui/LogWindow.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/LogWindow.java) filters its table by level with three check boxes and has no field
     to type in; the Log tab of Torrenta's detail pane ([`ui/DetailPane.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/DetailPane.java), `buildLog`) lists the selected torrent's
-    events with no filter; and Termina's Message Log ([`ui/MessageLogWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MessageLogWindow.java)) and nux's event log
-    ([`ui/EventsWindow.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/EventsWindow.java)) are a list and a table with no filter.
+    events with no filter; and nux's event log
+    ([`ui/EventsWindow.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/EventsWindow.java)) is a table with no filter.
 
 ## Anatomy
 

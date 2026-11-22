@@ -63,7 +63,7 @@ Every app keeps one, session-only and bounded, newest first, with Esc to close a
     cap of 200.
   - *Reference:* Editora [`ui/MessageLogPopup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java) (`WIDTH`, `LIST_HEIGHT`) and
     [`ui/MessageLog.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLog.java) (`MAX_ENTRIES`); the app template's [`ui/MessageLogView.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MessageLogView.java).
-    Torrenta's card is 640 × 300, and Termina's log is a separate window that keeps 500 messages.
+    Termina's card meets it too ([`ui/MessageLogCard.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MessageLogCard.java), `WIDTH`, `LIST_HEIGHT`, with `MessageLog.MAX`). Torrenta's card is 640 × 300.
 
 ## Behavior
 
@@ -84,8 +84,9 @@ Every app keeps one, session-only and bounded, newest first, with Esc to close a
     also closes on `Ctrl+G` whatever the keymap, though the CUA keymap binds `C-g` to `nav.goToLine`; its handler
     reads `Alt+G` too, which the Emacs keymap's `M-g` prefix takes first. The app template's Message Log
     ([`ui/MessageLogView.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MessageLogView.java)) is shown through its [`ui/OverlayHost.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/OverlayHost.java), which closes it the same way, on the
-    keymap's `edit.cancel` chord (`cancelOn`). Elsewhere the chord is fixed: `Ctrl+G` in Termina
-    ([`ui/MessageLogWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MessageLogWindow.java)) and Mirada ([`ui/MessageLogView.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MessageLogView.java)). Torrenta's
+    keymap's `edit.cancel` chord (`cancelOn`). Mirada's ([`ui/MessageLogView.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MessageLogView.java)) closes on its keymap's cancel chord too (`C-g` in the
+    Emacs keymap). Termina's ([`ui/MessageLogCard.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MessageLogCard.java)) closes on Esc, a press on its backdrop and the chord that opened it, and
+    its key table binds no cancel command, so the chord asks nothing more of it. Torrenta's
     ([`ui/MessageLogPopup.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MessageLogPopup.java)) closes on Esc and on a press on its backdrop: Torrenta has no keymap and no cancel
     command, so the chord asks nothing more of it.
 - **MLOG-04 · SHOULD.** The Message Log copies the selected entries on the platform's copy chord, `Ctrl+C`
@@ -95,10 +96,11 @@ Every app keeps one, session-only and bounded, newest first, with Esc to close a
     keymap binds to its copy command (`M-w` in an Emacs keymap), read from the keymap and not written into the
     handler.
   - *Reference:* for the platform's chord, Editora [`MessageLogPopup.copySelection`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java), on a fixed shortcut-down C, and
-    the Message Logs of Torrenta ([`ui/MessageLogPopup.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MessageLogPopup.java)), Termina ([`ui/MessageLogWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MessageLogWindow.java)), Mirada
+    the Message Logs of Torrenta ([`ui/MessageLogPopup.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MessageLogPopup.java)), Termina ([`ui/MessageLogCard.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MessageLogCard.java)), Mirada
     ([`ui/MessageLogView.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MessageLogView.java)) and the app template ([`ui/MessageLogView.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MessageLogView.java)), each the same way. For the
-    keymap's chord, no app yet: none of the five reads the keymap's copy binding in its log, and Editora's Emacs
-    keymap binds copy to `M-w`, which its log does not read. The app template meets the rule all the same: none of its
+    keymap's chord, Termina's card reads the chords its key table binds to Copy (`copies`) and Mirada's log the one
+    its keymap binds (`M-w` in the Emacs keymap; `MessageLogView.copies`); Editora's Emacs keymap binds copy to
+    `M-w`, which its log does not read. The app template meets the rule all the same: none of its
     keymaps binds a copy command, so there is no second chord to read, and its key dispatcher steps aside while the
     log, an overlay, is open (`KeyDispatcher`), so `Ctrl+C` reaches it under the Emacs keymap's `C-c` prefix too. Editora doesn't hold the first half under that keymap
     on Windows and Linux either: the keymap starts longer chords with `C-c`, a prefix the window's key dispatcher

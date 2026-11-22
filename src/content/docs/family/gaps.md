@@ -33,8 +33,9 @@ that set the font on `.context-menu`, write 14 px as a fixed size. And no app me
 ([ACC-01](../../latest/accessibility/#acc-01)): Termina's sweeps icon-only buttons, Editora's and Mirada's each check a few
 named sets of buttons, and Torrenta, Modula and nux have none. Editora's in-window menu rows carry no accessible text;
 Torrenta sets one in a single helper, which names every button of its main toolbar and the Search view's Clear button
-and not its "···" button, and Modula sets none. The app template, which is not one of the six, meets all six
-MUSTs: each rule's Reference says where.
+and not its "···" button, and Modula sets none. The app template, which is not one of the six, meets five of the six
+MUSTs, and of WIN-12 misses only the chords: since it dropped its text zoom, its keymaps leave `Ctrl+=`, `Ctrl+-` and
+`Ctrl+0` unbound. Each rule's Reference says where.
 
 | App | Missing MUSTs |
 |---|---|

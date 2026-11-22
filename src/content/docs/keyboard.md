@@ -185,9 +185,7 @@ Every other list choice (recent files, themes, keymaps, a setting's values) uses
     reaches every other control of each window and dialog, and Space or Enter works it.
   - *Reference:* the app template, where each control the keyboard cannot focus has its other way: the status bar's
     echo area, error count and update notice run commands (`view.messageLog`, `help.openNewRelease`:
-    [`ui/StatusBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/StatusBar.java)), its toolbar's buttons are [TBAR-02](../toolbars-and-tooltips/#tbar-02)'s
-    (`Icons.toolbarButton` in [`ui/Icons.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Icons.java)), a tool window's header buttons run commands
-    ([`ui/ToolWindowManager.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/ToolWindowManager.java)), the find bars' buttons are [FIND-16](../templates/find-bar/#find-16)'s
+    [`ui/StatusBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/StatusBar.java)), the Debug Log's find bar's buttons are [FIND-16](../templates/find-bar/#find-16)'s
     ([`ui/FindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/FindBar.java)), and the picker's list is moved from its field ([`ui/Picker.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Picker.java)). Editora doesn't
     hold the rule everywhere yet: the Clear button of its Message Log ([`ui/MessageLogPopup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java)) and the Previous
     Run and Save Output buttons of its build console ([`ui/BuildToolPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/BuildToolPanel.java)) are out of the Tab order with no

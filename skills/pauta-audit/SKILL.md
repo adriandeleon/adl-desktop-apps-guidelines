@@ -238,7 +238,7 @@ answer. Otherwise take the first of these that fits, and don't guess between the
 
 - **The rule is limited** (step 1: its text, its `appliesTo`, or the rule it details) and the app is outside it:
   `limited`.
-- **The rule is about a part another rule requires** (the Command Palette, a status bar, About and its edition
+- **The rule is about a part another rule requires** (the Command Palette, the echo area, About and its edition
   link, the Debug Log's find bar, the Pauta window, the keymap files): how the part behaves, what it shows, or
   what every one of its rows, controls or files does or never does. Without the part the rule is unmet. It fails
   with the rule that requires the part, and its evidence names that rule ("no Pauta window: fails with PWIN-01"),

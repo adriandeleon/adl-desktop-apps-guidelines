@@ -20,10 +20,11 @@ screen reader and the OS's accessibility settings need is [Accessibility](../acc
   - *Reference:* Editora [`command/Command.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/Command.java), [`command/CommandRegistry.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/CommandRegistry.java). Editora doesn't hold the rule
     everywhere yet: the Clear button of its Message Log ([`ui/MessageLogPopup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java)) empties the log in its own
     handler, and the Previous Run and Save Output buttons of its build console ([`ui/BuildToolPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/BuildToolPanel.java)) work the
-    same way, with no command behind any of the three. Termina doesn't either. These buttons, among others, do their
-    work in handlers of their own with no command behind them: Clear in its Message Log
-    ([`ui/MessageLogWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MessageLogWindow.java)), Refresh, Copy, Export and Clear in its Debug Log ([`ui/DebugLogWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/DebugLogWindow.java)), and
-    Import theme in Settings ([`ui/SettingsWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/SettingsWindow.java)).
+    same way, with no command behind any of the three. Termina's log and Settings buttons
+    call what a command's runnable calls: Copy and Clear in its Message Log ([`ui/MessageLogCard.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MessageLogCard.java),
+    `messageLog.copy`, `messageLog.clear`), Refresh, Copy, Export and Clear in its Debug Log
+    ([`ui/DebugLogWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/DebugLogWindow.java), the `debugLog.*` commands) and Import theme in Settings
+    ([`ui/SettingsActions.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/SettingsActions.java), `settings.importTheme`).
 - **KBD-02 · SHOULD.** Command ids are dotted and grouped by area, as in `file.open`, `view.toggleStatusBar`
   and `help.reportProblem`. A rule that names a command's id requires that id; these three are examples.
   - *Check (code):* every registered id is two or more names joined by dots, and the first is the area the command

@@ -8,6 +8,23 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Termina's and Mirada's References, read again at their current heads.** Three files the pages linked are gone,
+  so 6.2.0 pinned both apps at their 6.1.0 commits; the next edition can pin them at their heads again.
+  - Termina's Message Log is now a card in its overlay host (`ui/MessageLogCard.java`), 773 × 336 with 200
+    messages, a filter and a right-click menu, so it meets MLOG-08, FIND-03 and MENU-05. MLOG-03 and MLOG-04 say how
+    it closes and copies. Its Message Log, Debug Log and Settings buttons call what a command calls (KBD-01), its
+    Debug Log has a menu (MENU-05), and its install guide is on its website, no longer in the repository (DOCS-02).
+  - Mirada's menus are one menu bar on every OS (`ui/AppMenus.java`): in the title bar by default on Windows and
+    Linux, behind a setting (WIN-03), and in the system menu bar on macOS. Its ☰ menu is gone. File ends with
+    `app.quit` (WIN-14). The Help menu keeps Pauta's order with Documentation, the keyboard reference, Check for
+    Updates and About in it (DOCS-06, DOCS-07, DOCS-08, DIAG-10, ABOUT-01). The macOS Settings item shows the keymap's
+    chord (WIN-15), and its logs have right-click menus (MENU-05). Escape, the accent color and the title's place no
+    longer differ by OS, so Same on every OS lists none of Mirada's differences. MLOG-03 and MLOG-04 say its log
+    closes and copies on its keymap's chords.
+  - WIN-14's statement no longer gives Mirada's ☰ as its example of a main menu; the definition is unchanged.
+
 ## [6.2.0] - 2026-11-22
 
 A minor: an app built to 6.1.0 has nothing to undo. A status bar is no longer required: WIN-01 now covers only an app

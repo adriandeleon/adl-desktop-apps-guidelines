@@ -99,7 +99,7 @@ reaches every menu command through the Command Palette ([KBD-05](../keyboard/#kb
   also shows a word, a glyph or a shape.
   - *Why:* about one man in twelve can't tell red from green.
   - *Check (by hand):* look at a grayscale screenshot of each window and find every state still told apart.
-  - *Reference:* Editora's echo area colors an error and also says what failed ([`ui/StatusBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusBar.java); [WIN-01](../window-shell/#win-01)). The app
+  - *Reference:* Editora's echo area colors an error and also says what failed ([`ui/StatusBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusBar.java); [WIN-16](../window-shell/#win-16)). The app
     template gives a file's Git status its letter beside the color, on a tab ([`ui/TabHeaders.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/TabHeaders.java); [`TabsAndPanelsFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/TabsAndPanelsFxTest.java),
     `aTabShowsItsGitStatusAsALetter`) and on the file's row in its Documents window ([`ui/SamplePanels.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/SamplePanels.java)).
 - **ACC-06 · SHOULD.** In an app whose window has more than one region (the content and at least one panel beside

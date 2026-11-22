@@ -5,22 +5,34 @@ description: "Status bar, themes, title bar, dialogs, Welcome, About, window sta
 
 ![Editora's Welcome tab](../../assets/shots/editora-welcome.png "Editora's Welcome page: Start actions with their chords, Recent Projects, Recent Files and Customize.")
 
-The window shell is what every app has around its content: the status bar and its echo area, the menu bar in the
-title bar, dialogs and the order of their buttons, the window's size and place kept across launches, zoom, and Quit.
+The window shell is what an app has around its content: the echo area, in the status bar where the app has one, the
+menu bar in the title bar where it has a menu bar, dialogs and the order of their buttons, the window's size and place
+kept across launches, zoom, and Quit. Every app has the echo area, the order of a dialog's buttons, the UI zoom and Quit; a status
+bar and a menu bar are the app's to choose, and their rules apply once it has one.
 A user meets these parts before any of the app's own features, so they look and work the same in every app, and on
 every OS apart from the places [Same on every OS](../same-on-every-os/) lists (the macOS application menu among
 them). The [Welcome page](../templates/welcome/) and the [About window](../templates/about/) have templates of their
 own.
 
-- **WIN-01 · MUST.** The main window has a status bar, shown by default; the user may hide it. Its left side is the
-  *echo area*: one line of feedback for the last action, errors in red and warnings in amber. Clicking it opens the
-  Message Log ([DIAG-01](../diagnostics/#diag-01)).
-  - *Check (code):* the main window builds a status bar that is visible unless the user hid it; the echo label
-    switches between an error and a warning style class, and its click handler runs the Message Log command.
+- **WIN-01 · MUST.** In an app with a status bar, the main window shows the status bar by default, the user may hide
+  it, and its left side is the echo area ([WIN-16](#win-16)).
+  - *Check (code):* the main window builds a status bar that is visible unless the user hid it, with the echo area's
+    label at its left.
+  - *Reference:* Editora [`ui/StatusBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusBar.java). Editora hides and shows the bar with `view.toggleStatusBar` and a
+    setting, and Zen mode hides it ([`ui/Chrome.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Chrome.java), `statusBar`). Termina doesn't meet the rule yet: its
+    status bar is a setting that starts off ([`config/Settings.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/config/Settings.java), `showStatusBar`). nux has no status bar.
+- **WIN-16 · MUST.** Every app has an *echo area* in its main window: one line of feedback for the last action,
+  errors in red and warnings in amber, that opens the Message Log ([DIAG-01](../diagnostics/#diag-01)) on a click. In
+  an app with a status bar it is the bar's left side, and hides when the user hides the bar ([WIN-01](#win-01)); an app without one shows the line where its
+  main window has room for it, and may show it only while it holds a message. A message there never takes the focus or
+  waits for an answer.
+  - *Why:* without one place for feedback, a failure is said in a dialog, or not at all ([Principles](../principles/),
+    "Nothing fails silently").
+  - *Check (code):* every message for the user goes through one label in the main window, which switches between an
+    error and a warning style class and whose click handler runs the Message Log command.
   - *Reference:* Editora [`ui/StatusBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusBar.java) (`status-echo-error`, `status-echo-warn`; a click runs
-    `view.messageLog`) and the [Message Log template](../templates/message-log/). Editora hides and shows the bar
-    with `view.toggleStatusBar` and a setting, and Zen mode hides it ([`ui/Chrome.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Chrome.java), `statusBar`). Termina doesn't
-    meet the rule yet: its status bar is a setting that starts off ([`config/Settings.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/config/Settings.java), `showStatusBar`).
+    `view.messageLog`) and the [Message Log template](../templates/message-log/). nux doesn't meet the rule yet: it has
+    no status bar and no other line for feedback.
 - **WIN-03 · MUST.** In an app with a menu bar, the menu bar sits in the title bar by default on Windows and Linux:
   JavaFX 27's `HeaderBar` with `StageStyle.EXTENDED` carries the menu, and a setting that starts on lets the user
   fall back to a decorated window. On macOS the menus are in the system menu bar (`useSystemMenuBar`), and the window
@@ -82,7 +94,7 @@ own.
     `view.zoomIn`, `view.zoomOut` and `view.zoomReset` for its documents' text, bound to `Ctrl+=`, `Ctrl+-` and `Ctrl+0` (`Cmd` on macOS) in every keymap it ships
     and kept in `textZoom` ([`config/Settings.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/Settings.java); [`SessionAndWelcomeFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/SessionAndWelcomeFxTest.java), `theDocumentsTextZoomsOnItsOwn`).
 - **WIN-12 · MUST.** The app has a UI zoom: one setting scales the whole chrome, the menus
-  ([MENU-16](../menus/#menu-16)), toolbar, tabs and status bar included. It applies at once, is kept across
+  ([MENU-16](../menus/#menu-16)) and whichever of a toolbar, tabs and a status bar the app has included. It applies at once, is kept across
   launches, and three commands zoom it in, out and back to the default. In an app with content of its own to zoom
   (an editor's text, a terminal's grid, an image) `Ctrl+=`, `Ctrl+-` and `Ctrl+0` (`Cmd` on macOS) stay with the
   content zoom ([WIN-09](#win-09)) and this rule fixes no chord for the UI zoom's commands; in an app without,

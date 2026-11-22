@@ -1,14 +1,14 @@
 ---
 title: "Message Log"
-description: "The family's Message Log: the session's status-bar messages, newest first, opened from the status bar."
+description: "The family's Message Log: the session's echo-area messages, newest first, opened from the echo area."
 ---
 
-The status bar's echo line shows one message and replaces it with the next; the Message Log keeps them, so nothing
+The echo area shows one message and replaces it with the next; the Message Log keeps them, so nothing
 the app said is lost because it scrolled past.
 
 Every app keeps one, session-only and bounded, newest first, with Esc to close and Clear to empty it:
-[DIAG-01](../../diagnostics/#diag-01). A click on the status bar's echo area opens it:
-[WIN-01](../../window-shell/#win-01). This page is what the log looks like and how it behaves beyond that.
+[DIAG-01](../../diagnostics/#diag-01). A click on the echo area, the status bar's left side in an app with a status bar, opens it:
+[WIN-16](../../window-shell/#win-16). This page is what the log looks like and how it behaves beyond that.
 
 ## Anatomy
 
@@ -37,7 +37,7 @@ Every app keeps one, session-only and bounded, newest first, with Esc to close a
 <li><span class="pin">4</span><span><strong>Severity</strong> colors the message, not the row: errors red, warnings amber, information in the default color. The time stays muted.</span></li>
 <li><span class="pin">5</span><span><strong>Actions:</strong> Copy (the selected entries as text, or every listed entry when none is selected), Clear (empties the session log and its unread count), and Open Doctor: messages carry no actions of their own, and a missing tool or a server that would not start is where Doctor helps.</span></li>
 <li><span class="pin">6</span><span><strong>Key hint</strong>, muted, 11 px.</span></li>
-<li><span class="pin">7</span><span><strong>Echo line.</strong> The status bar's latest message; a click opens the log.</span></li>
+<li><span class="pin">7</span><span><strong>Echo line.</strong> The echo area's latest message, here on the status bar; a click opens the log.</span></li>
 <li><span class="pin">8</span><span><strong>Unread errors.</strong> A red count beside the echo line while errors have arrived since the log was last opened; a click opens the log.</span></li>
 </ol>
 
@@ -45,7 +45,7 @@ Every app keeps one, session-only and bounded, newest first, with Esc to close a
 
 | Property | Value | Reference |
 |---|---|---|
-| Kind | A card in the shared in-scene overlay host, anchored just above the status bar's echo area, over the window | `MessageLogPopup.show`, `OverlayHost` |
+| Kind | A card in the shared in-scene overlay host, anchored just above the echo area, over the window | `MessageLogPopup.show`, `OverlayHost` |
 | Size | 773 px wide; the list 336 px high, scrolling past that | `WIDTH`, `LIST_HEIGHT` |
 | Card | `-color-bg-overlay`, radius 12, like the palette | `.message-log` |
 | Rows | Padding 2 4, radius 5; selected row `-state-sel` | `.message-log-list .list-cell` |
@@ -54,8 +54,8 @@ Every app keeps one, session-only and bounded, newest first, with Esc to close a
 | Lifetime | This session only, in memory. Not written to disk: the Debug Log is the persistent record | `MessageLog` |
 | Blank messages | Not recorded (a blank message only clears the echo line) | `MessageLog.add` |
 
-- **MLOG-08 · SHOULD.** The Message Log is a card in the window's in-scene overlay host, anchored just above the status
-  bar's echo area, never a separate window: 773 px wide, its list 336 px high, at the default zoom, holding the
+- **MLOG-08 · SHOULD.** The Message Log is a card in the window's in-scene overlay host, anchored just above the echo
+  area ([WIN-16](../../window-shell/#win-16)), never a separate window: 773 px wide, its list 336 px high, at the default zoom, holding the
   newest 200 messages of the session (the cap [DIAG-01](../../diagnostics/#diag-01) asks for).
   - *Why:* the log answers "what just happened?" next to the line that said it; a separate window, or another size
     and cap, makes the same log look and behave differently from app to app.
@@ -67,9 +67,11 @@ Every app keeps one, session-only and bounded, newest first, with Esc to close a
 
 ## Behavior
 
-- **MLOG-02 · SHOULD.** A click on the status bar's unread-error count opens the Message Log, as a click on the
-  echo area does ([WIN-01](../../window-shell/#win-01)), and so does the `view.messageLog` command.
-  - *Check (code):* the unread-error count runs `view.messageLog` on a click, and the command is registered.
+- **MLOG-02 · SHOULD.** The `view.messageLog` command opens the Message Log, as a click on the echo area does
+  ([WIN-16](../../window-shell/#win-16)), and so does a click on the unread-error count, in an app that shows one
+  (Editora's is on its status bar).
+  - *Check (code):* the `view.messageLog` command is registered, and where the app shows an unread-error count, the
+    count runs it on a click.
   - *Reference:* Editora [`StatusBar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusBar.java) (`echo`, `unreadErrors`), [`StatusBar.showMessageLog`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusBar.java).
 - **MLOG-03 · SHOULD.** The active keymap's cancel chord or a click outside closes the Message Log, as Esc does.
   - *Check (code):* the Message Log closes on the chord the active keymap binds to its cancel command, not on a fixed

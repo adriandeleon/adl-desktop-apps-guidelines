@@ -8,6 +8,31 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 
 ## [Unreleased]
 
+### Added
+
+- **WIN-16 · MUST: every app has an echo area.** The echo area is the main window's one line of feedback for the last
+  action, errors in red and warnings in amber, opening the Message Log on a click. WIN-01 used to require it as part of
+  a status bar; it is now a rule of its own, so an app without a status bar still says what happened somewhere. In an
+  app with a status bar it is the bar's left side, as before; an app without one puts the line where its main window
+  has room, and may show it only while it holds a message. nux has neither yet.
+
+### Changed
+
+- **A status bar is optional.** WIN-01 now applies to an app with a status bar: there, the bar is shown by default,
+  the user may hide it, and the echo area is its left side. Which chrome an app has is its own choice; once it has a
+  part, that part's rules apply at their level. Principle 3 says so, and names the Command Palette as the one way in
+  every app has. The window shell's introduction no longer says every app has a status bar and a menu bar.
+- **DIAG-09.** A found update is said in the main window, in its status bar where the app has one, naming the version
+  and linking the release. nux, with no status bar, meets it with the button in its toolbar.
+- **MLOG-02.** The `view.messageLog` command opens the Message Log; a click on the unread-error count does too in an
+  app that shows one. **MLOG-08** anchors the log above the echo area, wherever it sits.
+- **The echo area, not the status line.** FIND-10, FIND-12 and QOPEN-10 say a message goes to the echo area; principle
+  7 says a failure reaches the echo area, the Message Log or the Debug Log. DIAG-01, ICON-18, ACC-05 and the Message
+  Log template point at WIN-16 for the echo area.
+- **WIN-12.** The UI zoom scales the menus and whichever of a toolbar, tabs and a status bar the app has.
+- **The checklist.** The status bar line is two: the echo area for every app (WIN-16), the bar for an app with one
+  (WIN-01). The lines for the main toolbar, tab headers, bulk close and tool panels open with the apps they cover.
+
 ### Fixed
 
 - **DOCS-18's Reference names the app template.** The template now renders its README's screenshots at 2× in the

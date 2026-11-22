@@ -210,7 +210,7 @@ read as one family: a lens, the field as the card's own text, the count, a regex
     template's [`ui/TextInputKeys.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/TextInputKeys.java) (`install`) is on the field of each of its find bars, and its key dispatcher leaves a
     text field's editing chords to the field ([`TextInputKeysTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/TextInputKeysTest.java); [`FindBarFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/FindBarFxTest.java),
     `theSearchStartsAtTheCaretAndTheFieldKeepsItsEditingKeys`).
-- **FIND-10 · SHOULD.** Nothing found is one status-line message ("Not found: x") or the count "No matches". No beep,
+- **FIND-10 · SHOULD.** Nothing found is one echo-area message ("Not found: x") or the count "No matches". No beep,
   no dialog.
   - *Check (code):* the no-match path sets `find.notFound` or `search.none` and opens nothing.
   - *Reference:* Editora [`FindReplaceBar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/FindReplaceBar.java) (`find.notFound`); Termina [`SearchBar`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/SearchBar.java) (`search.none`).
@@ -220,10 +220,10 @@ read as one family: a lens, the field as the card's own text, the count, a regex
     replaces (Editora's `PreserveCase.apply`). A test that asserts it is the surest evidence.
   - *Reference:* Editora [`FindReplaceBarFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/FindReplaceBarFxTest.java) (`preserveCaseFollowsEachMatchesCasing`).
 - **FIND-12 · SHOULD.** In a find bar that replaces, Replace and Replace All run under a time budget, as the search
-  does: a replacement that outruns it stops and says so in the status line (in Editora's words, "Replace stopped:
+  does: a replacement that outruns it stops and says so in the echo area (in Editora's words, "Replace stopped:
   the pattern is too slow") instead of hanging the window. How long the budget is is the app's own.
   - *Check (code):* Replace and Replace All match under a time budget, as the search does, and when it runs out
-    they stop and say so in the status line (Editora's `find.replaceTimeout`) instead of hanging the window. A test
+    they stop and say so in the echo area (Editora's `find.replaceTimeout`) instead of hanging the window. A test
     that asserts it, with a catastrophic regular expression in Replace All, is the surest evidence.
   - *Reference:* Editora `find.replaceTimeout`, [`FindReplaceBarFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/FindReplaceBarFxTest.java)
     (`catastrophicRegexInReplaceAllAbortsInsteadOfHanging`).

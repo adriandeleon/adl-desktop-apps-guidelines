@@ -272,7 +272,7 @@ pill, a row tint and a hover state come from the same place. `.state-pill` is th
   - *Check (code):* the lookup from a saved name to a theme ends in the default, not an exception.
   - *Reference:* Editora [`Themes.themeFor`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Themes.java), falling back to [`Themes.DEFAULT`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/Themes.java) (Editora Light).
 - **ICON-18 · SHOULD.** The state colors never decorate: in every theme amber means "not durable yet", a warning
-  ([WIN-01](../window-shell/#win-01) requires a warning in the echo area in amber) or an update available in About
+  ([WIN-16](../window-shell/#win-16) requires a warning in the echo area in amber) or an update available in About
   ([ABOUT-10](../templates/about/#about-10) asks for it there), red "broken" and green "verified", and nothing is
   colored amber, red or green for any other reason. A theme may change the accent, the ground and the ink, never
   these meanings.

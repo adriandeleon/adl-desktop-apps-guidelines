@@ -98,7 +98,8 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 [Window shell](../window-shell/) · [Welcome page](../templates/welcome/) · [Confirm dialog](../templates/confirm-dialog/) · [About window](../templates/about/)
 
 - [ ] In an app with a menu bar: on Windows and Linux, the menu bar in the title bar (`HeaderBar`) by default, with a setting to fall back to a decorated window; on macOS, the system menu bar · [WIN-03](../window-shell/#win-03)
-- [ ] A status bar whose echo area shows the last action's feedback, errors in red and warnings in amber, and opens the Message Log on a click · [WIN-01](../window-shell/#win-01)
+- [ ] An echo area in the main window that shows the last action's feedback, errors in red and warnings in amber, and opens the Message Log on a click · [WIN-16](../window-shell/#win-16)
+- [ ] In an app with a status bar: the bar shown by default, the user able to hide it, the echo area at its left · [WIN-01](../window-shell/#win-01)
 - [ ] Every destructive action asks first, or can be taken back instead; where the app asks, the question names the thing, the button names the action in red, and Escape cancels · [CONF-01](../templates/confirm-dialog/#conf-01), [CONF-02](../templates/confirm-dialog/#conf-02), [CONF-03](../templates/confirm-dialog/#conf-03), [CONF-04](../templates/confirm-dialog/#conf-04)
 - [ ] Every such question has one default button, never the red one: Cancel, or Save where saving is an option, so Enter destroys nothing · [CONF-13](../templates/confirm-dialog/#conf-13)
 - [ ] The buttons of every dialog with two or more buttons, a text prompt and a form included, are worded from the message catalog, never JavaFX's stock OK, Yes, No, Cancel, Apply or Close · [CONF-14](../templates/confirm-dialog/#conf-14)
@@ -131,17 +132,17 @@ README names; its Pauta window lists what is left. Click **Use this template**, 
 - [ ] Every tooltip shown after the same 400 ms delay (SHOULD) · [TBAR-14](../toolbars-and-tooltips/#tbar-14)
 - [ ] A toolbar never holds the only way to an action · [TBAR-08](../toolbars-and-tooltips/#tbar-08)
 - [ ] Groups separated by spacing on one chrome band, no hairlines; a toggle wears `:open` while it is on (SHOULD) · [TBAR-04](../toolbars-and-tooltips/#tbar-04), [TBAR-06](../toolbars-and-tooltips/#tbar-06), [TBAR-07](../toolbars-and-tooltips/#tbar-07)
-- [ ] The main toolbar: its icons overflow and its pinned tail never does, Settings last with Simple mode before it, buttons disabled while their command can't act, a command hides the bar, and the bar keeps its height (SHOULD) · [TBAR-15](../toolbars-and-tooltips/#tbar-15), [TBAR-16](../toolbars-and-tooltips/#tbar-16), [TBAR-17](../toolbars-and-tooltips/#tbar-17), [TBAR-18](../toolbars-and-tooltips/#tbar-18), [TBAR-19](../toolbars-and-tooltips/#tbar-19)
+- [ ] In an app with a main toolbar: its icons overflow and its pinned tail never does, Settings last with Simple mode before it, buttons disabled while their command can't act, a command hides the bar, and the bar keeps its height (SHOULD) · [TBAR-15](../toolbars-and-tooltips/#tbar-15), [TBAR-16](../toolbars-and-tooltips/#tbar-16), [TBAR-17](../toolbars-and-tooltips/#tbar-17), [TBAR-18](../toolbars-and-tooltips/#tbar-18), [TBAR-19](../toolbars-and-tooltips/#tbar-19)
 
 ## Tabs and panels
 
 [Tabs and tool panels](../tabs-and-panels/)
 
 - [ ] In an app whose main window holds documents or sessions in tabs the user opens and closes: every tab operation is a command, on every tab of the strip, whatever it shows; a terminal app's tabs have no close unmodified and no close all · [TABS-01](../tabs-and-panels/#tabs-01)
-- [ ] One tab header carries the title and the states: `•` and amber italic for unsaved, a pin and bold for pinned, muted italic for read-only (`TabHeaders`); in a terminal, the running program as the title and a mark for a notification, bell or activity · [TABS-02](../tabs-and-panels/#tabs-02), [TABS-03](../tabs-and-panels/#tabs-03)
-- [ ] Bulk close skips pinned tabs, pinning moves a tab to the end of the pinned group, and Reopen Closed Tab brings the last one back (`ClosedTabs`) · [TABS-04](../tabs-and-panels/#tabs-04), [TABS-05](../tabs-and-panels/#tabs-05), [TABS-06](../tabs-and-panels/#tabs-06)
-- [ ] A `tool.<id>` command shows and hides each tool panel, on `M-1` to `M-0` in the Emacs keymap, and a panel's content is built on first use (`ToolWindowManager`) · [TABS-13](../tabs-and-panels/#tabs-13), [PERF-14](../performance/#perf-14)
-- [ ] Each panel's place and size restored on the next launch (SHOULD) · [TABS-15](../tabs-and-panels/#tabs-15)
+- [ ] In an app with such tabs, one tab header carries the title and the states: `•` and amber italic for unsaved, a pin and bold for pinned, muted italic for read-only (`TabHeaders`); in a terminal, the running program as the title and a mark for a notification, bell or activity · [TABS-02](../tabs-and-panels/#tabs-02), [TABS-03](../tabs-and-panels/#tabs-03)
+- [ ] In an app with such tabs, bulk close skips pinned tabs, pinning moves a tab to the end of the pinned group, and Reopen Closed Tab brings the last one back (`ClosedTabs`) · [TABS-04](../tabs-and-panels/#tabs-04), [TABS-05](../tabs-and-panels/#tabs-05), [TABS-06](../tabs-and-panels/#tabs-06)
+- [ ] In an app with tool panels, a `tool.<id>` command shows and hides each one, on `M-1` to `M-0` in the Emacs keymap, and a panel's content is built on first use (`ToolWindowManager`) · [TABS-13](../tabs-and-panels/#tabs-13), [PERF-14](../performance/#perf-14)
+- [ ] In an app with tool panels, each panel's place and size restored on the next launch (SHOULD) · [TABS-15](../tabs-and-panels/#tabs-15)
 
 ## Menus
 

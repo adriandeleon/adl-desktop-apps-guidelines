@@ -4,7 +4,7 @@ description: "Message Log, Debug Log, update notification, Report a Problem, Doc
 ---
 
 When something goes wrong, the user and the developer need the same evidence, and every app keeps it the same way.
-The [Message Log](../templates/message-log/) holds what the status bar said this session; the Debug Log holds every
+The [Message Log](../templates/message-log/) holds what the echo area said this session; the Debug Log holds every
 log record and uncaught exception, and keeps the previous session's file so a crash leaves its trace; the update check
 says when a newer version is out; and Report a Problem turns the evidence into a redacted GitHub issue the user reads
 and edits before it is sent. Two SHOULDs complete it: a Doctor page that checks the environment, and, in an app with
@@ -12,7 +12,7 @@ user documents, unsaved work offered back after a crash.
 
 - **DIAG-01 · MUST.** The **Message Log** is a session-only, bounded history of every echo-area message with
   `HH:mm:ss` times, newest first. Esc closes it; Clear empties it. What opens it, a click on the echo area, is
-  [WIN-01](../window-shell/#win-01)'s to require; the [Message Log template](../templates/message-log/) has the rest.
+  [WIN-16](../window-shell/#win-16)'s to require; the [Message Log template](../templates/message-log/) has the rest.
   - *Check (code):* every message the echo area shows is added, with its time, to one log held in memory and never
     written to disk; the log drops its oldest entry past a fixed count and lists the rest newest first with
     `HH:mm:ss` times; and its window closes on Esc and has a Clear action that empties it. A test that records
@@ -62,18 +62,18 @@ user documents, unsaved work offered back after a crash.
     don't wait yet: Torrenta starts its check as soon as its engine is ready ([`ui/MainWindow.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java),
     `maybeCheckForUpdates`), and Modula ([`ModulaApp.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ModulaApp.java), `checkForUpdates`) and nux ([`App.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/App.java),
     `maybeCheckForUpdates`) start theirs inside `start()`.
-- **DIAG-09 · MUST.** When the update check ([DIAG-05](#diag-05)) finds a newer version, the status bar says so,
-  naming the version and linking its release. About's line for the last check is
-  [ABOUT-02](../templates/about/#about-02).
-  - *Check (code):* when a check finds a newer version, the app shows a notice in the status bar that names that
-    version, and the notice, or a link beside it in the bar, opens that release's page (Editora's
-    `UpdateCoordinator` shows a status-bar segment whose click opens the release).
+- **DIAG-09 · MUST.** When the update check ([DIAG-05](#diag-05)) finds a newer version, the main window says so,
+  in its status bar where the app has one, naming the version and linking its release. About's line for the last
+  check is [ABOUT-02](../templates/about/#about-02).
+  - *Check (code):* when a check finds a newer version, the app shows a notice in the main window, in the status bar
+    where it has one, that names that version, and the notice, or a link beside it, opens
+    that release's page (Editora's `UpdateCoordinator` shows a status-bar segment whose click opens the release).
   - *Reference:* Editora [`ui/UpdateCoordinator.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/UpdateCoordinator.java). Mirada ([`ui/StatusBar.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/StatusBar.java)) and the app template
     ([`ui/StatusBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/StatusBar.java)) show a link in the bar, and Torrenta a badge there that opens the release
     ([`ui/MainWindow.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java), `updateBadge`). Termina and Modula don't link the release yet: their status message
     names the version and nothing in the bar opens it (Termina's `status.updateAvailable`, posted from
-    [`ui/WindowManager.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/WindowManager.java); Modula's [`ui/RadioPane.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/RadioPane.java), `setAvailableUpdate`). nux doesn't meet it
-    either: it has no status bar, and shows a button in its toolbar that opens the release
+    [`ui/WindowManager.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/WindowManager.java); Modula's [`ui/RadioPane.java`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ui/RadioPane.java), `setAvailableUpdate`). nux, which has no status
+    bar, shows a button in its toolbar that names the version and opens the release
     ([`App.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/App.java), `refreshUpdateNotice`).
 - **DIAG-10 · MUST.** **Check for Updates** runs the update check ([DIAG-05](#diag-05)) by hand, as a command in the
   palette and in the Help menu, where the app has a Help menu (the Help menu of a menu bar, or a Help submenu of the

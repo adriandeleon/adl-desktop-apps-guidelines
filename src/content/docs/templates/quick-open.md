@@ -129,7 +129,7 @@ have none ([Uses](#uses)).
   - *Reference:* Editora [`QuickOpen.addRowAction(key, legend, action)`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java), [`QuickOpenPreviewFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/QuickOpenPreviewFxTest.java)
     (`aRowActionActsOnTheHighlightedRowAndKeepsThePickerOpen`).
 - **QOPEN-10 · SHOULD.** A picker that can open on an empty list shows a placeholder sentence in it, never a blank
-  card. A picker with nothing to offer may instead say so in the status line and not open.
+  card. A picker with nothing to offer may instead say so in the echo area and not open.
   - *Check (code):* each picker whose source can be empty either calls `setPlaceholder` or returns before `show` with
     a status message.
   - *Reference:* Editora [`QuickOpen.setPlaceholder`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/QuickOpen.java) ([`BreakpointsPicker`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/BreakpointsPicker.java)); [`NavigationCoordinator`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/NavigationCoordinator.java)

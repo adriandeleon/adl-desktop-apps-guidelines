@@ -20,7 +20,9 @@ Editora is the reference; each principle names where else it is written down.
 2. **Keyboard first.** Every action works without a mouse. The mouse is a shortcut to commands, not the
    other way round.
 3. **Every feature is a command.** One registry of commands with ids. Menus, toolbar buttons, the command
-   palette and key bindings all run commands by id. Nothing is wired straight to logic.
+   palette and key bindings all run commands by id. Nothing is wired straight to logic. Every app has the
+   Command Palette, so every command is in reach; a menu bar, a toolbar, tabs, tool panels and their stripes, a
+   status bar and a tray icon are the app's to choose, and once it has one, that part's rules apply at their level.
 4. **Speed comes first.** Start-up and the app's core action (typing in Editora, stepping to the next image in
    Mirada, a keystroke reaching the shell in Termina) are the product. When a feature pulls against them, the
    feature loses or waits until it can be made cheap. *(Mirada's "Priorities" and its "fast first".)*
@@ -31,7 +33,7 @@ Editora is the reference; each principle names where else it is written down.
    resources that window is built from (its fonts, the message catalog, the keymap, its icons); and the last
    save as the app quits ([PERF-01](../performance/#perf-01)).
 6. **Changes apply as they are made.** Settings have no Save button. A change reaches every open window.
-7. **Nothing fails silently.** Every failure reaches the status bar, the Message Log or the Debug Log, and
+7. **Nothing fails silently.** Every failure reaches the echo area, the Message Log or the Debug Log, and
    the user can turn any of it into a GitHub issue.
 8. **Never claim what is not true.** No link that looks like a link and does nothing, no "up to date" before
    an update check has answered, no setting that seems to apply when it cannot: a setting that waits for a

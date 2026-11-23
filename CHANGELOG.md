@@ -32,9 +32,9 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
   KBD-15, WIN-08, TABS-10, TBAR-14, MENU-05, FIND-01 and FIND-16 say what its code does now: one find bar, over its
   Debug Log; right-click menus on the Debug Log, the Message Log and Settings; the window's place and size kept
   in `session.json` with no documents to reopen; the app's name as the window title. WELC-02 names its empty state
-  (`placeholder` in `ui/MainWindow.java`). WIN-12 says the template no longer meets its last clause: with no content
-  zoom left, `Ctrl+=`, `Ctrl+-` and `Ctrl+0` should be the UI zoom's, and its keymaps leave them unbound. The Quick
-  open template's relatives and *Gaps per app* follow. No rule changed.
+  (`placeholder` in `ui/MainWindow.java`). WIN-12 says its UI zoom now has `Ctrl+=`, `Ctrl+-` and `Ctrl+0` (`Cmd` on
+  macOS, `C-=`, `C--` and `C-0` in Emacs), which the last clause gives an app with no content zoom (its PR 54). The
+  Quick open template's relatives follow. No rule changed.
 
 ## [6.2.0] - 2026-11-22
 

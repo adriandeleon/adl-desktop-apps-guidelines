@@ -109,9 +109,9 @@ own.
     (`zoom`): one setting, `uiZoom` in [`config/Settings.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/Settings.java), scales every pixel size of the stylesheets, the root
     font size among them, and the sizes the code fixes are bound to the zoom; a change restyles every open window
     at once. Its commands are `view.uiZoomIn`, `view.uiZoomOut` and `view.uiZoomReset` ([`ui/Commands.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Commands.java)), on
-    `Ctrl+Alt+=`, `Ctrl+Alt+-` and `Ctrl+Alt+0` (`Cmd+Alt` on macOS) in its CUA keymaps; [`UiZoomTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/UiZoomTest.java) holds the scaling.
-    The template doesn't meet the last clause yet: it has no content zoom since it dropped its documents, and its
-    keymaps leave `Ctrl+=`, `Ctrl+-` and `Ctrl+0` unbound (its Emacs keymap binds no zoom at all). Editora, Termina and Mirada zoom their
+    `Ctrl+=`, `Ctrl+-` and `Ctrl+0` (`Cmd` on macOS) in every keymap, `C-=`, `C--` and `C-0` in Emacs, since it has
+    no content zoom ([`keymaps/cua.json`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/keymaps/cua.json)); [`UiZoomTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/UiZoomTest.java) holds the scaling and
+    [`KeybindingsTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/command/KeybindingsTest.java) (`theZoomChordsZoomTheUiInEveryKeymap`) the chords in every keymap. Editora, Termina and Mirada zoom their
     content only (`view.textZoomIn`, `zoomIn`, `view.zoomIn`), and Editora writes its menu font as absolute pixels ([`MainMenuBar.UI_FONT_SIZE`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java), `.context-menu`
     in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css)). Torrenta, Modula and nux have no zoom command.
 - **WIN-13 · MUST.** Every quit entry point an app has runs one quit method: the Quit row and the `app.quit` command

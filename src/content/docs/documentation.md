@@ -45,9 +45,8 @@ repository's [`docs/README.md`](https://github.com/adriandeleon/Editora/blob/mas
     settle it.
   - *Reference:* editora-website [`README.md`](https://github.com/adriandeleon/editora-website/blob/master/README.md) (*Content*). Editora doesn't yet, though its [`AGENTS.md`](https://github.com/adriandeleon/Editora/blob/master/AGENTS.md) says "User-facing feature
     documentation goes to the separate website repository": [`docs/plugins.md`](https://github.com/adriandeleon/Editora/blob/master/docs/plugins.md), a page for plugin authors, has a
-    section that tells the user the three ways to install a plugin and one on troubleshooting plugins. Termina
-    doesn't either: [`docs/reference/installing.md`](https://github.com/adriandeleon/Termina/blob/master/docs/reference/installing.md) tells the person installing it which download to take, how to
-    install each and how to check its signature, and its README sends the reader there. Nor does Torrenta:
+    section that tells the user the three ways to install a plugin and one on troubleshooting plugins. Torrenta doesn't
+    either:
     [`docs/headless.md`](https://github.com/adriandeleon/torrenta/blob/master/docs/headless.md), [`docs/webapi.md`](https://github.com/adriandeleon/torrenta/blob/master/docs/webapi.md) and [`docs/search-providers.md`](https://github.com/adriandeleon/torrenta/blob/master/docs/search-providers.md) are guides for the person using it.
 - **DOCS-03 · SHOULD.** Every link from the app into its user docs opens the running version's docs, the address
   `help.documentation` opens ([DOCS-06](#docs-06)) as much as a link to one page. Pages live under
@@ -118,9 +117,8 @@ The documentation is one command away, so nobody has to know the website's addre
     page's Help row runs the same command through the registry (`welcome.documentation` in Editora's
     `WelcomePane`).
   - *Reference:* Editora [`WindowCommandRegistrar`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowCommandRegistrar.java) (`help.documentation` → [`MainController.openDocumentation()`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainController.java)),
-    [`MenuBarModel`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java) (`menubar.help`), [`WelcomePane`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WelcomePane.java) (`welcome.documentation`). Mirada's macOS Help menu has
-    the row ([`MacMenus`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MacMenus.java)); its main menu doesn't yet: there the Documentation row sits beside the Help submenu,
-    not in it ([`ui/TitleBar.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/TitleBar.java)).
+    [`MenuBarModel`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java) (`menubar.help`), [`WelcomePane`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WelcomePane.java) (`welcome.documentation`). Mirada's Help menu has the row on
+    every OS ([`AppMenus`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/AppMenus.java)).
 - **DOCS-07 · SHOULD.** Where the app has a Help menu (the Help menu of a menu bar, or a Help submenu of the app's
   main menu, which [WIN-14](../window-shell/#win-14) defines), its rows run in this order: Command Palette ·
   Documentation · the keyboard reference ([DOCS-08](#docs-08)) · Welcome Page · Check for Updates · Message Log ·
@@ -132,17 +130,16 @@ The documentation is one command away, so nobody has to know the website's addre
   - *Reference:* Editora [`MenuBarModel`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java), both `MenuSpec("menubar.help", …)`, for the rows its Help menu has. It has
     no Welcome Page row, since `view.welcome` is still in the View menu ([WELC-03](../templates/welcome/#welc-03)),
     and no keyboard-reference row. Termina's [`MenuBarModel`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MenuBarModel.java) (`documentation`, `whatsNew`, `keyboardShortcuts`,
-    then `checkForUpdates`) and Mirada's macOS menu bar, [`MacMenus`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MacMenus.java) (`PALETTE`, `DOCUMENTATION`, `SHORTCUTS`, then
-    `CHECK_FOR_UPDATES`) put the keyboard reference there; Termina's What's New row, between the two, is its own.
-    The Help submenu of Mirada's main menu doesn't follow the order yet: it holds Message Log, Debug Log, Report a
-    Problem, then Check for Updates, and Documentation, the keyboard reference and About are rows of the main menu
-    beside it ([`ui/TitleBar.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/TitleBar.java)).
+    then `checkForUpdates`) and Mirada's menu bar, on every OS, [`AppMenus`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/AppMenus.java) (`PALETTE`, `DOCUMENTATION`, `SHORTCUTS`,
+    then `CHECK_FOR_UPDATES`) put the keyboard reference there; Termina's What's New row, between the two, is its own.
+    Mirada's Help menu keeps the whole order, About last, with the release row after Check for Updates and each log's
+    Copy and Clear after it, rows of its own.
 - **DOCS-08 · SHOULD.** Where the app has a Help menu (the Help menu of a menu bar, or a Help submenu of the app's
   main menu, which [WIN-14](../window-shell/#win-14) defines), a row of it opens a keyboard reference: a searchable
   window of every key, grouped as the menus are, or the keybinding editor.
   - *Check (by hand):* open it from Help, search for a command, and find its key.
   - *Reference:* Termina's [`ShortcutsWindow`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/ShortcutsWindow.java), a row of its Help menu, and Mirada's [`ShortcutsWindow`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/ShortcutsWindow.java), a row of its
-    macOS Help menu; in Mirada's main menu the row sits beside the Help submenu. Editora doesn't yet: its
+    Help menu on every OS. Editora doesn't yet: its
     keybinding editor is a page of Settings ([Keyboard first](../keyboard/)), and no row of its Help menu opens it
     ([`MenuBarModel`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java)).
 

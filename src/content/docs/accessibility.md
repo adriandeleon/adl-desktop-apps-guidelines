@@ -59,8 +59,8 @@ reaches every menu command through the Command Palette ([KBD-05](../keyboard/#kb
     its submenus keep their own. The app template has the test that sweeps every window for every control:
     [`NamedControlsFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/NamedControlsFxTest.java) (`everyControlInEveryWindowHasAName`, and
     `everyMenuRowReadsAsItsTitleAndWearsAGlyph` for the menu rows, which [`AppMenus.inWindowRow`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AppMenus.java) names from their title
-    and chord) opens the main window and its panels, the find bars, the Message Log, Settings, About, the Pauta
-    window, the Debug Log and Report a Problem, the palette, the switcher, a question and a prompt. Termina's [`IconOnlyButtonsFxTest.java`](https://github.com/adriandeleon/Termina/blob/master/src/test/java/com/termina/ui/IconOnlyButtonsFxTest.java) comes nearest: it opens the main window, the menus, Settings and About and
+    and chord) opens the main window, the Message Log, every Settings page, About, the Pauta window, the Debug Log and
+    its find bar, Report a Problem, the Doctor, the palette, a question and a prompt. Termina's [`IconOnlyButtonsFxTest.java`](https://github.com/adriandeleon/Termina/blob/master/src/test/java/com/termina/ui/IconOnlyButtonsFxTest.java) comes nearest: it opens the main window, the menus, Settings and About and
     fails an icon-only button with no name, and no other kind of control. Torrenta's one call to
     `setAccessibleText` is in a helper ([`ui/Icons.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/Icons.java), `name`) that names every button of its main toolbar and the
     Search view's Clear button, and no other control; Modula never calls it.
@@ -90,8 +90,7 @@ reaches every menu command through the Command Palette ([KBD-05](../keyboard/#kb
   - *Check (code):* every `Transition`, `Timeline` or `AnimationTimer` that moves, fades or flashes part of the UI
     starts through one helper that reads `reducedMotionProperty()`.
   - *Reference:* no app reads the setting yet. The app template animates nothing, so it has nothing to judge: its
-    timelines and pauses are timers that move, fade or flash no part of the UI (the Output sample's lines in
-    [`ui/SamplePanels.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/SamplePanels.java), the debounce of [`ui/Debounce.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Debounce.java), the sync interval and the update check's delay).
+    timelines and pauses are timers that move, fade or flash no part of the UI (the debounce of [`ui/Debounce.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Debounce.java), the sync interval and the update check's delay).
     Mirada fades its on-screen controls in and out
     ([`ui/OnScreenControls.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/OnScreenControls.java), a `FadeTransition`), and Editora's Project Map flashes a revealed row for 900 ms
     ([`ui/MapSurface.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MapSurface.java), an `AnimationTimer`); neither reads a motion setting.
@@ -99,18 +98,15 @@ reaches every menu command through the Command Palette ([KBD-05](../keyboard/#kb
   also shows a word, a glyph or a shape.
   - *Why:* about one man in twelve can't tell red from green.
   - *Check (by hand):* look at a grayscale screenshot of each window and find every state still told apart.
-  - *Reference:* Editora's echo area colors an error and also says what failed ([`ui/StatusBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusBar.java); [WIN-16](../window-shell/#win-16)). The app
-    template gives a file's Git status its letter beside the color, on a tab ([`ui/TabHeaders.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/TabHeaders.java); [`TabsAndPanelsFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/TabsAndPanelsFxTest.java),
-    `aTabShowsItsGitStatusAsALetter`) and on the file's row in its Documents window ([`ui/SamplePanels.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/SamplePanels.java)).
+  - *Reference:* Editora's echo area colors an error and also says what failed ([`ui/StatusBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/StatusBar.java); [WIN-16](../window-shell/#win-16)), and
+    so does the app template's ([`ui/StatusBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/StatusBar.java)), whose unread-error count is a number.
 - **ACC-06 · SHOULD.** In an app whose window has more than one region (the content and at least one panel beside
   it), a command moves focus to the next region, another moves it to the previous one, and every keymap binds
   both.
   - *Why:* Tab walks through every control inside a region; with several panels open, a keyboard user needs a way to
     jump between them.
   - *Check (code):* the two commands are registered and bound in each bundled keymap.
-  - *Reference:* the app template's `window.focusNextRegion` and `window.focusPreviousRegion` ([`ui/Commands.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Commands.java), `focusRegion`
-    in [`ui/ToolWindowManager.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/ToolWindowManager.java)), on `F6` and `Shift+F6` in its CUA keymaps and `C-x o` and `C-x S-o` in Emacs, bound in
-    every keymap it ships ([`TabsAndPanelsFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/TabsAndPanelsFxTest.java), `theRegionCommandsWalkTheDocumentsAndTheOpenToolWindows`). Editora's `window.other` ("Cycle focus between the editor and tool windows",
+  - *Reference:* no app yet; the app template's window has one region, with no panel beside its content. Editora's `window.other` ("Cycle focus between the editor and tool windows",
     [`ui/WindowCommandRegistrar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/WindowCommandRegistrar.java)), one command that cycles, bound only in the Emacs keymap (`C-x o`,
     [`keymaps/emacs.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/emacs.json)). `F6`, the Windows convention, is taken in
     every other Editora keymap: CUA and VS Code bind it to `debug.pause`, IntelliJ to `lsp.move` and Sublime to

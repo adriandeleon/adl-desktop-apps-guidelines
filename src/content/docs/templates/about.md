@@ -22,8 +22,8 @@ Torrenta ([`AboutDialog`](https://github.com/adriandeleon/torrenta/blob/master/s
     [`ui/MacAppMenu.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MacAppMenu.java) inserts the macOS item, which runs `help.about`, so the template meets the whole rule.
     Editora doesn't add the macOS item yet, and nor do Torrenta, Modula and nux. Termina ([`ui/MacAppMenu.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MacAppMenu.java)) and Mirada ([`os/MacAppMenu.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/os/MacAppMenu.java)) add it too: JavaFX has no
     public API for that menu, so the three insert the item into the one Glass keeps (`MacApplication.getAppleMenu`).
-    Neither of those two is the whole rule: Termina's command is `about`, not `help.about`, and Mirada's About row sits beside
-    the Help submenu of its main menu, not in it ([`ui/TitleBar.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/TitleBar.java), `finish`).
+    Termina's isn't the whole rule: its command is `about`, not `help.about`. Mirada's meets it: About is the
+    last row of its Help menu, on every OS ([`ui/AppMenus.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/AppMenus.java)).
 - **ABOUT-02 · MUST.** About shows the version and build, the runtime, the license, links to the app's home page,
   its source code and its releases, and the result of the last update check. The Pauta edition is
   [ABOUT-05](#about-05).

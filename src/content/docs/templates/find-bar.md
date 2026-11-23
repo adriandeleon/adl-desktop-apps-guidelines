@@ -25,8 +25,7 @@ see the [QuickOpen template](../quick-open/).
     Editora doesn't meet it in every console yet: the build console has the bar
     ([`ui/BuildToolPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/BuildToolPanel.java)); the Run, External Tools and Debug consoles ([`ui/RunPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/RunPanel.java), [`ui/ExternalToolPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ExternalToolPanel.java),
     [`ui/DebugPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/DebugPanel.java)) are read-only text areas with none.
-    The app template's [`ui/FindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/FindBar.java) is one bar over a text area, a row in the window: over each document
-    ([`ui/DocumentView.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DocumentView.java)), over the Output console ([`ui/SamplePanels.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/SamplePanels.java)) and over its Debug Log
+    The app template's [`ui/FindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/FindBar.java) is one bar over a text area, a row in the window, over its Debug Log, the one text it shows
     ([`ui/DebugLogWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DebugLogWindow.java)). No released app's Debug Log has a find bar yet. Editora's Message Log ([`ui/MessageLogPopup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java)) and Torrenta's log
     window ([`ui/LogWindow.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/LogWindow.java)) are lists, which [FIND-03](#find-03) covers.
 - **FIND-02 · MUST.** A find bar searches as its query is typed and shows a match count.
@@ -52,12 +51,12 @@ see the [QuickOpen template](../quick-open/).
     table of readings or of history is not judged.
   - *Reference:* Torrenta [`Omnibox`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/Omnibox.java), [`FilterQuery`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/FilterQuery.java), [`MainWindow.onOmniboxKey`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java).
     Over a log shown as a list: Editora's [`ui/MessageLogPopup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java), a filter field over its `ListView`
-    (`applyFilter`), and the Message Logs of Torrenta ([`ui/MessageLogPopup.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MessageLogPopup.java)), Mirada ([`ui/MessageLogView.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MessageLogView.java))
-    and the app template ([`ui/MessageLogView.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MessageLogView.java)), each a filter field over a `ListView`. Four logs don't
+    (`applyFilter`), and the Message Logs of Torrenta ([`ui/MessageLogPopup.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MessageLogPopup.java)), Termina ([`ui/MessageLogCard.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MessageLogCard.java)), Mirada ([`ui/MessageLogView.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MessageLogView.java))
+    and the app template ([`ui/MessageLogView.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MessageLogView.java)), each a filter field over a `ListView`. Three logs don't
     meet it yet: Torrenta's [`ui/LogWindow.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/LogWindow.java) filters its table by level with three check boxes and has no field
     to type in; the Log tab of Torrenta's detail pane ([`ui/DetailPane.java`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/DetailPane.java), `buildLog`) lists the selected torrent's
-    events with no filter; and Termina's Message Log ([`ui/MessageLogWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MessageLogWindow.java)) and nux's event log
-    ([`ui/EventsWindow.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/EventsWindow.java)) are a list and a table with no filter.
+    events with no filter; and nux's event log
+    ([`ui/EventsWindow.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/ui/EventsWindow.java)) is a table with no filter.
 
 ## Anatomy
 
@@ -265,8 +264,7 @@ read as one family: a lens, the field as the card's own text, the count, a regex
     clear button inside each field. Its [`ConsoleFindBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ConsoleFindBar.java) and [`TerminalFindBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/TerminalFindBar.java) take Previous, Next and Close
     out of it, which Shift+Enter, Enter and Escape in the field do, and leave the field and the match-case toggle
     in. The app template's [`FindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/FindBar.java) takes the same three out: Previous and Next run its bar's step
-    commands (`find.previous` and `find.next` over a document, `output.findPrevious` and `output.findNext`,
-    `debugLog.findPrevious` and `debugLog.findNext`), Close is the field's Escape, and the Match Case box stays in.
+    commands over its Debug Log (`debugLog.findPrevious` and `debugLog.findNext`), Close is the field's Escape, and the Match Case box stays in.
     Torrenta's filter box is out of it and reached by its `filter` command
     ([`MainWindow.buildFilterBar`](https://github.com/adriandeleon/torrenta/blob/master/src/main/java/com/torrenta/ui/MainWindow.java)). In Mirada's [`BookmarksWindow.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/BookmarksWindow.java) the three kind toggles are out of it and
     have a command each (`bookmarks.listAll`, `bookmarks.listBookmarked`, `bookmarks.listNotes`). Termina's

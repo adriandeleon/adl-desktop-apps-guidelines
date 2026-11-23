@@ -8,6 +8,34 @@ nothing of an app, a minor asks it to add, a major asks it to undo or redo.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Termina's and Mirada's References, read again at their current heads.** Three files the pages linked are gone,
+  so 6.2.0 pinned both apps at their 6.1.0 commits; the next edition can pin them at their heads again.
+  - Termina's Message Log is now a card in its overlay host (`ui/MessageLogCard.java`), 773 × 336 with 200
+    messages, a filter and a right-click menu, so it meets MLOG-08, FIND-03 and MENU-05. MLOG-03 and MLOG-04 say how
+    it closes and copies. Its Message Log, Debug Log and Settings buttons call what a command calls (KBD-01), its
+    Debug Log has a menu (MENU-05), and its install guide is on its website, no longer in the repository (DOCS-02).
+  - Mirada's menus are one menu bar on every OS (`ui/AppMenus.java`): in the title bar by default on Windows and
+    Linux, behind a setting (WIN-03), and in the system menu bar on macOS. Its ☰ menu is gone. File ends with
+    `app.quit` (WIN-14). The Help menu keeps Pauta's order with Documentation, the keyboard reference, Check for
+    Updates and About in it (DOCS-06, DOCS-07, DOCS-08, DIAG-10, ABOUT-01). The macOS Settings item shows the keymap's
+    chord (WIN-15), and its logs have right-click menus (MENU-05). Escape, the accent color and the title's place no
+    longer differ by OS, so Same on every OS lists none of Mirada's differences. MLOG-03 and MLOG-04 say its log
+    closes and copies on its keymap's chords.
+  - WIN-14's statement no longer gives Mirada's ☰ as its example of a main menu; the definition is unchanged.
+- **The app template's References follow it to a minimal starter.** Since 6.2.0 made a toolbar, tabs and tool panels
+  optional, the template keeps only what every app has (its PR 53): its main window is the menus, an empty state and
+  the status bar. Its toolbar, tool windows and stripes, document tabs, sample files, tab switcher, text zoom, region
+  commands and Welcome page are gone, and the References that cited them no longer do. ACC-06, WIN-09, TABS-08, WELC-03,
+  WELC-04, WELC-05 and WELC-11 drop the template; ACC-06 now says no app meets it yet. ACC-01, ACC-04, ACC-05,
+  KBD-15, WIN-08, TABS-10, TBAR-14, MENU-05, FIND-01 and FIND-16 say what its code does now: one find bar, over its
+  Debug Log; right-click menus on the Debug Log, the Message Log and Settings; the window's place and size kept
+  in `session.json` with no documents to reopen; the app's name as the window title. WELC-02 names its empty state
+  (`placeholder` in `ui/MainWindow.java`). WIN-12 says its UI zoom now has `Ctrl+=`, `Ctrl+-` and `Ctrl+0` (`Cmd` on
+  macOS, `C-=`, `C--` and `C-0` in Emacs), which the last clause gives an app with no content zoom (its PR 54). The
+  Quick open template's relatives follow. No rule changed.
+
 ## [6.2.0] - 2026-11-22
 
 A minor: an app built to 6.1.0 has nothing to undo. A status bar is no longer required: WIN-01 now covers only an app

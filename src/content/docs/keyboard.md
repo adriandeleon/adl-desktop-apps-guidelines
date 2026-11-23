@@ -20,10 +20,11 @@ screen reader and the OS's accessibility settings need is [Accessibility](../acc
   - *Reference:* Editora [`command/Command.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/Command.java), [`command/CommandRegistry.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/command/CommandRegistry.java). Editora doesn't hold the rule
     everywhere yet: the Clear button of its Message Log ([`ui/MessageLogPopup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java)) empties the log in its own
     handler, and the Previous Run and Save Output buttons of its build console ([`ui/BuildToolPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/BuildToolPanel.java)) work the
-    same way, with no command behind any of the three. Termina doesn't either. These buttons, among others, do their
-    work in handlers of their own with no command behind them: Clear in its Message Log
-    ([`ui/MessageLogWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MessageLogWindow.java)), Refresh, Copy, Export and Clear in its Debug Log ([`ui/DebugLogWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/DebugLogWindow.java)), and
-    Import theme in Settings ([`ui/SettingsWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/SettingsWindow.java)).
+    same way, with no command behind any of the three. Termina's log and Settings buttons
+    call what a command's runnable calls: Copy and Clear in its Message Log ([`ui/MessageLogCard.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MessageLogCard.java),
+    `messageLog.copy`, `messageLog.clear`), Refresh, Copy, Export and Clear in its Debug Log
+    ([`ui/DebugLogWindow.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/DebugLogWindow.java), the `debugLog.*` commands) and Import theme in Settings
+    ([`ui/SettingsActions.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/SettingsActions.java), `settings.importTheme`).
 - **KBD-02 · SHOULD.** Command ids are dotted and grouped by area, as in `file.open`, `view.toggleStatusBar`
   and `help.reportProblem`. A rule that names a command's id requires that id; these three are examples.
   - *Check (code):* every registered id is two or more names joined by dots, and the first is the area the command
@@ -184,9 +185,7 @@ Every other list choice (recent files, themes, keymaps, a setting's values) uses
     reaches every other control of each window and dialog, and Space or Enter works it.
   - *Reference:* the app template, where each control the keyboard cannot focus has its other way: the status bar's
     echo area, error count and update notice run commands (`view.messageLog`, `help.openNewRelease`:
-    [`ui/StatusBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/StatusBar.java)), its toolbar's buttons are [TBAR-02](../toolbars-and-tooltips/#tbar-02)'s
-    (`Icons.toolbarButton` in [`ui/Icons.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Icons.java)), a tool window's header buttons run commands
-    ([`ui/ToolWindowManager.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/ToolWindowManager.java)), the find bars' buttons are [FIND-16](../templates/find-bar/#find-16)'s
+    [`ui/StatusBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/StatusBar.java)), the Debug Log's find bar's buttons are [FIND-16](../templates/find-bar/#find-16)'s
     ([`ui/FindBar.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/FindBar.java)), and the picker's list is moved from its field ([`ui/Picker.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Picker.java)). Editora doesn't
     hold the rule everywhere yet: the Clear button of its Message Log ([`ui/MessageLogPopup.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MessageLogPopup.java)) and the Previous
     Run and Save Output buttons of its build console ([`ui/BuildToolPanel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/BuildToolPanel.java)) are out of the Tab order with no

@@ -83,8 +83,7 @@ user documents, unsaved work offered back after a crash.
     listed there, and the scheduler skips the automatic check while the setting is off.
   - *Reference:* Editora [`ui/MenuBarModel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java) (`help.checkForUpdates`),
     [`ui/SettingsWindow.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/SettingsWindow.java) (`settings.checkForUpdates`), [`ui/UpdateCheckScheduler.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/UpdateCheckScheduler.java).
-    Mirada lists the command in the Help submenu of its main menu ([`ui/TitleBar.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/TitleBar.java), `help`) and in the Help
-    menu of its macOS menu bar. nux, which has no menu bar, registers the command for its palette
+    Mirada lists the command in its Help menu, on every OS ([`ui/AppMenus.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/AppMenus.java), `help.checkForUpdates`). nux, which has no menu bar, registers the command for its palette
     (`app.checkUpdates` in [`App.java`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/App.java)).
 - **DIAG-06 · MUST.** **Report a Problem** is a command, listed in the Help menu where the app has one, that builds a
   report: the app's version, the OS, the runtime, a summary of the settings and the recent Debug Log. Its redaction

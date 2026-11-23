@@ -44,10 +44,10 @@ own.
     macOS the menu bar sets `useSystemMenuBar`, and a header, where the window has one, holds no menus.
   - *Reference:* the app template ([`config/Settings.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/Settings.java), `titleBarMenus = true`, read by
     [`Chrome.usesHeaderBar`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Chrome.java)). Editora ([`ui/ExtendedWindow.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/ExtendedWindow.java), [`ui/MainMenuBar.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java)), Torrenta
-    and Termina have the setting but start it off. Mirada has no setting: its [`ui/TitleBar.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/TitleBar.java) is a `HeaderBar` on a
-    `StageStyle.EXTENDED` stage wherever JavaFX supports one, on macOS too. Its header holds the file name and
-    buttons, the main menu's among them, and no menu bar; on macOS [`ui/MacMenus.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MacMenus.java) puts the menus in the system
-    menu bar. Modula and nux have no menu bar.
+    and Termina have the setting but start it off. Mirada meets it: on Windows and Linux its menus are in a `HeaderBar` on a `StageStyle.EXTENDED`
+    stage, and `window.titleBarMenus`, on by default, puts them under the system's title bar instead ([`ui/TitleBar.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/TitleBar.java),
+    `usesHeaderBar`; [`settings/Settings.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/settings/Settings.java)); on macOS they are in the system menu bar and its header holds none
+    ([`ui/AppMenus.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/AppMenus.java)). Modula and nux have no menu bar.
 - **WIN-04 · SHOULD.** Native dialogs go through one helper that attaches the app stylesheet. The UI font reaches
   every scene, a dialog's included, by [ICON-01](../icons-and-color/#icon-01).
   - *Why:* a dialog is its own scene and does not inherit the window's stylesheet.
@@ -80,8 +80,8 @@ own.
     [`NoSessionStartupFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/NoSessionStartupFxTest.java) and, for the window's geometry, [`WindowManagerLaunchFxTest`](https://github.com/adriandeleon/Editora/blob/master/src/test/java/com/editora/ui/WindowManagerLaunchFxTest.java)
     (`aWindowComesBackAtTheSizeAndPlaceItsSessionRecorded`, `aWindowThatWasMaximizedComesBackMaximized`), which
     restore a window from a saved `workspace-state.json`. No Editora test saves the geometry and reads it back. The app template does both: `saveWindowState` in
-    [`ui/MainWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MainWindow.java) writes the size, place, maximized state and the open documents to `session.json`, and the next launch
-    restores them ([`ui/DocumentTabs.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/DocumentTabs.java); [`SessionAndWelcomeFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/SessionAndWelcomeFxTest.java), `theOpenDocumentsComeBackFromTheSessionFile`).
+    [`ui/MainWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MainWindow.java) writes the size, place and maximized state to `session.json`, and the next launch
+    restores them ([`MainWindowFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/MainWindowFxTest.java), `handOffQuitAndWindowState`, `aRestartRestoresTheWindowAndReportsConfigTrouble`); it opens no documents, so it has no items to reopen.
 - **WIN-09 · SHOULD.** In an app with content to zoom (text, an image, a terminal), it zooms from the keyboard
   (`Ctrl+=`, `Ctrl+-` and `Ctrl+0`, with `Cmd` on macOS; `=` is the key that carries `+`), kept across launches.
   The UI zoom is [WIN-12](#win-12).
@@ -90,9 +90,7 @@ own.
   - *Reference:* Editora `view.textZoomIn`, `view.textZoomOut` and `view.textZoomReset`, kept in
     [`Settings.fontZoom`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/Settings.java) and bound to `C-=`, `C--` and `C-0`
     ([`keymaps/cua.json`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/keymaps/cua.json)); Termina's `zoomIn`, `zoomOut` and `actualSize`, on `Shortcut+Equals`, `Shortcut+Minus` and
-    `Shortcut+0` ([`keymaps/keymap.json`](https://github.com/adriandeleon/Termina/blob/master/src/main/resources/com/termina/keymaps/keymap.json)), kept in `font.zoom` ([`config/Settings.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/config/Settings.java)); the app template's
-    `view.zoomIn`, `view.zoomOut` and `view.zoomReset` for its documents' text, bound to `Ctrl+=`, `Ctrl+-` and `Ctrl+0` (`Cmd` on macOS) in every keymap it ships
-    and kept in `textZoom` ([`config/Settings.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/Settings.java); [`SessionAndWelcomeFxTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/SessionAndWelcomeFxTest.java), `theDocumentsTextZoomsOnItsOwn`).
+    `Shortcut+0` ([`keymaps/keymap.json`](https://github.com/adriandeleon/Termina/blob/master/src/main/resources/com/termina/keymaps/keymap.json)), kept in `font.zoom` ([`config/Settings.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/config/Settings.java)).
 - **WIN-12 · MUST.** The app has a UI zoom: one setting scales the whole chrome, the menus
   ([MENU-16](../menus/#menu-16)) and whichever of a toolbar, tabs and a status bar the app has included. It applies at once, is kept across
   launches, and three commands zoom it in, out and back to the default. In an app with content of its own to zoom
@@ -111,7 +109,9 @@ own.
     (`zoom`): one setting, `uiZoom` in [`config/Settings.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/config/Settings.java), scales every pixel size of the stylesheets, the root
     font size among them, and the sizes the code fixes are bound to the zoom; a change restyles every open window
     at once. Its commands are `view.uiZoomIn`, `view.uiZoomOut` and `view.uiZoomReset` ([`ui/Commands.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Commands.java)), on
-    `Ctrl+Alt+=`, `Ctrl+Alt+-` and `Ctrl+Alt+0` (`Cmd+Alt` on macOS) in its CUA keymaps, which leave `Ctrl+=`, `Ctrl+-` and `Ctrl+0` to its documents' text zoom ([WIN-09](#win-09)); [`UiZoomTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/UiZoomTest.java) holds the scaling. Editora, Termina and Mirada zoom their
+    `Ctrl+=`, `Ctrl+-` and `Ctrl+0` (`Cmd` on macOS) in every keymap, `C-=`, `C--` and `C-0` in Emacs, since it has
+    no content zoom ([`keymaps/cua.json`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/resources/com/example/app/keymaps/cua.json)); [`UiZoomTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/ui/UiZoomTest.java) holds the scaling and
+    [`KeybindingsTest`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/test/java/com/example/app/command/KeybindingsTest.java) (`theZoomChordsZoomTheUiInEveryKeymap`) the chords in every keymap. Editora, Termina and Mirada zoom their
     content only (`view.textZoomIn`, `zoomIn`, `view.zoomIn`), and Editora writes its menu font as absolute pixels ([`MainMenuBar.UI_FONT_SIZE`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MainMenuBar.java), `.context-menu`
     in [`app.css`](https://github.com/adriandeleon/Editora/blob/master/src/main/resources/com/editora/styles/app.css)). Torrenta, Modula and nux have no zoom command.
 - **WIN-13 · MUST.** Every quit entry point an app has runs one quit method: the Quit row and the `app.quit` command
@@ -148,7 +148,7 @@ own.
     each asks for itself ([`TerminalWindow.close`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/TerminalWindow.java)).
 - **WIN-14 · MUST.** Every app has a Quit, on every OS: the `app.quit` command, in the Command Palette, and, where the
   app has a File menu or a main menu, a Quit row in that menu that runs the command. A main menu is a menu button in
-  the window that holds the app's commands as a menu bar would (Mirada's ☰, which it shows on every OS). A menu button
+  the window that holds the app's commands as a menu bar would. A menu button
   that lists one kind of thing is not a main menu (nux's Profiles and Commands), and neither is a right-click menu
   (the only menu Modula has): an app with no File menu and no main menu meets the rule with the command alone. What
   Quit does is [WIN-13](#win-13). Closing the last window may end the app as well, but it is never the only way out.
@@ -159,9 +159,9 @@ own.
     neither menu passes on the command.
   - *Reference:* the app template's [`Commands.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/Commands.java) (`app.quit`) and [`AppMenus.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/AppMenus.java) (Quit, the File menu's last row); Editora's `app.quit`, the
     last row of its File menu ([`ui/MenuBarModel.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/ui/MenuBarModel.java)). Torrenta's File menu ends with Quit, and it registers the command as `quit`.
-    Termina and Mirada have no Quit. Termina's File menu has Close Window and ends with Settings, Sync Now and
-    Configure Profiles ([`ui/MenuBarModel.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MenuBarModel.java)); Mirada's ☰ menu, on every OS ([`ui/TitleBar.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/TitleBar.java)), and, on macOS, its File menu
-    ([`ui/MacMenus.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MacMenus.java)) end with Close (`window.close`). nux has neither menu and meets the rule with `app.quit`
+    Mirada's `app.quit` is the last row of its File menu, on every OS ([`ui/AppMenus.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/AppMenus.java)). Termina has no
+    Quit: its File menu has Close Window and ends with Settings, Sync Now and Configure Profiles
+    ([`ui/MenuBarModel.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MenuBarModel.java)). nux has neither menu and meets the rule with `app.quit`
     ([`App`](https://github.com/adriandeleon/nux/blob/master/src/main/java/com/nux/App.java)). Modula has neither menu and no quit command: it quits from its tray and its window's close button
     ([`ModulaApp.quit`](https://github.com/adriandeleon/Modula/blob/master/src/main/java/com/modula/ModulaApp.java)).
 - **WIN-15 · SHOULD.** On macOS, Settings is in the application menu, the one macOS names after the app, and runs
@@ -177,10 +177,8 @@ own.
   - *Check (code):* on macOS the app inserts a Settings item into the application menu that runs the settings
     command. The item's title carries the chord the active keymap binds to that command and is written again when
     the keymap changes; the item is created without a key equivalent.
-  - *Reference:* Mirada [`MacAppMenu.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/os/MacAppMenu.java) adds the item, and it runs `app.settings`. It doesn't show the keymap's chord yet: it
-    creates the item with the native key equivalent `Cmd+,` (`createMenuItem(…, ',', COMMAND)`), which stays
-    whatever the keymap binds, and Mirada's Emacs keymap binds `C-,`
-    ([`keymaps/emacs.json`](https://github.com/adriandeleon/Mirada/blob/main/src/main/resources/com/mirada/keymaps/emacs.json)). The app template's [`ui/MacAppMenu.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MacAppMenu.java) meets it: it inserts a Settings item that runs
+  - *Reference:* Mirada [`MacAppMenu.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/os/MacAppMenu.java) adds the item, which runs `app.settings`, with no key equivalent; its title carries the
+    keymap's chord and `refresh` writes it again when the keys change. The app template's [`ui/MacAppMenu.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MacAppMenu.java) meets it too: it inserts a Settings item that runs
     `app.settings`, created with no key equivalent, whose title carries the keymap's chord and is written again on a
     keymap change (`refresh`, from [`ui/MainWindow.java`](https://github.com/adriandeleon/adl-desktop-app-template/blob/master/src/main/java/com/example/app/ui/MainWindow.java)). Termina's [`MacAppMenu.java`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/ui/MacAppMenu.java) adds About
     only. Editora, Torrenta, Modula and nux add nothing to that menu.

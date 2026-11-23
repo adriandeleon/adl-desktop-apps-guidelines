@@ -55,8 +55,6 @@ fixed:
 - Termina removes its `hideMenuBar` command on macOS instead of disabling it ([OS-01](#os-01)).
 - Termina believes the folder a shell reports for itself on Windows only, so a tab's folder and where a new tab
   starts can differ by OS for the same shell ([OS-04](#os-04)).
-- Mirada closes the window on Escape on Linux only, follows the OS's accent color on macOS and Windows only, and
-  puts the title on the left on Windows only ([OS-04](#os-04)).
 - Editora keeps the user's own key bindings apart by OS, `keybindings` for Windows and Linux and `keybindingsMac`
   for macOS, so a chord rebound on one is not rebound on the other ([OS-04](#os-04)).
 - Termina's Settings Sync keeps the user's key bindings in one file for macOS and another for Windows and Linux,
@@ -71,10 +69,9 @@ fixed:
 - Editora, Torrenta, Modula and nux don't run their quit method from macOS's own Quit: the application menu's and
   the Dock's Quit ask each window to close, which in Torrenta, Modula and nux, closing to the tray, hides the window
   ([WIN-13](../window-shell/#win-13)).
-- Only Mirada puts Settings in the macOS application menu, with a fixed `Cmd+,` where the keymap's chord belongs
+- Only Mirada puts Settings in the macOS application menu
   ([WIN-15](../window-shell/#win-15)); only Termina and Mirada add About there
   ([ABOUT-01](../templates/about/#about-01)).
-- Mirada has a menu bar on macOS only: on Windows and Linux its menus are one ☰ button ([OS-04](#os-04)).
 - Editora, Termina, Modula and nux ship no console launcher on Windows, and none attaches to the parent's console;
   Torrenta's `torrenta-nox` is one ([CLI-11](../command-line/#cli-11)).
 
@@ -176,10 +173,7 @@ Everything else, and in particular:
     `AppServices`, and the pickers' keys that `MainWindow` hands `PickerKeys`), the system menu bar and its
     application menu (`MainWindow`, `Chrome`, `MacAppMenu`), and a program's path, arguments and `PATH`
     (`Executables`, `Browser`, `ShellPath`). No other app has been read through for it yet. The
-    differences found so far, each on no row or short of its row: Mirada
-    closes its window on Escape on Linux only ([`Command.escapeCloses`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Command.java)), follows the OS's accent color on macOS and
-    Windows only ([`Theme.followsAccent`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/Theme.java)), puts its title on the left on Windows only ([`TitleBar.Layout`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/TitleBar.java)) and has a
-    menu bar on macOS only ([`ui/MacMenus.java`](https://github.com/adriandeleon/Mirada/blob/main/src/main/java/com/mirada/ui/MacMenus.java)); Editora deletes a file for good on Windows ([`io/Trash.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/io/Trash.java)),
+    differences found so far, each on no row or short of its row: Editora deletes a file for good on Windows ([`io/Trash.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/io/Trash.java)),
     keeps the user's key bindings apart by OS (`keybindings` and `keybindingsMac` in [`config/Settings.java`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/config/Settings.java)) and
     registers its WSL targets on Windows only ([`App`](https://github.com/adriandeleon/Editora/blob/master/src/main/java/com/editora/App.java)); Termina believes the folder a shell reports for itself on
     Windows only ([`ProcessCwd.reportedDirectoryWins`](https://github.com/adriandeleon/Termina/blob/master/src/main/java/com/termina/pty/ProcessCwd.java)), and its Settings Sync keeps the user's key bindings in one
